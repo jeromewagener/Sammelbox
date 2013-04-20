@@ -1,0 +1,67 @@
+<project name="Collector-Desktop" basedir="." default="main">
+
+    <property name="src.dir"     value="src"/>
+	<property name="res.dir"     value="res"/>
+    <property name="build.dir"   value="build"/>
+    <property name="classes.dir" value="${build.dir}/classes"/>
+    <property name="jar.dir"     value="${build.dir}/jar"/>
+	<property name="lib.dir"     value="lib"/>
+	
+    <property name="main-class"  value="collector.desktop.Collector"/>
+	
+    <path id="collector.classpath">
+         <fileset dir="${lib.dir}" includes="**/*.jar"/>
+	</path>
+	
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+    </target>
+
+    <target name="compile">
+        <mkdir dir="${classes.dir}"/>
+    	<javac includeantruntime="false" srcdir="${src.dir}/collector" destdir="${classes.dir}" target="1.7">
+    		<classpath refid="collector.classpath" />
+    	</javac>
+    </target>
+
+    <target name="jarWin64" depends="compile">
+        <mkdir dir="${jar.dir}"/>
+        <jar basedir="${classes.dir}" destfile="${jar.dir}/${ant.project.name}_Win64.jar">
+            <zipfileset excludes="META-INF/*.SF" src="${lib.dir}/swt-4.2-windows-x64.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="${lib.dir}/sqlite-jdbc-3.7.2.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="${lib.dir}/log4j-1.2.17.jar"/>
+        	<zipfileset excludes="META-INF/*.SF" src="${lib.dir}/junit-4.10.jar"/>
+        	<fileset dir="${res.dir}"/>
+            <manifest>
+                <attribute name="Main-Class" value="${main-class}"/>
+            </manifest>
+        </jar>
+    </target>
+    
+    <target name="jarLinux64" depends="compile">
+        <mkdir dir="${jar.dir}"/>
+        <jar basedir="${classes.dir}" destfile="${jar.dir}/${ant.project.name}_Linux64.jar">
+            <zipfileset excludes="META-INF/*.SF" src="${lib.dir}/swt-4.2-linux-x64.jar" />
+            <zipfileset excludes="META-INF/*.SF" src="${lib.dir}/sqlite-jdbc-3.7.2.jar" />
+            <zipfileset excludes="META-INF/*.SF" src="${lib.dir}/log4j-1.2.17.jar"/>
+        	<zipfileset excludes="META-INF/*.SF" src="${lib.dir}/junit-4.10.jar"/>
+        	<fileset dir="${res.dir}"/>
+            <manifest>
+                <attribute name="Main-Class" value="${main-class}"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="runWin64" depends="jarWin64">
+        <java jar="${jar.dir}/${ant.project.name}_Win64.jar" fork="true"/>
+    </target>
+
+    <target name="runLinux64" depends="jarLinux64">
+        <java jar="${jar.dir}/${ant.project.name}_Linux64.jar" fork="true"/>
+    </target>
+	
+    <target name="clean-buildWin64" depends="clean,jarWin64"/>
+
+    <target name="main" depends="clean,jarWin64,jarLinux64"/>
+
+</project>

@@ -1,0 +1,144 @@
+<!-- ############### BEACON HANDLING ############### -->
+
+   <!-- Computer 2 Mobile -->
+   <collector>
+   		<hostname>linlux</hostname>
+   </collector>
+
+<!-- ############### ALBUM HANDLING ############### -->
+
+   <!-- Mobile 2 Computer -->
+   <collector>
+      <request type="getAlbumList" />
+   </collector>
+
+	<!-- Computer 2 Mobile -->
+   <collector>
+      <response type="getAlbumList">
+      	<albums>
+	         <album>
+	            <album-name>books</album-name>
+	            <schema-version-uuid>1234-1234-1234-1234</schema-version-uuid>
+	         </album>
+	         <album>
+	            <album-name>cds</album-name>
+	            <schema-version-uuid>1234-1234-1234-4566</schema-version-uuid>
+	         </album>
+	         <album>
+	            <album-name>electronics</album-name>
+	            <schema-version-uuid>1234-1234-1234-6743</schema-version-uuid>
+	         </album>
+	    </albums>
+      </response>
+   </collector>
+
+   <!-- Mobile 2 Computer -->
+   <collector>
+      <request type="getAlbumSchema">
+         <album-name>books</album-name>
+      </request>
+   </collector>
+
+	/*<!-- Computer 2 Mobile -->
+   <collector>
+      <response type="getAlbumSchema">
+         <album-name>electronics</album-name>         
+         <schema-version-uuid>1234-1234-1234-4566</schema-version-uuid>
+         <schema>
+            <field>
+                  <field-name>id</field-name>
+                  <field-type>number</field-type>
+            <field>
+            <field>
+                  <field-name>title</field-name>
+                  <field-type>text</field-type>
+            <field>
+            ...
+         </schema>
+      </response>
+   </collector>*/
+
+<!-- ############### ITEM HANDLING ############### -->
+
+   <!-- Mobile 2 Computer -->
+   <collector>
+      <request type="getItemList">
+         <album-name>books</album-name>
+      </request>
+   </collector>
+
+	<!-- Computer 2 Mobile -->
+   <collector>
+      <response type="getItemList">
+         <album-name>books</album-name>    
+         <items>     
+	         <item>            
+	            <item-id>1</item-id>
+	            <content-version-uuid>1234-1234-1234-1234</content-version-content>
+	         </item>
+	         <item>
+	            <item-id>2</item-id>
+	            <content-version-uuid>1234-1234-1234-1235</content-version-content>
+	         </item>
+	         <item>
+	            <item-id>3</item-id>
+	            <content-version-uuid>1234-1234-1234-1236</content-version-content>
+	         </item>
+	     </items>
+      </response>
+   </collector>
+
+   <!-- Mobile 2 Computer -->
+   <collector>
+      <request type="getItemContent">
+         <album-name>books</album-name>         
+         <id>2</id>
+      </request>
+   </collector>
+
+	/*<!-- Computer 2 Mobile -->
+   <collector>
+      <response type="getItemContent">
+         <album-name>books</album-name>         
+         <id>2</id>         
+         <content-version-uuid>1234-1234-1234-4566</schema-version-uuid>
+         <content>
+            <field>
+               <field-name>Title</field-name>
+               <field-type>text</field-type>
+               <field-value>Design Patterns</field-value>
+            </field>
+         </content>
+      </command>
+   </collector>*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
