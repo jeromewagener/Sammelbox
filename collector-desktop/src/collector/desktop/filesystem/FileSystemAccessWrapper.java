@@ -468,6 +468,10 @@ public class FileSystemAccessWrapper {
 		
 		Collection<AlbumView> albumViews = new ArrayList<AlbumView>();
 		
+		if (albumViewsAsXml.isEmpty()) {
+			return albumViews;
+		}
+		
 		try {
 			DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
