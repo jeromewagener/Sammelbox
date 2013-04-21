@@ -90,4 +90,8 @@ public class AlbumItemStore {
 	public static boolean isStopIndexAtEnd() {
 		return stopIndex >= albumItems.size() - 1;
 	}
+
+	public static List<AlbumItem> getAllVisibleAlbumItems() {
+		return getAlbumItems(getStopIndex());
+	}
 }

@@ -3,65 +3,59 @@ package collector.desktop.filesystem.export;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.List;
 
-import collector.desktop.database.AlbumItemResultSet;
-import collector.desktop.database.DatabaseWrapper;
+import collector.desktop.database.AlbumItem;
+import collector.desktop.database.AlbumItemStore;
 import collector.desktop.database.FieldType;
 import collector.desktop.database.OptionType;
-import collector.desktop.gui.BrowserContent;
 
 public class HTMLExporter {
 	public static void exportVisibleItems(String filepath) {
-		String lastSQLQuery = BrowserContent.getLastSqlQuery();
-
-		AlbumItemResultSet albumItemResultSet = DatabaseWrapper.executeSQLQuery(lastSQLQuery);
+		List<AlbumItem> visibleAlbumItems = AlbumItemStore.getAllVisibleAlbumItems();
 
 		StringBuilder headerBuilder = new StringBuilder();
 		StringBuilder dataBuilder = new StringBuilder();
 		boolean firstLine = true;
 
-		while (albumItemResultSet.moveToNext()) {
+		for (AlbumItem albumItem : visibleAlbumItems) {	
 			if (firstLine) {
 				headerBuilder.append("<tr>");
 			}
 			dataBuilder.append("<tr>");
 			
-			for (int i=1; i<=albumItemResultSet.getFieldCount(); i++) {				
-				if (albumItemResultSet.getFieldType(i).equals(FieldType.UUID)) {
+			for (int i=0; i<albumItem.getFields().size(); i++) {			
+				if (albumItem.getField(i).getType().equals(FieldType.UUID)) {
 					// schema or content version UUID --> ignore 
 				}
-				else if (albumItemResultSet.getFieldType(i).equals(FieldType.ID)) {
-					if (albumItemResultSet.isItemID(i)) {
-						// do not show
-					} else {
-						// its a trap :-) (Probably just the typeinfo foreign key..)
-					}
+				else if (albumItem.getField(i).getType().equals(FieldType.ID)) {
+					// do not show ID either
 				}
-				else if (albumItemResultSet.getFieldType(i).equals(FieldType.Picture)) {
+				else if (albumItem.getField(i).getType().equals(FieldType.Picture)) {
 					// not possible in CSV
 				}
 				else {
-					if (albumItemResultSet.getFieldType(i).equals(FieldType.Option)) {
+					if (albumItem.getField(i).getType().equals(FieldType.Option)) {
 						if (firstLine) {
-							headerBuilder.append("<th>" + albumItemResultSet.getFieldName(i) + "</th>");
+							headerBuilder.append("<th style=\"border:1px solid black;\">" + albumItem.getField(i).getName() + "</th>");
 						}
 
-						if (albumItemResultSet.getFieldValue(i) == OptionType.Yes) {
-							dataBuilder.append("<td>" + "Yes" + "</td>");
-						} else if (albumItemResultSet.getFieldValue(i) == OptionType.No) {
-							dataBuilder.append("<td>" + "No" + "</td>");
+						if (albumItem.getField(i).getValue() == OptionType.Yes) {
+							dataBuilder.append("<td style=\"border:1px solid black;\">" + "Yes" + "</td>");
+						} else if (albumItem.getField(i).getValue() == OptionType.No) {
+							dataBuilder.append("<td style=\"border:1px solid black;\">" + "No" + "</td>");
 						} else {
-							dataBuilder.append("<td>" + "Unknown" + "</td>");
+							dataBuilder.append("<td style=\"border:1px solid black;\">" + "Unknown" + "</td>");
 						}
 					} else {
 						if (firstLine) {
-							headerBuilder.append("<th>" + albumItemResultSet.getFieldName(i) + "</th>");
+							headerBuilder.append("<th style=\"border:1px solid black;\">" + albumItem.getField(i).getName() + "</th>");
 						}
 
-						if (albumItemResultSet.getFieldValue(i) == null || albumItemResultSet.getFieldValue(i).equals("")) {
-							dataBuilder.append("<td>" + "-" + "</td>");
+						if (albumItem.getField(i).getValue() == null || albumItem.getField(i).getValue().equals("")) {
+							dataBuilder.append("<td style=\"border:1px solid black;\">" + "-" + "</td>");
 						} else {
-							dataBuilder.append("<td>" + albumItemResultSet.getFieldValue(i) + "</td>");
+							dataBuilder.append("<td style=\"border:1px solid black;\">" + albumItem.getField(i).getValue() + "</td>");
 						}
 					}
 				}
@@ -78,12 +72,10 @@ public class HTMLExporter {
 
 		try {
 			BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(filepath));
-			bufferedWriter.write("<html><body><table border=\"1\">" + headerBuilder.toString() + dataBuilder.toString() + "</table></body></html>");
+			bufferedWriter.write("<html><head><meta charset=\"utf-8\"></head><body><table style=\"border:1px solid black; border-collapse:collapse;\">" + headerBuilder.toString() + dataBuilder.toString() + "</table></body></html>");
 			bufferedWriter.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
-		albumItemResultSet.close();
 	}
 }

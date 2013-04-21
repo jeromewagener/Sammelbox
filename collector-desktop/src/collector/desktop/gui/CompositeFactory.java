@@ -58,9 +58,22 @@ public class CompositeFactory {
 		Composite quickControlComposite = new Composite(parentComposite, SWT.NONE);
 		quickControlComposite.setLayout(new GridLayout());
 
-		// separator
+		// separator grid data
 		GridData seperatorGridData = new GridData(GridData.FILL_BOTH);
 		seperatorGridData.minimumHeight = 15;
+		
+		// quick-search label
+		Label quickSearchLabel = new Label(quickControlComposite, SWT.NONE);
+		quickSearchLabel.setText("Quicksearch:");
+		quickSearchLabel.setFont(new Font(parentComposite.getDisplay(), quickSearchLabel.getFont().getFontData()[0].getName(), 11, SWT.BOLD));
+
+		// quick-search text-box
+		final Text quickSearchText = new Text(quickControlComposite, SWT.BORDER);
+		quickSearchText.setLayoutData(new GridData(GridData.FILL_BOTH));
+		quickSearchText.addModifyListener(new QuickSearchModifyListener());
+		
+		// separator
+		new Label(quickControlComposite, SWT.SEPARATOR | SWT.HORIZONTAL).setLayoutData(seperatorGridData);
 
 		// select album label
 		Label selectAlbumLabel = new Label(quickControlComposite, SWT.NONE);
@@ -68,18 +81,15 @@ public class CompositeFactory {
 		selectAlbumLabel.setFont(new Font(parentComposite.getDisplay(), selectAlbumLabel.getFont().getFontData()[0].getName(), 11, SWT.BOLD));
 
 		// the list of albums (listener is added later)
-		final List list = new List(quickControlComposite, SWT.SINGLE | SWT.BORDER | SWT.V_SCROLL);
+		final List albumList = new List(quickControlComposite, SWT.SINGLE | SWT.BORDER | SWT.V_SCROLL);
 
-		for (String album : DatabaseWrapper.listAllAlbums()) {
-			list.add(album);
-		}
 		GridData gridData = new GridData(GridData.FILL_BOTH);
 		gridData.heightHint = 100;
-		gridData.widthHint = 115;
-		list.setLayoutData(gridData);
+		gridData.widthHint = 125;
+		albumList.setLayoutData(gridData);
 
 		// Set the currently active album
-		Collector.setAlbumSWTList(list);
+		Collector.setAlbumSWTList(albumList);
 		
 		// separator
 		new Label(quickControlComposite, SWT.SEPARATOR | SWT.HORIZONTAL).setLayoutData(seperatorGridData);
@@ -91,49 +101,37 @@ public class CompositeFactory {
 
 		// the list of albums (listener is added later)
 		final List viewList = new List(quickControlComposite, SWT.SINGLE | SWT.BORDER | SWT.V_SCROLL);
-
 		// initialize view list
 		AlbumViewManager.initialize();
 		
-		for (AlbumView albumView : AlbumViewManager.getAlbumViews()) {
-			viewList.add(albumView.getName());
-		}
-		
-		viewList.setLayoutData(gridData);		
+		GridData gridData2 = new GridData(GridData.FILL_BOTH);
+		gridData2.heightHint = 250;
+		gridData2.widthHint = 125;
+		viewList.setLayoutData(gridData2);		
 		Collector.setViewSWTList(viewList);
-		
-		// separator
-		new Label(quickControlComposite, SWT.SEPARATOR | SWT.HORIZONTAL).setLayoutData(seperatorGridData);
-		
-		// quick-search label
-		Label quickSearchLabel = new Label(quickControlComposite, SWT.NONE);
-		quickSearchLabel.setText("Quicksearch:");
-		quickSearchLabel.setFont(new Font(parentComposite.getDisplay(), quickSearchLabel.getFont().getFontData()[0].getName(), 11, SWT.BOLD));
 
-		// quick-search text-box
-		final Text quickSearchText = new Text(quickControlComposite, SWT.BORDER);
-		quickSearchText.setLayoutData(new GridData(GridData.FILL_BOTH));
-		quickSearchText.addModifyListener(new QuickSearchModifyListener());
-
-		list.addSelectionListener(new SelectionListener() {
+		albumList.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {}
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (list.getSelectionIndex() != -1)	{			
-					Collector.setSelectedAlbumOrView(list.getItem(list.getSelectionIndex()));
+				if (albumList.getSelectionIndex() != -1)	{			
+					String albumName = albumList.getItem(albumList.getSelectionIndex());
+					
+					Collector.setSelectedAlbum(albumList.getItem(albumList.getSelectionIndex()));
 					Collector.changeRightCompositeTo(PanelType.Empty, CompositeFactory.getEmptyComposite(Collector.getThreePanelComposite()));
 
-					if (DatabaseWrapper.isAlbumQuicksearchable(list.getItem(list.getSelectionIndex()))) {
-						quickSearchText.setEnabled(true);
-					} else {
-						quickSearchText.setEnabled(false);
-					}
+					quickSearchText.setText("");
+					quickSearchText.setEnabled(
+							DatabaseWrapper.isAlbumQuicksearchable(albumName));
 
 					BrowserContent.performBrowserQueryAndShow(
 							Collector.getAlbumItemSWTBrowser(), 							
-							DatabaseWrapper.createSelectStarQuery(list.getItem(list.getSelectionIndex())));
+							DatabaseWrapper.createSelectStarQuery(albumName));
+					
+					viewList.setEnabled(AlbumViewManager.hasAlbumViewsAttached(albumName));
+					AlbumViewManager.getInstance().notifyObservers();
 				}
 			}
 		});
@@ -143,14 +141,39 @@ public class CompositeFactory {
 			public void widgetDefaultSelected(SelectionEvent arg0) {}
 			
 			@Override
-			public void widgetSelected(SelectionEvent arg0) {
-				Collector.setSelectedAlbumOrView(viewList.getItem(list.getSelectionIndex()));
-				
+			public void widgetSelected(SelectionEvent arg0) {				
 				BrowserContent.performBrowserQueryAndShow(
 						Collector.getAlbumItemSWTBrowser(), 							
-						AlbumViewManager.getSqlQueryByName(list.getItem(list.getSelectionIndex())));
+						AlbumViewManager.getSqlQueryByName(viewList.getItem(viewList.getSelectionIndex())));
 			}
 		});
+		
+		boolean first = true;
+		// Add all albums to album list
+		for (String album : DatabaseWrapper.listAllAlbums()) {
+			albumList.add(album);
+			
+			// If the first album retrieved is not quick-searchable, then disable the related textbox
+			// If the first album retrieved has no views attached, then disable the related list
+			if (first) {
+				if (!DatabaseWrapper.isAlbumQuicksearchable(album)) {
+					quickSearchText.setEnabled(false);
+				}
+				
+				if (!AlbumViewManager.hasAlbumViewsAttached(album)) {
+					viewList.setEnabled(false);
+				} else {
+					
+					for (AlbumView albumView : AlbumViewManager.getAlbumViews(albumList.getItem(0))) {
+						viewList.add(albumView.getName());
+					}
+					
+					viewList.setEnabled(true);
+				}
+				
+				first = false;
+			}
+		}		
 		
 		return quickControlComposite;
 	}
@@ -618,7 +641,7 @@ public class CompositeFactory {
 
 				DatabaseWrapper.createNewAlbum(albumNameText.getText(), metaItemFields, willContainImages);
 				Collector.updateAlbumSWTList();
-				Collector.setSelectedAlbumOrView(albumNameText.getText());				
+				Collector.setSelectedAlbum(albumNameText.getText());				
 				BrowserContent.performBrowserQueryAndShow(
 						Collector.getAlbumItemSWTBrowser(),
 						"select * from " + DatabaseWrapper.transformNameToDBName(albumNameText.getText()));

@@ -453,7 +453,7 @@ public class FileSystemAccessWrapper {
 		for (AlbumView albumView : albumViews) {
 			xmlOutput.append("\t<view>\n");
 			xmlOutput.append("\t\t<name>" + albumView.getName() + "</name>\n");
-			xmlOutput.append("\t\t<album>" + albumView.getName() + "</album>\n");
+			xmlOutput.append("\t\t<album>" + albumView.getAlbum() + "</album>\n");
 			xmlOutput.append("\t\t<sqlQuery>" + albumView.getSqlQuery() + "</sqlQuery>\n");
 			xmlOutput.append("\t</view>\n");
 		}

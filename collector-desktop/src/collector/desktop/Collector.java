@@ -54,8 +54,8 @@ public class Collector implements UIObservable, UIObserver {
 	/** A reference to a composite being part of the general user interface */
 	private static Composite threePanelComposite = null, upperLeftSubComposite = null, lowerLeftSubComposite = null, 
 	    leftComposite = null, rightComposite = null, centerComposite = null, statusComposite = null, toolbarComposite = null;
-	/** The currently active/selected album. The selected album changes via selections within the album list */
-	private static String selectedAlbumOrView;
+	/** The currently selected album. The selected album changes via selections within the album list */
+	private static String selectedAlbum;
 	/** A reference to the SWT list containing all available albums */
 	private static List albumSWTList;
 	/** A reference to the SWT list containing all available views */
@@ -202,7 +202,7 @@ public class Collector implements UIObservable, UIObserver {
 	private static void selectDefaultAndShowSelectedAlbum() {
 		if (albumSWTList.getItemCount() > 0) {
 			albumSWTList.setSelection(0);
-			Collector.setSelectedAlbumOrView(albumSWTList.getItem(albumSWTList.getSelectionIndex()));
+			Collector.setSelectedAlbum(albumSWTList.getItem(albumSWTList.getSelectionIndex()));
 			BrowserContent.performBrowserQueryAndShow(
 					Collector.getAlbumItemSWTBrowser(), 
 					DatabaseWrapper.createSelectStarQuery(albumSWTList.getItem(albumSWTList.getSelectionIndex())));
@@ -213,7 +213,7 @@ public class Collector implements UIObservable, UIObserver {
 	private static void selectDefaultAndShowWelcomePage() {
 		if (albumSWTList.getItemCount() > 0) {
 			albumSWTList.setSelection(0);
-			Collector.setSelectedAlbumOrView(albumSWTList.getItem(albumSWTList.getSelectionIndex()));
+			Collector.setSelectedAlbum(albumSWTList.getItem(albumSWTList.getSelectionIndex()));
 		}
 		
 		BrowserContent.loadWelcomePage();
@@ -402,13 +402,13 @@ public class Collector implements UIObservable, UIObserver {
 	/** Returns the currently selected/active album or view
 	 * @return the currently selected/active album or view */
 	public static String getSelectedAlbum() {
-		return selectedAlbumOrView;
+		return selectedAlbum;
 	}
 
-	/** Sets the currently selected/active album or view
-	 * @param album the name of the now selected/active album or view */
-	public static void setSelectedAlbumOrView(String album) {
-		Collector.selectedAlbumOrView = album;
+	/** Sets the currently selected/active album
+	 * @param album the name of the now selected/active album */
+	public static void setSelectedAlbum(String album) {
+		Collector.selectedAlbum = album;
 	}
 
 	/** Sets the the list of albums
@@ -521,7 +521,7 @@ public class Collector implements UIObservable, UIObserver {
 					BrowserContent.loadHtmlPage(Collector.getAlbumItemSWTBrowser(), getShell().getClass().getClassLoader().getResourceAsStream("htmlfiles/albums_restored.html"));
 				}
 			} else if (((MenuItem) event.widget).getText().equals("Advanced Search")) {
-				changeRightCompositeTo(PanelType.AdvancedSearch, CompositeFactory.getAdvancedSearchComposite(threePanelComposite, selectedAlbumOrView));
+				changeRightCompositeTo(PanelType.AdvancedSearch, CompositeFactory.getAdvancedSearchComposite(threePanelComposite, selectedAlbum));
 			} else if (((MenuItem) event.widget).getText().equals("Synchronize")) {
 				changeRightCompositeTo(PanelType.Synchronization, CompositeFactory.getSynchronizeComposite(threePanelComposite));
 			} else if (((MenuItem) event.widget).getText().equals("How-to create a new album?")) {
@@ -606,7 +606,7 @@ public class Collector implements UIObservable, UIObserver {
 		if (origin == AlbumViewManager.class) {
 			viewSWTList.removeAll();
 			
-			for (AlbumView albumView : AlbumViewManager.getAlbumViews()) {
+			for (AlbumView albumView : AlbumViewManager.getAlbumViews(selectedAlbum)) {
 				viewSWTList.add(albumView.getName());				
 			}
 		}

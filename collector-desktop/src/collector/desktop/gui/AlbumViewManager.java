@@ -1,5 +1,6 @@
 package collector.desktop.gui;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 
@@ -21,8 +22,16 @@ public class AlbumViewManager implements UIObservable {
 		albumViews = FileSystemAccessWrapper.loadViews();
 	}
 	
-	public static Collection<AlbumView> getAlbumViews() {
-		return albumViews;
+	public static Collection<AlbumView> getAlbumViews(String albumName) {
+		Collection<AlbumView> filteredAlbumViews = new ArrayList<AlbumView>();
+		
+		for (AlbumView albumView : albumViews) {
+			if (albumView.getAlbum().equals(albumName)) {
+				filteredAlbumViews.add(albumView);
+			}
+		}
+		
+		return filteredAlbumViews;
 	}
 
 	private static void setAlbumViews(Collection<AlbumView> albumViews) {
@@ -58,7 +67,7 @@ public class AlbumViewManager implements UIObservable {
 	}
 	
 	private static void storeViews() {
-		FileSystemAccessWrapper.storeViews(getAlbumViews());
+		FileSystemAccessWrapper.storeViews(albumViews);
 	}
 	
 	public static void loadViews() {
@@ -135,5 +144,15 @@ public class AlbumViewManager implements UIObservable {
 		}
 		
 		return null;
+	}
+
+	public static boolean hasAlbumViewsAttached(String albumName) {
+		for (AlbumView albumView : albumViews) {
+			if (albumView.getAlbum().equals(albumName)) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 }

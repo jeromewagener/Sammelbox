@@ -37,26 +37,18 @@ public class BrowserContent {
 	/** To avoid rebuilding the exact same HTML output when returning from the picture viewer 
 	 * to the album view, the last generated HTML output is saved  */
 	private static String lastPageAsHtml;
-	/** To avoid rebuilding the exact same SQL Query when returning from the picture viewer 
-	 * to the search view, the last SQL query is saved */
-	private static String lastSqlQuery;
-
-	public static String getLastSqlQuery() {
-		return lastSqlQuery;
-	}
 
 	public static void performBrowserQueryAndShow(Browser browser, String sqlQuery) {				
 		AlbumItemStore.reinitializeStore(DatabaseWrapper.executeSQLQuery(sqlQuery));
 		showAlbum(browser);
-		lastSqlQuery = sqlQuery;
 	}
 
 	public static void performLastQuery(Browser browser) {
-		AlbumItemStore.reinitializeStore(DatabaseWrapper.executeSQLQuery(lastSqlQuery));
 		showAlbum(browser);
 	}
 
 	public static void showResultSet(Browser browser, AlbumItemResultSet albumItemResultSet) {
+		AlbumItemStore.reinitializeStore(albumItemResultSet);
 		showAlbum(browser);
 	}
 

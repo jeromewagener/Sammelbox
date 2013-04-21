@@ -3,71 +3,65 @@ package collector.desktop.filesystem.export;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.List;
 
-import collector.desktop.database.AlbumItemResultSet;
-import collector.desktop.database.DatabaseWrapper;
+import collector.desktop.database.AlbumItem;
+import collector.desktop.database.AlbumItemStore;
 import collector.desktop.database.FieldType;
 import collector.desktop.database.OptionType;
-import collector.desktop.gui.BrowserContent;
 
 public class CSVExporter {
 	public static void exportVisibleItems(String filepath) {
-		String lastSQLQuery = BrowserContent.getLastSqlQuery();
-
-		AlbumItemResultSet albumItemResultSet = DatabaseWrapper.executeSQLQuery(lastSQLQuery);
-
+		List<AlbumItem> visibleAlbumItems = AlbumItemStore.getAllVisibleAlbumItems();
+		
 		StringBuilder headerBuilder = new StringBuilder();
 		StringBuilder dataBuilder = new StringBuilder();
 		boolean firstLine = true;
 
-		while (albumItemResultSet.moveToNext()) {
-			for (int i=1; i<=albumItemResultSet.getFieldCount(); i++) {				
-				if (albumItemResultSet.getFieldType(i).equals(FieldType.UUID)) {
+		for (AlbumItem albumItem : visibleAlbumItems) {			
+			for (int i=0; i<albumItem.getFields().size(); i++) {				
+				if (albumItem.getField(i).getType().equals(FieldType.UUID)) {
 					// schema or content version UUID --> ignore 
 				}
-				else if (albumItemResultSet.getFieldType(i).equals(FieldType.ID)) {
-					if (albumItemResultSet.isItemID(i)) {
-						// do not show
-					} else {
-						// its a trap :-) (Probably just the typeinfo foreign key..)
-					}
+				else if (albumItem.getField(i).getType().equals(FieldType.ID)) {
+					// do not show ID either
 				}
-				else if (albumItemResultSet.getFieldType(i).equals(FieldType.Picture)) {
+				else if (albumItem.getField(i).getType().equals(FieldType.Picture)) {
 					// not possible in CSV
 				}
 				else {
-					if (albumItemResultSet.getFieldType(i).equals(FieldType.Option)) {
+					if (albumItem.getField(i).getType().equals(FieldType.Option)) {
 						if (firstLine) {
-							headerBuilder.append(albumItemResultSet.getFieldName(i));
+							headerBuilder.append(albumItem.getField(i).getName());
 							
-							if (i < albumItemResultSet.getFieldCount()) {
+							if (i < albumItem.getFields().size()) {
 								headerBuilder.append("$");
 							}
 						}
 
-						if (albumItemResultSet.getFieldValue(i) == OptionType.Yes) {
+						if (albumItem.getField(i).getValue() == OptionType.Yes) {
 							dataBuilder.append("Yes");
-						} else if (albumItemResultSet.getFieldValue(i) == OptionType.No) {
+						} else if (albumItem.getField(i).getValue() == OptionType.No) {
 							dataBuilder.append("No");
 						} else {
 							dataBuilder.append("Unknown");
 						}
 						
-						if (i < albumItemResultSet.getFieldCount()) {
+						if (i < albumItem.getFields().size()) {
 							dataBuilder.append("$");
 						}
 					} else {
 						if (firstLine) {
-							headerBuilder.append(albumItemResultSet.getFieldName(i));
+							headerBuilder.append(albumItem.getField(i).getName());
 							
-							if (i < albumItemResultSet.getFieldCount()) {
+							if (i < albumItem.getFields().size()) {
 								headerBuilder.append("$");
 							}
 						}
 
-						dataBuilder.append(albumItemResultSet.getFieldValue(i));
+						dataBuilder.append(albumItem.getField(i).getValue());
 						
-						if (i < albumItemResultSet.getFieldCount()) {
+						if (i < albumItem.getFields().size()) {
 							dataBuilder.append("$");
 						}
 					}
@@ -90,7 +84,5 @@ public class CSVExporter {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
-		albumItemResultSet.close();
 	}
 }
