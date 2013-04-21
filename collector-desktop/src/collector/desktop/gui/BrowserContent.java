@@ -154,7 +154,7 @@ public class BrowserContent {
 		for (AlbumItem albumItem : AlbumItemStore.getAlbumItems(AlbumItemStore.getStopIndex())) {
 			String picturePath = "";
 
-			int id = 0;
+			long id = 0;
 
 			for (ItemField fieldItem : albumItem.getFields()) {				
 				if (fieldItem.getType().equals(FieldType.UUID)) {
@@ -240,7 +240,7 @@ public class BrowserContent {
 	}
 	
 	private static void addAlbumItemTableRow(AlbumItem albumItem, StringBuilder htmlDataColumnContent, StringBuilder htmlPictureColumnContent, StringBuilder albumItemTableRowHtml) {
-		int id = 0;
+		long id = 0;
 		
 		for (ItemField fieldItem : albumItem.getFields()) {			
 			if (fieldItem.getType().equals(FieldType.UUID)) {

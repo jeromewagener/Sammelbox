@@ -58,7 +58,7 @@ public class RemoveAlbumItemTests {
 			fail("The id of the item to be deleted could not be retrieved");
 		} 
 		
-		int albumItemId  = resultSet.getFieldValue(1);
+		long albumItemId  = resultSet.getFieldValue(1);
 		if (DatabaseWrapper.deleteAlbumItem(dvdAlbumName, albumItemId) == false) {
 			fail("Deletion of item with id: " + albumItemId + " failed!");
 		}

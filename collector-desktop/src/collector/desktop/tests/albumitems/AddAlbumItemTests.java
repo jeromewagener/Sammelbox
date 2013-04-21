@@ -71,7 +71,7 @@ public class AddAlbumItemTests {
 
 		item.setFields(fields);
 		item.setContentVersion(UUID.randomUUID());
-		int newAlbumID = DatabaseWrapper.addNewAlbumItem(item, false, false);
+		long newAlbumID = DatabaseWrapper.addNewAlbumItem(item, false, false);
 		if (newAlbumID == -1) {
 			fail("Album Item could not be inserted into album");
 		}
@@ -115,7 +115,7 @@ public class AddAlbumItemTests {
 		fields.add( new ItemField("Time Stamp", FieldType.Time, new Time(System.currentTimeMillis())));
 		
 		item.setFields(fields);
-		int newAlbumID = DatabaseWrapper.addNewAlbumItem(item, false, true);
+		long newAlbumID = DatabaseWrapper.addNewAlbumItem(item, false, true);
 		if (newAlbumID == -1) {
 			fail("Album Item could not be inserted into album");
 		}
@@ -169,7 +169,7 @@ public class AddAlbumItemTests {
 		fields.add( new ItemField("Time Stamp", FieldType.Time, new Time(System.currentTimeMillis())));
 
 		item.setFields(fields);
-		int newAlbumID = DatabaseWrapper.addNewAlbumItem(item, false, true);
+		long newAlbumID = DatabaseWrapper.addNewAlbumItem(item, false, true);
 		if (newAlbumID == -1) {
 			fail("Album Item could not be inserted into album");
 		}
@@ -229,7 +229,7 @@ public class AddAlbumItemTests {
 		item.setFields(fields);
 		item.addField("collectorPicture", FieldType.Picture, pictureURIs);
 
-		int newAlbumID = DatabaseWrapper.addNewAlbumItem(item, false, true);
+		long newAlbumID = DatabaseWrapper.addNewAlbumItem(item, false, true);
 		if (newAlbumID == -1) {
 			fail("Album Item could not be inserted into album");
 		}
