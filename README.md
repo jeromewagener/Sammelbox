@@ -24,5 +24,5 @@ Have fun ;)
 ## Technical Information
 
 - Java / HTML / JavaScript / CSS based
-- Uses a SQLLite database which can be used even without the program
+- Uses a SQLite database which can be used even without the program
 - Native user interface support through SWT for Windows, Linux and Mac OS
