@@ -269,7 +269,7 @@ public class BrowserContent {
 				if (uris.size() > 1) {
 					for(URI uri : uris) {
 						htmlPictureColumnContent.append("<div align=center style=\"display:inline; min-width:40px; width:auto; width:40px\">");
-						htmlPictureColumnContent.append("<a onClick=showBigPicture(\"imageId" + id + "\") onMouseover=change(\"imageId" + id + "\", \"" + uri.toString() + "\")>");
+						htmlPictureColumnContent.append("<a onClick=showBigPicture(\"imageId" + id + "\") onMouseOver='change(\"imageId" + id + "\", \"" + uri.toString() + "\")'>");
 						htmlPictureColumnContent.append("<img onMouseOver=this.style.cursor=\"pointer\" style=\"max-width:40px; max-height:40px;\" src=\"" + uri.toString() + "\">");
 						htmlPictureColumnContent.append("</a>");
 						htmlPictureColumnContent.append("</div>");
@@ -309,6 +309,7 @@ public class BrowserContent {
 		albumItemTableRowHtml.append("<tr id=\"albumId" + id + "\"><td>" + htmlPictureColumnContent + "</td><td width=90% bgcolor=" + getBackgroundColorOfWidgetInHex() + ">" + htmlDataColumnContent + "</td></tr><tr><td height=\"20\" colspan=\"2\"></td></tr>");		
 	}
 	
+	// TODO move to FileSystemAccessWrapper
 	private static String readInputStreamIntoString(InputStream fileInputStream) {
 		StringBuilder stringBuilder = new StringBuilder();
 
