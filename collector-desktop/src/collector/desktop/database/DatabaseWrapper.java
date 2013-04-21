@@ -138,12 +138,12 @@ public class DatabaseWrapper  {
 			connection.setAutoCommit(false);
 			// Backup the old data in java objects
 			List<AlbumItem> albumItems = fetchAlbumItemsFromDatabase(createSelectStarQuery(oldAlbumName));
-			Map<Integer, String> rawPicFieldMap = new HashMap<Integer, String>();
+			Map<Long, String> rawPicFieldMap = new HashMap<Long, String>();
 			boolean hasPictureField = albumHasPictureField(oldAlbumName);
 			List<MetaItemField> newFields =  getAllAlbumItemMetaItemFields(oldAlbumName);
 			for (AlbumItem albumItem : albumItems) {
 				// store the old uri List of all albumItems to restore later
-				int albumItemID = (Integer) albumItem.getField("id").getValue();
+				long albumItemID = (Long) albumItem.getField("id").getValue();
 				String rawPicString = null;
 				if ( hasPictureField ) {
 					rawPicString = fetchRAWDBPictureString(albumItem.getAlbumName(), albumItemID);
@@ -168,7 +168,7 @@ public class DatabaseWrapper  {
 			for (AlbumItem albumItem : albumItems) {
 				albumItem.setAlbumName(newTableName);
 				if (hasPictureField) {
-					int albumItemID = (Integer) albumItem.getField("id").getValue();
+					long albumItemID = (Long) albumItem.getField("id").getValue();
 					albumItem.setFieldValue(PICTURE_COLUMN_NAME,rawPicFieldMap.get(albumItemID));
 				}
 				if (addNewAlbumItem(albumItem, true, false) == -1) {
@@ -221,7 +221,7 @@ public class DatabaseWrapper  {
 			connection.setAutoCommit(false);
 			// Backup the old data in java objects
 			List<AlbumItem> albumItems = fetchAlbumItemsFromDatabase(createSelectStarQuery(albumName));
-			Map<Integer, String> rawPicFieldMap = new HashMap<Integer, String>();
+			Map<Long, String> rawPicFieldMap = new HashMap<Long, String>();
 			// Create the new table pointing to new typeinfo
 			boolean keepPictureField = albumHasPictureField(albumName) && !metaItemField.getType().equals(FieldType.Picture);
 			List<MetaItemField> newFields =  getAlbumItemFieldNamesAndTypes(albumName);
@@ -229,7 +229,7 @@ public class DatabaseWrapper  {
 
 			for (AlbumItem albumItem : albumItems) {				
 				// store the old uri List of all albumItems to restore later
-				int albumItemID = (Integer) albumItem.getField("id").getValue();
+				long albumItemID = (Long) albumItem.getField("id").getValue();
 				String rawPicString = null;
 				if ( keepPictureField ) {
 					rawPicString = fetchRAWDBPictureString(albumItem.getAlbumName(), albumItemID);
@@ -255,7 +255,7 @@ public class DatabaseWrapper  {
 			for (AlbumItem albumItem : newAlbumItems) {
 				albumItem.setAlbumName(newTableName);
 				if (keepPictureField ) {
-					int albumItemID = (Integer) albumItem.getField("id").getValue();
+					long albumItemID = (Long) albumItem.getField("id").getValue();
 					albumItem.setFieldValue(PICTURE_COLUMN_NAME,rawPicFieldMap.get(albumItemID));
 				}
 				if (addNewAlbumItem(albumItem, true, false) == -1) {					
@@ -306,14 +306,14 @@ public class DatabaseWrapper  {
 			connection.setAutoCommit(false);
 			// Backup the old data in java objects
 			List<AlbumItem> albumItems = fetchAlbumItemsFromDatabase(createSelectStarQuery(albumName));
-			Map<Integer, String> rawPicFieldMap = new HashMap<Integer, String>();
+			Map<Long, String> rawPicFieldMap = new HashMap<Long, String>();
 			// Create the new table pointing to new typeinfo
 			boolean hasPictureField = albumHasPictureField(albumName);
 			List<MetaItemField> newFields =  getAlbumItemFieldNamesAndTypes(albumName);
 			newFields = renameFieldInMetaItemList(oldMetaItemField, newMetaItemField, newFields);// [rename column]
 			for (AlbumItem albumItem : albumItems) {	
 				// store the old uri List of all albumItems to restore later
-				int albumItemID = (Integer) albumItem.getField("id").getValue();
+				long albumItemID = (Long) albumItem.getField("id").getValue();
 				String rawPicString = null;
 				if ( hasPictureField ) {
 					rawPicString = fetchRAWDBPictureString(albumItem.getAlbumName(), albumItemID);
@@ -339,7 +339,7 @@ public class DatabaseWrapper  {
 			for (AlbumItem albumItem : newAlbumItems) {
 				albumItem.setAlbumName(newTableName);
 				if (hasPictureField) {
-					int albumItemID = (Integer) albumItem.getField("id").getValue();
+					long albumItemID = (Long) albumItem.getField("id").getValue();
 					albumItem.setFieldValue(PICTURE_COLUMN_NAME,rawPicFieldMap.get(albumItemID));
 				}
 				if (addNewAlbumItem(albumItem, true, false) == -1) {
@@ -383,14 +383,14 @@ public class DatabaseWrapper  {
 			connection.setAutoCommit(false);
 			// Backup the old data in java objects
 			List<AlbumItem> albumItems = fetchAlbumItemsFromDatabase(createSelectStarQuery(albumName));
-			Map<Integer, String> rawPicFieldMap = new HashMap<Integer, String>();
+			Map<Long, String> rawPicFieldMap = new HashMap<Long, String>();
 			// Create the new table pointing to new typeinfo
 			boolean hasPictureField = albumHasPictureField(albumName);
 			List<MetaItemField> newFields =  getAlbumItemFieldNamesAndTypes(albumName);
 			newFields = reorderFieldInMetaItemList(metaItemField, preceedingField, newFields);// [reorder column]
 			for (AlbumItem albumItem : albumItems) {
 				// store the old uri List of all albumItems to restore later
-				int albumItemID = (Integer) albumItem.getField("id").getValue();
+				Long albumItemID = (Long) albumItem.getField("id").getValue();
 				String rawPicString = null;
 				if ( hasPictureField ) {
 					rawPicString = fetchRAWDBPictureString(albumItem.getAlbumName(), albumItemID);
@@ -417,7 +417,7 @@ public class DatabaseWrapper  {
 			for (AlbumItem albumItem : newAlbumItems) {
 				albumItem.setAlbumName(newTableName);
 				if (hasPictureField) {
-					int albumItemID = (Integer) albumItem.getField("id").getValue();
+					long albumItemID = (Long) albumItem.getField("id").getValue();
 					albumItem.setFieldValue(PICTURE_COLUMN_NAME,rawPicFieldMap.get(albumItemID));
 				}
 				if (addNewAlbumItem(albumItem, true, false) == -1) {
@@ -479,13 +479,13 @@ public class DatabaseWrapper  {
 	 * @param albumItemID the id of the albumItem entry
 	 * @return The raw picture string, or null if the operation fails.
 	 */
-	private static String fetchRAWDBPictureString (String tableName, Integer albumItemID) {
+	private static String fetchRAWDBPictureString (String tableName, Long albumItemID) {
 		PreparedStatement preparedStatement = null;
 		ResultSet rs = null;
 		String rawDBString = null;
 		try {
 			preparedStatement = connection.prepareStatement(createSelectColumnQueryWhere(tableName, PICTURE_COLUMN_NAME, "id"));
-			preparedStatement.setInt(1, albumItemID);
+			preparedStatement.setLong(1, albumItemID);
 			rs = preparedStatement.executeQuery();
 			if (rs.next()) {
 				rawDBString = rs.getString(1);
@@ -1163,7 +1163,7 @@ public class DatabaseWrapper  {
 	 * should be copied over make sure the albumItem contains a content version!
 	 * @return The ID of the newly added item. Probably -1 if it fails.
 	 */
-	public static int addNewAlbumItem(AlbumItem item, boolean insertRAWPicString, boolean updateContentVersion) {
+	public static long addNewAlbumItem(AlbumItem item, boolean insertRAWPicString, boolean updateContentVersion) {
 		// Check if the item contains a albumName
 		if (item.getAlbumName().isEmpty()) {
 			System.err.println("DatabaseWrapper::addNewAlbumItem(), item has no albumName");
@@ -1182,7 +1182,7 @@ public class DatabaseWrapper  {
 			return -1;
 		}
 
-		int result = -1;
+		long result = -1;
 		// Build the string with placeholders '?'
 		String insertIntoTableString = "";
 		StringBuilder sb = new StringBuilder("INSERT INTO ");
@@ -1236,13 +1236,13 @@ public class DatabaseWrapper  {
 					parameterIndex++;
 				}
 			}
-			preparedStatement.setInt(parameterIndex, TYPE_INFO_FOREIGN_KEY);
+			preparedStatement.setLong(parameterIndex, TYPE_INFO_FOREIGN_KEY);
 
 			// Retrieves the generated key used in the new  album item
 			preparedStatement.executeUpdate();
 			generatedKeys = preparedStatement.getGeneratedKeys();
 			if (generatedKeys.next()) {
-				result = generatedKeys.getInt(1);
+				result = generatedKeys.getLong(1);
 			}
 			// Either copies the old content version over or generates a new one
 			UUID newUUID = generateNewUUID();
@@ -1413,7 +1413,7 @@ public class DatabaseWrapper  {
 			System.out.println(updateAlbumItemString);
 			System.out.println("parameter index: " + parameterIndex);
 			// Replace wildcard char '?' in WHERE id=? clause
-			Integer id = idField.getValue();
+			Long id = idField.getValue();
 			preparedStatement.setString(parameterIndex, id.toString());
 
 
@@ -1475,7 +1475,7 @@ public class DatabaseWrapper  {
 		return albumItemRS;
 	}
 
-	private static void updateContentVersion(String albumName, int itemID, UUID newUuid) throws SQLException {	
+	private static void updateContentVersion(String albumName, long itemID, UUID newUuid) throws SQLException {	
 		StringBuilder sb = new StringBuilder("UPDATE ");
 		sb.append(transformNameToDBName(albumName));
 		sb.append(" SET ");
@@ -1486,7 +1486,7 @@ public class DatabaseWrapper  {
 		System.out.println("updateContentVersion(), "+sb.toString());
 		PreparedStatement preparedStatement = connection.prepareStatement(sb.toString());
 		preparedStatement.setString(1, newUuid.toString());
-		preparedStatement.setInt(2, itemID);
+		preparedStatement.setLong(2, itemID);
 		preparedStatement.executeUpdate();
 	}
 
@@ -1936,7 +1936,7 @@ public class DatabaseWrapper  {
 		Object value = null;
 		switch (type) {
 		case ID:
-			value = results.getInt(columnIndex);
+			value = results.getLong(columnIndex);
 			break;
 		case Text:
 			value = results.getString(columnIndex);
