@@ -1,6 +1,7 @@
 package collector.desktop.gui;
 
 import java.io.File;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -147,9 +148,12 @@ public class ImageDropAndManagementComposite extends Composite {
 					refreshImageComposite();
 				}
 			});
+			
+			InputStream istream = this.getClass().getClassLoader().getResourceAsStream("graphics/arrow-up.png");
+			Image arrowUp = new Image(Display.getCurrent(),istream);
 
 			Button upButton = new Button(imageComposite, SWT.NONE);
-			upButton.setText("▲");
+			upButton.setImage(arrowUp);
 			upButton.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
@@ -165,9 +169,12 @@ public class ImageDropAndManagementComposite extends Composite {
 					}
 				}
 			});
-
+			
+			istream = this.getClass().getClassLoader().getResourceAsStream("graphics/arrow-down.png");
+			Image arrowDown = new Image(Display.getCurrent(),istream);
+			
 			Button downButton = new Button(imageComposite, SWT.NONE);
-			downButton.setText("▼");
+			downButton.setImage(arrowDown);
 			downButton.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
