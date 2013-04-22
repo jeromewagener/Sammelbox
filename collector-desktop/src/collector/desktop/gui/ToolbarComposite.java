@@ -14,17 +14,19 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 
 import collector.desktop.Collector;
+import collector.desktop.database.DatabaseWrapper;
 import collector.desktop.interfaces.UIObserver;
 
 public class ToolbarComposite implements UIObserver {
 	private static ToolbarComposite instance = null;
 	private Composite toolbarComposite = null;
-	private Image addAlbum = null, addEntry = null, detailedView = null, pictureView = null, search = null, sync = null, help = null;
-	private Image addAlbumActive = null, addEntryActive = null, searchActive = null, syncActive = null, helpActive = null;
-	private Button addAlbumBtn = null, addEntryBtn = null, viewBtn = null, searchBtn = null, syncBtn = null, helpBtn = null;
+	private Image home = null, addAlbum = null, addEntry = null, detailedView = null, pictureView = null, search = null, sync = null, help = null;
+	private Image homeActive = null, addAlbumActive = null, addEntryActive = null, searchActive = null, syncActive = null, helpActive = null;
+	private Button homeBtn = null, addAlbumBtn = null, addEntryBtn = null, viewBtn = null, searchBtn = null, syncBtn = null, helpBtn = null;
 	private PanelType lastSelectedPanelType = PanelType.Empty;
 	
 	private void disableActiveButtons() {
+		homeBtn.setImage(home);
 		addAlbumBtn.setImage(addAlbum);
 		addEntryBtn.setImage(addEntry);
 		viewBtn.setImage(detailedView);
@@ -44,13 +46,18 @@ public class ToolbarComposite implements UIObserver {
 
 		Composite innerComposite = new Composite(toolbarComposite, SWT.NONE);
 
-		gridLayout = new GridLayout(6, false);
+		gridLayout = new GridLayout(7, false);
 		gridLayout.marginHeight = 0;
 		gridLayout.marginWidth = 0;
 
 		innerComposite.setLayout(gridLayout);
 
-		InputStream istream = this.getClass().getClassLoader().getResourceAsStream("graphics/add.png");
+		InputStream istream = this.getClass().getClassLoader().getResourceAsStream("graphics/home.png");
+		home = new Image(Display.getCurrent(),istream);
+		istream = this.getClass().getClassLoader().getResourceAsStream("graphics/home-active.png");
+		homeActive = new Image(Display.getCurrent(),istream);
+		
+		istream = this.getClass().getClassLoader().getResourceAsStream("graphics/add.png");
 		addAlbum = new Image(Display.getCurrent(),istream);
 		istream = this.getClass().getClassLoader().getResourceAsStream("graphics/add-active.png");
 		addAlbumActive = new Image(Display.getCurrent(),istream);
@@ -80,6 +87,11 @@ public class ToolbarComposite implements UIObserver {
 		istream = this.getClass().getClassLoader().getResourceAsStream("graphics/help-active.png");
 		helpActive = new Image(Display.getCurrent(),istream);
 
+		homeBtn = new Button(innerComposite, SWT.PUSH);    
+		homeBtn.setImage(homeActive);
+		homeBtn.setText("Home");
+		homeBtn.setToolTipText("Go to the welcome screen");
+		
 		addAlbumBtn = new Button(innerComposite, SWT.PUSH);    
 		addAlbumBtn.setImage(addAlbum);
 		addAlbumBtn.setText("Add Album");
@@ -89,17 +101,20 @@ public class ToolbarComposite implements UIObserver {
 		addEntryBtn.setImage(addEntry);
 		addEntryBtn.setText("Add Entry");
 		addEntryBtn.setToolTipText("Add an entry to the currently active album");
-
+		addEntryBtn.setEnabled(false);
+		
 		viewBtn = new Button(innerComposite, SWT.PUSH);    
-		viewBtn.setImage(pictureView);
+		viewBtn.setImage(detailedView);
 		viewBtn.setText("Toggle Views");
-		viewBtn.setToolTipText("Toggle to picture view");
+		viewBtn.setToolTipText("Toggle to gallery mode");
+		viewBtn.setEnabled(false);
 		
 		searchBtn = new Button(innerComposite, SWT.PUSH);    
 		searchBtn.setImage(search);
 		searchBtn.setText("Search");
 		searchBtn.setToolTipText("Open the advanced search panel");
-
+		searchBtn.setEnabled(false);
+		
 		syncBtn = new Button(innerComposite, SWT.PUSH);    
 		syncBtn.setImage(sync);
 		syncBtn.setText("Synchronize");
@@ -112,6 +127,28 @@ public class ToolbarComposite implements UIObserver {
 
 		// ---------- Add Mouse Listeners ----------
 
+		homeBtn.addMouseListener(new MouseListener() {
+			@Override
+			public void mouseUp(MouseEvent arg0) {
+				disableActiveButtons();
+				
+				homeBtn.setImage(homeActive);
+				
+				BrowserContent.loadWelcomePage();
+				
+				addEntryBtn.setEnabled(false);
+				
+				viewBtn.setEnabled(false);
+				viewBtn.setImage(detailedView);
+				viewBtn.setToolTipText("Toggle to gallery mode");
+					
+				searchBtn.setEnabled(false);
+			}
+
+			@Override public void mouseDown(MouseEvent arg0) {}
+			@Override public void mouseDoubleClick(MouseEvent arg0) {}
+		});
+		
 		addAlbumBtn.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseUp(MouseEvent arg0) {
@@ -166,7 +203,7 @@ public class ToolbarComposite implements UIObserver {
 			public void mouseUp(MouseEvent arg0) {
 				if (!Collector.isViewDetailed()) {
 					viewBtn.setImage(pictureView);
-					viewBtn.setToolTipText("Toggle to picture view");
+					viewBtn.setToolTipText("Toggle to gallery mode");
 					
 					Collector.setViewIsDetailed(true);
 					
@@ -288,5 +325,31 @@ public class ToolbarComposite implements UIObserver {
 	
 	public void registerAsObserverToCollectorUpdates() {
 		Collector.getInstance().registerObserver(instance);
+	}
+
+	public void enableAlbumButtons(String albumName) {
+		homeBtn.setImage(home);
+		
+		addEntryBtn.setEnabled(true);
+		viewBtn.setEnabled(true);
+		
+		if (DatabaseWrapper.albumHasPictureField(albumName)) {
+			viewBtn.setImage(pictureView);
+			viewBtn.setToolTipText("Toggle to gallery mode");
+			viewBtn.setEnabled(true);
+			
+			Collector.setViewIsDetailed(true);
+			
+			BrowserContent.performLastQuery(Collector.getAlbumItemSWTBrowser());
+		} else {
+			viewBtn.setImage(detailedView);
+			viewBtn.setEnabled(false);
+			
+			Collector.setViewIsDetailed(true);
+			
+			BrowserContent.performLastQuery(Collector.getAlbumItemSWTBrowser());			
+		}
+		
+		searchBtn.setEnabled(true);
 	}
 }

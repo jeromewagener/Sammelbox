@@ -342,6 +342,7 @@ public class BrowserContent {
 	public static void loadWelcomePage() {
 		String welcomePage = "";
 
+		// TODO use real information
 		welcomePage += "<html width=100% height=80%>";
 		welcomePage += "<body width=100% height=80%>";
 		welcomePage += "	<br>";
@@ -354,15 +355,21 @@ public class BrowserContent {
 		welcomePage += "			</td>";
 		welcomePage += "			<td width=50%>";
 		welcomePage += "				<div style=\"padding:10px; background-color:#" + getBackgroundColorOfWidgetInHex() + "\">";
-		welcomePage += "					<h3>Hotlinks</h3>";
+		welcomePage += "					<h3>Album Information</h3>";
 		welcomePage += "					<ul>";
-		// TODO load real hotlinks
+		welcomePage += "						<li>Album <b>AGDF</b> <br> <font size=-1><i>(15 items - Updated in Nov 2011)</i></font></li>";
+		welcomePage += "						<li>Album <b>TTEAS</b> <br> <font size=-1><i>(104 items - Updated in Sep 2012)</font></li>";
+		welcomePage += "						<li>Album <b>WWSE</b> <br> <font size=-1><i>(38 items - Updated in Apr 2013)</font></li>";
+		welcomePage += "					</ul>";
+		welcomePage += "					<br>";
+		welcomePage += "					<h3>Favorite Albums & Views</h3>";
+		welcomePage += "					<ul>";
 		welcomePage += "						<li>Show Album XYZA</li>";
-		welcomePage += "						<li>Show Album ASD</li>";
+		welcomePage += "						<li>Show View ASD</li>";
 		welcomePage += "						<li>Show Album AIOI</li>";
 		welcomePage += "					</ul>";
-		// TODO load real news
-		welcomePage += "				<h3>News</h3>";
+		welcomePage += "					<br>";
+		welcomePage += "					<h3>Application News</h3>";
 		welcomePage += "					<ul>";
 		welcomePage += "						<li>3 Active Users</li>";
 		welcomePage += "						<li>Android App in Development</li>";
