@@ -132,6 +132,8 @@ public class CompositeFactory {
 					
 					viewList.setEnabled(AlbumViewManager.hasAlbumViewsAttached(albumName));
 					AlbumViewManager.getInstance().notifyObservers();
+					
+					ToolbarComposite.getInstance(parentComposite).enableAlbumButtons(albumName);
 				}
 			}
 		});
