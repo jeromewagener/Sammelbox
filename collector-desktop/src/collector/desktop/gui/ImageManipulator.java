@@ -27,7 +27,7 @@ public class ImageManipulator {
 	public static URI adaptAndStoreImageForCollector(URI originalImageURI, String album) {
 		try {
 			Image image = new Image(Display.getCurrent(), originalImageURI.getPath());
-
+			
 			double imageWidth = (double) image.getImageData().width;
 			double imageHeight = (double) image.getImageData().height;
 
@@ -57,7 +57,7 @@ public class ImageManipulator {
 
 			return new File(newLocation).toURI();
 		} catch (SWTException swte) {
-			// TODO do something if format not supported is.. (YODA)
+			// TODO do something if format not supported is.. (YODA) Log the exception message into the log.
 			
 			return null;
 		}

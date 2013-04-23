@@ -11,14 +11,13 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTarget;
-import org.eclipse.swt.dnd.DropTargetAdapter;
 import org.eclipse.swt.dnd.DropTargetEvent;
+import org.eclipse.swt.dnd.DropTargetListener;
 import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.ImageTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -27,11 +26,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Widget;
 
 import collector.desktop.Collector;
 
-public class ImageDropAndManagementComposite extends Composite {
+public class ImageDropAndManagementComposite extends Composite implements DropTargetListener{
 	/** A list of image URIs pointing to already renamed and resized pictures in the corresponding album */
 	private LinkedList<URI> imageURIs = new LinkedList<URI>();
 	/** An inner composite presenting the pictures */
@@ -91,37 +91,16 @@ public class ImageDropAndManagementComposite extends Composite {
 
 	/** This method adds drop (drag & drop) support to a given SWT widget 
 	 * @param widget an SWT widget such as a label or a composite */
-	private void addDropSupport(Widget widget) {
+	private void addDropSupport(final Widget widget) {
 		int ops = DND.DROP_COPY | DND.DROP_LINK | DND.DROP_DEFAULT;
 		final FileTransfer fTransfer = FileTransfer.getInstance();
 		final ImageTransfer iTransfer = ImageTransfer.getInstance();
 		Transfer[] transfers = new Transfer[] { fTransfer, iTransfer };
+		
 
 		DropTarget target = new DropTarget((Control) widget, ops);
 		target.setTransfer(transfers);
-		target.addDropListener(new DropTargetAdapter() {
-			@Override
-			public void drop(DropTargetEvent event) {
-				if (event.data instanceof String[]) {
-					String[] filenames = (String[]) event.data;
-					if (filenames.length > 0){
-						for (String filename : filenames) {													
-							imageURIs.addLast(
-									ImageManipulator.adaptAndStoreImageForCollector(
-											new File(filename).toURI(), Collector.getSelectedAlbum()));
-						}
-
-						refreshImageComposite();
-					}
-				}
-			}
-
-			@Override
-			public void dragEnter(DropTargetEvent event) {
-				System.out.println("drag enter");
-				event.detail = DND.DROP_COPY;
-			}
-		});
+		target.addDropListener(this);
 	}
 
 	/** This method refreshes the ImageDropAndManagementComposite in a sense that the image composite is completely rebuild. This method
@@ -200,5 +179,54 @@ public class ImageDropAndManagementComposite extends Composite {
 	 * @return the imageURIs list */
 	public List<URI> getAllImageURIs() {		
 		return imageURIs;
+	}
+
+	@Override
+	public void dragEnter(DropTargetEvent event) {
+		System.out.println("drag enter");//TODO: log instead of syso
+		// Changing the event detail to drop_copy enables the drop. 
+		event.detail = DND.DROP_COPY;
+	}
+	@Override
+	public void dragLeave(DropTargetEvent arg0) {	
+	}
+
+	@Override
+	public void dragOperationChanged(DropTargetEvent arg0) {		
+	}
+
+	@Override
+	public void dragOver(DropTargetEvent arg0) {
+	}
+
+	@Override
+	public void drop(DropTargetEvent event) {
+		if (event.data instanceof String[]) {
+			String[] filenames = (String[]) event.data;
+			if (filenames.length > 0){
+				for (String filename : filenames) {
+					URI pictureLocationInAlbum = ImageManipulator.adaptAndStoreImageForCollector(
+							new File(filename).toURI(), Collector.getSelectedAlbum());
+					if (pictureLocationInAlbum == null) {
+						  showDroppedUnsupportedFileMessageBox(filename);
+					}else {
+						imageURIs.addLast(pictureLocationInAlbum);
+					}
+				}
+				refreshImageComposite();
+			}
+		}
+	}
+
+
+	@Override
+	public void dropAccept(DropTargetEvent arg0) {	
+	}
+	/** This method displays a message box informing the user of trying to drop the unsupported file.*/
+	public void showDroppedUnsupportedFileMessageBox(String filePathToUnsupportedFilegeBox){
+		MessageBox messageBox = new MessageBox(getShell(), SWT.ICON_ERROR);
+		messageBox.setText("Invalid File");
+	    messageBox.setMessage(filePathToUnsupportedFilegeBox +" is not valid a file or of supported type. The only supported file types are: BMP, ICO, JPEG, GIF, PNG and TIFF.");
+	    messageBox.open();
 	}
 }
