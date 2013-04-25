@@ -96,7 +96,7 @@ public class CompositeFactory {
 
 		// select album label
 		Label selectViewLabel = new Label(quickControlComposite, SWT.NONE);
-		selectViewLabel.setText("View List:");
+		selectViewLabel.setText("Saved Searches:");
 		selectViewLabel.setFont(new Font(parentComposite.getDisplay(), selectAlbumLabel.getFont().getFontData()[0].getName(), 11, SWT.BOLD));
 
 		// the list of albums (listener is added later)
@@ -105,7 +105,7 @@ public class CompositeFactory {
 		AlbumViewManager.initialize();
 		
 		GridData gridData2 = new GridData(GridData.FILL_BOTH);
-		gridData2.heightHint = 250;
+		gridData2.heightHint = 200;
 		gridData2.widthHint = 125;
 		viewList.setLayoutData(gridData2);		
 		Collector.setViewSWTList(viewList);
@@ -176,6 +176,63 @@ public class CompositeFactory {
 				first = false;
 			}
 		}		
+		
+		Menu popupMenu = new Menu(viewList);
+		
+		MenuItem moveTop = new MenuItem(popupMenu, SWT.NONE);
+		moveTop.setText("Move to top..");
+		moveTop.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if (viewList.getSelectionIndex() > 0) {
+					AlbumViewManager.moveToFront(viewList.getSelectionIndex());
+				}
+			}
+		});
+		
+		MenuItem moveOneUp = new MenuItem(popupMenu, SWT.NONE);
+		moveOneUp.setText("Move one up..");
+		moveOneUp.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if (viewList.getSelectionIndex() > 0) {
+					AlbumViewManager.moveOneUp(viewList.getSelectionIndex());
+				}
+			}
+		});
+		
+		MenuItem moveOneDown = new MenuItem(popupMenu, SWT.NONE);
+		moveOneDown.setText("Move one down..");
+		moveOneDown.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if (viewList.getSelectionIndex() > 0) {
+					AlbumViewManager.moveOneDown(viewList.getSelectionIndex());
+				}
+			}
+		});
+		
+		MenuItem moveBottom = new MenuItem(popupMenu, SWT.NONE);
+		moveBottom.setText("Move to bottom..");
+		moveBottom.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if (viewList.getSelectionIndex() < viewList.getItemCount()-1) {
+					AlbumViewManager.moveToBottom(viewList.getSelectionIndex());
+				}
+			}
+		});
+		
+		new MenuItem(popupMenu, SWT.SEPARATOR);
+		
+		MenuItem addSavedSearch = new MenuItem(popupMenu, SWT.NONE);
+		addSavedSearch.setText("Add another saved search..");
+		addSavedSearch.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if (viewList.getSelectionIndex() > 0) {
+					Collector.changeRightCompositeTo(PanelType.AdvancedSearch, 
+							getAdvancedSearchComposite(Collector.getThreePanelComposite(), Collector.getSelectedAlbum()));
+				}
+			}
+		});		
+		
+		viewList.setMenu(popupMenu);
 		
 		return quickControlComposite;
 	}

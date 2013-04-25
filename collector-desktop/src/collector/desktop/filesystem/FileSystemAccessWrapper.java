@@ -12,9 +12,9 @@ import java.io.PrintWriter;
 import java.io.StringReader;
 import java.net.URI;
 import java.sql.Connection;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.LinkedList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
@@ -466,7 +466,7 @@ public class FileSystemAccessWrapper {
 	public static Collection<AlbumView> loadViews() {
 		String albumViewsAsXml = readFileAsString(VIEW_FILE);
 		
-		Collection<AlbumView> albumViews = new ArrayList<AlbumView>();
+		Collection<AlbumView> albumViews = new LinkedList<AlbumView>();
 		
 		if (albumViewsAsXml.isEmpty()) {
 			return albumViews;
