@@ -71,6 +71,7 @@ public class CompositeFactory {
 		final Text quickSearchText = new Text(quickControlComposite, SWT.BORDER);
 		quickSearchText.setLayoutData(new GridData(GridData.FILL_BOTH));
 		quickSearchText.addModifyListener(new QuickSearchModifyListener());
+		Collector.setQuickSearchTextField(quickSearchText);
 		
 		// separator
 		new Label(quickControlComposite, SWT.SEPARATOR | SWT.HORIZONTAL).setLayoutData(seperatorGridData);
@@ -117,23 +118,11 @@ public class CompositeFactory {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (albumList.getSelectionIndex() != -1)	{			
-					String albumName = albumList.getItem(albumList.getSelectionIndex());
-					
+
 					Collector.setSelectedAlbum(albumList.getItem(albumList.getSelectionIndex()));
+					
 					Collector.changeRightCompositeTo(PanelType.Empty, CompositeFactory.getEmptyComposite(Collector.getThreePanelComposite()));
 
-					quickSearchText.setText("");
-					quickSearchText.setEnabled(
-							DatabaseWrapper.isAlbumQuicksearchable(albumName));
-
-					BrowserContent.performBrowserQueryAndShow(
-							Collector.getAlbumItemSWTBrowser(), 							
-							DatabaseWrapper.createSelectStarQuery(albumName));
-					
-					viewList.setEnabled(AlbumViewManager.hasAlbumViewsAttached(albumName));
-					AlbumViewManager.getInstance().notifyObservers();
-					
-					ToolbarComposite.getInstance(parentComposite).enableAlbumButtons(albumName);
 				}
 			}
 		});
@@ -362,6 +351,10 @@ public class CompositeFactory {
 		saveAsViewButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				if (!Collector.hasSelectedAlbum()) {
+					Collector.showErrorDialog("No album has been selected", "Please select an album from the list or create one first.");
+					return;
+				}
 				// TODO save sql query
 				ArrayList<QueryComponent> queryComponents = new ArrayList<QueryComponent>();
 
@@ -641,8 +634,9 @@ public class CompositeFactory {
 					willContainImages = true;
 				}
 
-				DatabaseWrapper.createNewAlbum(albumNameText.getText(), metaItemFields, willContainImages);
-				Collector.updateAlbumSWTList();
+				DatabaseWrapper.createNewAlbum(albumNameText.getText(), metaItemFields, willContainImages);				
+				// Correctly select and display the selected album.
+				Collector.refreshSWTAlbumList();
 				Collector.setSelectedAlbum(albumNameText.getText());				
 				BrowserContent.performBrowserQueryAndShow(
 						Collector.getAlbumItemSWTBrowser(),
@@ -689,7 +683,7 @@ public class CompositeFactory {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				DatabaseWrapper.renameAlbum(album, albumNameText.getText());
-				Collector.updateAlbumSWTList();
+				Collector.refreshSWTAlbumList();
 			}
 		});
 
@@ -1254,6 +1248,10 @@ public class CompositeFactory {
 			@SuppressWarnings("deprecation")
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				if (!Collector.hasSelectedAlbum()) {
+					Collector.showErrorDialog("No album has been selected", "Please select an album from the list or create one first.");
+					return;
+				}
 				AlbumItem albumItem = new AlbumItem(Collector.getSelectedAlbum());
 
 				for (Control control : composite.getChildren()) {

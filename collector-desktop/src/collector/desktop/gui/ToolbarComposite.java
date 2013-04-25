@@ -176,6 +176,10 @@ public class ToolbarComposite implements UIObserver {
 		addEntryBtn.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseUp(MouseEvent arg0) {
+				if (!Collector.hasSelectedAlbum()) {
+					Collector.showErrorDialog("No album has been selected", "Please select an album from the list or create one first.");
+					return;
+				}
 				if (Collector.getCurrentRightPanelType() != PanelType.AddEntry) {
 					Collector.changeRightCompositeTo(PanelType.AddAlbum, CompositeFactory.getAddAlbumItemComposite(
 							Collector.getThreePanelComposite(), Collector.getSelectedAlbum()));
@@ -225,6 +229,10 @@ public class ToolbarComposite implements UIObserver {
 		searchBtn.addMouseListener(new MouseListener() {			
 			@Override
 			public void mouseUp(MouseEvent arg0) {
+				if (!Collector.hasSelectedAlbum()) {
+					Collector.showErrorDialog("No album has been selected", "Please select an album from the list or create one first.");
+					return;
+				}
 				if (Collector.getCurrentRightPanelType() != PanelType.AdvancedSearch) {
 					Collector.changeRightCompositeTo(PanelType.AdvancedSearch, CompositeFactory.getAdvancedSearchComposite(
 							Collector.getThreePanelComposite(), Collector.getSelectedAlbum()));

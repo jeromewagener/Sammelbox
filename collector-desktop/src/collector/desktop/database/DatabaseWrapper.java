@@ -1528,7 +1528,7 @@ public class DatabaseWrapper  {
 	 * Performs a quicksearch. A quicksearch is a search limited to the marked fields. Every item return contains at least a field
 	 * whose value partially matches the any query term.
 	 * @param albumName The name of the album to which the query refers to.
-	 * @param quickSearchTerms A list of terms to be matched against the marked fields.
+	 * @param quickSearchTerms A list of terms to be matched against the marked fields. If null, a select * is performed.
 	 * @return A valid albumItemResultSet for the provided quicksearch terms or a select * 
 	 */
 	public static AlbumItemResultSet executeQuickSearch(String albumName, List<String> quickSearchTerms) {
