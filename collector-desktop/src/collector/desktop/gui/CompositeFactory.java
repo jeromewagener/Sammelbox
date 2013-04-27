@@ -14,6 +14,8 @@ import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.TraverseEvent;
+import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -1060,12 +1062,22 @@ public class CompositeFactory {
 						SWT.WRAP
 						| SWT.MULTI
 						| SWT.BORDER
-						| SWT.V_SCROLL);
+						| SWT.V_SCROLL
+						);
 
 				GridData gridData = new GridData(SWT.FILL, SWT.FILL, false, false);
 				// TODO magic value!!!
 				gridData.widthHint = 200;
 				textText.setLayoutData(gridData);
+				// Override the normal tab behaviour of a multiline text widget.
+				// Instead of ctrl+Tab a simple text chnages focus.
+				textText.addTraverseListener(new TraverseListener() {
+					public void keyTraversed(TraverseEvent e) {
+						if (e.detail == SWT.TRAVERSE_TAB_NEXT || e.detail == SWT.TRAVERSE_TAB_PREVIOUS) {
+							e.doit = true;
+						}
+					}
+				});
 
 				if (loadDataIntoFields) {
 					textText.setText((String) albumItem.getField(fieldName).getValue());
