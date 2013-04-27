@@ -80,7 +80,11 @@ public class BrowserContent {
 		}
 	}
 
-	public static void showPicture(String pathToPicture, long albumItemId) {		
+	public static void showPicture(String pathToPicture, long albumItemId) {
+		if (!Collector.hasSelectedAlbum()) {
+			Collector.showErrorDialog("No album has been selected", "Please select an album from the list or create one first.");
+			return;
+		}
 		StringBuilder smallPage = new StringBuilder();
 
 		StatusBarComposite.getInstance(
@@ -199,7 +203,11 @@ public class BrowserContent {
 		BrowserContent.lastPageAsHtml = finalPageAsHtml;
 	}
 
-	private static void showDetailedAlbum(Browser browser) {		
+	private static void showDetailedAlbum(Browser browser) {
+		if (!Collector.hasSelectedAlbum()) {
+			Collector.showErrorDialog("No album has been selected", "Please select an album from the list or create one first.");
+			return;
+		}
 		StringBuilder albumItemTableRowHtml = new StringBuilder();
 
 		String javaScript = "<script src=\"file://" + FileSystemAccessWrapper.COLLECTOR_HOME_APPDATA + File.separatorChar + "effects.js" + "\"></script>";

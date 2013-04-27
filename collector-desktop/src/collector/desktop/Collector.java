@@ -13,6 +13,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.List;
@@ -21,6 +22,7 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 
 import collector.desktop.database.DatabaseWrapper;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
@@ -42,7 +44,7 @@ public class Collector implements UIObservable, UIObserver {
 	private static final int RIGHT_PANEL_MEDIUM_WIDTH = 225;
 	private static final int RIGHT_PANEL_SMALL_WIDTH = 150;
 	private static final int RIGHT_PANEL_NO_WIDTH = 0;
-	
+
 	/** The minimum width of the shell in pixels. The shell can never have a smaller width than this. */
 	private static final int MIN_SHELL_WIDTH = 1150;
 	/** The minimum height of the shell in pixels. The shell can never have a smaller height than this. */
@@ -53,11 +55,13 @@ public class Collector implements UIObservable, UIObserver {
 	private final static Shell shell = new Shell(display);
 	/** A reference to a composite being part of the general user interface */
 	private static Composite threePanelComposite = null, upperLeftSubComposite = null, lowerLeftSubComposite = null, 
-	    leftComposite = null, rightComposite = null, centerComposite = null, statusComposite = null, toolbarComposite = null;
+			leftComposite = null, rightComposite = null, centerComposite = null, statusComposite = null, toolbarComposite = null;
 	/** The currently selected album. The selected album changes via selections within the album list */
 	private static String selectedAlbum;
 	/** A reference to the SWT list containing all available albums */
 	private static List albumSWTList;
+	/** A reference to the SWT Text representing the quickSearch field*/
+	private static Text quickSearchTextField;
 	/** A reference to the SWT list containing all available views */
 	private static List viewSWTList;
 	/** True if the current view is list based, false if item based (picture based) */
@@ -83,7 +87,7 @@ public class Collector implements UIObservable, UIObserver {
 		FileSystemAccessWrapper.updateCollectorFileStructure();
 		DatabaseWrapper.openConnection();
 		FileSystemAccessWrapper.updateAlbumFileStructure(DatabaseWrapper.getConnection());
-		
+
 		instance = this;
 	}
 
@@ -178,7 +182,7 @@ public class Collector implements UIObservable, UIObserver {
 		// SWT display management
 		shell.pack();
 		shell.open();
-		
+
 		selectDefaultAndShowWelcomePage();		
 		//selectDefaultAndShowSelectedAlbum();
 		// TODO remove
@@ -200,25 +204,26 @@ public class Collector implements UIObservable, UIObserver {
 	/** This method is used during the creation of the user interface. It ensures that 
 	 * the first album is selected and its items are presented */
 	private static void selectDefaultAndShowSelectedAlbum() {
-		if (albumSWTList.getItemCount() > 0) {
-			albumSWTList.setSelection(0);
-			Collector.setSelectedAlbum(albumSWTList.getItem(albumSWTList.getSelectionIndex()));
-			BrowserContent.performBrowserQueryAndShow(
-					Collector.getAlbumItemSWTBrowser(), 
-					DatabaseWrapper.createSelectStarQuery(albumSWTList.getItem(albumSWTList.getSelectionIndex())));
-		}
+//		if (albumSWTList.getItemCount() > 0) {
+//			albumSWTList.setSelection(0);
+//			Collector.setSelectedAlbum(albumSWTList.getItem(albumSWTList.getSelectionIndex()));
+//			BrowserContent.performBrowserQueryAndShow(
+//					Collector.getAlbumItemSWTBrowser(), 
+//					DatabaseWrapper.createSelectStarQuery(albumSWTList.getItem(albumSWTList.getSelectionIndex())));
+//		}
+		System.err.println("selectDefaultAndShowSelectedAlbum() is not implemented");
 	}
 
-	// TODO comment
+	// TODO fix Issue #20
 	private static void selectDefaultAndShowWelcomePage() {
 		if (albumSWTList.getItemCount() > 0) {
-			albumSWTList.setSelection(0);
-			Collector.setSelectedAlbum(albumSWTList.getItem(albumSWTList.getSelectionIndex()));
+			albumSWTList.setSelection(-1);
+			//Collector.setSelectedAlbum(albumSWTList.getItem(albumSWTList.getSelectionIndex()));
 		}
-		
+
 		BrowserContent.loadWelcomePage();
 	}
-	
+
 	/** This method creates the menu for the main user interface
 	 * @param shell the shell used to create the user interface */
 	private static void createMenuBar(Shell parentShell) {
@@ -258,7 +263,7 @@ public class Collector implements UIObservable, UIObserver {
 		MenuItem testItem = new MenuItem(collectorMenu, SWT.NONE);
 		testItem.setText("TEST");
 		testItem.addSelectionListener(instance.new MenuActionListener());
-		
+
 		// Create the Album item's dropdown menu
 		Menu albumMenu = new Menu(menu);
 		albumItem.setMenu(albumMenu);
@@ -351,18 +356,18 @@ public class Collector implements UIObservable, UIObserver {
 			put(PanelType.Help, RIGHT_PANEL_SMALL_WIDTH);
 		}
 	};
-	
+
 	public static void resizeRightCompositeTo(int pixels) {
 		GridData layoutData = new GridData(GridData.FILL_BOTH);
 		layoutData.grabExcessHorizontalSpace = false;
 		layoutData.grabExcessVerticalSpace = true;
 		layoutData.verticalAlignment = GridData.BEGINNING;
 		layoutData.widthHint = pixels;
-		
+
 		rightComposite.setLayoutData(layoutData);
 		rightComposite.getParent().layout();
 	}
-	
+
 	/** This method exchanges the right composite with a composite provided as parameter. Hereby, the previous composite is disposed. 
 	 * @param newRightComposite the new composite for the right element of the user interface */
 	public static void changeRightCompositeTo(PanelType panelType, Composite newRightComposite) {
@@ -390,12 +395,12 @@ public class Collector implements UIObservable, UIObserver {
 		}
 
 		newRightComposite.setLayoutData(layoutData);
-		
+
 		rightComposite.dispose();
 		rightComposite = newRightComposite;
 		rightComposite.moveBelow(centerComposite);
 		rightComposite.getParent().layout();
-		
+
 		instance.notifyObservers();
 	}
 
@@ -405,10 +410,70 @@ public class Collector implements UIObservable, UIObserver {
 		return selectedAlbum;
 	}
 
+	/**
+	 * Determines is an album has been selected.
+	 * @return True if the selectedAlbumName is not null and not empty. True if an album is selected.
+	 */
+	public static boolean hasSelectedAlbum() {
+		if (selectedAlbum != null && !selectedAlbum.isEmpty()) {
+			return true;
+		}
+		return false;
+	}
+	
+	public static void setQuickSearchTextField(Text quickSearchTextField) {
+		Collector.quickSearchTextField = quickSearchTextField;
+	}
+	
+	public static Text getQuickSearchTextField() {
+		return Collector.quickSearchTextField;
+	}
+
 	/** Sets the currently selected/active album
-	 * @param album the name of the now selected/active album */
-	public static void setSelectedAlbum(String album) {
-		Collector.selectedAlbum = album;
+	 * @param albumName the name of the now selected/active album 
+	 * @return True if the album is selected internally and in the SWT Album list. False otherwise.*/
+	public static boolean setSelectedAlbum(String albumName) {
+		// Set the album name and verify that it is in the list
+		Collector.selectedAlbum = albumName;
+		
+		int albumListItemCount = Collector.albumSWTList.getItemCount();
+		boolean albumSelectionIsInSync = false;
+		for (int itemIndex = 0; itemIndex<albumListItemCount; itemIndex++) {
+			 if ( Collector.albumSWTList.getItem(itemIndex).equals(albumName) ) {
+				 Collector.albumSWTList.setSelection(itemIndex);
+				 albumSelectionIsInSync = true;
+				 break;
+			 }
+		}
+		if (!albumSelectionIsInSync){
+			System.err.println("The album list does not contain the album that is supposed to be selected.");// TODO:log instead of printout
+			return false;
+		}
+	
+		Collector.getQuickSearchTextField().setText("");
+		Collector.getQuickSearchTextField().setEnabled(
+				DatabaseWrapper.isAlbumQuicksearchable(albumName));
+
+		BrowserContent.performBrowserQueryAndShow(
+				Collector.getAlbumItemSWTBrowser(), 							
+				DatabaseWrapper.createSelectStarQuery(albumName));
+		
+		Collector.getViewSWTList().setEnabled(AlbumViewManager.hasAlbumViewsAttached(albumName));
+		AlbumViewManager.getInstance().notifyObservers();
+		
+		// TODO: check if null could be passed because the toolbar always exists when this method is called.		
+		ToolbarComposite.getInstance(Collector.getThreePanelComposite()).enableAlbumButtons(albumName);
+		
+		return true;
+	}
+	
+	/** After adding/removing albums, this method should be used to refresh the SWT album list with the current album names thus leaving no album selected.*/
+	public static void refreshSWTAlbumList() {
+		albumSWTList.removeAll();
+		setSelectedAlbum("");
+		for (String album : DatabaseWrapper.listAllAlbums()) {
+			albumSWTList.add(album);			
+		}
 	}
 
 	/** Sets the the list of albums
@@ -434,14 +499,6 @@ public class Collector implements UIObservable, UIObserver {
 	public static List getViewSWTList() {
 		return viewSWTList;
 	}
-	
-	/** After adding/removing albums, this method should be used to refresh the SWT album list with the current album names */
-	public static void updateAlbumSWTList() {
-		albumSWTList.removeAll();
-		for (String album : DatabaseWrapper.listAllAlbums()) {
-			albumSWTList.add(album);
-		}
-	}
 
 	/** Sets the album item SWT browser
 	 * @param browser the reference to the albumItemSWTBrowser */
@@ -458,54 +515,11 @@ public class Collector implements UIObservable, UIObserver {
 	/** This class is used to catch and process every menu action */
 	private class MenuActionListener extends SelectionAdapter {
 		public void widgetSelected(SelectionEvent event) {
+			
 			if (((MenuItem) event.widget).getText().equals("Exit")) {
 				getShell().close();
-			} else if (((MenuItem) event.widget).getText().equals("Delete selected Album")) {
-				MessageBox messageBox = new MessageBox(getShell(), SWT.ICON_WARNING | SWT.YES | SWT.NO);
-				messageBox.setMessage("Do you really want to delete the \"" + Collector.getSelectedAlbum() + "\" album? All data will be permanently lost!");
-				messageBox.setText("Delete");
-				if (messageBox.open() == SWT.YES) {
-					DatabaseWrapper.removeAlbum(getSelectedAlbum());
-					Collector.updateAlbumSWTList();
-					BrowserContent.loadHtmlPage(Collector.getAlbumItemSWTBrowser(), getShell().getClass().getClassLoader().getResourceAsStream("htmlfiles/album_deleted.html"));
-				}
-			} else if (((MenuItem) event.widget).getText().equals("Alter selected Album")) {
-				changeRightCompositeTo(PanelType.AlterAlbum, CompositeFactory.getAlterAlbumComposite(threePanelComposite, getSelectedAlbum()));
 			} else if (((MenuItem) event.widget).getText().equals("Create a new Album")) {
 				changeRightCompositeTo(PanelType.AddAlbum, CompositeFactory.getCreateNewAlbumComposite(threePanelComposite));
-			} else if (((MenuItem) event.widget).getText().equals("TEST")) {
-				changeRightCompositeTo(PanelType.AlterAlbum, CompositeFactory.getTestComposite(threePanelComposite));
-			} else if (((MenuItem) event.widget).getText().equals("Export Visible Items...")) {
-				FileDialog saveFileDialog = new FileDialog(getShell(), SWT.SAVE);
-				saveFileDialog.setText("Export Visible Items");
-				saveFileDialog.setFilterPath(System.getProperty("user.home"));
-				String[] filterExt = { "*.html", "*.csv"};
-				saveFileDialog.setFilterExtensions(filterExt);
-				String[] filterNames = { "*.html (A simple print-friendly list export)" , 
-						"*.csv (CSV export for spredsheet applications)" };
-				saveFileDialog.setFilterNames(filterNames);
-				
-				String filepath = saveFileDialog.open();
-				if (filepath != null) {
-					if (filepath.endsWith(".csv")) {
-						CSVExporter.exportVisibleItems(filepath);
-					} else if (filepath.endsWith(".html")) {
-						HTMLExporter.exportVisibleItems(filepath);
-					} else {
-						// TODO
-					}
-				}
-			} else if (((MenuItem) event.widget).getText().equals("Backup Albums to File...")) {
-				FileDialog saveFileDialog = new FileDialog(getShell(), SWT.SAVE);
-				saveFileDialog.setText("Backup to File");
-				saveFileDialog.setFilterPath(System.getProperty("user.home"));
-				String[] filterExt = { "*.cbk" };
-				saveFileDialog.setFilterExtensions(filterExt);
-
-				String path = saveFileDialog.open();
-				if (path != null) {
-					DatabaseWrapper.backupToFile(path);
-				}		        
 			} else if (((MenuItem) event.widget).getText().equals("Restore Albums from File...")) {
 				FileDialog openFileDialog = new FileDialog(getShell(), SWT.OPEN);
 				openFileDialog.setText("Restore from File");
@@ -516,26 +530,84 @@ public class Collector implements UIObservable, UIObserver {
 				String path = openFileDialog.open();
 				if (path != null) {
 					DatabaseWrapper.restoreFromFile(path);
-
-					Collector.updateAlbumSWTList();
+					// No default album is selected on restore
+					Collector.refreshSWTAlbumList();
 					BrowserContent.loadHtmlPage(Collector.getAlbumItemSWTBrowser(), getShell().getClass().getClassLoader().getResourceAsStream("htmlfiles/albums_restored.html"));
 				}
-			} else if (((MenuItem) event.widget).getText().equals("Advanced Search")) {
-				changeRightCompositeTo(PanelType.AdvancedSearch, CompositeFactory.getAdvancedSearchComposite(threePanelComposite, selectedAlbum));
-			} else if (((MenuItem) event.widget).getText().equals("Synchronize")) {
-				changeRightCompositeTo(PanelType.Synchronization, CompositeFactory.getSynchronizeComposite(threePanelComposite));
 			} else if (((MenuItem) event.widget).getText().equals("How-to create a new album?")) {
+				// No default album is selected on help
+				Collector.refreshSWTAlbumList();
 				BrowserContent.loadHtmlPage(
 						getAlbumItemSWTBrowser(),
 						getShell().getClass().getClassLoader().getResourceAsStream("helpfiles/howto_createAlbum.html"));
 			} else if (((MenuItem) event.widget).getText().equals("How-to add a new item to an album?")) {
+				// No default album is selected on help
+				Collector.refreshSWTAlbumList();
 				BrowserContent.loadHtmlPage(
 						getAlbumItemSWTBrowser(),
 						getShell().getClass().getClassLoader().getResourceAsStream("helpfiles/howto_addAlbumItem.html"));				
 			} else if (((MenuItem) event.widget).getText().equals("How-to alter an existing album?")) {
+				// No default album is selected on help
+				Collector.refreshSWTAlbumList();
 				BrowserContent.loadHtmlPage(
 						getAlbumItemSWTBrowser(),
 						getShell().getClass().getClassLoader().getResourceAsStream("helpfiles/howto_alterAlbum.html"));				
+			} else if (((MenuItem) event.widget).getText().equals("Synchronize")) {
+				changeRightCompositeTo(PanelType.Synchronization, CompositeFactory.getSynchronizeComposite(threePanelComposite));
+			} else {
+				// Ensure that the following actions have a valid selected album. 
+				if (!Collector.hasSelectedAlbum()) {
+					Collector.showErrorDialog("No album has been selected", "Please select an album from the list or create one first.");
+					return;
+				}
+				if (((MenuItem) event.widget).getText().equals("Delete selected Album")) {
+
+					MessageBox messageBox = new MessageBox(getShell(), SWT.ICON_WARNING | SWT.YES | SWT.NO);
+					messageBox.setMessage("Do you really want to delete the \"" + Collector.getSelectedAlbum() + "\" album? All data will be permanently lost!");
+					messageBox.setText("Delete");
+					if (messageBox.open() == SWT.YES) {
+						DatabaseWrapper.removeAlbum(getSelectedAlbum());
+						Collector.refreshSWTAlbumList();
+						BrowserContent.loadHtmlPage(Collector.getAlbumItemSWTBrowser(), getShell().getClass().getClassLoader().getResourceAsStream("htmlfiles/album_deleted.html"));
+					}
+				} else if (((MenuItem) event.widget).getText().equals("Alter selected Album")) {
+					changeRightCompositeTo(PanelType.AlterAlbum, CompositeFactory.getAlterAlbumComposite(threePanelComposite, getSelectedAlbum()));
+				} else if (((MenuItem) event.widget).getText().equals("TEST")) {
+					changeRightCompositeTo(PanelType.AlterAlbum, CompositeFactory.getTestComposite(threePanelComposite));
+				} else if (((MenuItem) event.widget).getText().equals("Export Visible Items...")) {
+					FileDialog saveFileDialog = new FileDialog(getShell(), SWT.SAVE);
+					saveFileDialog.setText("Export Visible Items");
+					saveFileDialog.setFilterPath(System.getProperty("user.home"));
+					String[] filterExt = { "*.html", "*.csv"};
+					saveFileDialog.setFilterExtensions(filterExt);
+					String[] filterNames = { "*.html (A simple print-friendly list export)" , 
+					"*.csv (CSV export for spredsheet applications)" };
+					saveFileDialog.setFilterNames(filterNames);
+
+					String filepath = saveFileDialog.open();
+					if (filepath != null) {
+						if (filepath.endsWith(".csv")) {
+							CSVExporter.exportVisibleItems(filepath);
+						} else if (filepath.endsWith(".html")) {
+							HTMLExporter.exportVisibleItems(filepath);
+						} else {
+							// TODO: support further export types. 
+						}
+					}
+				} else if (((MenuItem) event.widget).getText().equals("Backup Albums to File...")) {
+					FileDialog saveFileDialog = new FileDialog(getShell(), SWT.SAVE);
+					saveFileDialog.setText("Backup to File");
+					saveFileDialog.setFilterPath(System.getProperty("user.home"));
+					String[] filterExt = { "*.cbk" };
+					saveFileDialog.setFilterExtensions(filterExt);
+
+					String path = saveFileDialog.open();
+					if (path != null) {
+						DatabaseWrapper.backupToFile(path);
+					}		        
+				} else if (((MenuItem) event.widget).getText().equals("Advanced Search")) {
+					changeRightCompositeTo(PanelType.AdvancedSearch, CompositeFactory.getAdvancedSearchComposite(threePanelComposite, selectedAlbum));
+				}
 			}
 		}
 	}
@@ -544,17 +616,17 @@ public class Collector implements UIObservable, UIObserver {
 	public static void main(String[] args) throws ClassNotFoundException {
 		// Initialize the Database connection
 		new Collector();
-	
+
 		//TODO IMPORT FOR ROBY - REMOVE IF NOT REQUIRED ANYMORE
 		//CSVImporter.importCSV();
-		
+
 		// Register the toolbar as an observer for collector updates
 		ToolbarComposite.getInstance(Collector.getShell()).registerAsObserverToCollectorUpdates();
 		AlbumViewManager.getInstance().registerObserver(instance);
-		
+
 		// create the shell and show the user interface. This blocks until the shell is closed
 		createCollectorShell(getShell());
-		
+
 		// close the database connection if the the shell is closed
 		DatabaseWrapper.closeConnection();
 	}
@@ -605,7 +677,7 @@ public class Collector implements UIObservable, UIObserver {
 	public void update(Class<?> origin) {
 		if (origin == AlbumViewManager.class) {
 			viewSWTList.removeAll();
-			
+
 			for (AlbumView albumView : AlbumViewManager.getAlbumViews(selectedAlbum)) {
 				viewSWTList.add(albumView.getName());				
 			}
@@ -614,6 +686,13 @@ public class Collector implements UIObservable, UIObserver {
 				viewSWTList.setEnabled(true);
 			}
 		}
+	}
+
+	public static void showErrorDialog(String TitleText, String messageText) {
+		MessageBox errorMessageBox = new MessageBox(getShell());
+		errorMessageBox.setText(TitleText);
+		errorMessageBox.setMessage(messageText);
+		errorMessageBox.open();
 	}
 }
 

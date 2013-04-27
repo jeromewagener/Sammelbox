@@ -43,7 +43,7 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 
 	@Override
 	/** If the current browser location is changing, it must be checked what the new location will be. Because the location may contain
-	 * program specific commands such as "show:///updateComposite=2". In this case, the change is not performed, but instand an operation
+	 * program specific commands such as "show:///updateComposite=2". In this case, the change is not performed, but instead an operation
 	 * is executed. (E.g. opening a new composite) 
 	 * @param event the location event used to identify the new location */
 	public void changing(LocationEvent event) {		
@@ -55,6 +55,7 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 		String showDetails = "show:///details=";
 		String showDetailsComposite = "show:///detailsComposite=";
 		String addAdditionalAlbumItems = "show:///addAdditionalAlbumItems";
+		
 		
 		if (event.location.startsWith(showUpdateComposite)) {
 			String id = event.location.substring(showUpdateComposite.length());

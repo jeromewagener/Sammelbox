@@ -115,6 +115,9 @@ public class DatabaseWrapper  {
 				}
 			}
 			createIndex(albumName, quickSearchableColumnNames);
+			if (hasAlbumPictureField) {
+				FileSystemAccessWrapper.updateAlbumFileStructure(connection);
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 			result = false;
@@ -727,20 +730,34 @@ public class DatabaseWrapper  {
 
 
 	/**
-	 * Appends new columns to the end of the album. Fields with the type FieldType.ID or FieldType.Picture fail the whole operation, no fields will be added then. 
+	 * Appends new field to the end of the album. Fields with the type FieldType.ID or FieldType.Picture fail the whole operation, no fields will be added then.
 	 * @param albumName The name of the album to be modified.
 	 * @param metaFields The metaItemFields to be appended to the album.
 	 * @return True if the operation succeeded and the fields were addded, false if the operation failed either due to an internal error or invalid fields.
 	 */
 	public static boolean appendNewAlbumFields(String albumName, MetaItemField metaItemField) {
+		if (metaItemField.getType().equals(FieldType.ID) || metaItemField.getType().equals(FieldType.Picture)) {
+			return false;
+		}
+		
+		return appedNewTableColumn(albumName, metaItemField);
+	}
+	/**
+	 * Appends a new column to the album table. This internal method does allows to add any type of column, even id and picture column.
+	 * An exception is that you cannot add an additional picture column to an table.
+	 * To prevent accidental corruption of the tables, perform checks in the enclosing methods.
+	 * @param albumName The name of the album to be modified.
+	 * @param metaItemField he metaItemFields to be appended to the album.
+	 * @return True if the operation succeeded and the fields were addded, false if the operation failed either due to an internal error or invalid fields.
+	 */
+	private static boolean appedNewTableColumn(String albumName, MetaItemField metaItemField) {
 		Boolean result = true;
 		PreparedStatement preparedStatement = null;
 		try {
 			connection.setAutoCommit(false);
 
-			if (metaItemField.getType().equals(FieldType.ID) ) {
-				return false;
-			}else if (metaItemField.getType().equals(FieldType.Picture) && albumHasPictureField(albumName)) {
+			// Maximum 1 picture column per table.
+			if (metaItemField.getType().equals(FieldType.Picture) && albumHasPictureField(albumName)) {
 				return false;
 			}
 
@@ -783,7 +800,7 @@ public class DatabaseWrapper  {
 
 
 	/**
-	 * Adds a pciture field to an album. Currently only one picture field is allowed.
+	 * Adds a picture field to an album. Currently only one picture field is allowed.
 	 * @param albumName The name of the album to which the item belongs.
 	 * @return True if the album has a picture field, either through addition or because one already existed.
 	 */
@@ -794,8 +811,8 @@ public class DatabaseWrapper  {
 		}
 
 		// Appends and updates the schema version
-		result = appendNewAlbumFields(albumName, new MetaItemField(PICTURE_COLUMN_NAME, FieldType.Picture));
-
+		result = appedNewTableColumn(albumName, new MetaItemField(PICTURE_COLUMN_NAME, FieldType.Picture));
+		FileSystemAccessWrapper.updateAlbumFileStructure(connection);
 		return result;
 	}
 
@@ -1528,7 +1545,7 @@ public class DatabaseWrapper  {
 	 * Performs a quicksearch. A quicksearch is a search limited to the marked fields. Every item return contains at least a field
 	 * whose value partially matches the any query term.
 	 * @param albumName The name of the album to which the query refers to.
-	 * @param quickSearchTerms A list of terms to be matched against the marked fields.
+	 * @param quickSearchTerms A list of terms to be matched against the marked fields. If null, a select * is performed.
 	 * @return A valid albumItemResultSet for the provided quicksearch terms or a select * 
 	 */
 	public static AlbumItemResultSet executeQuickSearch(String albumName, List<String> quickSearchTerms) {

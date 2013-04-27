@@ -52,7 +52,7 @@ public class FileSystemAccessWrapper {
 
 	/** This method is used to create and update the file-structure for the collector application.
 	 *  During this process no existing directory or file is overwritten.
-	 *  This method must be called during initialization of the program and before the updateAlbumFileStructure method */
+	 *  This method must be called during initialization of the program.*/
 	public static boolean updateCollectorFileStructure() {
 		File collectorDirectory = new File(COLLECTOR_HOME);
 
@@ -133,8 +133,8 @@ public class FileSystemAccessWrapper {
 
 	/** This method is used to create and update the file-structure for every album.
 	 *  During this process no existing directory or file is overwritten.
-	 *  This method must be called after a new album is created 
-	 *  It should be also called during initialization of the program */
+	 *  This method must be called after a new album is created or altered.
+	 *  It should be also called during initialization of the program after the collector file structure has been updated. */
 	public static boolean updateAlbumFileStructure(Connection databaseConnection) {
 		// Create inside the album home directory all album directories
 		for (String albumName : DatabaseWrapper.listAllAlbums()) {
