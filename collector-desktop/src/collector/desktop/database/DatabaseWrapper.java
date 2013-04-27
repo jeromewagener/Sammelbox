@@ -114,10 +114,8 @@ public class DatabaseWrapper  {
 					quickSearchableColumnNames.add(transformNameToDBName(metaItemField.getName()));
 				}
 			}
-			createIndex(albumName, quickSearchableColumnNames);
-			if (hasAlbumPictureField) {
-				FileSystemAccessWrapper.updateAlbumFileStructure(connection);
-			}
+			createIndex(albumName, quickSearchableColumnNames);			
+			FileSystemAccessWrapper.updateAlbumFileStructure(connection);
 		} catch (SQLException e) {
 			e.printStackTrace();
 			result = false;
@@ -2332,6 +2330,7 @@ public class DatabaseWrapper  {
 
 		FileSystemAccessWrapper.deleteDatabaseRestoreFile();
 		FileSystemAccessWrapper.updateCollectorFileStructure();
+		FileSystemAccessWrapper.updateAlbumFileStructure(connection);
 		
 		return successState;		
 	}

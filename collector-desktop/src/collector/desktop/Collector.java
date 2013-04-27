@@ -559,8 +559,21 @@ public class Collector implements UIObservable, UIObserver {
 						getShell().getClass().getClassLoader().getResourceAsStream("helpfiles/howto_alterAlbum.html"));				
 			} else if (((MenuItem) event.widget).getText().equals("Synchronize")) {
 				changeRightCompositeTo(PanelType.Synchronization, CompositeFactory.getSynchronizeComposite(threePanelComposite));
+			} else if (((MenuItem) event.widget).getText().equals("Backup Albums to File...")) {
+				FileDialog saveFileDialog = new FileDialog(getShell(), SWT.SAVE);
+				saveFileDialog.setText("Backup to File");
+				saveFileDialog.setFilterPath(System.getProperty("user.home"));
+				String[] filterExt = { "*.cbk" };
+				saveFileDialog.setFilterExtensions(filterExt);
+
+				String path = saveFileDialog.open();
+				if (path != null) {
+					DatabaseWrapper.backupToFile(path);
+				}		        
 			} else {
-				// Ensure that the following actions have a valid selected album. 
+				// --------------------------------------------------------------
+				// Ensure that the following context sensitive actions are applied only when an album has been selected.
+				// --------------------------------------------------------------
 				if (!Collector.hasSelectedAlbum()) {
 					Collector.showErrorDialog("No album has been selected", "Please select an album from the list or create one first.");
 					return;
@@ -599,17 +612,6 @@ public class Collector implements UIObservable, UIObserver {
 							// TODO: support further export types. 
 						}
 					}
-				} else if (((MenuItem) event.widget).getText().equals("Backup Albums to File...")) {
-					FileDialog saveFileDialog = new FileDialog(getShell(), SWT.SAVE);
-					saveFileDialog.setText("Backup to File");
-					saveFileDialog.setFilterPath(System.getProperty("user.home"));
-					String[] filterExt = { "*.cbk" };
-					saveFileDialog.setFilterExtensions(filterExt);
-
-					String path = saveFileDialog.open();
-					if (path != null) {
-						DatabaseWrapper.backupToFile(path);
-					}		        
 				} else if (((MenuItem) event.widget).getText().equals("Advanced Search")) {
 					changeRightCompositeTo(PanelType.AdvancedSearch, CompositeFactory.getAdvancedSearchComposite(threePanelComposite, selectedAlbum));
 				}
