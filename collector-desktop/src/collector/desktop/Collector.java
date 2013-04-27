@@ -609,6 +609,10 @@ public class Collector implements UIObservable, UIObserver {
 			for (AlbumView albumView : AlbumViewManager.getAlbumViews(selectedAlbum)) {
 				viewSWTList.add(albumView.getName());				
 			}
+			
+			if (viewSWTList.isEnabled() == false && viewSWTList.getItemCount() != 0) {
+				viewSWTList.setEnabled(true);
+			}
 		}
 	}
 }
