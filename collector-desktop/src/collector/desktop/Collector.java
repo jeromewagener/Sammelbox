@@ -430,11 +430,16 @@ public class Collector implements UIObservable, UIObserver {
 	}
 
 	/** Sets the currently selected/active album
-	 * @param albumName the name of the now selected/active album 
-	 * @return True if the album is selected internally and in the SWT Album list. False otherwise.*/
+	 * @param albumName The name of the now selected/active album. If the albumName is null or empty then all albums are deselected.  
+	 * @return True if the album is selected internally and in the SWT Album list. If all albums were successfully deselected then true is also returned. 
+	 * False otherwise.*/
 	public static boolean setSelectedAlbum(String albumName) {
 		// Set the album name and verify that it is in the list
 		Collector.selectedAlbum = albumName;
+		if (albumName== null || albumName.isEmpty()) {
+			Collector.albumSWTList.deselectAll();
+			return true;
+		}
 		
 		int albumListItemCount = Collector.albumSWTList.getItemCount();
 		boolean albumSelectionIsInSync = false;
