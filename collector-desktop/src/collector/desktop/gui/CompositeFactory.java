@@ -377,7 +377,7 @@ public class CompositeFactory {
 		data.heightHint = 150;
 		searchQueryTable.setLayoutData(data);	
 
-		ComponentFactory.getSmallBoldItalicLabel(advancedSearchComposite, "Connect query components by: ");
+		ComponentFactory.getSmallBoldItalicLabel(advancedSearchComposite, "Connect search terms by: ");
 
 		Composite composite = new Composite(advancedSearchComposite, SWT.BORDER);
 		composite.setLayout(new RowLayout());
@@ -390,7 +390,7 @@ public class CompositeFactory {
 		orButton.setText("OR");
 
 		Button searchButton = new Button(advancedSearchComposite, SWT.PUSH);
-		searchButton.setText("Execute Search");
+		searchButton.setText("Execute search");
 		searchButton.setLayoutData(new GridData(GridData.FILL_BOTH));
 		searchButton.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -414,7 +414,7 @@ public class CompositeFactory {
 		});
 		
 		Button saveAsViewButton = new Button(advancedSearchComposite, SWT.PUSH);
-		saveAsViewButton.setText("Save as View");
+		saveAsViewButton.setText("Save this search");
 		saveAsViewButton.setLayoutData(new GridData(GridData.FILL_BOTH));
 		saveAsViewButton.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -435,7 +435,7 @@ public class CompositeFactory {
 				}
 
 				TextInputDialog textInputDialog = new TextInputDialog(parentComposite.getShell());
-				String viewName = textInputDialog.open("Please enter a name for the view", "View Name: ", "My View", "Save");
+				String viewName = textInputDialog.open("Please enter a name for the search", "Search Name: ", "My Search", "Save");
 
 				if (viewName != null && !AlbumViewManager.hasViewWithName(viewName)) {
 					AlbumViewManager.addAlbumView(viewName, Collector.getSelectedAlbum(), QueryBuilder.buildQuery(queryComponents, connectByAnd, album));
