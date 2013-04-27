@@ -552,6 +552,8 @@ public class Collector implements UIObservable, UIObserver {
 				BrowserContent.loadHtmlPage(
 						getAlbumItemSWTBrowser(),
 						getShell().getClass().getClassLoader().getResourceAsStream("helpfiles/howto_alterAlbum.html"));				
+			} else if (((MenuItem) event.widget).getText().equals("Synchronize")) {
+				changeRightCompositeTo(PanelType.Synchronization, CompositeFactory.getSynchronizeComposite(threePanelComposite));
 			} else {
 				// Ensure that the following actions have a valid selected album. 
 				if (!Collector.hasSelectedAlbum()) {
@@ -605,9 +607,7 @@ public class Collector implements UIObservable, UIObserver {
 					}		        
 				} else if (((MenuItem) event.widget).getText().equals("Advanced Search")) {
 					changeRightCompositeTo(PanelType.AdvancedSearch, CompositeFactory.getAdvancedSearchComposite(threePanelComposite, selectedAlbum));
-				} else if (((MenuItem) event.widget).getText().equals("Synchronize")) {
-					changeRightCompositeTo(PanelType.Synchronization, CompositeFactory.getSynchronizeComposite(threePanelComposite));
-				} 
+				}
 			}
 		}
 	}

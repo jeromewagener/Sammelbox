@@ -58,7 +58,7 @@ public class ImageManipulator {
 			return new File(newLocation).toURI();
 		} catch (SWTException swte) {
 			// TODO do something if format not supported is.. (YODA) Log the exception message into the log.
-			
+			System.err.println("ImageManipulator.adaptAndStoreImageForCollector() - "+swte.getMessage());
 			return null;
 		}
 	}
