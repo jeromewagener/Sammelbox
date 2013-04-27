@@ -1,6 +1,5 @@
 package collector.desktop.gui;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 
@@ -23,7 +22,7 @@ public class AlbumViewManager implements UIObservable {
 	}
 	
 	public static Collection<AlbumView> getAlbumViews(String albumName) {
-		Collection<AlbumView> filteredAlbumViews = new ArrayList<AlbumView>();
+		Collection<AlbumView> filteredAlbumViews = new LinkedList<AlbumView>();
 		
 		for (AlbumView albumView : albumViews) {
 			if (albumView.getAlbum().equals(albumName)) {
@@ -154,5 +153,51 @@ public class AlbumViewManager implements UIObservable {
 		}
 		
 		return false;
+	}
+
+	public static void moveToFront(int selectionIndex) {
+		AlbumView tmp = ((LinkedList<AlbumView>) albumViews).get(selectionIndex);
+		((LinkedList<AlbumView>) albumViews).remove(selectionIndex);
+		((LinkedList<AlbumView>) albumViews).addFirst(tmp);
+		
+		storeViews();
+		
+		instance.notifyObservers();
+	}
+
+	public static void moveOneUp(int selectionIndex) {
+		if (selectionIndex-1 >= 0) {
+			AlbumView tmp = ((LinkedList<AlbumView>) albumViews).get(selectionIndex-1);
+			
+			((LinkedList<AlbumView>) albumViews).set(selectionIndex-1, ((LinkedList<AlbumView>) albumViews).get(selectionIndex));
+			((LinkedList<AlbumView>) albumViews).set(selectionIndex, tmp);
+			
+			storeViews();
+			
+			instance.notifyObservers();
+		}
+	}
+
+	public static void moveOneDown(int selectionIndex) {
+		if (selectionIndex+1 <= albumViews.size()-1) {
+			AlbumView tmp = ((LinkedList<AlbumView>) albumViews).get(selectionIndex+1);
+			
+			((LinkedList<AlbumView>) albumViews).set(selectionIndex+1, ((LinkedList<AlbumView>) albumViews).get(selectionIndex));
+			((LinkedList<AlbumView>) albumViews).set(selectionIndex, tmp);
+			
+			storeViews();
+			
+			instance.notifyObservers();
+		}
+	}
+
+	public static void moveToBottom(int selectionIndex) {
+		AlbumView tmp = ((LinkedList<AlbumView>) albumViews).get(selectionIndex);
+		((LinkedList<AlbumView>) albumViews).remove(selectionIndex);
+		((LinkedList<AlbumView>) albumViews).addLast(tmp);
+		
+		storeViews();
+		
+		instance.notifyObservers();
 	}
 }
