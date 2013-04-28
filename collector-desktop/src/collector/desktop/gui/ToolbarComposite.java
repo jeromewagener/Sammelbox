@@ -152,6 +152,10 @@ public class ToolbarComposite implements UIObserver {
 			public void mouseUp(MouseEvent arg0) {
 				disableActiveButtons();
 
+				Collector.changeRightCompositeTo(PanelType.Empty, CompositeFactory.getEmptyComposite(Collector.getThreePanelComposite()));
+				
+				lastSelectedPanelType = PanelType.Empty;
+				
 				homeBtn.setImage(homeActive);
 
 				BrowserContent.loadWelcomePage();
