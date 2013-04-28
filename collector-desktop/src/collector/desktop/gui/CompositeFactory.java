@@ -649,6 +649,11 @@ public class CompositeFactory {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				if (DatabaseWrapper.listAllAlbums().contains(albumNameText.getText())) {
+					ComponentFactory.getMessageBox(parentComposite, "Name already in use", "This name is already used by another album. Please choose another name.", SWT.ICON_INFORMATION).open();					
+					return;
+				}
+				
 				ArrayList<MetaItemField> metaItemFields = new ArrayList<MetaItemField>();
 
 				for ( int i=0 ; i < albumFieldNamesAndTypesTable.getItemCount() ; i++ ) {					
@@ -712,6 +717,11 @@ public class CompositeFactory {
 		renameAlbumButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				if (DatabaseWrapper.listAllAlbums().contains(albumNameText.getText())) {
+					ComponentFactory.getMessageBox(parentComposite, "Name already in use", "This name is already used by another album. Please choose another name.", SWT.ICON_INFORMATION).open();					
+					return;
+				}
+				
 				DatabaseWrapper.renameAlbum(album, albumNameText.getText());
 				Collector.refreshSWTAlbumList();
 			}
@@ -1285,7 +1295,6 @@ public class CompositeFactory {
 	 * @return a new selection listener suitable for the add and update composite*/
 	private static SelectionListener getSelectionListenerForAddAndUpdateAlbumItemComposite(final Composite composite, final boolean isUpdateAlbumItemComposite, final long albumItemId) {
 		return new SelectionAdapter() {
-			@SuppressWarnings("deprecation")
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (!Collector.hasSelectedAlbum()) {

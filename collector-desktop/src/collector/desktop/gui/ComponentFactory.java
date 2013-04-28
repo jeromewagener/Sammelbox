@@ -131,7 +131,7 @@ public class ComponentFactory {
 
 		return messageBox;
 	}
-
+	
 	/**
 	 * Returns a panel header which is normally used for the right panel of the three-panel-solution
 	 * @param panelComposite the panel (right panel) to which the header should be added
