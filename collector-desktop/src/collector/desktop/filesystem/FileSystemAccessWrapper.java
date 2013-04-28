@@ -140,7 +140,7 @@ public class FileSystemAccessWrapper {
 		}
 	}
 
-	/** This method is used to create and update the file-structure for every album.
+	/** This method is used to create album picture folders if the album is set to contain pictures and the folder does not exist yet.
 	 *  During this process no existing directory or file is overwritten.
 	 *  This method must be called after a new album is created or altered.
 	 *  It should be also called during initialization of the program after the collector file structure has been updated. */
@@ -149,7 +149,7 @@ public class FileSystemAccessWrapper {
 		for (String albumName : DatabaseWrapper.listAllAlbums()) {
 			File albumDirectory = new File(getFilePathForAlbum(albumName));
 
-			if (!albumDirectory.exists()) {
+			if ( DatabaseWrapper.albumHasPictureField(albumName) && !albumDirectory.exists()) {
 				if (!albumDirectory.mkdir()) {
 					System.err.println("Cannot create collector album directory although it seems that it does not exist");
 					return false;
@@ -300,7 +300,7 @@ public class FileSystemAccessWrapper {
 	}
 
 	/**
-	 * Unzips a file to the specified location, recreating the original file structure whitin it
+	 * Unzips a file to the specified location, recreating the original file structure within it
 	 * @param zipLocation The path to the future location of the zip file.
 	 * @param folderLocation The path to the source directory.
 	 */

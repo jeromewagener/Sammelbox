@@ -429,11 +429,16 @@ public class Collector implements UIObservable, UIObserver {
 	}
 
 	/** Sets the currently selected/active album
-	 * @param albumName the name of the now selected/active album 
-	 * @return True if the album is selected internally and in the SWT Album list. False otherwise.*/
+	 * @param albumName The name of the now selected/active album. If the albumName is null or empty then all albums are deselected.  
+	 * @return True if the album is selected internally and in the SWT Album list. If all albums were successfully deselected then true is also returned. 
+	 * False otherwise.*/
 	public static boolean setSelectedAlbum(String albumName) {
 		// Set the album name and verify that it is in the list
 		Collector.selectedAlbum = albumName;
+		if (albumName== null || albumName.isEmpty()) {
+			Collector.albumSWTList.deselectAll();
+			return true;
+		}
 		
 		int albumListItemCount = Collector.albumSWTList.getItemCount();
 		boolean albumSelectionIsInSync = false;
@@ -553,8 +558,21 @@ public class Collector implements UIObservable, UIObserver {
 						getShell().getClass().getClassLoader().getResourceAsStream("helpfiles/howto_alterAlbum.html"));				
 			} else if (((MenuItem) event.widget).getText().equals("Synchronize")) {
 				changeRightCompositeTo(PanelType.Synchronization, CompositeFactory.getSynchronizeComposite(threePanelComposite));
+			} else if (((MenuItem) event.widget).getText().equals("Backup Albums to File...")) {
+				FileDialog saveFileDialog = new FileDialog(getShell(), SWT.SAVE);
+				saveFileDialog.setText("Backup to File");
+				saveFileDialog.setFilterPath(System.getProperty("user.home"));
+				String[] filterExt = { "*.cbk" };
+				saveFileDialog.setFilterExtensions(filterExt);
+
+				String path = saveFileDialog.open();
+				if (path != null) {
+					DatabaseWrapper.backupToFile(path);
+				}		        
 			} else {
-				// Ensure that the following actions have a valid selected album. 
+				// --------------------------------------------------------------
+				// Ensure that the following context sensitive actions are applied only when an album has been selected.
+				// --------------------------------------------------------------
 				if (!Collector.hasSelectedAlbum()) {
 					Collector.showErrorDialog("No album has been selected", "Please select an album from the list or create one first.");
 					return;
@@ -593,17 +611,6 @@ public class Collector implements UIObservable, UIObserver {
 							// TODO: support further export types. 
 						}
 					}
-				} else if (((MenuItem) event.widget).getText().equals("Backup Albums to File...")) {
-					FileDialog saveFileDialog = new FileDialog(getShell(), SWT.SAVE);
-					saveFileDialog.setText("Backup to File");
-					saveFileDialog.setFilterPath(System.getProperty("user.home"));
-					String[] filterExt = { "*.cbk" };
-					saveFileDialog.setFilterExtensions(filterExt);
-
-					String path = saveFileDialog.open();
-					if (path != null) {
-						DatabaseWrapper.backupToFile(path);
-					}		        
 				} else if (((MenuItem) event.widget).getText().equals("Advanced Search")) {
 					changeRightCompositeTo(PanelType.AdvancedSearch, CompositeFactory.getAdvancedSearchComposite(threePanelComposite, selectedAlbum));
 				}

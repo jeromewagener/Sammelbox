@@ -226,13 +226,14 @@ public class BrowserContent {
 
 		if (htmlDataColumnContent.length() == 0 && htmlPictureColumnContent.length() == 0) {
 			albumItemTableRowHtml.delete(0, albumItemTableRowHtml.length());
-			albumItemTableRowHtml.append("<h3>No Items found in " + Collector.getSelectedAlbum() + "!</h3> Either you just created this album and it is still empty <i>(In this case, please feel free to add as many items " +
-					"as you want using the \"Add a new Item to Album\" button or the corresponding file-menu-entry)</i> or you just performed a search which did not yield any results!");
+			albumItemTableRowHtml.append("<tr> <td><h3>No Items found in " + Collector.getSelectedAlbum() + "!</h3> Either you just created this album and it is still empty <i>(In this case, please feel free to add as many items " +
+					"as you want using the \"Add a new Item to Album\" button or the corresponding file-menu-entry)</i> or you just performed a search which did not yield any results!</td></tr>");
 		}
 
 		String finalPageAsHtml = "<!DOCTYPE HTML>" +
 				"<html><head><meta http-equiv=\"X-UA-Compatible\" content=\"IE=9\" >" + styleCSS + " " + javaScript + "</head><body bgcolor=white><table id=\"albumItems\" border=0>" + albumItemTableRowHtml + "</table></body></html>";
-		
+		//TODO:remove this log
+		FileSystemAccessWrapper.writeToFile(finalPageAsHtml, FileSystemAccessWrapper.COLLECTOR_HOME+File.separator+"BrowserOutput.html");
 		browser.setText(finalPageAsHtml);
 
 		BrowserContent.lastPageAsHtml = finalPageAsHtml;		
