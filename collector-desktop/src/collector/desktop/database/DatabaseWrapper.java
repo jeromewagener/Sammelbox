@@ -1492,6 +1492,22 @@ public class DatabaseWrapper  {
 		return albumItemRS;
 	}
 
+	public static long getNumberOfItemsInAlbum(String albumName) {
+		try {
+			Statement statement = connection.createStatement();
+			ResultSet resultSet = statement.executeQuery("SELECT COUNT(*) AS numberOfItems FROM " + transformNameToDBName(albumName));
+			
+			if (resultSet.next()) {
+				return resultSet.getLong("numberOfItems");
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return 0;
+	}
+	
 	private static void updateContentVersion(String albumName, long itemID, UUID newUuid) throws SQLException {	
 		StringBuilder sb = new StringBuilder("UPDATE ");
 		sb.append(transformNameToDBName(albumName));

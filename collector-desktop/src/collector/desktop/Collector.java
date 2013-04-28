@@ -13,7 +13,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.List;
@@ -101,7 +100,7 @@ public class Collector implements UIObservable, UIObserver {
 		shellGridLayout.marginWidth = 0;
 
 		// setup the Shell
-		shell.setText("Collector");
+		shell.setText("Sammelbox - Collection Manager");
 		shell.setMinimumSize(MIN_SHELL_WIDTH, MIN_SHELL_HEIGHT);
 		shell.setSize(MIN_SHELL_WIDTH, MIN_SHELL_HEIGHT);
 		shell.setLayout(shellGridLayout);

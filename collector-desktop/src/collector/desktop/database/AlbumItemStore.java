@@ -22,7 +22,7 @@ public class AlbumItemStore {
 			AlbumItem albumItem = new AlbumItem(albumItemResultSet.getAlbumName());
 			List<ItemField> itemFields = new ArrayList<ItemField>();
 			
-			for (int i=1; i<albumItemResultSet.getFieldCount(); i++) {
+			for (int i=1; i<=albumItemResultSet.getFieldCount(); i++) {
 				itemFields.add(new ItemField(albumItemResultSet.getFieldName(i), 
 					albumItemResultSet.getFieldType(i), albumItemResultSet.getFieldValue(i)));
 			}

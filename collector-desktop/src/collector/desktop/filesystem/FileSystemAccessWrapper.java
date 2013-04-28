@@ -14,7 +14,9 @@ import java.net.URI;
 import java.sql.Connection;
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
@@ -37,11 +39,13 @@ public class FileSystemAccessWrapper {
 	public static final String ALBUM_PICTURES					= "album-pictures";
 	public static final String COLLECTOR_HOME_ALBUM_PICTURES 	= COLLECTOR_HOME + File.separatorChar + ALBUM_PICTURES;
 	public static final String PLACEHOLDERIMAGE 				= COLLECTOR_HOME_APPDATA + File.separatorChar + "placeholder.png";
+	public static final String LOGO 							= COLLECTOR_HOME_APPDATA + File.separatorChar + "logo.png";
 	public static final String DATABASE_NAME					= "collector.db";
 	public static final String DATABASE_TO_RESTORE_NAME			= "collector.restore.db";
 	public static final String DATABASE 						= COLLECTOR_HOME + File.separatorChar + DATABASE_NAME;
 	public static final String DATABASE_TO_RESTORE				= COLLECTOR_HOME + File.separatorChar + DATABASE_TO_RESTORE_NAME;
 	public static final String VIEW_FILE						= COLLECTOR_HOME_APPDATA + File.separatorChar + "views.xml";
+	public static final String WELCOME_PAGE_FILE				= COLLECTOR_HOME_APPDATA + File.separatorChar + "welcome.xml";
 	
 	private static final boolean OVERWRITE_EXISITING_FILES = true;
 	
@@ -88,6 +92,11 @@ public class FileSystemAccessWrapper {
 			copyResourceToFile("graphics/placeholder.png", placeholderPNG);
 		}
 
+		File logoPNG = new File(LOGO);
+		if (!logoPNG.exists() || OVERWRITE_EXISITING_FILES) {		
+			copyResourceToFile("graphics/logo.png", logoPNG);
+		}
+		
 		File effectsJS = new File(COLLECTOR_HOME_APPDATA + File.separatorChar + "effects.js");
 		if (!effectsJS.exists() || OVERWRITE_EXISITING_FILES) {		
 			copyResourceToFile("javascript/effects.js", effectsJS);
@@ -540,5 +549,124 @@ public class FileSystemAccessWrapper {
 		}
 
 		return new String(buffer);
+	}
+
+	public static void storeWelcomePageManagerInformation(
+			Map<String, Integer> albumAndViewsToClicks,
+			Map<String, Long> albumToLastModified) {
+		
+		StringBuilder xmlOutput = new StringBuilder();
+		
+		xmlOutput.append("<welcomePageInformation>\n");
+		
+		for (String albumOrViewName : albumAndViewsToClicks.keySet()) {
+			xmlOutput.append("\t<albumAndViewsToClicks>\n");
+			xmlOutput.append("\t\t<name><![CDATA[" + albumOrViewName + "]]></name>\n");
+			xmlOutput.append("\t\t<clicks><![CDATA[" + albumAndViewsToClicks.get(albumOrViewName) + "]]></clicks>\n");
+			xmlOutput.append("\t</albumAndViewsToClicks>\n");
+		}
+		
+		for (String albumName : albumToLastModified.keySet()) {
+			xmlOutput.append("\t<albumToLastModified>\n");
+			xmlOutput.append("\t\t<albumName><![CDATA[" + albumName + "]]></albumName>\n");
+			xmlOutput.append("\t\t<lastModified><![CDATA[" + albumToLastModified.get(albumName) + "]]></lastModified>\n");
+			xmlOutput.append("\t</albumToLastModified>\n");
+		}
+		
+		xmlOutput.append("</welcomePageInformation>\n");
+		
+		writeToFile(xmlOutput.toString(), WELCOME_PAGE_FILE);
+	}
+
+	public static Map<String, Integer> getAlbumAndViewsToClicks() {
+		String welcomePageInformationXml = readFileAsString(WELCOME_PAGE_FILE);
+		
+		Map<String, Integer> albumAndViewsToClicks = new HashMap<String, Integer>();
+		
+		if (welcomePageInformationXml.isEmpty()) {
+			return albumAndViewsToClicks;
+		}
+		
+		try {
+			DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+			InputSource inputSource = new InputSource();
+			inputSource.setCharacterStream(new StringReader(welcomePageInformationXml));
+
+			Document document = documentBuilder.parse(inputSource);
+			Node root = document.getFirstChild();
+
+			if (!root.getNodeName().equals("welcomePageInformation")) {
+				throw new Exception("Invalid Welcome Page File");
+			} else {
+				NodeList viewNodes = document.getElementsByTagName("albumAndViewsToClicks");
+				
+				String name = "";
+				Integer clicks = 0;
+
+				for (int i = 0; i < viewNodes.getLength(); i++) {
+					Node node = viewNodes.item(i);
+
+					if (node.getNodeType() == Node.ELEMENT_NODE) {
+						Element element = (Element) node;
+						
+						name = getValue("name", element);
+						clicks = Integer.parseInt(getValue("clicks", element));
+						
+						albumAndViewsToClicks.put(name, clicks);
+					}
+				}
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		
+		return albumAndViewsToClicks;
+	}
+
+	public static Map<String, Long> getAlbumToLastModified() {
+		String welcomePageInformationXml = readFileAsString(WELCOME_PAGE_FILE);
+		
+		Map<String, Long> albumToLastModified = new HashMap<String, Long>();
+		
+		if (welcomePageInformationXml.isEmpty()) {
+			return albumToLastModified;
+		}
+		
+		try {
+			DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+			InputSource inputSource = new InputSource();
+			inputSource.setCharacterStream(new StringReader(welcomePageInformationXml));
+
+			Document document = documentBuilder.parse(inputSource);
+			Node root = document.getFirstChild();
+
+			if (!root.getNodeName().equals("welcomePageInformation")) {
+				throw new Exception("Invalid Welcome Page File");
+			} else {
+				NodeList viewNodes = document.getElementsByTagName("albumToLastModified");
+				
+				String name = "";
+				Long lastModified = 0L;
+
+				for (int i = 0; i < viewNodes.getLength(); i++) {
+					Node node = viewNodes.item(i);
+
+					if (node.getNodeType() == Node.ELEMENT_NODE) {
+						Element element = (Element) node;
+						
+						name = getValue("albumName", element);
+						lastModified = Long.parseLong(getValue("lastModified", element));
+						
+						albumToLastModified.put(name, lastModified);
+					}
+				}
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		
+		return albumToLastModified;
 	}
 }

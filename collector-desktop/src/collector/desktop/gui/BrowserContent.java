@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -357,32 +358,16 @@ public class BrowserContent {
 		welcomePage += "	<table width=100% height=80%>";
 		welcomePage += "		<tr width=100% height=80%>";
 		welcomePage += "			<td width=50% align=\"center\">";
-		welcomePage += "				<h1>Collector Daily Build</h1>";
-		welcomePage += "				<img src=\" " + FileSystemAccessWrapper.PLACEHOLDERIMAGE + " \">";
-		welcomePage += "				<h2>Welcome to Collector!</h2>";
+		welcomePage += "				<h1>Sammelbox</h1>";
+		welcomePage += "				<img height=\"350px\" src=\" " + FileSystemAccessWrapper.LOGO + " \">";
+		welcomePage += "				<h2>Collection Manager</h2>";
 		welcomePage += "			</td>";
 		welcomePage += "			<td width=50%>";
 		welcomePage += "				<div style=\"padding:10px; background-color:#" + getBackgroundColorOfWidgetInHex() + "\">";
-		welcomePage += "					<h3>Album Information</h3>";
-		welcomePage += "					<ul>";
-		welcomePage += "						<li>Album <b>AGDF</b> <br> <font size=-1><i>(15 items - Updated in Nov 2011)</i></font></li>";
-		welcomePage += "						<li>Album <b>TTEAS</b> <br> <font size=-1><i>(104 items - Updated in Sep 2012)</font></li>";
-		welcomePage += "						<li>Album <b>WWSE</b> <br> <font size=-1><i>(38 items - Updated in Apr 2013)</font></li>";
-		welcomePage += "					</ul>";
-		welcomePage += "					<br>";
-		welcomePage += "					<h3>Favorite Albums & Views</h3>";
-		welcomePage += "					<ul>";
-		welcomePage += "						<li>Show Album XYZA</li>";
-		welcomePage += "						<li>Show View ASD</li>";
-		welcomePage += "						<li>Show Album AIOI</li>";
-		welcomePage += "					</ul>";
-		welcomePage += "					<br>";
-		welcomePage += "					<h3>Application News</h3>";
-		welcomePage += "					<ul>";
-		welcomePage += "						<li>3 Active Users</li>";
-		welcomePage += "						<li>Android App in Development</li>";
-		welcomePage += "						<li>Alpha v1 Released</li>";
-		welcomePage += "					</ul>";
+
+		welcomePage += generateAlbumInformation();
+		welcomePage += generateFavorites();
+		
 		welcomePage += "				</div>";
 		welcomePage += "			</td>";
 		welcomePage += "		</tr>";
@@ -393,6 +378,53 @@ public class BrowserContent {
 		Collector.getAlbumItemSWTBrowser().setText(welcomePage);
 	}
 
+	public static String generateAlbumInformation() {
+		String welcomePage = "<h4>Album Information</h4>";
+		welcomePage += "<ul>";
+				
+		boolean empty = true;
+		for (String albumName : DatabaseWrapper.listAllAlbums()) {
+			welcomePage += "<li>Album <b>" + albumName + "</b> <br> <font size=-1><i>(" + WelcomePageManager.getInstance().getNumberOfItemsInAlbum(albumName) 
+					+ " items - Last updated: " + WelcomePageManager.getInstance().getLastModifiedDate(albumName) + ")</i></font></li>";
+			
+			empty = false;
+		}
+		
+		if (empty) {
+			welcomePage += "<li>No information available</li>";
+		}
+		
+		welcomePage += "</ul>";
+		
+		return welcomePage;
+	}
+	
+	public static String generateFavorites() {
+		String welcomePage = "<h4>Favorite Albums & Views</h4>";
+		welcomePage += "<ol>";
+		
+		int favCounter = 0;
+		boolean empty = true;
+		for (String albumOrViewName : WelcomePageManager.getInstance().getAlbumAndViewsSortedByClicks().keySet()) {
+			welcomePage += "<li>" + albumOrViewName + "<font size=-1><i> " +
+					" - (Clicks: " + WelcomePageManager.getInstance().getAlbumAndViewsSortedByClicks().get(albumOrViewName) + ") </i></font></li>";
+			
+			if (++favCounter == 5) {
+				break;
+			}
+			
+			empty = false;
+		}
+		
+		if (empty) {
+			welcomePage += "<li>No information available</li>";
+		}
+		
+		welcomePage += "</ol>";
+		
+		return welcomePage;		
+	}
+	
 	public static void loadHelpPage() {
 		loadHtmlPage(
 				Collector.getAlbumItemSWTBrowser(),

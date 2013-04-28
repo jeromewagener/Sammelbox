@@ -123,6 +123,7 @@ public class CompositeFactory {
 					
 					Collector.changeRightCompositeTo(PanelType.Empty, CompositeFactory.getEmptyComposite(Collector.getThreePanelComposite()));
 
+					WelcomePageManager.getInstance().increaseClickCountForAlbumOrView(albumList.getItem(albumList.getSelectionIndex()));
 				}
 			}
 		});
@@ -136,6 +137,8 @@ public class CompositeFactory {
 				BrowserContent.performBrowserQueryAndShow(
 						Collector.getAlbumItemSWTBrowser(), 							
 						AlbumViewManager.getSqlQueryByName(viewList.getItem(viewList.getSelectionIndex())));
+				
+				WelcomePageManager.getInstance().increaseClickCountForAlbumOrView(viewList.getItem(viewList.getSelectionIndex()));
 			}
 		});
 		
@@ -1434,7 +1437,9 @@ public class CompositeFactory {
 					BrowserContent.setFutureJumpAnchor(BrowserContent.getAnchorForAlbumItemId(DatabaseWrapper.addNewAlbumItem(albumItem, false, true)));
 				}
 
-				Collector.changeRightCompositeTo(PanelType.Empty, CompositeFactory.getEmptyComposite(Collector.getThreePanelComposite()));				
+				Collector.changeRightCompositeTo(PanelType.Empty, CompositeFactory.getEmptyComposite(Collector.getThreePanelComposite()));
+				WelcomePageManager.getInstance().updateLastModifiedWithCurrentDate(Collector.getSelectedAlbum());
+				
 				BrowserContent.performBrowserQueryAndShow(Collector.getAlbumItemSWTBrowser(), DatabaseWrapper.createSelectStarQuery(Collector.getSelectedAlbum()));
 			}
 		};
