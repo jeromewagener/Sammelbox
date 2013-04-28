@@ -13,15 +13,17 @@ public class AlbumItemStore {
 	private static int previousStopIndex = DEFAULT_STOP_INDEX;
 	
 	public static void reinitializeStore(AlbumItemResultSet albumItemResultSet) {
+			
+		if (!isOutDated()) {
+			// Don't do anything when the store is not really outdated.
+			albumItemResultSet.close();
+			return;
+		}
+		
 		albumItems.clear();
 		lastReinitalized = System.currentTimeMillis();
 		stopIndex = DEFAULT_STOP_INDEX;
 		previousStopIndex = DEFAULT_STOP_INDEX;
-		
-		if (!isOutDated()) {
-			// Don't do anything when the store is not really outdated.
-			return;
-		}
 		
 		while (albumItemResultSet.moveToNext()) {
 			AlbumItem albumItem = new AlbumItem(albumItemResultSet.getAlbumName());
@@ -47,7 +49,7 @@ public class AlbumItemStore {
 			// On startup no changes have been done.
 			return true;
 			
-		}else if (AlbumItemStore.lastReinitalized < lastDatabaseChangeTimeStamp) {
+		}else if (AlbumItemStore.lastReinitalized <= lastDatabaseChangeTimeStamp) {
 			return true;
 		}
 		
