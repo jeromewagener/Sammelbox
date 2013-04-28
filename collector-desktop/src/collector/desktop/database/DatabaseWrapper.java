@@ -48,7 +48,7 @@ public class DatabaseWrapper  {
 	protected static final String SCHEMA_VERSION_COLUMN_NAME = "schemaVersion";
 	/** The final name of the content version column. Updated at each change of the content of the field.*/
 	protected static final String CONTENT_VERSION_COLUMN_NAME = "contentVersion";
-
+	private static long lastChangeTimeStamp = -1;
 	private static String sqliteConnectionString = "jdbc:sqlite:";
 	private static Connection connection = null;
 
@@ -116,6 +116,7 @@ public class DatabaseWrapper  {
 			}
 			createIndex(albumName, quickSearchableColumnNames);			
 			FileSystemAccessWrapper.updateAlbumFileStructure(connection);
+			updateLastDatabaseChangeTimeStamp();
 		} catch (SQLException e) {
 			e.printStackTrace();
 			result = false;
@@ -180,6 +181,7 @@ public class DatabaseWrapper  {
 
 			result =( result && FileSystemAccessWrapper.renameAlbumPictureFolder(oldAlbumName, newAlbumName));
 			rebuildIndexForTable(newAlbumName, newFields);
+			updateLastDatabaseChangeTimeStamp();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}finally {
@@ -266,7 +268,7 @@ public class DatabaseWrapper  {
 			}	
 
 			rebuildIndexForTable(albumName, newFields);
-
+			updateLastDatabaseChangeTimeStamp();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}finally {
@@ -350,7 +352,7 @@ public class DatabaseWrapper  {
 			}	
 
 			rebuildIndexForTable(albumName, newFields);
-
+			updateLastDatabaseChangeTimeStamp();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}finally {
@@ -428,7 +430,7 @@ public class DatabaseWrapper  {
 			}
 
 			rebuildIndexForTable(albumName, newFields);
-
+			updateLastDatabaseChangeTimeStamp();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}finally {
@@ -467,6 +469,7 @@ public class DatabaseWrapper  {
 		}
 		try {
 			updateSchemaVersion(albumName);
+			updateLastDatabaseChangeTimeStamp();
 		} catch (SQLException e) {
 			e.printStackTrace();
 			result = false;
@@ -628,7 +631,7 @@ public class DatabaseWrapper  {
 
 			// drop the typeInfo table
 			dropTable(typeInfoTableName);// TODO: check if the albumname db compliant
-
+			updateLastDatabaseChangeTimeStamp();
 		} catch (SQLException e) {
 			e.printStackTrace();
 			result = false;
@@ -738,7 +741,12 @@ public class DatabaseWrapper  {
 			return false;
 		}
 		
-		return appedNewTableColumn(albumName, metaItemField);
+		if ( appedNewTableColumn(albumName, metaItemField) ) {
+			updateLastDatabaseChangeTimeStamp();
+			return true;
+		}
+		
+		return false;
 	}
 	/**
 	 * Appends a new column to the album table. This internal method does allows to add any type of column, even id and picture column.
@@ -810,7 +818,10 @@ public class DatabaseWrapper  {
 
 		// Appends and updates the schema version
 		result = appedNewTableColumn(albumName, new MetaItemField(PICTURE_COLUMN_NAME, FieldType.Picture));
-		FileSystemAccessWrapper.updateAlbumFileStructure(connection);
+		if (result) {
+			FileSystemAccessWrapper.updateAlbumFileStructure(connection);
+			updateLastDatabaseChangeTimeStamp();
+		}
 		return result;
 	}
 
@@ -825,6 +836,7 @@ public class DatabaseWrapper  {
 		boolean result = removeAlbumItemField(albumName, new MetaItemField(PICTURE_COLUMN_NAME, FieldType.Picture));
 		try {
 			updateSchemaVersion(albumName);
+			updateLastDatabaseChangeTimeStamp();
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return false;
@@ -1100,7 +1112,7 @@ public class DatabaseWrapper  {
 	 * are quoted. 
 	 * @return True if the operation was successful. False otherwise.
 	 */
-	public static boolean createIndex(String albumName, List<String> columnNames) {
+	private static boolean createIndex(String albumName, List<String> columnNames) {
 		if (columnNames.isEmpty()) {
 			return false;
 		}
@@ -1139,7 +1151,7 @@ public class DatabaseWrapper  {
 	 * @param tableName The name of the table to which the index belongs.
 	 * @return True if the table has no associated index to it. False if the operation failed.
 	 */
-	public static boolean dropIndex(String tableName) {
+	private static boolean dropIndex(String tableName) {
 		String indexName = getTableIndexName(tableName);
 		if (indexName == null) {			
 			return true;
@@ -1267,6 +1279,7 @@ public class DatabaseWrapper  {
 
 			}
 			updateContentVersion(item.getAlbumName(), result, newUUID);//FIXME:
+			updateLastDatabaseChangeTimeStamp();
 		} catch (SQLException e) {
 			e.printStackTrace();
 			result = -1;
@@ -1437,6 +1450,7 @@ public class DatabaseWrapper  {
 			preparedStatement.close();
 
 			updateContentVersion(item.getAlbumName(), id, generateNewUUID());
+			updateLastDatabaseChangeTimeStamp();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} 
@@ -1462,6 +1476,7 @@ public class DatabaseWrapper  {
 			preparedStatement = connection.prepareStatement(deleteAlbumItemString);
 
 			preparedStatement.executeUpdate();
+			updateLastDatabaseChangeTimeStamp();
 		} catch (SQLException e) {
 			e.printStackTrace();
 			result = false;
@@ -2343,11 +2358,29 @@ public class DatabaseWrapper  {
 				successState = false;
 			}
 		}
-
+		
 		FileSystemAccessWrapper.deleteDatabaseRestoreFile();
-		FileSystemAccessWrapper.updateCollectorFileStructure();
-		FileSystemAccessWrapper.updateAlbumFileStructure(connection);
+		//TODO: Check if executing this only when success creates undesired side effects.
+		if (successState == true){
+			FileSystemAccessWrapper.updateCollectorFileStructure();
+			FileSystemAccessWrapper.updateAlbumFileStructure(connection);
+			// Update timestamp
+			updateLastDatabaseChangeTimeStamp();
+		}
+		
 		
 		return successState;		
+	}
+	
+	/**
+	 * Gets the time stamp when the last change to the database happened.
+	 * @return The time in milliseconds when the last change to the database occured. -1 If not initialized.
+	 */
+	public static long getLastDatabaseChangeTimeStamp() {
+		return lastChangeTimeStamp;
+	}
+	
+	private static void updateLastDatabaseChangeTimeStamp() {
+		lastChangeTimeStamp = System.currentTimeMillis();
 	}
 }

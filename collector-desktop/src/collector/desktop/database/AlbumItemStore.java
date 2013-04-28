@@ -18,6 +18,11 @@ public class AlbumItemStore {
 		stopIndex = DEFAULT_STOP_INDEX;
 		previousStopIndex = DEFAULT_STOP_INDEX;
 		
+		if (!isOutDated()) {
+			// Don't do anything when the store is not really outdated.
+			return;
+		}
+		
 		while (albumItemResultSet.moveToNext()) {
 			AlbumItem albumItem = new AlbumItem(albumItemResultSet.getAlbumName());
 			List<ItemField> itemFields = new ArrayList<ItemField>();
@@ -35,13 +40,18 @@ public class AlbumItemStore {
 	}
 	
 	public static boolean isOutDated() {
-		// TODO use the database wrapper to determine when the database 
-		// was last queried in order to find out whether the cache is out-dated
-		if (AlbumItemStore.lastReinitalized - 1 > 0) {
-			return false;
+		// Use the database wrapper to determine when the database 
+		// was last changed in order to find out whether the cache is out-dated
+		long lastDatabaseChangeTimeStamp = DatabaseWrapper.getLastDatabaseChangeTimeStamp();
+		if (lastDatabaseChangeTimeStamp == -1) {
+			// On startup no changes have been done.
+			return true;
+			
+		}else if (AlbumItemStore.lastReinitalized < lastDatabaseChangeTimeStamp) {
+			return true;
 		}
 		
-		return true;
+		return false;
 	}
 	
 	public static List<AlbumItem> getAllAlbumItems() {
