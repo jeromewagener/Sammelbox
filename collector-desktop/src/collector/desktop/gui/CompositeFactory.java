@@ -417,7 +417,7 @@ public class CompositeFactory {
 					Collector.showErrorDialog("No album has been selected", "Please select an album from the list or create one first.");
 					return;
 				}
-				// TODO save sql query
+
 				ArrayList<QueryComponent> queryComponents = new ArrayList<QueryComponent>();
 
 				for ( int i=0 ; i < searchQueryTable.getItemCount() ; i++ ) {					
@@ -438,7 +438,7 @@ public class CompositeFactory {
 				if (viewName != null && !AlbumViewManager.hasViewWithName(viewName)) {
 					AlbumViewManager.addAlbumView(viewName, Collector.getSelectedAlbum(), QueryBuilder.buildQuery(queryComponents, connectByAnd, album));
 				} else {
-					// TODO error message
+					ComponentFactory.getMessageBox(parentComposite, "Name already in use", "This name is already used by another saved search. Please choose another name.", SWT.ICON_INFORMATION).open();
 				}
 			}
 		});
