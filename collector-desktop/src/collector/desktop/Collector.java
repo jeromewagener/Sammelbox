@@ -258,10 +258,6 @@ public class Collector implements UIObservable, UIObserver {
 		MenuItem exitItem = new MenuItem(collectorMenu, SWT.NONE);
 		exitItem.setText("Exit");
 		exitItem.addSelectionListener(instance.new MenuActionListener());
-		new MenuItem(collectorMenu, SWT.SEPARATOR);
-		MenuItem testItem = new MenuItem(collectorMenu, SWT.NONE);
-		testItem.setText("TEST");
-		testItem.addSelectionListener(instance.new MenuActionListener());
 
 		// Create the Album item's dropdown menu
 		Menu albumMenu = new Menu(menu);
@@ -525,6 +521,8 @@ public class Collector implements UIObservable, UIObserver {
 			} else if (((MenuItem) event.widget).getText().equals("Create a new Album")) {
 				changeRightCompositeTo(PanelType.AddAlbum, CompositeFactory.getCreateNewAlbumComposite(threePanelComposite));
 			} else if (((MenuItem) event.widget).getText().equals("Restore Albums from File...")) {
+				changeRightCompositeTo(PanelType.Empty, CompositeFactory.getEmptyComposite(Collector.threePanelComposite));
+				
 				FileDialog openFileDialog = new FileDialog(getShell(), SWT.OPEN);
 				openFileDialog.setText("Restore from File");
 				openFileDialog.setFilterPath(System.getProperty("user.home"));
@@ -589,8 +587,6 @@ public class Collector implements UIObservable, UIObserver {
 					}
 				} else if (((MenuItem) event.widget).getText().equals("Alter selected Album")) {
 					changeRightCompositeTo(PanelType.AlterAlbum, CompositeFactory.getAlterAlbumComposite(threePanelComposite, getSelectedAlbum()));
-				} else if (((MenuItem) event.widget).getText().equals("TEST")) {
-					changeRightCompositeTo(PanelType.AlterAlbum, CompositeFactory.getTestComposite(threePanelComposite));
 				} else if (((MenuItem) event.widget).getText().equals("Export Visible Items...")) {
 					FileDialog saveFileDialog = new FileDialog(getShell(), SWT.SAVE);
 					saveFileDialog.setText("Export Visible Items");

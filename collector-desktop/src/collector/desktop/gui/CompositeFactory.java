@@ -482,38 +482,6 @@ public class CompositeFactory {
 		return emptyComposite;
 	}
 
-	/** Returns an empty composite
-	 * @param parentComposite the parent composite
-	 * @return a new empty composite */
-	public static Composite getTestComposite(Composite parentComposite) {
-		// Setup empty composite
-		Composite testComposite = new Composite(parentComposite, SWT.NONE);
-		testComposite.setLayout(new GridLayout());
-		
-		// goto website
-		Label gotoLabel = new Label(testComposite, SWT.NONE);
-		gotoLabel.setText("Goto Website:");
-		final Text websiteUrlText = new Text(testComposite, SWT.BORDER);
-		websiteUrlText.setLayoutData(new GridData(GridData.FILL_BOTH));
-		websiteUrlText.setText("www.example.com");
-
-		// Create album button
-		Button createAlbumButton = new Button(testComposite, SWT.PUSH);
-		createAlbumButton.setText("Create the Album");
-		createAlbumButton.setLayoutData(new GridData(GridData.FILL_BOTH));
-		createAlbumButton.addSelectionListener(new SelectionListener() {
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {}
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				Collector.getAlbumItemSWTBrowser().setUrl(websiteUrlText.getText());
-			}
-		});
-
-		return testComposite;
-	}
-
 	/** Returns a "create new album" composite. This composite provides the user interface to create a new album. Meaning that an 
 	 * album name can be specified, as well as an undefined number of fields (columns) with user defined types etc..
 	 * @param parentComposite the parent composite
