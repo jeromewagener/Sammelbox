@@ -422,7 +422,7 @@ public class BrowserContent {
 	public static void loadHelpPage() {
 		loadHtmlPage(
 				Collector.getAlbumItemSWTBrowser(),
-				Collector.getInstance().getClass().getClassLoader().getResourceAsStream("helpfiles/howto_createAlbum.html"));
+				Collector.getInstance().getClass().getClassLoader().getResourceAsStream("helpfiles/index.html"));
 	}
 	
 	public static void addAdditionalAlbumItems() {

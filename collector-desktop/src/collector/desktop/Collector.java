@@ -294,16 +294,12 @@ public class Collector implements UIObservable, UIObserver {
 
 		// Create all the items in the Help dropdown menu
 		MenuItem howtoCreateAlbum = new MenuItem(helpMenu, SWT.NONE);
-		howtoCreateAlbum.setText("How-to create a new album?");
+		howtoCreateAlbum.setText("Help Contents");
 		howtoCreateAlbum.addSelectionListener(instance.new MenuActionListener());
 
 		MenuItem howtoAddNewItemToAlbum = new MenuItem(helpMenu, SWT.NONE);
-		howtoAddNewItemToAlbum.setText("How-to add a new item to an album?");
+		howtoAddNewItemToAlbum.setText("About Sammelbox");
 		howtoAddNewItemToAlbum.addSelectionListener(instance.new MenuActionListener());
-
-		MenuItem howtoAlterAlbum = new MenuItem(helpMenu, SWT.NONE);
-		howtoAlterAlbum.setText("How-to alter an existing album?");
-		howtoAlterAlbum.addSelectionListener(instance.new MenuActionListener());
 
 		// Set the bar menu as the menu in the shell
 		getShell().setMenuBar(menu);
@@ -536,24 +532,20 @@ public class Collector implements UIObservable, UIObserver {
 					Collector.refreshSWTAlbumList();
 					BrowserContent.loadHtmlPage(Collector.getAlbumItemSWTBrowser(), getShell().getClass().getClassLoader().getResourceAsStream("htmlfiles/albums_restored.html"));
 				}
-			} else if (((MenuItem) event.widget).getText().equals("How-to create a new album?")) {
+			} else if (((MenuItem) event.widget).getText().equals("Help Contents")) {
 				// No default album is selected on help
 				Collector.refreshSWTAlbumList();
 				BrowserContent.loadHtmlPage(
 						getAlbumItemSWTBrowser(),
-						getShell().getClass().getClassLoader().getResourceAsStream("helpfiles/howto_createAlbum.html"));
-			} else if (((MenuItem) event.widget).getText().equals("How-to add a new item to an album?")) {
+						getShell().getClass().getClassLoader().getResourceAsStream("helpfiles/index.html"));
+				changeRightCompositeTo(PanelType.Help, CompositeFactory.getEmptyComposite(threePanelComposite));
+			} else if (((MenuItem) event.widget).getText().equals("About Sammelbox")) {
 				// No default album is selected on help
 				Collector.refreshSWTAlbumList();
 				BrowserContent.loadHtmlPage(
 						getAlbumItemSWTBrowser(),
-						getShell().getClass().getClassLoader().getResourceAsStream("helpfiles/howto_addAlbumItem.html"));				
-			} else if (((MenuItem) event.widget).getText().equals("How-to alter an existing album?")) {
-				// No default album is selected on help
-				Collector.refreshSWTAlbumList();
-				BrowserContent.loadHtmlPage(
-						getAlbumItemSWTBrowser(),
-						getShell().getClass().getClassLoader().getResourceAsStream("helpfiles/howto_alterAlbum.html"));				
+						getShell().getClass().getClassLoader().getResourceAsStream("helpfiles/about.html"));
+				changeRightCompositeTo(PanelType.Help, CompositeFactory.getEmptyComposite(threePanelComposite));
 			} else if (((MenuItem) event.widget).getText().equals("Synchronize")) {
 				changeRightCompositeTo(PanelType.Synchronization, CompositeFactory.getSynchronizeComposite(threePanelComposite));
 			} else if (((MenuItem) event.widget).getText().equals("Backup Albums to File...")) {
