@@ -585,8 +585,8 @@ public class Collector implements UIObservable, UIObserver {
 					saveFileDialog.setFilterPath(System.getProperty("user.home"));
 					String[] filterExt = { "*.html", "*.csv"};
 					saveFileDialog.setFilterExtensions(filterExt);
-					String[] filterNames = { "*.html (A simple print-friendly list export)" , 
-					"*.csv (CSV export for spredsheet applications)" };
+					String[] filterNames = { "*.html (Print-friendly table)" , 
+					"*.csv (CSV export for spreadsheet applications)" };
 					saveFileDialog.setFilterNames(filterNames);
 
 					String filepath = saveFileDialog.open();
