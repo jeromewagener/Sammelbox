@@ -710,7 +710,7 @@ public class CompositeFactory {
 		albumNameText.setLayoutData(new GridData(GridData.FILL_BOTH));
 		albumNameText.setText(album);
 
-		// Alter album button
+		// Rename album button
 		Button renameAlbumButton = new Button(alterAlbumComposite, SWT.PUSH);
 		renameAlbumButton.setText("Rename the Album");
 		renameAlbumButton.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -872,15 +872,18 @@ public class CompositeFactory {
 		delete.setText("Remove");
 		delete.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				if (albumFieldNamesAndTypesTable.getSelectionIndex() != -1) {	    			
-					TableItem item = albumFieldNamesAndTypesTable.getItem(albumFieldNamesAndTypesTable.getSelectionIndex());
+				if (albumFieldNamesAndTypesTable.getSelectionIndex() != -1) {	    	
+					boolean removalConfirmed = Collector.showYesNoDialog("Delete album field", "The album item will be permanently deleted.\n Do you want to proceed?");
+					if (removalConfirmed) {
+						TableItem item = albumFieldNamesAndTypesTable.getItem(albumFieldNamesAndTypesTable.getSelectionIndex());
 
-					DatabaseWrapper.removeAlbumItemField(
-							album, new MetaItemField(item.getText(1), FieldType.valueOf(item.getText(2)), item.getChecked()));
+						DatabaseWrapper.removeAlbumItemField(
+								album, new MetaItemField(item.getText(1), FieldType.valueOf(item.getText(2)), item.getChecked()));
 
-					item.dispose();
+						item.dispose();
 
-					BrowserContent.performLastQuery(Collector.getAlbumItemSWTBrowser());
+						BrowserContent.performLastQuery(Collector.getAlbumItemSWTBrowser());
+					}
 				}
 			}
 		});

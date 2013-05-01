@@ -696,6 +696,19 @@ public class Collector implements UIObservable, UIObserver {
 		errorMessageBox.setMessage(messageText);
 		errorMessageBox.open();
 	}
+	
+	public static boolean showYesNoDialog(String TitleText, String messageText) {
+		int questionMessageBoxStyle = SWT.ICON_QUESTION |SWT.YES | SWT.NO;
+		MessageBox errorMessageBox = new MessageBox(getShell(), questionMessageBoxStyle);
+		errorMessageBox.setText(TitleText);
+		errorMessageBox.setMessage(messageText);
+		int messageBoxResultFlag = errorMessageBox.open();
+		if ( messageBoxResultFlag  == SWT.YES) {
+			return true;
+		}else {
+			return false;
+		}
+	}
 }
 
 
