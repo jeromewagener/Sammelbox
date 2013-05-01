@@ -1,12 +1,13 @@
 package collector.desktop.filesystem;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringReader;
@@ -401,47 +402,6 @@ public class FileSystemAccessWrapper {
 		file.delete();
 	}
 
-	/**
-	 * Copies a file from the input stream to the file  out.
-	 * @param fileInputStream The input from which the information to copy is read.
-	 * @param outputFile The file where the input stream is being copied.
-	 */
-	private void copyFromInputstreamToFile(FileInputStream fileInputStream, File outputFile) {//TODO: Test this!
-		FileOutputStream fileoutputStream = null; // Stream to write to destination
-		try {
-			fileoutputStream = new FileOutputStream(outputFile); // Create output stream
-			byte[] buffer = new byte[4096]; // To hold file contents
-			int bytesRead; // How many bytes in buffer
-
-			// Read a chunk of bytes into the buffer, then write them out,
-			// looping until we reach the end of the file (when read() returns
-			// -1).
-			while ((bytesRead = fileInputStream.read(buffer)) != -1)
-				// Read until EOF
-				fileoutputStream.write(buffer, 0, bytesRead); // write
-		} catch (FileNotFoundException e) {
-
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		//Close both input and output streams, even if exceptions were thrown
-		finally {
-			if (fileInputStream != null)
-				try {
-					fileInputStream.close();
-				} catch (IOException e) {
-					System.err.println("Closing the file input stream failed!");
-				}
-			if (fileoutputStream != null)
-				try {
-					fileoutputStream.close();
-				} catch (IOException e) {
-					System.err.println("Closing the file output stream failed!");
-				}
-		}
-	}
-
 	public static void writeToFile(String content, String filepath) {
 		try {
 			PrintWriter out = new PrintWriter(filepath);
@@ -668,5 +628,23 @@ public class FileSystemAccessWrapper {
 		}
 		
 		return albumToLastModified;
+	}
+	
+	public static String readInputStreamIntoString(InputStream fileInputStream) {
+		StringBuilder stringBuilder = new StringBuilder();
+
+		try {
+			BufferedReader reader = new BufferedReader(new InputStreamReader(fileInputStream));
+			String line = null;
+			String ls = System.getProperty("line.separator");
+			while((line = reader.readLine()) != null) {
+				stringBuilder.append(line);
+				stringBuilder.append(ls);
+			}
+		} catch (IOException ioe) {
+			System.err.println(ioe.getMessage());
+		}
+
+		return stringBuilder.toString();
 	}
 }

@@ -31,7 +31,7 @@ import collector.desktop.gui.QueryBuilder.QueryOperator;
 
 public class DatabaseWrapper  {
 	/** The final name of the picture column. Currently only a single column is supported, this is its name.*/
-	private static final String PICTURE_COLUMN_NAME = "collectorPicture";
+	public static final String PICTURE_COLUMN_NAME = "collectorPicture";
 	/** Suffix used to append to the mame of the main table to obtain the index name during index creation.*/
 	private static final String INDEX_NAME_SUFFIX = "_index";
 	/** The internal separator used in-between  the different picture names in the picture column.*/
@@ -48,6 +48,7 @@ public class DatabaseWrapper  {
 	protected static final String SCHEMA_VERSION_COLUMN_NAME = "schemaVersion";
 	/** The final name of the content version column. Updated at each change of the content of the field.*/
 	protected static final String CONTENT_VERSION_COLUMN_NAME = "contentVersion";
+	public static final String ID_COLUMN_NAME = "id";
 	private static long lastChangeTimeStamp = -1;
 	private static String sqliteConnectionString = "jdbc:sqlite:";
 	private static Connection connection = null;

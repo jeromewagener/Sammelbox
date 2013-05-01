@@ -1,8 +1,11 @@
 package collector.desktop.database;
 
+import java.net.URI;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
+
+import collector.desktop.filesystem.FileSystemAccessWrapper;
 
 public class AlbumItem {
 	protected String albumName = "";
@@ -35,13 +38,17 @@ public class AlbumItem {
 	public String getAlbumName() {
 		return albumName;
 	}
-
+	
 	/**
 	 * Setter for the album name this item belongs to.
 	 * @param albumName The name this item belongs to.
 	 */
 	public void setAlbumName(String albumName) {
 		this.albumName = albumName;
+	}
+	
+	public long getItemID() {
+		return getField(DatabaseWrapper.ID_COLUMN_NAME).getValue();
 	}
 	
 	/**
@@ -245,6 +252,20 @@ public class AlbumItem {
 
 	public void setContentVersion(UUID contentVersion) {
 		this.contentVersion = contentVersion;
+	}
+
+	public String getPrimaryPicturePath() {
+		if (getField(DatabaseWrapper.PICTURE_COLUMN_NAME) != null) {
+			List<URI> pictureURIs = getField(DatabaseWrapper.PICTURE_COLUMN_NAME).getValue();
+			
+			if (!pictureURIs.isEmpty()) {
+				return pictureURIs.get(0).toString();
+			} else {
+				return FileSystemAccessWrapper.PLACEHOLDERIMAGE;
+			}
+		}
+		
+		return FileSystemAccessWrapper.PLACEHOLDERIMAGE;
 	}
 
 }

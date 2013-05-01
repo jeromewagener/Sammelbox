@@ -1,14 +1,10 @@
 package collector.desktop.gui;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URI;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -154,7 +150,7 @@ public class BrowserContent {
 		String javaScript = "<script src=\"file://" + FileSystemAccessWrapper.COLLECTOR_HOME_APPDATA + File.separatorChar + "effects.js" + "\"></script>";
 		String styleCSS = "<link rel=stylesheet href=\"file://"+ FileSystemAccessWrapper.COLLECTOR_HOME_APPDATA + File.separatorChar + "style.css" + "\"></link>";
 		
-		htmlBuilder.append("<html><head><meta http-equiv=\"X-UA-Compatible\" content=\"IE=9\">" + styleCSS + " " + javaScript + "</head><body>");
+		htmlBuilder.append("<html><head><meta http-equiv=\"X-UA-Compatible\" content=\"IE=9\">" + styleCSS + " " + javaScript + "</head><body><div id=\"albumItems\">");
 
 		for (AlbumItem albumItem : AlbumItemStore.getAlbumItems(AlbumItemStore.getStopIndex())) {
 			String picturePath = "";
@@ -186,8 +182,8 @@ public class BrowserContent {
 				}
 			}		
 
-			htmlBuilder.append("<div id=\"imageId" + id + "\" + class=\"pictureContainer\" " +
-					"onMouseOver=\"parent.location.href='show:///details=" + id + "'\" onClick=\"parent.location.href='show:///detailsComposite=" + id + "'\"\\>");
+			htmlBuilder.append("<div id=\"imageId" + id + "\" class=\"pictureContainer\" " +
+					"onMouseOver=\"parent.location.href=&quot;show:///details=" + id + "&quot;\" onClick=\"parent.location.href=&quot;show:///detailsComposite=" + id + "&quot;\">");
 
 			htmlBuilder.append("<div class=\"innerPictureContainer\">");
 			htmlBuilder.append("<img src=\"" + picturePath + "\">");
@@ -196,7 +192,7 @@ public class BrowserContent {
 			htmlBuilder.append("</div>");
 		}
 
-		htmlBuilder.append("</body></html>");
+		htmlBuilder.append("</div></body></html>");
 
 		String finalPageAsHtml = htmlBuilder.toString();
 
@@ -232,8 +228,7 @@ public class BrowserContent {
 
 		String finalPageAsHtml = "<!DOCTYPE HTML>" +
 				"<html><head><meta http-equiv=\"X-UA-Compatible\" content=\"IE=9\" >" + styleCSS + " " + javaScript + "</head><body bgcolor=white><table id=\"albumItems\" border=0>" + albumItemTableRowHtml + "</table></body></html>";
-		//TODO:remove this log
-		FileSystemAccessWrapper.writeToFile(finalPageAsHtml, FileSystemAccessWrapper.COLLECTOR_HOME+File.separator+"BrowserOutput.html");
+
 		browser.setText(finalPageAsHtml);
 
 		BrowserContent.lastPageAsHtml = finalPageAsHtml;		
@@ -247,6 +242,25 @@ public class BrowserContent {
 		addAlbumItemTableRow(albumItem, htmlDataColumnContent, htmlPictureColumnContent, albumItemTableRowHtml);
 		
 		return albumItemTableRowHtml.toString();
+	}
+	
+	private static String getAlbumItemDivContainerHtml(AlbumItem albumItem) {
+		StringBuilder htmlBuilder = new StringBuilder();
+		
+		addAlbumItemDivContainer(albumItem, htmlBuilder);
+		
+		return htmlBuilder.toString();
+	}
+	
+	private static void addAlbumItemDivContainer(AlbumItem albumItem, StringBuilder htmlBuilder) {
+		htmlBuilder.append("<div id=\"imageId" + albumItem.getItemID() + "\" class=\"pictureContainer\" " +
+				"onMouseOver=\"parent.location.href=&quot;show:///details=" + albumItem.getItemID() + "&quot;\" onClick=\"parent.location.href=&quot;show:///detailsComposite=" + albumItem.getItemID() + "&quot;\">");
+
+		htmlBuilder.append("<div class=\"innerPictureContainer\">");
+		htmlBuilder.append("<img src=\"" + albumItem.getPrimaryPicturePath() + "\">");
+
+		htmlBuilder.append("</div>");
+		htmlBuilder.append("</div>");
 	}
 	
 	private static void addAlbumItemTableRow(AlbumItem albumItem, StringBuilder htmlDataColumnContent, StringBuilder htmlPictureColumnContent, StringBuilder albumItemTableRowHtml) {
@@ -279,7 +293,7 @@ public class BrowserContent {
 				if (uris.size() > 1) {
 					for(URI uri : uris) {
 						htmlPictureColumnContent.append("<div align=center style=\"display:inline; min-width:40px; width:auto; width:40px\">");
-						htmlPictureColumnContent.append("<a onClick=showBigPicture(\"imageId" + id + "\") onMouseOver='change(\"imageId" + id + "\", \"" + uri.toString() + "\")'>");
+						htmlPictureColumnContent.append("<a onClick=showBigPicture(\"imageId" + id + "\") onMouseOver=\"change(&quot;imageId" + id + "&quot;, &quot;" + uri.toString() + "&quot;)\">");
 						htmlPictureColumnContent.append("<img onMouseOver=this.style.cursor=\"pointer\" style=\"max-width:40px; max-height:40px;\" src=\"" + uri.toString() + "\">");
 						htmlPictureColumnContent.append("</a>");
 						htmlPictureColumnContent.append("</div>");
@@ -319,28 +333,8 @@ public class BrowserContent {
 		albumItemTableRowHtml.append("<tr id=\"albumId" + id + "\"><td>" + htmlPictureColumnContent + "</td><td width=90% bgcolor=" + getBackgroundColorOfWidgetInHex() + ">" + htmlDataColumnContent + "</td></tr><tr><td height=\"20\" colspan=\"2\"></td></tr>");		
 	}
 	
-	// TODO move to FileSystemAccessWrapper
-	private static String readInputStreamIntoString(InputStream fileInputStream) {
-		StringBuilder stringBuilder = new StringBuilder();
-
-		try {
-			BufferedReader reader = new BufferedReader(new InputStreamReader(fileInputStream));
-			String line = null;
-			String ls = System.getProperty("line.separator");
-			while((line = reader.readLine()) != null) {
-				stringBuilder.append(line);
-				stringBuilder.append(ls);
-			}
-		} catch (IOException ioe) {
-			System.err.println(ioe.getMessage());
-		}
-
-		return stringBuilder.toString();
-	}
-
-
 	public static void loadHtmlPage(Browser browser, InputStream fileInputStream) {
-		browser.setText(readInputStreamIntoString(fileInputStream));
+		browser.setText(FileSystemAccessWrapper.readInputStreamIntoString(fileInputStream));
 	}
 
 	public static String getBackgroundColorOfWidgetInHex() {
@@ -352,7 +346,6 @@ public class BrowserContent {
 	public static void loadWelcomePage() {
 		String welcomePage = "";
 
-		// TODO use real information
 		welcomePage += "<html width=100% height=80%>";
 		welcomePage += "<body width=100% height=80%>";
 		welcomePage += "	<br>";
@@ -442,16 +435,29 @@ public class BrowserContent {
 					rows.append(getAlbumItemTableRowHtml(albumItem));
 				}
 				
+				
 				String javascript = "var table = document.getElementById('albumItems'); " +
-									"var tbody = table.tBodies[0]; "  +
+									"var tbody = table.tBodies[0]; " +
 				                    "var temp = tbody.ownerDocument.createElement('div'); " +
 				                    "temp.innerHTML = '<table>' + tbody.innerHTML + '" + rows + "</table>'; " +
 				                    "tbody.parentNode.replaceChild(temp.firstChild.firstChild, tbody); ";
-				
+								
 				Collector.getAlbumItemSWTBrowser().execute(javascript);
 			}
 		} else {
-			System.out.println("overview"); // TODO
+			if (!AlbumItemStore.isStopIndexAtEnd()) {
+				StringBuilder divs = new StringBuilder();
+				
+				AlbumItemStore.increaseStopIndex();
+				for (AlbumItem albumItem : (AlbumItemStore.getAlbumItemsInRange(AlbumItemStore.getPreviousStopIndex() + 1, AlbumItemStore.getStopIndex()))) {
+					divs.append(getAlbumItemDivContainerHtml(albumItem));
+				}
+				
+				String javascript = "var div = document.getElementById('albumItems');" +
+									"div.innerHTML = div.innerHTML + '" + divs + "';";
+								
+				Collector.getAlbumItemSWTBrowser().execute(javascript);
+			}
 		}
 	}
 }

@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AlbumItemStore {
-	private static final int DEFAULT_STOP_INDEX_INCREASE_AMOUNT = 3;
-	private static final int DEFAULT_STOP_INDEX = 100;
+	private static final int DEFAULT_STOP_INDEX_INCREASE_AMOUNT = 10;
+	private static final int DEFAULT_STOP_INDEX = 40;
 	
 	private static List<AlbumItem> albumItems = new ArrayList<AlbumItem>();
 	private static long lastReinitalized = 0;
