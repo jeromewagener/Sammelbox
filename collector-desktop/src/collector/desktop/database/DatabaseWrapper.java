@@ -1507,9 +1507,11 @@ public class DatabaseWrapper  {
 	}
 
 	public static long getNumberOfItemsInAlbum(String albumName) {
+		Statement statement = null;
+		ResultSet resultSet = null;
 		try {
-			Statement statement = connection.createStatement();
-			ResultSet resultSet = statement.executeQuery("SELECT COUNT(*) AS numberOfItems FROM " + transformNameToDBName(albumName));
+			statement = connection.createStatement();
+			resultSet = statement.executeQuery("SELECT COUNT(*) AS numberOfItems FROM " + transformNameToDBName(albumName));
 			
 			if (resultSet.next()) {
 				return resultSet.getLong("numberOfItems");
@@ -1517,6 +1519,17 @@ public class DatabaseWrapper  {
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			try {
+				resultSet.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			try {
+				statement.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 		
 		return 0;
