@@ -751,14 +751,25 @@ public class CompositeFactory {
 				}
 			}
 		});
-		Button noButtonForIncludingImages = new Button(composite, SWT.RADIO);
+		final Button noButtonForIncludingImages = new Button(composite, SWT.RADIO);
 		noButtonForIncludingImages.setText("No");
 		noButtonForIncludingImages.setSelection(!DatabaseWrapper.albumHasPictureField(album));
 		noButtonForIncludingImages.addSelectionListener(new SelectionAdapter() {
+			
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (DatabaseWrapper.albumHasPictureField(album)) {
-					DatabaseWrapper.removePictureField(album);
+					boolean removalConfirmed = Collector.showYesNoDialog("Delete album pictures", 
+							"All pictures this album may contain will bed permanently removed along with the picture field itself.\n " +
+							"Do you want to proceed?");
+					if (removalConfirmed) {
+						DatabaseWrapper.removePictureField(album);
+					}else {
+						// TODO: Find a better way to prevent the no button form being selected
+						// e.doit = false does not work.
+						yesButtonForIncludingImages.setSelection(true);
+						noButtonForIncludingImages.setSelection(false);
+					}
 				}
 			}
 		});
