@@ -47,8 +47,10 @@ public class FileSystemAccessWrapper {
 	public static final String DATABASE_TO_RESTORE				= COLLECTOR_HOME + File.separatorChar + DATABASE_TO_RESTORE_NAME;
 	public static final String VIEW_FILE						= COLLECTOR_HOME_APPDATA + File.separatorChar + "views.xml";
 	public static final String WELCOME_PAGE_FILE				= COLLECTOR_HOME_APPDATA + File.separatorChar + "welcome.xml";
+	public static final String LOCK_FILE						= COLLECTOR_HOME_APPDATA + File.separatorChar + ".lock";
 	
 	private static final boolean OVERWRITE_EXISITING_FILES = true;
+	
 	
 	/**
 	 * Instance to itself used in the process to located stored resources. 
