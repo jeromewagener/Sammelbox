@@ -218,8 +218,7 @@ public class ToolbarComposite implements UIObserver {
 			@Override
 			public void mouseUp(MouseEvent arg0) {
 				if (!Collector.hasSelectedAlbum()) {
-					Collector
-							.showErrorDialog("No album has been selected",
+					ComponentFactory.showErrorDialog(toolbarComposite,"No album has been selected",
 									"Please select an album from the list or create one first.");
 					return;
 				}
@@ -293,8 +292,7 @@ public class ToolbarComposite implements UIObserver {
 			@Override
 			public void mouseUp(MouseEvent arg0) {
 				if (!Collector.hasSelectedAlbum()) {
-					Collector
-							.showErrorDialog("No album has been selected",
+					ComponentFactory.showErrorDialog(toolbarComposite,"No album has been selected",
 									"Please select an album from the list or create one first.");
 					return;
 				}

@@ -14,7 +14,7 @@ public class QuickSearchModifyListener implements ModifyListener {
 	/** This method launches a quick-search for the entered keywords if an album has been selected*/
 	public void modifyText(ModifyEvent e) {
 		if (!Collector.hasSelectedAlbum()) {
-			Collector.showErrorDialog("No album has been selected", "Please select an album from the list or create one first.");
+			ComponentFactory.showErrorDialog(Collector.getShell(),"No album has been selected", "Please select an album from the list or create one first.");
 			return;
 		}
 		if (((Text) e.widget).getText().equals("")) {

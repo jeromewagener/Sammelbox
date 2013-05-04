@@ -238,7 +238,7 @@ public class CompositeFactory {
 	 * @return a new advanced search composite */
 	public static Composite getAdvancedSearchComposite(final Composite parentComposite, final String album) {
 		// setup advanced composite
-		Composite advancedSearchComposite = new Composite(parentComposite, SWT.NONE);
+		final Composite advancedSearchComposite = new Composite(parentComposite, SWT.NONE);
 		advancedSearchComposite.setLayout(new GridLayout(1, false));
 		advancedSearchComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
@@ -414,7 +414,7 @@ public class CompositeFactory {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (!Collector.hasSelectedAlbum()) {
-					Collector.showErrorDialog("No album has been selected", "Please select an album from the list or create one first.");
+					ComponentFactory.showErrorDialog(advancedSearchComposite, "No album has been selected", "Please select an album from the list or create one first.");
 					return;
 				}
 
@@ -698,7 +698,7 @@ public class CompositeFactory {
 	 * @return a new "alter album" composite */
 	public static Composite getAlterAlbumComposite(final Composite parentComposite, final String album) {
 		// setup alter album composite
-		Composite alterAlbumComposite = new Composite(parentComposite, SWT.NONE);
+		final Composite alterAlbumComposite = new Composite(parentComposite, SWT.NONE);
 		alterAlbumComposite.setLayout(new GridLayout());
 
 		// description (header) label
@@ -773,7 +773,7 @@ public class CompositeFactory {
 			public void widgetSelected(SelectionEvent e) {
 				String currentAlbumName = albumNameText.getData().toString();
 				if (DatabaseWrapper.albumHasPictureField(currentAlbumName)) {
-					boolean removalConfirmed = Collector.showYesNoDialog("Delete album pictures", 
+					boolean removalConfirmed = ComponentFactory.showYesNoDialog(alterAlbumComposite, "Delete album pictures", 
 							"All pictures this album may contain will bed permanently removed along with the picture field itself.\n " +
 							"Do you want to proceed?");
 					if (removalConfirmed) {
@@ -900,7 +900,7 @@ public class CompositeFactory {
 		delete.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (albumFieldNamesAndTypesTable.getSelectionIndex() != -1) {	    	
-					boolean removalConfirmed = Collector.showYesNoDialog("Delete album field", "The album item will be permanently deleted.\n Do you want to proceed?");
+					boolean removalConfirmed = ComponentFactory.showYesNoDialog(alterAlbumComposite,"Delete album field", "The album item will be permanently deleted.\n Do you want to proceed?");
 					if (removalConfirmed) {
 						TableItem item = albumFieldNamesAndTypesTable.getItem(albumFieldNamesAndTypesTable.getSelectionIndex());
 						
@@ -1329,7 +1329,7 @@ public class CompositeFactory {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (!Collector.hasSelectedAlbum()) {
-					Collector.showErrorDialog("No album has been selected", "Please select an album from the list or create one first.");
+					ComponentFactory.showErrorDialog(composite,"No album has been selected", "Please select an album from the list or create one first.");
 					return;
 				}
 				AlbumItem albumItem = new AlbumItem(Collector.getSelectedAlbum());

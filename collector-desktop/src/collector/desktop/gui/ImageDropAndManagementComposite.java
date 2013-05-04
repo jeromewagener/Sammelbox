@@ -202,7 +202,7 @@ public class ImageDropAndManagementComposite extends Composite implements DropTa
 	@Override
 	public void drop(DropTargetEvent event) {
 		if (!Collector.hasSelectedAlbum()) {
-			Collector.showErrorDialog("No album has been selected", "Please select an album from the list or create one first.");
+			ComponentFactory.showErrorDialog(this, "No album has been selected", "Please select an album from the list or create one first.");
 			return;
 		}
 		if (event.data instanceof String[]) {

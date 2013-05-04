@@ -568,7 +568,7 @@ public class Collector implements UIObservable, UIObserver {
 				// Ensure that the following context sensitive actions are applied only when an album has been selected.
 				// --------------------------------------------------------------
 				if (!Collector.hasSelectedAlbum()) {
-					Collector.showErrorDialog("No album has been selected", "Please select an album from the list or create one first.");
+					ComponentFactory.showErrorDialog(Collector.getShell(), "No album has been selected", "Please select an album from the list or create one first.");
 					return;
 				}
 				if (((MenuItem) event.widget).getText().equals("Delete selected Album")) {
@@ -701,25 +701,7 @@ public class Collector implements UIObservable, UIObserver {
 		}
 	}
 
-	public static void showErrorDialog(String TitleText, String messageText) {
-		MessageBox errorMessageBox = new MessageBox(getShell());
-		errorMessageBox.setText(TitleText);
-		errorMessageBox.setMessage(messageText);
-		errorMessageBox.open();
-	}
 	
-	public static boolean showYesNoDialog(String TitleText, String messageText) {
-		int questionMessageBoxStyle = SWT.ICON_QUESTION |SWT.YES | SWT.NO;
-		MessageBox errorMessageBox = new MessageBox(getShell(), questionMessageBoxStyle);
-		errorMessageBox.setText(TitleText);
-		errorMessageBox.setMessage(messageText);
-		int messageBoxResultFlag = errorMessageBox.open();
-		if ( messageBoxResultFlag  == SWT.YES) {
-			return true;
-		}else {
-			return false;
-		}
-	}
 }
 
 

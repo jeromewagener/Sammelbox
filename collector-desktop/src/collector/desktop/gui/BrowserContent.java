@@ -80,7 +80,7 @@ public class BrowserContent {
 
 	public static void showPicture(String pathToPicture, long albumItemId) {
 		if (!Collector.hasSelectedAlbum()) {
-			Collector.showErrorDialog("No album has been selected", "Please select an album from the list or create one first.");
+			ComponentFactory.showErrorDialog(Collector.getShell(), "No album has been selected", "Please select an album from the list or create one first.");
 			return;
 		}
 		StringBuilder smallPage = new StringBuilder();
@@ -351,7 +351,7 @@ public class BrowserContent {
 
 	private static void showDetailedAlbum(Browser browser) {
 		if (!Collector.hasSelectedAlbum()) {
-			Collector.showErrorDialog("No album has been selected", "Please select an album from the list or create one first.");
+			ComponentFactory.showErrorDialog(Collector.getShell(), "No album has been selected", "Please select an album from the list or create one first.");
 			return;
 		}
 		StringBuilder albumItemTableRowHtml = new StringBuilder();
