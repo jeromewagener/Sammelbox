@@ -2,6 +2,10 @@ body {
 	font-family: Verdana, Liberation, Arial;
 }
 
+.highlight {
+	background-color:orange;
+}
+
 .boldy {
 	font-weight: bold;
 }

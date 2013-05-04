@@ -19,6 +19,7 @@ import collector.desktop.database.AlbumItemStore;
 import collector.desktop.database.DatabaseWrapper;
 import collector.desktop.database.FieldType;
 import collector.desktop.database.ItemField;
+import collector.desktop.database.MetaItemField;
 import collector.desktop.database.OptionType;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
 
@@ -140,6 +141,154 @@ public class BrowserContent {
 		} else {
 			showOverviewAlbum(browser);
 		}
+	}
+	
+	/**
+	 * Shows a page that allows to review the changes made to the album and reload the album to see the changes. 
+	 * Only one change is displayed. 
+	 * @param browser The browser used to display the webpage.
+	 * @param oldAlbumName
+	 * @param oldAlbumFields
+	 * @param oldHasAlbumPictureField
+	 * @param newAlbumName
+	 * @param newAlbumFields
+	 * @param newHasAlbumPictureField
+	 */
+	public static void showAlteredAlbumPage(Browser browser,String oldAlbumName, List<MetaItemField> oldAlbumFields, boolean oldHasAlbumPictureField,
+			String newAlbumName, List<MetaItemField> newAlbumFields, boolean newHasAlbumPictureField) {
+		StringBuilder htmlBuilder = new StringBuilder();
+		String javaScript = "<script src=\"file://" + FileSystemAccessWrapper.COLLECTOR_HOME_APPDATA + File.separatorChar + "effects.js" + "\"></script>";
+		String styleCSS = "<link rel=stylesheet href=\"file://"+ FileSystemAccessWrapper.COLLECTOR_HOME_APPDATA + File.separatorChar + "style.css" + "\"></link>";
+		// TODO: implement better diff with more verbose output of the changes. Left old, right new kind of display
+		htmlBuilder.append("<html><head><meta http-equiv=\"X-UA-Compatible\" content=\"IE=9\">" + styleCSS + " " + javaScript + "</head><body><div>");
+		
+		htmlBuilder.append("<form><table><tr><th>Before</th><th>After</th></tr>");	
+		// Album names
+		htmlBuilder.append("<tr><td>");
+		htmlBuilder.append(oldAlbumName);// old album name
+		htmlBuilder.append("</td>");
+		if (!oldAlbumName.equals(newAlbumName)) {
+			htmlBuilder.append("<td class=\"highlight\">");
+			htmlBuilder.append(newAlbumName);// new album name
+			htmlBuilder.append("</td>");
+		}
+		
+		htmlBuilder.append("</tr>");
+		// Fields
+		int TypeOfAltering = newAlbumFields.size() - oldAlbumFields.size();// 0 for rename, 1 for add, -1 for remove field
+		final int albumFieldDeleted = -1;
+		final int albumFieldRenamed = 0;
+		final int albumFieldAdded = 1;
+		int indexOffset = 0;
+		
+		if (oldAlbumFields.size() == 0) {
+			// skip old item
+			htmlBuilder.append("<tr><td>------</td>");// old album
+			if (newAlbumFields.size() == 0) {
+				htmlBuilder.append("<td>------</td>");// new album
+			}else {
+				// print new item
+				htmlBuilder.append("<td class=\"highlight\">");
+				htmlBuilder.append(newAlbumFields.get(0).toString());// new album
+				htmlBuilder.append("</td>");
+			}
+			htmlBuilder.append("</tr>");
+		}else if (newAlbumFields.size() == 0) {
+			// print old item and skip new item
+			htmlBuilder.append("<tr><td class=\"highlight\">");
+			htmlBuilder.append(oldAlbumFields.get(0).toString());// old album
+			htmlBuilder.append("</td>");
+			htmlBuilder.append("<td>------</td></tr>");// new album
+		}else if (TypeOfAltering == albumFieldRenamed)  {
+			for(int indexForFields=0;indexForFields<oldAlbumFields.size(); indexForFields++){
+				if (!oldAlbumFields.get(indexForFields).equals(newAlbumFields.get(indexForFields))) {
+					htmlBuilder.append("<tr>");
+					// print old
+					htmlBuilder.append(composeAlbumItemFieldTD(oldAlbumFields.get(indexForFields).toString(), false, oldAlbumFields.get(indexForFields).isQuickSearchable()));
+					// print new with highlight class
+					htmlBuilder.append(composeAlbumItemFieldTD(newAlbumFields.get(indexForFields).toString(), true, newAlbumFields.get(indexForFields).isQuickSearchable()));
+					htmlBuilder.append("</tr>");				
+				}else{
+					// print old
+					htmlBuilder.append("<tr>");
+					htmlBuilder.append(composeAlbumItemFieldTD(oldAlbumFields.get(indexForFields).toString(), false, oldAlbumFields.get(indexForFields).isQuickSearchable())); 
+					// print new
+					htmlBuilder.append(composeAlbumItemFieldTD(newAlbumFields.get(indexForFields).toString(), false, newAlbumFields.get(indexForFields).isQuickSearchable()));
+					htmlBuilder.append("</tr>");
+				}
+			}
+		}else if (TypeOfAltering == albumFieldDeleted)  {
+			for(int indexForFields=0;indexForFields<oldAlbumFields.size(); indexForFields++){
+				if (!oldAlbumFields.get(indexForFields).equals(newAlbumFields.get(indexForFields))) {
+					// print old
+					htmlBuilder.append("<tr>");
+					htmlBuilder.append(composeAlbumItemFieldTD(oldAlbumFields.get(indexForFields).toString(), false, oldAlbumFields.get(indexForFields).isQuickSearchable()));
+					// for new list use index-1 and print highlighted blank cell
+					htmlBuilder.append(composeAlbumItemFieldTD(newAlbumFields.get(indexForFields).toString(), true, newAlbumFields.get(indexForFields).isQuickSearchable()));
+					htmlBuilder.append("</tr>");
+					indexOffset = -1;
+				}else{
+					// print old
+					htmlBuilder.append("<tr>");
+					htmlBuilder.append(composeAlbumItemFieldTD(oldAlbumFields.get(indexForFields).toString(), false, oldAlbumFields.get(indexForFields).isQuickSearchable()));
+					// print new
+					htmlBuilder.append(composeAlbumItemFieldTD(newAlbumFields.get(indexForFields+indexOffset).toString(), false, newAlbumFields.get(indexForFields+indexOffset).isQuickSearchable()));
+					htmlBuilder.append("</tr>");
+				}
+			}
+		}else if (TypeOfAltering == albumFieldAdded)  {
+			for(int indexForFields=0;indexForFields<newAlbumFields.size(); indexForFields++){
+				if (!oldAlbumFields.get(indexForFields).equals(newAlbumFields.get(indexForFields))) {
+					// print old with blank
+					htmlBuilder.append("<tr><td>------</td>");// old album
+					// for new list use index-1 and print highlighted added cell
+					htmlBuilder.append(composeAlbumItemFieldTD(newAlbumFields.get(indexForFields+indexOffset).toString(), true, newAlbumFields.get(indexForFields+indexOffset).isQuickSearchable()));
+					htmlBuilder.append("</tr>");
+					indexOffset = -1;
+				}else{
+					// print old
+					htmlBuilder.append("<tr>");
+					htmlBuilder.append(oldAlbumFields.get(indexForFields+indexOffset).toString());// old album
+					htmlBuilder.append(composeAlbumItemFieldTD(oldAlbumFields.get(indexForFields+indexOffset).toString(), false, oldAlbumFields.get(indexForFields+indexOffset).isQuickSearchable()));
+					htmlBuilder.append("</td>");
+					// print new
+					htmlBuilder.append(composeAlbumItemFieldTD(newAlbumFields.get(indexForFields).toString(), true, newAlbumFields.get(indexForFields).isQuickSearchable()));
+					htmlBuilder.append("</tr>");
+				}
+			}
+		}
+		
+		
+		// Has pictures
+		String pictureFieldIsHiglightedTD = (oldHasAlbumPictureField == newHasAlbumPictureField) ? "<td>" : "<td class=\"highlight\">";
+		htmlBuilder.append("<tr><td>");
+		htmlBuilder.append("<input type=\"checkbox\" checked = \"");
+		htmlBuilder.append(oldHasAlbumPictureField ? "true": "false");// old album
+		htmlBuilder.append("\">Album has picture<br></td>"); 
+		
+		htmlBuilder.append(pictureFieldIsHiglightedTD);		
+		htmlBuilder.append("<input type=\"checkbox\" checked = \"");
+		htmlBuilder.append(newHasAlbumPictureField ? "true": "false");// new  album
+		htmlBuilder.append("\">Album has picture<br></td></tr>");
+		
+		htmlBuilder.append("</table>");
+		htmlBuilder.append("<input type=\"button\" onclick=parent.location.href=\"show:///showalbum=" + newAlbumName + "\" value=\"Go back to album\">");
+		htmlBuilder.append("</form></div></body></html>");
+		String finalPageAsHtml = htmlBuilder.toString();
+
+		browser.setText(finalPageAsHtml);
+	}
+	
+	private static String composeAlbumItemFieldTD(String itemField, boolean highlightField, boolean isQuickSearchable){
+		StringBuilder htmlBuilder = new StringBuilder();
+		String itemValue = itemField.isEmpty() ? "------" : itemField;
+		String tdStartTag = !highlightField ? "<td>" : "<td  class=\"highlight\">";
+		htmlBuilder.append(tdStartTag);
+		htmlBuilder.append("<input type=\"checkbox\" checked=\"");
+		htmlBuilder.append(isQuickSearchable ? "true\">": "false\">");// item
+		htmlBuilder.append(itemValue);
+		htmlBuilder.append("<br></td>"); 
+		return htmlBuilder.toString();
 	}
 
 	private static void showOverviewAlbum(Browser browser) {
@@ -275,7 +424,7 @@ public class BrowserContent {
 					// do not show, but store id
 					id = fieldItem.getValue();
 				} else {
-					// its a trap :-) (Probably just the typeinfo foreign key..)
+					// TODO: its a trap :-) (Probably just the typeinfo foreign key..) probably not since that is caught just above ;)
 				}
 			}
 			else if (fieldItem.getType().equals(FieldType.Picture)) {

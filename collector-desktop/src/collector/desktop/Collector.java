@@ -533,6 +533,7 @@ public class Collector implements UIObservable, UIObserver {
 					DatabaseWrapper.restoreFromFile(path);
 					// No default album is selected on restore
 					Collector.refreshSWTAlbumList();
+					
 					BrowserContent.loadHtmlPage(Collector.getAlbumItemSWTBrowser(), getShell().getClass().getClassLoader().getResourceAsStream("htmlfiles/albums_restored.html"));
 				}
 			} else if (((MenuItem) event.widget).getText().equals("Help Contents")) {

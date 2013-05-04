@@ -2360,7 +2360,7 @@ public class DatabaseWrapper  {
 		try {
 			statement = connection.createStatement();
 			statement.executeUpdate("restore from '" + FileSystemAccessWrapper.DATABASE_TO_RESTORE+"'");
-
+			lastChangeTimeStamp =  System.currentTimeMillis();
 		} catch (SQLException e) {
 			successState = false;
 			e.printStackTrace();
