@@ -649,11 +649,7 @@ public class CompositeFactory {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (DatabaseWrapper.listAllAlbums().contains(albumNameText.getText())) {
-					ComponentFactory.getMessageBox(parentComposite, "Name already in use", "This name is already used by another album. Please choose another name.", SWT.ICON_INFORMATION).open();					
-					return;
-				}
-				
+					
 				ArrayList<MetaItemField> metaItemFields = new ArrayList<MetaItemField>();
 
 				for ( int i=0 ; i < albumFieldNamesAndTypesTable.getItemCount() ; i++ ) {					
@@ -669,7 +665,12 @@ public class CompositeFactory {
 					willContainImages = true;
 				}
 
-				DatabaseWrapper.createNewAlbum(albumNameText.getText(), metaItemFields, willContainImages);				
+				boolean albumCreationSuccessful = DatabaseWrapper.createNewAlbum(albumNameText.getText(), metaItemFields, willContainImages);
+				if (!albumCreationSuccessful) {
+					ComponentFactory.getMessageBox(parentComposite, "Name already in use", "This name is already used by another album. Please choose another name.", SWT.ICON_INFORMATION).open();
+					return;
+				}
+				
 				// Correctly select and display the selected album.
 				Collector.refreshSWTAlbumList();
 				Collector.setSelectedAlbum(albumNameText.getText());				
@@ -718,11 +719,14 @@ public class CompositeFactory {
 		renameAlbumButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (DatabaseWrapper.listAllAlbums().contains(albumNameText.getText())) {
-					ComponentFactory.getMessageBox(parentComposite, "Name already in use", "This name is already used by another album. Please choose another name.", SWT.ICON_INFORMATION).open();					
-					return;
-				}
 				String newAlbumName = albumNameText.getText();
+				
+				boolean isAlbumNameValid = DatabaseWrapper.isAlbumNameValid(newAlbumName); 
+				if (!isAlbumNameValid) {
+					ComponentFactory.getMessageBox(parentComposite, "Name already in use", "This name is already used by another album. Please choose another name.", SWT.ICON_INFORMATION).open();
+					return;
+				}			
+				
 				String currentAlbumName = albumNameText.getData().toString();
 				if (DatabaseWrapper.renameAlbum(currentAlbumName, newAlbumName)) {
 					albumNameText.setData(newAlbumName);

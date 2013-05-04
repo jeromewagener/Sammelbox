@@ -24,7 +24,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.eclipse.swt.SWT;
+
 import collector.desktop.filesystem.FileSystemAccessWrapper;
+import collector.desktop.gui.ComponentFactory;
 import collector.desktop.gui.QueryBuilder;
 import collector.desktop.gui.QueryBuilder.QueryComponent;
 import collector.desktop.gui.QueryBuilder.QueryOperator;
@@ -102,7 +105,7 @@ public class DatabaseWrapper  {
 	 */
 	public static boolean createNewAlbum(String albumName, List<MetaItemField> fields, boolean hasAlbumPictureField) {
 		// TODO: validate input
-		if (fields == null) {
+		if (fields == null || !isAlbumNameValid(albumName)) {
 			return false;
 		}
 		Boolean result = true;
@@ -2077,6 +2080,20 @@ public class DatabaseWrapper  {
 		}else {
 			return false;
 		}	
+	}
+	
+	/**
+	 * Tests if the proposed album name is valid and not already in use by another album.
+	 * @param requestedAalbumName The proposed album name to be tested of validity.
+	 * @return True if the name can be inserted into the database. False otherwise.
+	 */
+	public static boolean isAlbumNameValid(String requestedAalbumName) {
+		for (String albumName : DatabaseWrapper.listAllAlbums()) {
+			if (albumName.equalsIgnoreCase(requestedAalbumName)) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**
