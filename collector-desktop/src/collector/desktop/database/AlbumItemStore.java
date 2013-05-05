@@ -8,18 +8,19 @@ public class AlbumItemStore {
 	private static final int DEFAULT_STOP_INDEX = 40;
 	
 	private static List<AlbumItem> albumItems = new ArrayList<AlbumItem>();
+	private static String currentAlbumName = "";
 	private static long lastReinitalized = 0;
 	private static int stopIndex = DEFAULT_STOP_INDEX;
 	private static int previousStopIndex = DEFAULT_STOP_INDEX;
 	
 	public static void reinitializeStore(AlbumItemResultSet albumItemResultSet) {
-			
-		if (!isOutDated()) {
+		
+		if (!isOutDated() && currentAlbumName.equals(albumItemResultSet.getAlbumName())) {
 			// Don't do anything when the store is not really outdated.
 			albumItemResultSet.close();
 			return;
 		}
-		
+		currentAlbumName = albumItemResultSet.getAlbumName();
 		albumItems.clear();
 		lastReinitalized = System.currentTimeMillis();
 		stopIndex = DEFAULT_STOP_INDEX;

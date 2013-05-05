@@ -163,7 +163,7 @@ public class AlbumItemResultSet {
 	public boolean close() {
 		try {
 			items.close();
-		} catch (SQLException e) {
+		} catch (SQLException e) {			
 			e.printStackTrace();
 			return false;
 		}

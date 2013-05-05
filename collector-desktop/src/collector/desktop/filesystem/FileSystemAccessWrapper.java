@@ -49,8 +49,10 @@ public class FileSystemAccessWrapper {
 	public static final String VIEW_FILE						= COLLECTOR_HOME_APPDATA + File.separatorChar + "views.xml";
 	public static final String ALBUM_FILE						= COLLECTOR_HOME_APPDATA + File.separatorChar + "albums.xml";
 	public static final String WELCOME_PAGE_FILE				= COLLECTOR_HOME_APPDATA + File.separatorChar + "welcome.xml";
+	public static final String LOCK_FILE						= COLLECTOR_HOME_APPDATA + File.separatorChar + ".lock";
 	
 	private static final boolean OVERWRITE_EXISITING_FILES = true;
+	
 	
 	/**
 	 * Instance to itself used in the process to located stored resources. 

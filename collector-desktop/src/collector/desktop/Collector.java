@@ -1,5 +1,7 @@
 package collector.desktop;
 
+import java.io.RandomAccessFile;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -32,6 +34,7 @@ import collector.desktop.gui.AlbumViewManager;
 import collector.desktop.gui.AlbumViewManager.AlbumView;
 import collector.desktop.gui.BrowserContent;
 import collector.desktop.gui.BrowserListener;
+import collector.desktop.gui.ComponentFactory;
 import collector.desktop.gui.CompositeFactory;
 import collector.desktop.gui.PanelType;
 import collector.desktop.gui.StatusBarComposite;
@@ -468,6 +471,7 @@ public class Collector implements UIObservable, UIObserver {
 	/** After adding/removing albums, this method should be used to refresh the SWT album list with the current album names thus leaving no album selected.*/
 	public static void refreshSWTAlbumList() {
 		instance.update(AlbumManager.class);
+		Collector.getQuickSearchTextField().setEnabled(false);
 	}
 
 	/** Sets the the list of albums
@@ -542,7 +546,7 @@ public class Collector implements UIObservable, UIObserver {
 				Collector.refreshSWTAlbumList();
 				BrowserContent.loadHtmlPage(
 						getAlbumItemSWTBrowser(),
-						getShell().getClass().getClassLoader().getResourceAsStream("helpfiles/about.html"));
+						getShell().getClass().getClassLoader().getResourceAsStream("helpfiles/about.html"));				
 				changeRightCompositeTo(PanelType.Help, CompositeFactory.getEmptyComposite(threePanelComposite));
 			} else if (((MenuItem) event.widget).getText().equals("Synchronize")) {
 				changeRightCompositeTo(PanelType.Synchronization, CompositeFactory.getSynchronizeComposite(threePanelComposite));
@@ -562,7 +566,7 @@ public class Collector implements UIObservable, UIObserver {
 				// Ensure that the following context sensitive actions are applied only when an album has been selected.
 				// --------------------------------------------------------------
 				if (!Collector.hasSelectedAlbum()) {
-					Collector.showErrorDialog("No album has been selected", "Please select an album from the list or create one first.");
+					ComponentFactory.showErrorDialog(Collector.getShell(), "No album has been selected", "Please select an album from the list or create one first.");
 					return;
 				}
 				if (((MenuItem) event.widget).getText().equals("Delete selected Album")) {
@@ -606,24 +610,39 @@ public class Collector implements UIObservable, UIObserver {
 
 	/** The main method initializes the database (using the collector constructor) and establishes the user interface */
 	public static void main(String[] args) throws ClassNotFoundException {
-		// Initialize the Database connection
-		new Collector();
-
-		//TODO IMPORT FOR ROBY - REMOVE IF NOT REQUIRED ANYMORE
-		//CSVImporter.importCSV();
-
-		// Register as observer
-		AlbumManager.getInstance().registerObserver(instance);
-		ToolbarComposite.getInstance(Collector.getShell()).registerAsObserverToCollectorUpdates();
-		AlbumViewManager.getInstance().registerObserver(instance);
+	    try {
+			RandomAccessFile randomFile = new RandomAccessFile(FileSystemAccessWrapper.LOCK_FILE, "rw");
+		    FileChannel channel = randomFile.getChannel();
+		    
+		    if (channel.tryLock() != null) {
+				// Initialize the Database connection
+				new Collector();
 		
-		// create the shell and show the user interface. This blocks until the shell is closed
-		createCollectorShell(getShell());
-
-		// close the database connection if the the shell is closed
-		DatabaseWrapper.closeConnection();
+				// Register the toolbar as an observer for collector updates
+				AlbumManager.getInstance().registerObserver(instance);
+				ToolbarComposite.getInstance(Collector.getShell()).registerAsObserverToCollectorUpdates();
+				AlbumViewManager.getInstance().registerObserver(instance);
+		
+				// create the shell and show the user interface. This blocks until the shell is closed
+				createCollectorShell(getShell());
+		
+				// close the database connection if the the shell is closed
+				DatabaseWrapper.closeConnection();
+				
+				// close file & channel
+				channel.close();
+				randomFile.close();
+		    } else {
+		    	ComponentFactory.getMessageBox(getShell(), 
+		    			"Sammelbox is already running", 
+		    			"You ensure data integrity only a single Sammelbox instance can run at the same time. Sorry!", 
+		    			SWT.ICON_INFORMATION).open();
+		    }
+	    } catch (Exception ex) {
+	    	System.out.println(ex.toString()); // TODO log me
+	    }
 	}
-
+	
 	public static PanelType getCurrentRightPanelType() {
 		return currentRightPanelType;
 	}
@@ -687,25 +706,7 @@ public class Collector implements UIObservable, UIObserver {
 		}
 	}
 
-	public static void showErrorDialog(String TitleText, String messageText) {
-		MessageBox errorMessageBox = new MessageBox(getShell());
-		errorMessageBox.setText(TitleText);
-		errorMessageBox.setMessage(messageText);
-		errorMessageBox.open();
-	}
 	
-	public static boolean showYesNoDialog(String TitleText, String messageText) {
-		int questionMessageBoxStyle = SWT.ICON_QUESTION |SWT.YES | SWT.NO;
-		MessageBox errorMessageBox = new MessageBox(getShell(), questionMessageBoxStyle);
-		errorMessageBox.setText(TitleText);
-		errorMessageBox.setMessage(messageText);
-		int messageBoxResultFlag = errorMessageBox.open();
-		if ( messageBoxResultFlag  == SWT.YES) {
-			return true;
-		}else {
-			return false;
-		}
-	}
 }
 
 

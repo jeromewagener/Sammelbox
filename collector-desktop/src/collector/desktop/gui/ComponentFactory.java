@@ -119,17 +119,46 @@ public class ComponentFactory {
 	}
 
 	/** Returns a messageBox
-	 * @param parentComposite the parent of the message box 
-	 * @param title the title/caption of the message box
-	 * @param text the text shown within the message box
-	 * @param style a SWT style constant (E.g. SWT.ICON_ERROR)
-	 * @return a new message box */
+	 * @param parentComposite The parent of the message box 
+	 * @param title The title/caption of the message box
+	 * @param text The text shown within the message box
+	 * @param style A SWT style constant (E.g. SWT.ICON_ERROR)
+	 * @return A new message box */
 	public static MessageBox getMessageBox(Composite parentComposite, String title, String text, int style) {
 		MessageBox messageBox = new MessageBox(parentComposite.getShell(), style);
 		messageBox.setText(title);
 		messageBox.setMessage(text);
 
 		return messageBox;
+	}
+	
+	/**
+	 * Convenience method to open a simple error message box.
+	 * @param parentComposite The parent of the message box 
+	 * @param titleText he title/caption of the message box
+	 * @param messageText The text shown within the message box
+	 */
+	public static void showErrorDialog(Composite parentComposite, String titleText, String messageText) {
+		int errorMessageBoxStyle = SWT.ERROR;
+		MessageBox errorMessageBox = getMessageBox(parentComposite, titleText, messageText, errorMessageBoxStyle);
+		errorMessageBox.open();
+	}
+	
+	/**
+	 * Convenience method to open a simple message box with a yes and no button.
+	 * @param parentComposite The parent of the message box 
+	 * @param titleText he title/caption of the message box
+	 * @param messageText The text shown within the message box
+	 */
+	public static boolean showYesNoDialog(Composite parentComposite, String titleText, String messageText) {
+		int questionMessageBoxStyle = SWT.ICON_QUESTION |SWT.YES | SWT.NO;
+		MessageBox questionMessageBox= getMessageBox(parentComposite, titleText, messageText, questionMessageBoxStyle);
+		int messageBoxResultFlag = questionMessageBox.open();
+		if ( messageBoxResultFlag  == SWT.YES) {
+			return true;
+		}else {
+			return false;
+		}
 	}
 	
 	/**

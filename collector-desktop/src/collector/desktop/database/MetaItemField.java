@@ -15,8 +15,7 @@ public class MetaItemField {
 	
 	/**
 	 *  Alternative constructor. Disables the quicksearch support by default if item is inserted into database.
-	 * Recommended for internal use by the {@link DatabaseWrapper} only. To fetch or delete please refer to
-	 * al
+	 * Recommended for internal use by the {@link DatabaseWrapper} only.
 	 * @param name The name of the field.
 	 * @param type The type of the field. All values inserted must be of the specified type.
 	 */
