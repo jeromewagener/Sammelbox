@@ -27,6 +27,7 @@ import collector.desktop.database.DatabaseWrapper;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
 import collector.desktop.filesystem.export.CSVExporter;
 import collector.desktop.filesystem.export.HTMLExporter;
+import collector.desktop.gui.AlbumManager;
 import collector.desktop.gui.AlbumViewManager;
 import collector.desktop.gui.AlbumViewManager.AlbumView;
 import collector.desktop.gui.BrowserContent;
@@ -203,6 +204,7 @@ public class Collector implements UIObservable, UIObserver {
 	/** This method is used during the creation of the user interface. It ensures that 
 	 * the first album is selected and its items are presented */
 	private static void selectDefaultAndShowSelectedAlbum() {
+// TODO Remove if not needed
 //		if (albumSWTList.getItemCount() > 0) {
 //			albumSWTList.setSelection(0);
 //			Collector.setSelectedAlbum(albumSWTList.getItem(albumSWTList.getSelectionIndex()));
@@ -465,11 +467,7 @@ public class Collector implements UIObservable, UIObserver {
 	
 	/** After adding/removing albums, this method should be used to refresh the SWT album list with the current album names thus leaving no album selected.*/
 	public static void refreshSWTAlbumList() {
-		albumSWTList.removeAll();
-		setSelectedAlbum("");
-		for (String album : DatabaseWrapper.listAllAlbums()) {
-			albumSWTList.add(album);			
-		}
+		instance.update(AlbumManager.class);
 	}
 
 	/** Sets the the list of albums
@@ -614,10 +612,11 @@ public class Collector implements UIObservable, UIObserver {
 		//TODO IMPORT FOR ROBY - REMOVE IF NOT REQUIRED ANYMORE
 		//CSVImporter.importCSV();
 
-		// Register the toolbar as an observer for collector updates
+		// Register as observer
+		AlbumManager.getInstance().registerObserver(instance);
 		ToolbarComposite.getInstance(Collector.getShell()).registerAsObserverToCollectorUpdates();
 		AlbumViewManager.getInstance().registerObserver(instance);
-
+		
 		// create the shell and show the user interface. This blocks until the shell is closed
 		createCollectorShell(getShell());
 
@@ -669,7 +668,13 @@ public class Collector implements UIObservable, UIObserver {
 
 	@Override
 	public void update(Class<?> origin) {
-		if (origin == AlbumViewManager.class) {
+		if (origin == AlbumManager.class) {
+			albumSWTList.removeAll();
+			
+			for (String album : AlbumManager.getInstance().getAlbums()) {
+				albumSWTList.add(album);
+			}
+		} else if (origin == AlbumViewManager.class) {
 			viewSWTList.removeAll();
 
 			for (AlbumView albumView : AlbumViewManager.getAlbumViews(selectedAlbum)) {

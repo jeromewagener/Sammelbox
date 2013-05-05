@@ -63,7 +63,7 @@ public class CompositeFactory {
 		// separator grid data
 		GridData seperatorGridData = new GridData(GridData.FILL_BOTH);
 		seperatorGridData.minimumHeight = 15;
-		
+
 		// quick-search label
 		Label quickSearchLabel = new Label(quickControlComposite, SWT.NONE);
 		quickSearchLabel.setText("Quicksearch:");
@@ -74,7 +74,7 @@ public class CompositeFactory {
 		quickSearchText.setLayoutData(new GridData(GridData.FILL_BOTH));
 		quickSearchText.addModifyListener(new QuickSearchModifyListener());
 		Collector.setQuickSearchTextField(quickSearchText);
-		
+
 		// separator
 		new Label(quickControlComposite, SWT.SEPARATOR | SWT.HORIZONTAL).setLayoutData(seperatorGridData);
 
@@ -93,7 +93,7 @@ public class CompositeFactory {
 
 		// Set the currently active album
 		Collector.setAlbumSWTList(albumList);
-		
+
 		// separator
 		new Label(quickControlComposite, SWT.SEPARATOR | SWT.HORIZONTAL).setLayoutData(seperatorGridData);
 
@@ -106,7 +106,7 @@ public class CompositeFactory {
 		final List viewList = new List(quickControlComposite, SWT.SINGLE | SWT.BORDER | SWT.V_SCROLL);
 		// initialize view list
 		AlbumViewManager.initialize();
-		
+
 		GridData gridData2 = new GridData(GridData.FILL_BOTH);
 		gridData2.heightHint = 200;
 		gridData2.widthHint = 125;
@@ -122,7 +122,7 @@ public class CompositeFactory {
 				if (albumList.getSelectionIndex() != -1)	{			
 
 					Collector.setSelectedAlbum(albumList.getItem(albumList.getSelectionIndex()));
-					
+
 					Collector.changeRightCompositeTo(PanelType.Empty, CompositeFactory.getEmptyComposite(Collector.getThreePanelComposite()));
 
 					WelcomePageManager.getInstance().increaseClickCountForAlbumOrView(albumList.getItem(albumList.getSelectionIndex()));
@@ -130,51 +130,121 @@ public class CompositeFactory {
 			}
 		});
 
+		Menu albumPopupMenu = new Menu(albumList);
+
+		MenuItem moveAlbumTop = new MenuItem(albumPopupMenu, SWT.NONE);
+		moveAlbumTop.setText("Move selected to top..");
+		moveAlbumTop.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				AlbumManager.getInstance().moveToFront(albumList.getSelectionIndex());
+			}
+		});
+		MenuItem moveAlbumOneUp = new MenuItem(albumPopupMenu, SWT.NONE);
+		moveAlbumOneUp.setText("Move selected one up..");
+		moveAlbumOneUp.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				AlbumManager.getInstance().moveOneUp(albumList.getSelectionIndex());
+			}
+		});
+		MenuItem moveAlbumOneDown = new MenuItem(albumPopupMenu, SWT.NONE);
+		moveAlbumOneDown.setText("Move selected one down..");
+		moveAlbumOneDown.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				AlbumManager.getInstance().moveOneDown(albumList.getSelectionIndex());
+			}
+		});
+		MenuItem moveAlbumBottom = new MenuItem(albumPopupMenu, SWT.NONE);
+		moveAlbumBottom.setText("Move selected to bottom..");
+		moveAlbumBottom.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				AlbumManager.getInstance().moveToBottom(albumList.getSelectionIndex());
+			}
+		});
+		
+		new MenuItem(albumPopupMenu, SWT.SEPARATOR);
+
+		MenuItem createNewAlbum = new MenuItem(albumPopupMenu, SWT.NONE);
+		createNewAlbum.setText("Create new album..");
+		createNewAlbum.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				Collector.changeRightCompositeTo(
+						PanelType.AddAlbum, CompositeFactory.getCreateNewAlbumComposite(Collector.getThreePanelComposite()));
+			}
+		});
+		MenuItem alterAlbum = new MenuItem(albumPopupMenu, SWT.NONE);
+		alterAlbum.setText("Modify the structure of the selected album..");
+		alterAlbum.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				Collector.changeRightCompositeTo(
+						PanelType.AlterAlbum, CompositeFactory.getAlterAlbumComposite(
+								Collector.getThreePanelComposite(), Collector.getSelectedAlbum()));
+			}
+		});
+		
+		new MenuItem(albumPopupMenu, SWT.SEPARATOR);
+
+		MenuItem removeAlbum = new MenuItem(albumPopupMenu, SWT.NONE);
+		removeAlbum.setText("Remove selected album");
+		removeAlbum.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				MessageBox messageBox = new MessageBox(Collector.getShell(), SWT.ICON_WARNING | SWT.YES | SWT.NO);
+				messageBox.setMessage("Do you really want to delete the \"" + Collector.getSelectedAlbum() + "\" album? All data will be permanently lost!");
+				messageBox.setText("Delete");
+				if (messageBox.open() == SWT.YES) {
+					DatabaseWrapper.removeAlbum(Collector.getSelectedAlbum());
+					Collector.refreshSWTAlbumList();
+					BrowserContent.loadHtmlPage(Collector.getAlbumItemSWTBrowser(), Collector.getShell().getClass().getClassLoader().getResourceAsStream("htmlfiles/album_deleted.html"));
+				}
+			}
+		});
+
+		albumList.setMenu(albumPopupMenu);
+
 		viewList.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetDefaultSelected(SelectionEvent arg0) {}
-			
+
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {				
 				BrowserContent.performBrowserQueryAndShow(
 						Collector.getAlbumItemSWTBrowser(), 							
 						AlbumViewManager.getSqlQueryByName(viewList.getItem(viewList.getSelectionIndex())));
-				
+
 				WelcomePageManager.getInstance().increaseClickCountForAlbumOrView(viewList.getItem(viewList.getSelectionIndex()));
 			}
 		});
-		
+
 		boolean first = true;
 		// Add all albums to album list
-		for (String album : DatabaseWrapper.listAllAlbums()) {
+		for (String album : AlbumManager.getInstance().getAlbums()) {
 			albumList.add(album);
-			
+
 			// If the first album retrieved is not quick-searchable, then disable the related textbox
 			// If the first album retrieved has no views attached, then disable the related list
 			if (first) {
 				if (!DatabaseWrapper.isAlbumQuicksearchable(album)) {
 					quickSearchText.setEnabled(false);
 				}
-				
+
 				if (!AlbumViewManager.hasAlbumViewsAttached(album)) {
 					viewList.setEnabled(false);
 				} else {
-					
+
 					for (AlbumView albumView : AlbumViewManager.getAlbumViews(albumList.getItem(0))) {
 						viewList.add(albumView.getName());
 					}
-					
+
 					viewList.setEnabled(true);
 				}
-				
+
 				first = false;
 			}
 		}		
-		
+
 		Menu popupMenu = new Menu(viewList);
-		
+
 		MenuItem moveTop = new MenuItem(popupMenu, SWT.NONE);
-		moveTop.setText("Move to top..");
+		moveTop.setText("Move selected to top..");
 		moveTop.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (viewList.getSelectionIndex() > 0) {
@@ -182,9 +252,9 @@ public class CompositeFactory {
 				}
 			}
 		});
-		
+
 		MenuItem moveOneUp = new MenuItem(popupMenu, SWT.NONE);
-		moveOneUp.setText("Move one up..");
+		moveOneUp.setText("Move selected one up..");
 		moveOneUp.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (viewList.getSelectionIndex() > 0) {
@@ -192,9 +262,9 @@ public class CompositeFactory {
 				}
 			}
 		});
-		
+
 		MenuItem moveOneDown = new MenuItem(popupMenu, SWT.NONE);
-		moveOneDown.setText("Move one down..");
+		moveOneDown.setText("Move selected one down..");
 		moveOneDown.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (viewList.getSelectionIndex() > 0) {
@@ -202,9 +272,9 @@ public class CompositeFactory {
 				}
 			}
 		});
-		
+
 		MenuItem moveBottom = new MenuItem(popupMenu, SWT.NONE);
-		moveBottom.setText("Move to bottom..");
+		moveBottom.setText("Move selected to bottom..");
 		moveBottom.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (viewList.getSelectionIndex() < viewList.getItemCount()-1) {
@@ -212,9 +282,26 @@ public class CompositeFactory {
 				}
 			}
 		});
-		
+
 		new MenuItem(popupMenu, SWT.SEPARATOR);
-		
+
+		MenuItem removeSavedSearch = new MenuItem(popupMenu, SWT.NONE);
+		removeSavedSearch.setText("Remove selected saved search..");
+		removeSavedSearch.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if (viewList.getSelectionIndex() > 0) {
+					MessageBox messageBox = new MessageBox(Collector.getShell(), SWT.ICON_WARNING | SWT.YES | SWT.NO);
+					messageBox.setMessage("Do you really want to delete the \"" + viewList.getItem(viewList.getSelectionIndex()) + "\" saved search");
+					messageBox.setText("Delete");
+					if (messageBox.open() == SWT.YES) {
+						AlbumViewManager.removeAlbumView(viewList.getItem(viewList.getSelectionIndex()));
+					}
+				}
+			}
+		});	
+
+		new MenuItem(popupMenu, SWT.SEPARATOR);
+
 		MenuItem addSavedSearch = new MenuItem(popupMenu, SWT.NONE);
 		addSavedSearch.setText("Add another saved search..");
 		addSavedSearch.addSelectionListener(new SelectionAdapter() {
@@ -225,9 +312,9 @@ public class CompositeFactory {
 				}
 			}
 		});		
-		
+
 		viewList.setMenu(popupMenu);
-		
+
 		return quickControlComposite;
 	}
 
@@ -406,7 +493,7 @@ public class CompositeFactory {
 				QueryBuilder.buildQueryAndExecute(queryComponents, connectByAnd, album);
 			}
 		});
-		
+
 		Button saveAsViewButton = new Button(advancedSearchComposite, SWT.PUSH);
 		saveAsViewButton.setText("Save this search");
 		saveAsViewButton.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -653,7 +740,7 @@ public class CompositeFactory {
 					ComponentFactory.getMessageBox(parentComposite, "Name already in use", "This name is already used by another album. Please choose another name.", SWT.ICON_INFORMATION).open();					
 					return;
 				}
-				
+
 				ArrayList<MetaItemField> metaItemFields = new ArrayList<MetaItemField>();
 
 				for ( int i=0 ; i < albumFieldNamesAndTypesTable.getItemCount() ; i++ ) {					
@@ -721,7 +808,7 @@ public class CompositeFactory {
 					ComponentFactory.getMessageBox(parentComposite, "Name already in use", "This name is already used by another album. Please choose another name.", SWT.ICON_INFORMATION).open();					
 					return;
 				}
-				
+
 				DatabaseWrapper.renameAlbum(album, albumNameText.getText());
 				Collector.refreshSWTAlbumList();
 			}
@@ -1431,7 +1518,7 @@ public class CompositeFactory {
 
 				Collector.changeRightCompositeTo(PanelType.Empty, CompositeFactory.getEmptyComposite(Collector.getThreePanelComposite()));
 				WelcomePageManager.getInstance().updateLastModifiedWithCurrentDate(Collector.getSelectedAlbum());
-				
+
 				BrowserContent.performBrowserQueryAndShow(Collector.getAlbumItemSWTBrowser(), DatabaseWrapper.createSelectStarQuery(Collector.getSelectedAlbum()));
 			}
 		};

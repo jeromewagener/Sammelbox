@@ -1674,7 +1674,7 @@ public class DatabaseWrapper  {
 		return tableList;		
 	}
 
-
+	// TODO AlbumManager should be used instead
 	/**
 	 * Lists all albums currently stored in the database.
 	 * @return A list of albumnames. May be empty if no albums were created yet. Null in case of an error.

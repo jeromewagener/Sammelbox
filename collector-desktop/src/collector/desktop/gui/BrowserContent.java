@@ -377,9 +377,9 @@ public class BrowserContent {
 		welcomePage += "<ul>";
 				
 		boolean empty = true;
-		for (String albumName : DatabaseWrapper.listAllAlbums()) {
-			welcomePage += "<li>Album <b>" + albumName + "</b> <br> <font size=-1><i>(" + WelcomePageManager.getInstance().getNumberOfItemsInAlbum(albumName) 
-					+ " items - Last updated: " + WelcomePageManager.getInstance().getLastModifiedDate(albumName) + ")</i></font></li>";
+		for (String album : AlbumManager.getInstance().getAlbums()) {
+			welcomePage += "<li>Album <b>" + album + "</b> <br> <font size=-1><i>(" + WelcomePageManager.getInstance().getNumberOfItemsInAlbum(album) 
+					+ " items - Last updated: " + WelcomePageManager.getInstance().getLastModifiedDate(album) + ")</i></font></li>";
 			
 			empty = false;
 		}
