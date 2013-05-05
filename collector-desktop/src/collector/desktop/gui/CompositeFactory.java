@@ -63,7 +63,7 @@ public class CompositeFactory {
 		// separator grid data
 		GridData seperatorGridData = new GridData(GridData.FILL_BOTH);
 		seperatorGridData.minimumHeight = 15;
-		
+
 		// quick-search label
 		Label quickSearchLabel = new Label(quickControlComposite, SWT.NONE);
 		quickSearchLabel.setText("Quicksearch:");
@@ -74,7 +74,7 @@ public class CompositeFactory {
 		quickSearchText.setLayoutData(new GridData(GridData.FILL_BOTH));
 		quickSearchText.addModifyListener(new QuickSearchModifyListener());
 		Collector.setQuickSearchTextField(quickSearchText);
-		
+
 		// separator
 		new Label(quickControlComposite, SWT.SEPARATOR | SWT.HORIZONTAL).setLayoutData(seperatorGridData);
 
@@ -93,7 +93,7 @@ public class CompositeFactory {
 
 		// Set the currently active album
 		Collector.setAlbumSWTList(albumList);
-		
+
 		// separator
 		new Label(quickControlComposite, SWT.SEPARATOR | SWT.HORIZONTAL).setLayoutData(seperatorGridData);
 
@@ -106,7 +106,7 @@ public class CompositeFactory {
 		final List viewList = new List(quickControlComposite, SWT.SINGLE | SWT.BORDER | SWT.V_SCROLL);
 		// initialize view list
 		AlbumViewManager.initialize();
-		
+
 		GridData gridData2 = new GridData(GridData.FILL_BOTH);
 		gridData2.heightHint = 200;
 		gridData2.widthHint = 125;
@@ -122,7 +122,7 @@ public class CompositeFactory {
 				if (albumList.getSelectionIndex() != -1)	{			
 
 					Collector.setSelectedAlbum(albumList.getItem(albumList.getSelectionIndex()));
-					
+
 					Collector.changeRightCompositeTo(PanelType.Empty, CompositeFactory.getEmptyComposite(Collector.getThreePanelComposite()));
 
 					WelcomePageManager.getInstance().increaseClickCountForAlbumOrView(albumList.getItem(albumList.getSelectionIndex()));
@@ -133,46 +133,46 @@ public class CompositeFactory {
 		viewList.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetDefaultSelected(SelectionEvent arg0) {}
-			
+
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {				
 				BrowserContent.performBrowserQueryAndShow(
 						Collector.getAlbumItemSWTBrowser(), 							
 						AlbumViewManager.getSqlQueryByName(viewList.getItem(viewList.getSelectionIndex())));
-				
+
 				WelcomePageManager.getInstance().increaseClickCountForAlbumOrView(viewList.getItem(viewList.getSelectionIndex()));
 			}
 		});
-		
+
 		boolean first = true;
 		// Add all albums to album list
 		for (String album : DatabaseWrapper.listAllAlbums()) {
 			albumList.add(album);
-			
+
 			// If the first album retrieved is not quick-searchable, then disable the related textbox
 			// If the first album retrieved has no views attached, then disable the related list
 			if (first) {
 				if (!DatabaseWrapper.isAlbumQuicksearchable(album)) {
 					quickSearchText.setEnabled(false);
 				}
-				
+
 				if (!AlbumViewManager.hasAlbumViewsAttached(album)) {
 					viewList.setEnabled(false);
 				} else {
-					
+
 					for (AlbumView albumView : AlbumViewManager.getAlbumViews(albumList.getItem(0))) {
 						viewList.add(albumView.getName());
 					}
-					
+
 					viewList.setEnabled(true);
 				}
-				
+
 				first = false;
 			}
 		}		
-		
+
 		Menu popupMenu = new Menu(viewList);
-		
+
 		MenuItem moveTop = new MenuItem(popupMenu, SWT.NONE);
 		moveTop.setText("Move to top..");
 		moveTop.addSelectionListener(new SelectionAdapter() {
@@ -182,7 +182,7 @@ public class CompositeFactory {
 				}
 			}
 		});
-		
+
 		MenuItem moveOneUp = new MenuItem(popupMenu, SWT.NONE);
 		moveOneUp.setText("Move one up..");
 		moveOneUp.addSelectionListener(new SelectionAdapter() {
@@ -192,7 +192,7 @@ public class CompositeFactory {
 				}
 			}
 		});
-		
+
 		MenuItem moveOneDown = new MenuItem(popupMenu, SWT.NONE);
 		moveOneDown.setText("Move one down..");
 		moveOneDown.addSelectionListener(new SelectionAdapter() {
@@ -202,7 +202,7 @@ public class CompositeFactory {
 				}
 			}
 		});
-		
+
 		MenuItem moveBottom = new MenuItem(popupMenu, SWT.NONE);
 		moveBottom.setText("Move to bottom..");
 		moveBottom.addSelectionListener(new SelectionAdapter() {
@@ -212,9 +212,9 @@ public class CompositeFactory {
 				}
 			}
 		});
-		
+
 		new MenuItem(popupMenu, SWT.SEPARATOR);
-		
+
 		MenuItem addSavedSearch = new MenuItem(popupMenu, SWT.NONE);
 		addSavedSearch.setText("Add another saved search..");
 		addSavedSearch.addSelectionListener(new SelectionAdapter() {
@@ -225,9 +225,9 @@ public class CompositeFactory {
 				}
 			}
 		});		
-		
+
 		viewList.setMenu(popupMenu);
-		
+
 		return quickControlComposite;
 	}
 
@@ -406,7 +406,7 @@ public class CompositeFactory {
 				QueryBuilder.buildQueryAndExecute(queryComponents, connectByAnd, album);
 			}
 		});
-		
+
 		Button saveAsViewButton = new Button(advancedSearchComposite, SWT.PUSH);
 		saveAsViewButton.setText("Save this search");
 		saveAsViewButton.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -649,7 +649,7 @@ public class CompositeFactory {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-					
+
 				ArrayList<MetaItemField> metaItemFields = new ArrayList<MetaItemField>();
 
 				for ( int i=0 ; i < albumFieldNamesAndTypesTable.getItemCount() ; i++ ) {					
@@ -670,7 +670,7 @@ public class CompositeFactory {
 					ComponentFactory.getMessageBox(parentComposite, "Name already in use", "This name is already used by another album. Please choose another name.", SWT.ICON_INFORMATION).open();
 					return;
 				}
-				
+
 				// Correctly select and display the selected album.
 				Collector.refreshSWTAlbumList();
 				Collector.setSelectedAlbum(albumNameText.getText());				
@@ -720,22 +720,30 @@ public class CompositeFactory {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				String newAlbumName = albumNameText.getText();
-				
-				boolean isAlbumNameValid = DatabaseWrapper.isAlbumNameValid(newAlbumName); 
+
+				boolean isAlbumNameValid = DatabaseWrapper.albumNameIsAvailable(newAlbumName); 
 				if (!isAlbumNameValid) {
 					ComponentFactory.getMessageBox(parentComposite, "Name already in use", "This name is already used by another album. Please choose another name.", SWT.ICON_INFORMATION).open();
 					return;
 				}			
-				
-				String currentAlbumName = albumNameText.getData().toString();
-				if (DatabaseWrapper.renameAlbum(currentAlbumName, newAlbumName)) {
+
+				String oldAlbumName = albumNameText.getData().toString();
+				java.util.List<MetaItemField> oldAlbumMetaFields = DatabaseWrapper.getAlbumItemFieldNamesAndTypes(oldAlbumName);
+				if (DatabaseWrapper.renameAlbum(oldAlbumName, newAlbumName)) {
 					albumNameText.setData(newAlbumName);
 					Collector.refreshSWTAlbumList();
 					Collector.setSelectedAlbum(newAlbumName);
+
+					java.util.List<MetaItemField> newAlbumMetaFields = DatabaseWrapper.getAlbumItemFieldNamesAndTypes(newAlbumName);
+					// Display the html page showing the alter album changes
+					BrowserContent.showAlteredAlbumPage(Collector.getAlbumItemSWTBrowser(), 
+							oldAlbumName, oldAlbumMetaFields, 
+							newAlbumName, newAlbumMetaFields);
+
 				}else {
 					albumNameText.setText(albumNameText.getData().toString());
 				}
-				
+
 			}
 		});
 
@@ -758,9 +766,19 @@ public class CompositeFactory {
 		yesButtonForIncludingImages.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				String currentAlbumName = albumNameText.getData().toString();
-				if (!DatabaseWrapper.albumHasPictureField(currentAlbumName)) {
-					DatabaseWrapper.appendPictureField(currentAlbumName);
+				String albumName = albumNameText.getData().toString();
+				java.util.List<MetaItemField> oldAlbumMetaFields = DatabaseWrapper.getAlbumItemFieldNamesAndTypes(albumName);
+
+				if (!DatabaseWrapper.albumHasPictureField(albumName)) {
+					if ( DatabaseWrapper.appendPictureField(albumName) ){
+						java.util.List<MetaItemField> newAlbumMetaFields = DatabaseWrapper.getAlbumItemFieldNamesAndTypes(albumName);
+						// Display the html page showing the alter album changes
+						BrowserContent.showAlteredAlbumPage(Collector.getAlbumItemSWTBrowser(), 
+								albumName, oldAlbumMetaFields, 
+								albumName, newAlbumMetaFields);
+					}else{
+						//TODO: display failure page
+					}
 				}
 			}
 		});
@@ -768,7 +786,7 @@ public class CompositeFactory {
 		noButtonForIncludingImages.setText("No");
 		noButtonForIncludingImages.setSelection(!DatabaseWrapper.albumHasPictureField(album));
 		noButtonForIncludingImages.addSelectionListener(new SelectionAdapter() {
-			
+
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				String currentAlbumName = albumNameText.getData().toString();
@@ -777,9 +795,21 @@ public class CompositeFactory {
 							"All pictures this album may contain will bed permanently removed along with the picture field itself.\n " +
 							"Do you want to proceed?");
 					if (removalConfirmed) {
-						DatabaseWrapper.removePictureField(currentAlbumName);
+						String albumName = albumNameText.getData().toString();
+						java.util.List<MetaItemField> oldAlbumMetaFields = DatabaseWrapper.getAlbumItemFieldNamesAndTypes(albumName);
+
+						if ( DatabaseWrapper.removePictureField(currentAlbumName) ){
+							java.util.List<MetaItemField> newAlbumMetaFields = DatabaseWrapper.getAlbumItemFieldNamesAndTypes(albumName);
+							// Display the html page showing the alter album changes
+							BrowserContent.showAlteredAlbumPage(Collector.getAlbumItemSWTBrowser(), 
+									albumName, oldAlbumMetaFields, 
+									albumName, newAlbumMetaFields);
+						}else {
+							//TODO: display failure page
+						}
 					}else {
-						// TODO: Find a better way to prevent the no button form being selected
+						// TODO: Find a better way to prevent the no button from being selected
+						// Manually setting seems wrong.
 						// e.doit = false does not work.
 						yesButtonForIncludingImages.setSelection(true);
 						noButtonForIncludingImages.setSelection(false);
@@ -827,17 +857,33 @@ public class CompositeFactory {
 					itemAtNewPosition.setText(1, metaItemField.getName());
 					itemAtNewPosition.setText(2, metaItemField.getType().toString());
 					itemAtNewPosition.setChecked(metaItemField.isQuickSearchable());					
-					
-					String currentAlbumName = albumNameText.getData().toString();
+
+					String albumName = albumNameText.getData().toString();
+					java.util.List<MetaItemField> oldAlbumMetaFields = DatabaseWrapper.getAlbumItemFieldNamesAndTypes(albumName);
 					if (newPosition == 0) {
-						DatabaseWrapper.reorderAlbumItemField(currentAlbumName, metaItemField, null);
+
+						if ( DatabaseWrapper.reorderAlbumItemField(albumName, metaItemField, null) ){
+							java.util.List<MetaItemField> newAlbumMetaFields = DatabaseWrapper.getAlbumItemFieldNamesAndTypes(albumName);
+							// Display the html page showing the alter album changes
+							BrowserContent.showAlteredAlbumPage(Collector.getAlbumItemSWTBrowser(), 
+									albumName, oldAlbumMetaFields, 
+									albumName, newAlbumMetaFields);
+						}else {
+							// TODO: show error page in browser.
+						}
 					} else {
 						TableItem moveAfterTableItem = albumFieldNamesAndTypesTable.getItem(newPosition-1);
 						MetaItemField moveAfterField = new MetaItemField(moveAfterTableItem.getText(1), FieldType.valueOf(moveAfterTableItem.getText(2)), moveAfterTableItem.getChecked());
-						DatabaseWrapper.reorderAlbumItemField(currentAlbumName, metaItemField, moveAfterField);
+						if ( DatabaseWrapper.reorderAlbumItemField(albumName, metaItemField, moveAfterField) ) {
+							java.util.List<MetaItemField> newAlbumMetaFields = DatabaseWrapper.getAlbumItemFieldNamesAndTypes(albumName);
+							// Display the html page showing the alter album changes
+							BrowserContent.showAlteredAlbumPage(Collector.getAlbumItemSWTBrowser(), 
+									albumName, oldAlbumMetaFields, 
+									albumName, newAlbumMetaFields);
+						}else {
+							// TODO: show error page in browser.
+						}
 					}
-
-					BrowserContent.performLastQuery(Collector.getAlbumItemSWTBrowser());
 				}
 			}
 		});
@@ -856,17 +902,32 @@ public class CompositeFactory {
 					itemAtNewPosition.setText(1, metaItemField.getName());
 					itemAtNewPosition.setText(2, metaItemField.getType().toString());
 					itemAtNewPosition.setChecked(metaItemField.isQuickSearchable());
-					
-					String currentAlbumName = albumNameText.getData().toString();
+
+					String albumName = albumNameText.getData().toString();
+					java.util.List<MetaItemField> oldAlbumMetaFields = DatabaseWrapper.getAlbumItemFieldNamesAndTypes(albumName);
 					if (newPosition == 0) {
-						DatabaseWrapper.reorderAlbumItemField(currentAlbumName, metaItemField, null);
+						if ( DatabaseWrapper.reorderAlbumItemField(albumName, metaItemField, null) ) {
+							java.util.List<MetaItemField> newAlbumMetaFields = DatabaseWrapper.getAlbumItemFieldNamesAndTypes(albumName);
+							// Display the html page showing the alter album changes
+							BrowserContent.showAlteredAlbumPage(Collector.getAlbumItemSWTBrowser(), 
+									albumName, oldAlbumMetaFields, 
+									albumName, newAlbumMetaFields);
+						}else {
+							// TODO: show error page in browser.
+						}
 					} else {
 						TableItem moveAfterTableItem = albumFieldNamesAndTypesTable.getItem(newPosition - 1);
 						MetaItemField moveAfterField = new MetaItemField(moveAfterTableItem.getText(1), FieldType.valueOf(moveAfterTableItem.getText(2)), moveAfterTableItem.getChecked());
-						DatabaseWrapper.reorderAlbumItemField(currentAlbumName, metaItemField, moveAfterField);
+						if ( DatabaseWrapper.reorderAlbumItemField(albumName, metaItemField, moveAfterField) ) {
+							java.util.List<MetaItemField> newAlbumMetaFields = DatabaseWrapper.getAlbumItemFieldNamesAndTypes(albumName);
+							// Display the html page showing the alter album changes
+							BrowserContent.showAlteredAlbumPage(Collector.getAlbumItemSWTBrowser(), 
+									albumName, oldAlbumMetaFields, 
+									albumName, newAlbumMetaFields);
+						}else {
+							// TODO: show error page in browser.
+						}
 					}
-
-					BrowserContent.performLastQuery(Collector.getAlbumItemSWTBrowser());
 				}
 			}
 		});
@@ -884,12 +945,21 @@ public class CompositeFactory {
 				if (newName != null) {	    			
 					MetaItemField oldMetaItemField = new MetaItemField(item.getText(1),  FieldType.valueOf(item.getText(2)), item.getChecked());
 					MetaItemField newMetaItemField = new MetaItemField(newName,  FieldType.valueOf(item.getText(2)), item.getChecked());
-					String currentAlbumName = albumNameText.getData().toString();
-					DatabaseWrapper.renameAlbumItemField(currentAlbumName, oldMetaItemField, newMetaItemField);
 
-					item.setText(1, newName);
+					String albumName = albumNameText.getData().toString();
+					java.util.List<MetaItemField> oldAlbumMetaFields = DatabaseWrapper.getAlbumItemFieldNamesAndTypes(albumName);
+					if ( DatabaseWrapper.renameAlbumItemField( albumName, oldMetaItemField, newMetaItemField)){
+						java.util.List<MetaItemField> newAlbumMetaFields = DatabaseWrapper.getAlbumItemFieldNamesAndTypes(albumName);
+						// Display the html page showing the alter album changes
+						BrowserContent.showAlteredAlbumPage(Collector.getAlbumItemSWTBrowser(), 
+								albumName, oldAlbumMetaFields, 
+								albumName, newAlbumMetaFields);
+						item.setText(1, newName);
+					}else {
+						// TODO: show error page in browser.
+					}
 
-					BrowserContent.performLastQuery(Collector.getAlbumItemSWTBrowser());
+
 				}
 			}
 		});
@@ -903,14 +973,21 @@ public class CompositeFactory {
 					boolean removalConfirmed = ComponentFactory.showYesNoDialog(alterAlbumComposite,"Delete album field", "The album item will be permanently deleted.\n Do you want to proceed?");
 					if (removalConfirmed) {
 						TableItem item = albumFieldNamesAndTypesTable.getItem(albumFieldNamesAndTypesTable.getSelectionIndex());
-						
-						String currentAlbumName = albumNameText.getData().toString();
-						DatabaseWrapper.removeAlbumItemField(
-								currentAlbumName, new MetaItemField(item.getText(1), FieldType.valueOf(item.getText(2)), item.getChecked()));
 
-						item.dispose();
+						String albumName = albumNameText.getData().toString();
+						java.util.List<MetaItemField> oldAlbumMetaFields = DatabaseWrapper.getAlbumItemFieldNamesAndTypes(albumName);
+						if ( DatabaseWrapper.removeAlbumItemField(
+								albumName, new MetaItemField(item.getText(1), FieldType.valueOf(item.getText(2)), item.getChecked()))) {
+							java.util.List<MetaItemField> newAlbumMetaFields = DatabaseWrapper.getAlbumItemFieldNamesAndTypes(albumName);
+							// Display the html page showing the alter album changes
+							BrowserContent.showAlteredAlbumPage(Collector.getAlbumItemSWTBrowser(), 
+									albumName, oldAlbumMetaFields, 
+									albumName, newAlbumMetaFields);
+						}else {
+							// TODO: show error page in browser.
+						}
 
-						BrowserContent.performLastQuery(Collector.getAlbumItemSWTBrowser());
+						item.dispose();					
 					}
 				}
 			}
@@ -959,8 +1036,18 @@ public class CompositeFactory {
 							albumFieldNamesAndTypesTable.getItem(index).getText(1),
 							FieldType.valueOf(albumFieldNamesAndTypesTable.getItem(index).getText(2)),
 							albumFieldNamesAndTypesTable.getItem(index).getChecked());
-					String currentAlbumName = albumNameText.getData().toString();
-					DatabaseWrapper.setQuickSearchable(currentAlbumName, metaItemField);
+
+					String albumName = albumNameText.getData().toString();
+					java.util.List<MetaItemField> oldAlbumMetaFields = DatabaseWrapper.getAlbumItemFieldNamesAndTypes(albumName);
+					if ( DatabaseWrapper.setQuickSearchable(albumName, metaItemField) ) {
+						java.util.List<MetaItemField> newAlbumMetaFields = DatabaseWrapper.getAlbumItemFieldNamesAndTypes(albumName);
+						// Display the html page showing the alter album changes
+						BrowserContent.showAlteredAlbumPage(Collector.getAlbumItemSWTBrowser(), 
+								albumName, oldAlbumMetaFields, 
+								albumName, newAlbumMetaFields);
+					}else {
+						// TODO: show error page in browser.
+					}
 				}
 			}
 		});
@@ -978,16 +1065,35 @@ public class CompositeFactory {
 					messageBox.open();
 					return;
 				}
-				TableItem item = new TableItem(albumFieldNamesAndTypesTable, SWT.NONE);
-				item.setText(1, fieldNameText.getText());
-				item.setText(2, fieldTypeCombo.getText());
-				String currentAlbumName = albumNameText.getData().toString();
+				
+
 				MetaItemField metaItemField = new MetaItemField(fieldNameText.getText(), FieldType.valueOf(fieldTypeCombo.getText()), false);
-				DatabaseWrapper.appendNewAlbumFields(currentAlbumName, metaItemField);
+				String albumName = albumNameText.getData().toString();
+				java.util.List<MetaItemField> oldAlbumMetaFields = DatabaseWrapper.getAlbumItemFieldNamesAndTypes(albumName);
 
+				if (!DatabaseWrapper.itemFieldNameIsAvailable(albumName, metaItemField.getName())) {
+					MessageBox messageBox = ComponentFactory.getMessageBox(
+							parentComposite.getShell(), "Collector-Warning", "The field name is already in use for this album!", SWT.ICON_WARNING | SWT.OK);
+					messageBox.open();
+					fieldNameText.selectAll();
+					fieldNameText.setFocus();
+					return;
+				}
+				
+				if ( DatabaseWrapper.appendNewAlbumField(albumName, metaItemField) ) {
+					TableItem item = new TableItem(albumFieldNamesAndTypesTable, SWT.NONE);
+					item.setText(1, fieldNameText.getText());
+					item.setText(2, fieldTypeCombo.getText());
+					
+					java.util.List<MetaItemField> newAlbumMetaFields = DatabaseWrapper.getAlbumItemFieldNamesAndTypes(albumName);
+					// Display the html page showing the alter album changes
+					BrowserContent.showAlteredAlbumPage(Collector.getAlbumItemSWTBrowser(), 
+							albumName, oldAlbumMetaFields, 
+							albumName, newAlbumMetaFields);
+				}else {
+					// TODO: show error page in browser.
+				}
 				fieldNameText.setText("");
-
-				BrowserContent.performLastQuery(Collector.getAlbumItemSWTBrowser());
 			}
 		});
 
@@ -1459,7 +1565,7 @@ public class CompositeFactory {
 
 				Collector.changeRightCompositeTo(PanelType.Empty, CompositeFactory.getEmptyComposite(Collector.getThreePanelComposite()));
 				WelcomePageManager.getInstance().updateLastModifiedWithCurrentDate(Collector.getSelectedAlbum());
-				
+
 				BrowserContent.performBrowserQueryAndShow(Collector.getAlbumItemSWTBrowser(), DatabaseWrapper.createSelectStarQuery(Collector.getSelectedAlbum()));
 			}
 		};

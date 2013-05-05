@@ -67,7 +67,7 @@ public class AlterAlbumTests {
 		MetaItemField metaItemField = new MetaItemField("Publisher", FieldType.Text, false);
 		int originalAlbumItemCount = numberOfAlbumItems("Books");
 
-		DatabaseWrapper.appendNewAlbumFields("Books", metaItemField);
+		DatabaseWrapper.appendNewAlbumField("Books", metaItemField);
 		
 		List<MetaItemField> metaDataItems = DatabaseWrapper.getAlbumItemFieldNamesAndTypes("Books");
 		
@@ -85,7 +85,7 @@ public class AlterAlbumTests {
 		MetaItemField metaItemField = new MetaItemField("Publisher", FieldType.Text, true);
 		int originalAlbumItemCount = numberOfAlbumItems("Books");
 
-		DatabaseWrapper.appendNewAlbumFields("Books", metaItemField);
+		DatabaseWrapper.appendNewAlbumField("Books", metaItemField);
 		
 		List<MetaItemField> metaDataItems = DatabaseWrapper.getAlbumItemFieldNamesAndTypes("Books");
 		
@@ -103,7 +103,7 @@ public class AlterAlbumTests {
 
 		MetaItemField metaItemField = new MetaItemField("Publisher", FieldType.Text, false);
 		
-		DatabaseWrapper.appendNewAlbumFields("Books", metaItemField);
+		DatabaseWrapper.appendNewAlbumField("Books", metaItemField);
 		
 		List<MetaItemField> metaDataItems = DatabaseWrapper.getAlbumItemFieldNamesAndTypes("Books");
 		

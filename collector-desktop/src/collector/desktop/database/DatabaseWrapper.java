@@ -105,7 +105,7 @@ public class DatabaseWrapper  {
 	 */
 	public static boolean createNewAlbum(String albumName, List<MetaItemField> fields, boolean hasAlbumPictureField) {
 		// TODO: validate input
-		if (fields == null || !isAlbumNameValid(albumName)) {
+		if (fields == null || !albumNameIsAvailable(albumName)) {
 			return false;
 		}
 		Boolean result = true;
@@ -737,15 +737,21 @@ public class DatabaseWrapper  {
 	/**
 	 * Appends new field to the end of the album. Fields with the type FieldType.ID or FieldType.Picture fail the whole operation, no fields will be added then.
 	 * @param albumName The name of the album to be modified.
-	 * @param metaFields The metaItemFields to be appended to the album.
+	 * @param metaItemField The metaItemField to be appended to the album. Must not be null for successful insertion
 	 * @return True if the operation succeeded and the fields were addded, false if the operation failed either due to an internal error or invalid fields.
 	 */
-	public static boolean appendNewAlbumFields(String albumName, MetaItemField metaItemField) {
-		if (metaItemField.getType().equals(FieldType.ID) || metaItemField.getType().equals(FieldType.Picture)) {
+	public static boolean appendNewAlbumField(String albumName, MetaItemField metaItemField) {
+		if (metaItemField.getType().equals(FieldType.ID) || metaItemField.getType().equals(FieldType.Picture) || metaItemField == null || !itemFieldNameIsAvailable(albumName, metaItemField.getName())) {
 			return false;
 		}
 		
-		if ( appedNewTableColumn(albumName, metaItemField) ) {
+		if ( appendNewTableColumn(albumName, metaItemField) ) {
+			//TODO: implement this directly in a single operation such that the picture field
+			// is always the last column
+			List<MetaItemField> metaItemFields = getAlbumItemFieldNamesAndTypes(albumName);
+			if (albumHasPictureField(albumName) && metaItemFields.size()>1) {
+				reorderAlbumItemField(albumName, metaItemField, metaItemFields.get(metaItemFields.size()-1));
+			}
 			updateLastDatabaseChangeTimeStamp();
 			return true;
 		}
@@ -760,7 +766,7 @@ public class DatabaseWrapper  {
 	 * @param metaItemField he metaItemFields to be appended to the album.
 	 * @return True if the operation succeeded and the fields were addded, false if the operation failed either due to an internal error or invalid fields.
 	 */
-	private static boolean appedNewTableColumn(String albumName, MetaItemField metaItemField) {
+	private static boolean appendNewTableColumn(String albumName, MetaItemField metaItemField) {
 		Boolean result = true;
 		PreparedStatement preparedStatement = null;
 		try {
@@ -821,7 +827,7 @@ public class DatabaseWrapper  {
 		}
 
 		// Appends and updates the schema version
-		result = appedNewTableColumn(albumName, new MetaItemField(PICTURE_COLUMN_NAME, FieldType.Picture));
+		result = appendNewTableColumn(albumName, new MetaItemField(PICTURE_COLUMN_NAME, FieldType.Picture));
 		if (result) {
 			FileSystemAccessWrapper.updateAlbumFileStructure(connection);
 			updateLastDatabaseChangeTimeStamp();
@@ -1802,6 +1808,10 @@ public class DatabaseWrapper  {
 	public static List<MetaItemField> getAlbumItemFieldNamesAndTypes(String albumName) {
 		List<MetaItemField> itemMetadata = new ArrayList<MetaItemField>();
 		Statement statement = null;
+		
+		if (albumNameIsAvailable(albumName)) {
+			return itemMetadata;
+		}
 				
 		List<String> quickSearchableColumnNames = getIndexedColumnNames(albumName);
 		List<String> internalColumnNames = Arrays.asList("id", TYPE_INFO_COLUMN_NAME, CONTENT_VERSION_COLUMN_NAME);
@@ -2083,13 +2093,27 @@ public class DatabaseWrapper  {
 	}
 	
 	/**
-	 * Tests if the proposed album name is valid and not already in use by another album.
-	 * @param requestedAalbumName The proposed album name to be tested of validity.
+	 * Tests if the proposed album name is not already in use by another album.
+	 * @param requestedAlbumName The proposed album name to be tested of availability.
 	 * @return True if the name can be inserted into the database. False otherwise.
 	 */
-	public static boolean isAlbumNameValid(String requestedAalbumName) {
+	public static boolean albumNameIsAvailable(String requestedAlbumName) {
 		for (String albumName : DatabaseWrapper.listAllAlbums()) {
-			if (albumName.equalsIgnoreCase(requestedAalbumName)) {
+			if (albumName.equalsIgnoreCase(requestedAlbumName)) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	/**
+	 * Tests if the proposed item field name is not already in use by another field of the same album.
+	 * @param albumName The album name that contains the fields that the name is checked against.
+	 * @return True if the name can be inserted into the database. False otherwise.
+	 */
+	public static boolean itemFieldNameIsAvailable(String albumName, String requestedFieldName) {
+		for (MetaItemField metaItemField : DatabaseWrapper.getAlbumItemFieldNamesAndTypes(albumName)) {
+			if (requestedFieldName.equalsIgnoreCase(metaItemField.getName())) {
 				return false;
 			}
 		}
