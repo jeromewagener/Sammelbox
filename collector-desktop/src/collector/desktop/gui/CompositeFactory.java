@@ -144,31 +144,34 @@ public class CompositeFactory {
 			}
 		});
 
-		boolean first = true;
+//		boolean first = true;
+		quickSearchText.setEnabled(false);
+
 		// Add all albums to album list
 		for (String album : DatabaseWrapper.listAllAlbums()) {
 			albumList.add(album);
-
+			
+			//TODO: remove since no album is selected by default on startup->we4lcome page is shown.
 			// If the first album retrieved is not quick-searchable, then disable the related textbox
 			// If the first album retrieved has no views attached, then disable the related list
-			if (first) {
-				if (!DatabaseWrapper.isAlbumQuicksearchable(album)) {
-					quickSearchText.setEnabled(false);
-				}
-
-				if (!AlbumViewManager.hasAlbumViewsAttached(album)) {
-					viewList.setEnabled(false);
-				} else {
-
-					for (AlbumView albumView : AlbumViewManager.getAlbumViews(albumList.getItem(0))) {
-						viewList.add(albumView.getName());
-					}
-
-					viewList.setEnabled(true);
-				}
-
-				first = false;
-			}
+//			if (first) {
+//				if (!DatabaseWrapper.isAlbumQuicksearchable(album)) {
+//					quickSearchText.setEnabled(false);
+//				}
+//
+//				if (!AlbumViewManager.hasAlbumViewsAttached(album)) {
+//					viewList.setEnabled(false);
+//				} else {
+//
+//					for (AlbumView albumView : AlbumViewManager.getAlbumViews(albumList.getItem(0))) {
+//						viewList.add(albumView.getName());
+//					}
+//
+//					viewList.setEnabled(true);
+//				}
+//
+//				first = false;
+//			}
 		}		
 
 		Menu popupMenu = new Menu(viewList);

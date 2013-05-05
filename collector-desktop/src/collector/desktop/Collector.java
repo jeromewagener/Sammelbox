@@ -473,6 +473,7 @@ public class Collector implements UIObservable, UIObserver {
 		for (String album : DatabaseWrapper.listAllAlbums()) {
 			albumSWTList.add(album);			
 		}
+		Collector.getQuickSearchTextField().setEnabled(false);
 	}
 
 	/** Sets the the list of albums
@@ -533,7 +534,6 @@ public class Collector implements UIObservable, UIObserver {
 					DatabaseWrapper.restoreFromFile(path);
 					// No default album is selected on restore
 					Collector.refreshSWTAlbumList();
-					
 					BrowserContent.loadHtmlPage(Collector.getAlbumItemSWTBrowser(), getShell().getClass().getClassLoader().getResourceAsStream("htmlfiles/albums_restored.html"));
 				}
 			} else if (((MenuItem) event.widget).getText().equals("Help Contents")) {
@@ -548,7 +548,7 @@ public class Collector implements UIObservable, UIObserver {
 				Collector.refreshSWTAlbumList();
 				BrowserContent.loadHtmlPage(
 						getAlbumItemSWTBrowser(),
-						getShell().getClass().getClassLoader().getResourceAsStream("helpfiles/about.html"));
+						getShell().getClass().getClassLoader().getResourceAsStream("helpfiles/about.html"));				
 				changeRightCompositeTo(PanelType.Help, CompositeFactory.getEmptyComposite(threePanelComposite));
 			} else if (((MenuItem) event.widget).getText().equals("Synchronize")) {
 				changeRightCompositeTo(PanelType.Synchronization, CompositeFactory.getSynchronizeComposite(threePanelComposite));
