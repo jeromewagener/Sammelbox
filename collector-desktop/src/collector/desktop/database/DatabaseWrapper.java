@@ -1185,9 +1185,7 @@ public class DatabaseWrapper  {
 				return false;
 			}
 		}
-
-		return false;
-
+		return true;
 	}
 
 

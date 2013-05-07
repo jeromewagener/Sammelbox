@@ -858,8 +858,6 @@ public class CompositeFactory {
 					albumNameText.setText(albumNameText.getData().toString());
 				}
 
-				DatabaseWrapper.renameAlbum(album, albumNameText.getText());
-				Collector.refreshSWTAlbumList();
 			}
 		});
 
@@ -1074,8 +1072,6 @@ public class CompositeFactory {
 					}else {
 						// TODO: show error page in browser.
 					}
-
-
 				}
 			}
 		});
@@ -1103,8 +1099,8 @@ public class CompositeFactory {
 							// TODO: show error page in browser.
 						}
 
-						item.dispose();					
-					}
+						item.dispose();				
+					}					
 				}
 			}
 		});
