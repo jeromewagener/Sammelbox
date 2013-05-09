@@ -53,6 +53,8 @@ public class AlbumViewManager implements UIObservable {
 		}
 		
 		storeViews();
+		
+		instance.notifyObservers();
 	}
 	
 	public static boolean hasViewWithName(String viewName) {

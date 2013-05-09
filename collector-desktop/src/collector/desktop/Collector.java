@@ -29,6 +29,7 @@ import collector.desktop.database.DatabaseWrapper;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
 import collector.desktop.filesystem.export.CSVExporter;
 import collector.desktop.filesystem.export.HTMLExporter;
+import collector.desktop.gui.AlbumManager;
 import collector.desktop.gui.AlbumViewManager;
 import collector.desktop.gui.AlbumViewManager.AlbumView;
 import collector.desktop.gui.BrowserContent;
@@ -206,6 +207,7 @@ public class Collector implements UIObservable, UIObserver {
 	/** This method is used during the creation of the user interface. It ensures that 
 	 * the first album is selected and its items are presented */
 	private static void selectDefaultAndShowSelectedAlbum() {
+// TODO Remove if not needed
 //		if (albumSWTList.getItemCount() > 0) {
 //			albumSWTList.setSelection(0);
 //			Collector.setSelectedAlbum(albumSWTList.getItem(albumSWTList.getSelectionIndex()));
@@ -468,11 +470,8 @@ public class Collector implements UIObservable, UIObserver {
 	
 	/** After adding/removing albums, this method should be used to refresh the SWT album list with the current album names thus leaving no album selected.*/
 	public static void refreshSWTAlbumList() {
-		albumSWTList.removeAll();
-		setSelectedAlbum("");
-		for (String album : DatabaseWrapper.listAllAlbums()) {
-			albumSWTList.add(album);			
-		}
+		instance.update(AlbumManager.class);
+		Collector.getQuickSearchTextField().setEnabled(false);
 	}
 
 	/** Sets the the list of albums
@@ -533,7 +532,6 @@ public class Collector implements UIObservable, UIObserver {
 					DatabaseWrapper.restoreFromFile(path);
 					// No default album is selected on restore
 					Collector.refreshSWTAlbumList();
-					
 					BrowserContent.loadHtmlPage(Collector.getAlbumItemSWTBrowser(), getShell().getClass().getClassLoader().getResourceAsStream("htmlfiles/albums_restored.html"));
 				}
 			} else if (((MenuItem) event.widget).getText().equals("Help Contents")) {
@@ -548,7 +546,7 @@ public class Collector implements UIObservable, UIObserver {
 				Collector.refreshSWTAlbumList();
 				BrowserContent.loadHtmlPage(
 						getAlbumItemSWTBrowser(),
-						getShell().getClass().getClassLoader().getResourceAsStream("helpfiles/about.html"));
+						getShell().getClass().getClassLoader().getResourceAsStream("helpfiles/about.html"));				
 				changeRightCompositeTo(PanelType.Help, CompositeFactory.getEmptyComposite(threePanelComposite));
 			} else if (((MenuItem) event.widget).getText().equals("Synchronize")) {
 				changeRightCompositeTo(PanelType.Synchronization, CompositeFactory.getSynchronizeComposite(threePanelComposite));
@@ -621,6 +619,7 @@ public class Collector implements UIObservable, UIObserver {
 				new Collector();
 		
 				// Register the toolbar as an observer for collector updates
+				AlbumManager.getInstance().registerObserver(instance);
 				ToolbarComposite.getInstance(Collector.getShell()).registerAsObserverToCollectorUpdates();
 				AlbumViewManager.getInstance().registerObserver(instance);
 		
@@ -688,7 +687,13 @@ public class Collector implements UIObservable, UIObserver {
 
 	@Override
 	public void update(Class<?> origin) {
-		if (origin == AlbumViewManager.class) {
+		if (origin == AlbumManager.class) {
+			albumSWTList.removeAll();
+			
+			for (String album : AlbumManager.getInstance().getAlbums()) {
+				albumSWTList.add(album);
+			}
+		} else if (origin == AlbumViewManager.class) {
 			viewSWTList.removeAll();
 
 			for (AlbumView albumView : AlbumViewManager.getAlbumViews(selectedAlbum)) {

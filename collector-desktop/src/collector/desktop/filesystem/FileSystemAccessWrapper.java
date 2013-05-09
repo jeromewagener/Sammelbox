@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -46,6 +47,7 @@ public class FileSystemAccessWrapper {
 	public static final String DATABASE 						= COLLECTOR_HOME + File.separatorChar + DATABASE_NAME;
 	public static final String DATABASE_TO_RESTORE				= COLLECTOR_HOME + File.separatorChar + DATABASE_TO_RESTORE_NAME;
 	public static final String VIEW_FILE						= COLLECTOR_HOME_APPDATA + File.separatorChar + "views.xml";
+	public static final String ALBUM_FILE            			= COLLECTOR_HOME_APPDATA + File.separatorChar + "albums.xml"; 
 	public static final String WELCOME_PAGE_FILE				= COLLECTOR_HOME_APPDATA + File.separatorChar + "welcome.xml";
 	public static final String LOCK_FILE						= COLLECTOR_HOME_APPDATA + File.separatorChar + ".lock";
 	
@@ -651,6 +653,66 @@ public class FileSystemAccessWrapper {
 		}
 
 		return stringBuilder.toString();
+	}
+	
+	public static void storeAlbums(Collection<String> albums) {
+		StringBuilder xmlOutput = new StringBuilder();
+		
+		xmlOutput.append("<albums>\n");
+		
+		for (String album : albums) {
+			xmlOutput.append("\t<album>\n");
+			xmlOutput.append("\t\t<name><![CDATA[" + album + "]]></name>\n");
+			xmlOutput.append("\t</album>\n");
+		}
+		
+		xmlOutput.append("</albums>\n");
+		
+		writeToFile(xmlOutput.toString(), ALBUM_FILE);
+	}
+
+	public static List<String> loadAlbums() {
+		String albumsAsXml = readFileAsString(ALBUM_FILE);
+		
+		List<String> albumToPosition = new LinkedList<String>();
+		
+		if (albumsAsXml.isEmpty()) {
+			return albumToPosition;
+		}
+		
+		try {
+			DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+			InputSource inputSource = new InputSource();
+			inputSource.setCharacterStream(new StringReader(albumsAsXml));
+
+			Document document = documentBuilder.parse(inputSource);
+			Node root = document.getFirstChild();
+
+			if (!root.getNodeName().equals("albums")) {
+				throw new Exception("Invalid Album File");
+			} else {
+				NodeList viewNodes = document.getElementsByTagName("album");
+				
+				String name = "";
+				
+				for (int i = 0; i < viewNodes.getLength(); i++) {
+					Node node = viewNodes.item(i);
+
+					if (node.getNodeType() == Node.ELEMENT_NODE) {
+						Element element = (Element) node;
+						
+						name = getValue("name", element);
+						
+						albumToPosition.add(name);
+					}
+				}
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		
+		return albumToPosition;
 	}
 	
 	public static String getFileExtension(String fileNameOrPath) {
