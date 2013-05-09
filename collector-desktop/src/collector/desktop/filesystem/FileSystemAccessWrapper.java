@@ -192,21 +192,24 @@ public class FileSystemAccessWrapper {
 						new File(targetLocation, children[i]));
 			}
 		} else {
-
-			InputStream in = new FileInputStream(sourceLocation);
-			OutputStream out = new FileOutputStream(targetLocation);
-
-			// Copy the bits from instream to outstream
-			byte[] buf = new byte[1024];
-			int len;
-			while ((len = in.read(buf)) > 0) {
-				out.write(buf, 0, len);
-			}
-			in.close();
-			out.close();
+			copyFile(sourceLocation, targetLocation);
 		}
 	}
 
+	// TODO comment
+	public static void copyFile(File sourceLocation , File targetLocation) throws IOException {
+		InputStream in = new FileInputStream(sourceLocation);
+		OutputStream out = new FileOutputStream(targetLocation);
+
+		byte[] buf = new byte[1024];
+		int len;
+		while ((len = in.read(buf)) > 0) {
+			out.write(buf, 0, len);
+		}
+		in.close();
+		out.close();
+	}
+	
 	/**
 	 * Provides a valid URI to the location on the file system. Invalid paths may result in raised exceptions
 	 * @param fileNameWithExtension The name including file type extension of the picture.
@@ -648,5 +651,16 @@ public class FileSystemAccessWrapper {
 		}
 
 		return stringBuilder.toString();
+	}
+	
+	public static String getFileExtension(String fileNameOrPath) {
+		String extension = "";
+
+		int i = fileNameOrPath.lastIndexOf('.');
+		if (i > 0) {
+		    extension = fileNameOrPath.substring(i + 1);
+		}
+		
+		return extension;
 	}
 }

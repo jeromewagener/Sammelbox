@@ -97,35 +97,46 @@ public class BrowserContent {
 			}
 		}
 
+		String originalPathToPicture = "";
+		String thumbnailImageName = new File(pathToPicture).getName();
+		String imageId = thumbnailImageName.substring(0, thumbnailImageName.lastIndexOf('.'));
+		
 		StringBuilder smallPictures = new StringBuilder();
 		if (uris.size() >= 2) {
 			int counter = 1;
-			for (URI uri : uris) {					
-				smallPictures.append("<a onMouseover='change(\"bigimg\", \"" + uri.toString() + "\")'>");  
-				smallPictures.append("<img border=\"1\" onMouseOver='this.style.cursor=\"pointer\"' id=\"smallimage" + counter + "\" style=\"width:120px;\" src=\"" + uri.toString() + "\">");
-				smallPictures.append("</a>");
-				smallPictures.append("</br>");
-
-				counter++;
+			
+			for (URI uri : uris) {
+				if (uri.toString().contains("original")) {
+					if (uri.toString().contains(imageId)) {
+						originalPathToPicture = uri.toString();
+					}
+					
+					smallPictures.append("<a onMouseover='change(\"bigimg\", \"" + uri.toString() + "\")'>");  
+					smallPictures.append("<img border=\"1\" onMouseOver='this.style.cursor=\"pointer\"' id=\"smallimage" + counter + "\" style=\"width:120px;\" src=\"" + uri.toString() + "\">");
+					smallPictures.append("</a>");
+					smallPictures.append("</br>");
+	
+					counter++;
+				}
 			}
 
 			smallPictures.append("<br>");
 			smallPictures.append("<form><input type='button' onclick=\"parent.location.href='show:///lastPage'\" value='Go Back'></form>");
 		}
-
-		smallPage.append("<html width=\"80%\" height=80%>");
+		
+		smallPage.append("<html>");
 		smallPage.append("<head>");
 		smallPage.append("<script src=\"file://" + FileSystemAccessWrapper.COLLECTOR_HOME_APPDATA + File.separatorChar + "effects.js" + "\"></script>");
 		smallPage.append("<link rel=stylesheet href=\"file://" + FileSystemAccessWrapper.COLLECTOR_HOME_APPDATA + File.separatorChar + "style.css" + "\"></link>");
 		smallPage.append("</head>");
-		smallPage.append("<body width=\"90%\" height=80%>");
-		smallPage.append("<table width=\"90%\" height=80%>");
-		smallPage.append("<tr width=\"90%\"  height=80%>");
-		smallPage.append("<td align=\"center\">");
-		smallPage.append("<img id=\"bigimg\" height=80% src=\"" + pathToPicture + "\" onMouseOver=\"changeCursorToHand('bigimg')\" onclick=\"parent.location.href='show:///lastPage'\">");		
+		smallPage.append("<body>");
+		smallPage.append("<table>");
+		smallPage.append("<tr>");
+		smallPage.append("<td align=\"center\" valign=\"top\">");
+		smallPage.append(smallPictures.toString());		
 		smallPage.append("</td>");
 		smallPage.append("<td align=\"center\">");
-		smallPage.append(smallPictures.toString());		
+		smallPage.append("<img id=\"bigimg\" src=\"" + originalPathToPicture + "\" onMouseOver=\"changeCursorToHand('bigimg')\" onclick=\"parent.location.href='show:///lastPage'\">");		
 		smallPage.append("</td>");
 		smallPage.append("</tr>");
 		smallPage.append("</table>");
@@ -307,10 +318,14 @@ public class BrowserContent {
 				else if (fieldItem.getType().equals(FieldType.Picture)) {
 					List<URI> uris = fieldItem.getValue();
 
-					if (!uris.isEmpty()) {
-						picturePath = uris.get(0).toString();
-					} else {
-						picturePath = FileSystemAccessWrapper.PLACEHOLDERIMAGE;
+					picturePath = FileSystemAccessWrapper.PLACEHOLDERIMAGE;
+					
+					for (URI uri : uris) {
+						// find and return first thumbnail
+						if (!uri.toString().contains("original")) {
+							picturePath = uri.toString();
+							break;
+						}
 					}
 				}
 				else if (fieldItem.getType().equals(FieldType.Text)) {
@@ -330,7 +345,8 @@ public class BrowserContent {
 		htmlBuilder.append("</div></body></html>");
 
 		String finalPageAsHtml = htmlBuilder.toString();
-
+		System.out.println(finalPageAsHtml);
+		
 		browser.setText(finalPageAsHtml);
 		BrowserContent.lastPageAsHtml = finalPageAsHtml;
 	}
@@ -392,7 +408,7 @@ public class BrowserContent {
 				"onMouseOver=\"parent.location.href=&quot;show:///details=" + albumItem.getItemID() + "&quot;\" onClick=\"parent.location.href=&quot;show:///detailsComposite=" + albumItem.getItemID() + "&quot;\">");
 
 		htmlBuilder.append("<div class=\"innerPictureContainer\">");
-		htmlBuilder.append("<img src=\"" + albumItem.getPrimaryPicturePath() + "\">");
+		htmlBuilder.append("<img src=\"" + albumItem.getPrimaryThumbnailPicturePath() + "\">");
 
 		htmlBuilder.append("</div>");
 		htmlBuilder.append("</div>");
@@ -427,11 +443,13 @@ public class BrowserContent {
 				htmlPictureColumnContent.append("<div style=\"max-width:200px;\">");
 				if (uris.size() > 1) {
 					for(URI uri : uris) {
-						htmlPictureColumnContent.append("<div align=center style=\"display:inline; min-width:40px; width:auto; width:40px\">");
-						htmlPictureColumnContent.append("<a onClick=showBigPicture(\"imageId" + id + "\") onMouseOver=\"change(&quot;imageId" + id + "&quot;, &quot;" + uri.toString() + "&quot;)\">");
-						htmlPictureColumnContent.append("<img onMouseOver=this.style.cursor=\"pointer\" style=\"max-width:40px; max-height:40px;\" src=\"" + uri.toString() + "\">");
-						htmlPictureColumnContent.append("</a>");
-						htmlPictureColumnContent.append("</div>");
+						if (!uri.toString().contains("original")) {						
+							htmlPictureColumnContent.append("<div align=center style=\"display:inline; min-width:40px; width:auto; width:40px\">");
+							htmlPictureColumnContent.append("<a onClick=showBigPicture(\"imageId" + id + "\") onMouseOver=\"change(&quot;imageId" + id + "&quot;, &quot;" + uri.toString() + "&quot;)\">");
+							htmlPictureColumnContent.append("<img onMouseOver=this.style.cursor=\"pointer\" style=\"max-width:40px; max-height:40px;\" src=\"" + uri.toString() + "\">");
+							htmlPictureColumnContent.append("</a>");
+							htmlPictureColumnContent.append("</div>");
+						}
 					}
 				}
 				htmlPictureColumnContent.append("</div></td></tr></table>");

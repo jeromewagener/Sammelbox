@@ -254,14 +254,14 @@ public class AlbumItem {
 		this.contentVersion = contentVersion;
 	}
 
-	public String getPrimaryPicturePath() {
+	public String getPrimaryThumbnailPicturePath() {
 		if (getField(DatabaseWrapper.PICTURE_COLUMN_NAME) != null) {
 			List<URI> pictureURIs = getField(DatabaseWrapper.PICTURE_COLUMN_NAME).getValue();
 			
-			if (!pictureURIs.isEmpty()) {
-				return pictureURIs.get(0).toString();
-			} else {
-				return FileSystemAccessWrapper.PLACEHOLDERIMAGE;
+			for (URI uri : pictureURIs) {
+				if (!uri.toString().contains("original")) {
+					return uri.toString();
+				}
 			}
 		}
 		

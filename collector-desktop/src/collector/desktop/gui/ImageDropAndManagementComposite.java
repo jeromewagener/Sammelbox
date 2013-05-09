@@ -111,7 +111,12 @@ public class ImageDropAndManagementComposite extends Composite implements DropTa
 			control.dispose();
 		}
 
-		for (final URI fileURI : imageURIs) {			
+		for (final URI fileURI : imageURIs) {
+			// skip originals
+			if (fileURI.getPath().contains("original")) {
+				continue;
+			}
+			
 			Image originalImage = new Image(Display.getCurrent(), fileURI.getPath());	
 			Image scaledImage = new Image(Display.getCurrent(), originalImage.getImageData().scaledTo(100, 100));
 
@@ -209,12 +214,12 @@ public class ImageDropAndManagementComposite extends Composite implements DropTa
 			String[] filenames = (String[]) event.data;
 			if (filenames.length > 0){
 				for (String filename : filenames) {
-					URI pictureLocationInAlbum = ImageManipulator.adaptAndStoreImageForCollector(
+					List<URI> pictureLocationInAlbum = ImageManipulator.adaptAndStoreImageForCollector(
 							new File(filename).toURI(), Collector.getSelectedAlbum());
 					if (pictureLocationInAlbum == null) {
 						  showDroppedUnsupportedFileMessageBox(filename);
 					}else {
-						imageURIs.addLast(pictureLocationInAlbum);
+						imageURIs.addAll(pictureLocationInAlbum);
 					}
 				}
 				refreshImageComposite();
