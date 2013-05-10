@@ -41,6 +41,9 @@ import collector.desktop.gui.StatusBarComposite;
 import collector.desktop.gui.ToolbarComposite;
 import collector.desktop.interfaces.UIObservable;
 import collector.desktop.interfaces.UIObserver;
+import collector.desktop.internationalization.DictKeys;
+import collector.desktop.internationalization.Language;
+import collector.desktop.internationalization.Translator;
 
 public class Collector implements UIObservable, UIObserver {
 	private static final int RIGHT_PANEL_LARGE_WIDTH = 300;
@@ -79,7 +82,9 @@ public class Collector implements UIObservable, UIObserver {
 	private static ArrayList<UIObserver> observers = new ArrayList<UIObserver>();
 	/** An instance to the main collector */
 	private static Collector instance = null;
-
+	// TODO comment
+	private static Translator translator = new Translator(Language.DE);
+	
 	/**
 	 * The default constructor initializes the file structure and opens the database connections.
 	 * Furthermore the constructor creates the program instance which is used to register observers
@@ -634,8 +639,8 @@ public class Collector implements UIObservable, UIObserver {
 				randomFile.close();
 		    } else {
 		    	ComponentFactory.getMessageBox(getShell(), 
-		    			"Sammelbox is already running", 
-		    			"You ensure data integrity only a single Sammelbox instance can run at the same time. Sorry!", 
+		    			translator.get(DictKeys.PROGRAM_IS_RUNNING_DIALOG_TITLE), 
+		    			translator.get(DictKeys.PROGRAM_IS_RUNNING_DIALOG_CONTENT), 
 		    			SWT.ICON_INFORMATION).open();
 		    }
 	    } catch (Exception ex) {
