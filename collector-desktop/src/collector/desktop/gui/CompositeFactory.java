@@ -44,6 +44,7 @@ import collector.desktop.database.FieldType;
 import collector.desktop.database.MetaItemField;
 import collector.desktop.database.OptionType;
 import collector.desktop.database.StarRating;
+import collector.desktop.filesystem.FileSystemAccessWrapper;
 import collector.desktop.gui.AlbumViewManager.AlbumView;
 import collector.desktop.gui.QueryBuilder.QueryComponent;
 import collector.desktop.gui.QueryBuilder.QueryOperator;
@@ -759,10 +760,19 @@ public class CompositeFactory {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (DatabaseWrapper.listAllAlbums().contains(albumNameText.getText())) {
-					ComponentFactory.getMessageBox(parentComposite, "Name already in use", "This name is already used by another album. Please choose another name.", SWT.ICON_INFORMATION).open();					
+				String albumName = albumNameText.getText();
+
+				if (! DatabaseWrapper.albumNameIsAvailable(albumName)) {
+					ComponentFactory.getMessageBox(parentComposite, "Name already in use", "This name is already used by another album. Please choose another name.", SWT.ICON_INFORMATION).open();
 					return;
 				}
+				
+				if (!FileSystemAccessWrapper.isNameFileSystemCompliant(albumName)) {
+					// Purge the [ and ] enclosing the string of reservedCharacters. // TODO: tidy this up
+					String reservedFileSystemCharactersAsString = FileSystemAccessWrapper.reservedFileSystemCharacters.toString().substring(1, FileSystemAccessWrapper.reservedFileSystemCharacters.toString().length()-1).replace(",", " ");
+					ComponentFactory.getMessageBox(parentComposite, "Naming error", " The album name must not contain any of the following characters: "+ reservedFileSystemCharactersAsString, SWT.ICON_WARNING).open();					
+					return;
+				}				
 
 				ArrayList<MetaItemField> metaItemFields = new ArrayList<MetaItemField>();
 
@@ -779,18 +789,18 @@ public class CompositeFactory {
 					willContainImages = true;
 				}
 
-				boolean albumCreationSuccessful = DatabaseWrapper.createNewAlbum(albumNameText.getText(), metaItemFields, willContainImages);
+				boolean albumCreationSuccessful = DatabaseWrapper.createNewAlbum(albumName, metaItemFields, willContainImages);
 				if (!albumCreationSuccessful) {
-					ComponentFactory.getMessageBox(parentComposite, "Name already in use", "This name is already used by another album. Please choose another name.", SWT.ICON_INFORMATION).open();
+					ComponentFactory.getMessageBox(parentComposite, "Album creation error", "Unfortunately an error occured while trying to create thealbum", SWT.ICON_ERROR).open();
 					return;
 				}
 
 				// Correctly select and display the selected album.
 				Collector.refreshSWTAlbumList();
-				Collector.setSelectedAlbum(albumNameText.getText());				
+				Collector.setSelectedAlbum(albumName);				
 				BrowserContent.performBrowserQueryAndShow(
 						Collector.getAlbumItemSWTBrowser(),
-						"select * from " + DatabaseWrapper.transformNameToDBName(albumNameText.getText()));
+						"select * from " + DatabaseWrapper.transformNameToDBName(albumName));
 
 				Collector.changeRightCompositeTo(PanelType.Empty, CompositeFactory.getEmptyComposite(parentComposite));
 			}
@@ -839,7 +849,14 @@ public class CompositeFactory {
 				if (!isAlbumNameValid) {
 					ComponentFactory.getMessageBox(parentComposite, "Name already in use", "This name is already used by another album. Please choose another name.", SWT.ICON_INFORMATION).open();
 					return;
-				}			
+				}					
+				
+				if (!FileSystemAccessWrapper.isNameFileSystemCompliant(newAlbumName)) {
+					// Purge the [ and ] enclosing the string of reservedCharacters. // TODO: tidy this up
+					String reservedFileSystemCharactersAsString = FileSystemAccessWrapper.reservedFileSystemCharacters.toString().substring(1, FileSystemAccessWrapper.reservedFileSystemCharacters.toString().length()-1).replace(",", " ");
+					ComponentFactory.getMessageBox(parentComposite, "Naming error", " The album name must not contain any of the following characters: "+ reservedFileSystemCharactersAsString, SWT.ICON_WARNING).open();					
+					return;
+				}
 
 				String oldAlbumName = albumNameText.getData().toString();
 				java.util.List<MetaItemField> oldAlbumMetaFields = DatabaseWrapper.getAlbumItemFieldNamesAndTypes(oldAlbumName);
@@ -1054,11 +1071,11 @@ public class CompositeFactory {
 				TableItem item = albumFieldNamesAndTypesTable.getItem(albumFieldNamesAndTypesTable.getSelectionIndex());
 
 				TextInputDialog textInputDialog = new TextInputDialog(parentComposite.getShell());
-				String newName = textInputDialog.open("Renaming the field", "Rename: ", item.getText(1), "Rename!");
-
-				if (newName != null) {	    			
+				String newFieldName = textInputDialog.open("Renaming the field", "Rename: ", item.getText(1), "Rename!");
+						
+				if (newFieldName != null) {	    			
 					MetaItemField oldMetaItemField = new MetaItemField(item.getText(1),  FieldType.valueOf(item.getText(2)), item.getChecked());
-					MetaItemField newMetaItemField = new MetaItemField(newName,  FieldType.valueOf(item.getText(2)), item.getChecked());
+					MetaItemField newMetaItemField = new MetaItemField(newFieldName,  FieldType.valueOf(item.getText(2)), item.getChecked());
 
 					String albumName = albumNameText.getData().toString();
 					java.util.List<MetaItemField> oldAlbumMetaFields = DatabaseWrapper.getAlbumItemFieldNamesAndTypes(albumName);
@@ -1068,7 +1085,7 @@ public class CompositeFactory {
 						BrowserContent.showAlteredAlbumPage(Collector.getAlbumItemSWTBrowser(), 
 								albumName, oldAlbumMetaFields, 
 								albumName, newAlbumMetaFields);
-						item.setText(1, newName);
+						item.setText(1, newFieldName);
 					}else {
 						// TODO: show error page in browser.
 					}

@@ -13,12 +13,16 @@ import java.io.PrintWriter;
 import java.io.StringReader;
 import java.net.URI;
 import java.sql.Connection;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
@@ -52,7 +56,8 @@ public class FileSystemAccessWrapper {
 	public static final String LOCK_FILE						= COLLECTOR_HOME_APPDATA + File.separatorChar + ".lock";
 	
 	private static final boolean OVERWRITE_EXISITING_FILES = true;
-	
+	// TODO Set this set back to private when no longer needed in gui messagebox.
+	public static Set<String> reservedFileSystemCharacters 		= getImmutableReservedFileSystemCharacters();
 	
 	/**
 	 * Instance to itself used in the process to located stored resources. 
@@ -724,5 +729,31 @@ public class FileSystemAccessWrapper {
 		}
 		
 		return extension;
+	}
+	
+	private static Set<String> getImmutableReservedFileSystemCharacters() {
+		
+		Set<String> characterSet = new HashSet<String>();
+		characterSet.add("/");
+		characterSet.add("\\");
+		characterSet.add("?");
+		characterSet.add("%");
+		characterSet.add("*");
+		characterSet.add(":");
+		characterSet.add("|");
+		characterSet.add("\"");
+		characterSet.add("<");
+		characterSet.add(">");
+		characterSet.add(".");
+		return Collections.unmodifiableSet(characterSet);
+	}
+	
+	public static boolean isNameFileSystemCompliant(String name) {
+		for (String reservedFileSystemCharacter : reservedFileSystemCharacters) {
+			if (name.contains(reservedFileSystemCharacter)){
+				return false;
+			}
+		}
+		return true;
 	}
 }
