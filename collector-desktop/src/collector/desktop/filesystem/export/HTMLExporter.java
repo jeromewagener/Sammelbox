@@ -9,6 +9,8 @@ import collector.desktop.database.AlbumItem;
 import collector.desktop.database.AlbumItemStore;
 import collector.desktop.database.FieldType;
 import collector.desktop.database.OptionType;
+import collector.desktop.internationalization.DictKeys;
+import collector.desktop.internationalization.Translator;
 
 public class HTMLExporter {
 	public static void exportVisibleItems(String filepath) {
@@ -41,11 +43,11 @@ public class HTMLExporter {
 						}
 
 						if (albumItem.getField(i).getValue() == OptionType.Yes) {
-							dataBuilder.append("<td style=\"border:1px solid black;\">" + "Yes" + "</td>");
+							dataBuilder.append("<td style=\"border:1px solid black;\">" + Translator.get(DictKeys.BROWSER_YES) + "</td>");
 						} else if (albumItem.getField(i).getValue() == OptionType.No) {
-							dataBuilder.append("<td style=\"border:1px solid black;\">" + "No" + "</td>");
+							dataBuilder.append("<td style=\"border:1px solid black;\">" + Translator.get(DictKeys.BROWSER_NO) + "</td>");
 						} else {
-							dataBuilder.append("<td style=\"border:1px solid black;\">" + "Unknown" + "</td>");
+							dataBuilder.append("<td style=\"border:1px solid black;\">" + Translator.get(DictKeys.BROWSER_UNKNOWN) + "</td>");
 						}
 					} else {
 						if (firstLine) {

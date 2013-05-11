@@ -82,8 +82,6 @@ public class Collector implements UIObservable, UIObserver {
 	private static ArrayList<UIObserver> observers = new ArrayList<UIObserver>();
 	/** An instance to the main collector */
 	private static Collector instance = null;
-	// TODO comment
-	private static Translator translator = new Translator(Language.DE);
 	
 	/**
 	 * The default constructor initializes the file structure and opens the database connections.
@@ -95,7 +93,8 @@ public class Collector implements UIObservable, UIObserver {
 		FileSystemAccessWrapper.updateCollectorFileStructure();
 		DatabaseWrapper.openConnection();
 		FileSystemAccessWrapper.updateAlbumFileStructure(DatabaseWrapper.getConnection());
-
+		Translator.setLanguage(Language.DE);
+		
 		instance = this;
 	}
 
@@ -109,7 +108,7 @@ public class Collector implements UIObservable, UIObserver {
 		shellGridLayout.marginWidth = 0;
 
 		// setup the Shell
-		shell.setText("Sammelbox - Collection Manager");
+		shell.setText(Translator.get(DictKeys.TITLE_MAIN_WINDOW));
 		shell.setMinimumSize(MIN_SHELL_WIDTH, MIN_SHELL_HEIGHT);
 		shell.setSize(MIN_SHELL_WIDTH, MIN_SHELL_HEIGHT);
 		shell.setLayout(shellGridLayout);
@@ -241,13 +240,13 @@ public class Collector implements UIObservable, UIObserver {
 
 		// Create all the items in the bar menu
 		MenuItem collectorItem = new MenuItem(menu, SWT.CASCADE);
-		collectorItem.setText("Collector");
+		collectorItem.setText(Translator.get(DictKeys.MENU_COLLECTOR));
 		MenuItem albumItem = new MenuItem(menu, SWT.CASCADE);
-		albumItem.setText("Album");
+		albumItem.setText(Translator.get(DictKeys.MENU_ALBUM));
 		MenuItem synchronizeItem = new MenuItem(menu, SWT.CASCADE);
-		synchronizeItem.setText("Synchronize");
+		synchronizeItem.setText(Translator.get(DictKeys.MENU_SYNCHRONIZE));
 		MenuItem helpItem = new MenuItem(menu, SWT.CASCADE);
-		helpItem.setText("Help");
+		helpItem.setText(Translator.get(DictKeys.MENU_HELP));
 
 		// Create the Collector item's dropdown menu
 		Menu collectorMenu = new Menu(menu);
@@ -255,18 +254,18 @@ public class Collector implements UIObservable, UIObserver {
 
 		// Create all the items in the Collector dropdown menu
 		MenuItem exportItem = new MenuItem(collectorMenu, SWT.NONE);
-		exportItem.setText("Export Visible Items...");
+		exportItem.setText(Translator.get(DictKeys.MENU_EXPORT_VISIBLE_ITEMS));
 		exportItem.addSelectionListener(instance.new MenuActionListener());
 		new MenuItem(collectorMenu, SWT.SEPARATOR);
 		MenuItem backupItem = new MenuItem(collectorMenu, SWT.NONE);
-		backupItem.setText("Backup Albums to File...");
+		backupItem.setText(Translator.get(DictKeys.MENU_BACKUP_ALBUMS_TO_FILE));
 		backupItem.addSelectionListener(instance.new MenuActionListener());
 		MenuItem restoreItem = new MenuItem(collectorMenu, SWT.NONE);
-		restoreItem.setText("Restore Albums from File...");
+		restoreItem.setText(Translator.get(DictKeys.MENU_RESTORE_ALBUM_FROM_FILE));
 		restoreItem.addSelectionListener(instance.new MenuActionListener());
 		new MenuItem(collectorMenu, SWT.SEPARATOR);
 		MenuItem exitItem = new MenuItem(collectorMenu, SWT.NONE);
-		exitItem.setText("Exit");
+		exitItem.setText(Translator.get(DictKeys.MENU_EXIT));
 		exitItem.addSelectionListener(instance.new MenuActionListener());
 
 		// Create the Album item's dropdown menu
@@ -275,18 +274,18 @@ public class Collector implements UIObservable, UIObserver {
 
 		// Create all the items in the Album dropdown menu
 		MenuItem advancedSearch = new MenuItem(albumMenu, SWT.NONE);
-		advancedSearch.setText("Advanced Search");
+		advancedSearch.setText(Translator.get(DictKeys.MENU_ADVANCED_SEARCH));
 		advancedSearch.addSelectionListener(instance.new MenuActionListener());
 		new MenuItem(albumMenu, SWT.SEPARATOR);
 		MenuItem createAlbum = new MenuItem(albumMenu, SWT.NONE);
-		createAlbum.setText("Create a new Album");
+		createAlbum.setText(Translator.get(DictKeys.MENU_CREATE_NEW_ALBUM));
 		createAlbum.addSelectionListener(instance.new MenuActionListener());
 		MenuItem alterAlbum = new MenuItem(albumMenu, SWT.NONE);
-		alterAlbum.setText("Alter selected Album");
+		alterAlbum.setText(Translator.get(DictKeys.MENU_ALTER_SELECTED_ALBUM));
 		alterAlbum.addSelectionListener(instance.new MenuActionListener());
 		new MenuItem(albumMenu, SWT.SEPARATOR);
 		MenuItem deleteAlbum = new MenuItem(albumMenu, SWT.NONE);
-		deleteAlbum.setText("Delete selected Album");
+		deleteAlbum.setText(Translator.get(DictKeys.MENU_DELETE_SELECTED_ALBUM));
 		deleteAlbum.addSelectionListener(instance.new MenuActionListener());	
 
 		// Create the Synchronize item's dropdown menu
@@ -295,7 +294,7 @@ public class Collector implements UIObservable, UIObserver {
 
 		// Create all the items in the Synchronize dropdown menu
 		MenuItem Synchronize = new MenuItem(synchronizeMenu, SWT.NONE);
-		Synchronize.setText("Synchronize");
+		Synchronize.setText(Translator.get(DictKeys.MENU_SYNCHRONIZE));
 		Synchronize.addSelectionListener(instance.new MenuActionListener());
 
 		// Create the Help item's dropdown menu
@@ -303,13 +302,13 @@ public class Collector implements UIObservable, UIObserver {
 		helpItem.setMenu(helpMenu);
 
 		// Create all the items in the Help dropdown menu
-		MenuItem howtoCreateAlbum = new MenuItem(helpMenu, SWT.NONE);
-		howtoCreateAlbum.setText("Help Contents");
-		howtoCreateAlbum.addSelectionListener(instance.new MenuActionListener());
+		MenuItem helpContentsMenu = new MenuItem(helpMenu, SWT.NONE);
+		helpContentsMenu.setText(Translator.get(DictKeys.MENU_HELP_CONTENTS));
+		helpContentsMenu.addSelectionListener(instance.new MenuActionListener());
 
-		MenuItem howtoAddNewItemToAlbum = new MenuItem(helpMenu, SWT.NONE);
-		howtoAddNewItemToAlbum.setText("About Sammelbox");
-		howtoAddNewItemToAlbum.addSelectionListener(instance.new MenuActionListener());
+		MenuItem aboutMenu = new MenuItem(helpMenu, SWT.NONE);
+		aboutMenu.setText(Translator.get(DictKeys.MENU_ABOUT));
+		aboutMenu.addSelectionListener(instance.new MenuActionListener());
 
 		// Set the bar menu as the menu in the shell
 		getShell().setMenuBar(menu);
@@ -519,15 +518,15 @@ public class Collector implements UIObservable, UIObserver {
 	private class MenuActionListener extends SelectionAdapter {
 		public void widgetSelected(SelectionEvent event) {
 			
-			if (((MenuItem) event.widget).getText().equals("Exit")) {
+			if (((MenuItem) event.widget).getText().equals(Translator.get(DictKeys.MENU_EXIT))) {
 				getShell().close();
-			} else if (((MenuItem) event.widget).getText().equals("Create a new Album")) {
+			} else if (((MenuItem) event.widget).getText().equals(Translator.get(DictKeys.MENU_CREATE_NEW_ALBUM))) {
 				changeRightCompositeTo(PanelType.AddAlbum, CompositeFactory.getCreateNewAlbumComposite(threePanelComposite));
-			} else if (((MenuItem) event.widget).getText().equals("Restore Albums from File...")) {
+			} else if (((MenuItem) event.widget).getText().equals(Translator.get(DictKeys.MENU_RESTORE_ALBUM_FROM_FILE))) {
 				changeRightCompositeTo(PanelType.Empty, CompositeFactory.getEmptyComposite(Collector.threePanelComposite));
 				
 				FileDialog openFileDialog = new FileDialog(getShell(), SWT.OPEN);
-				openFileDialog.setText("Restore from File");
+				openFileDialog.setText(Translator.get(DictKeys.DIALOG_RESTORE_FROM_FILE));
 				openFileDialog.setFilterPath(System.getProperty("user.home"));
 				String[] filterExt = { "*.cbk" };
 				openFileDialog.setFilterExtensions(filterExt);
@@ -539,25 +538,25 @@ public class Collector implements UIObservable, UIObserver {
 					Collector.refreshSWTAlbumList();
 					BrowserContent.loadHtmlPage(Collector.getAlbumItemSWTBrowser(), getShell().getClass().getClassLoader().getResourceAsStream("htmlfiles/albums_restored.html"));
 				}
-			} else if (((MenuItem) event.widget).getText().equals("Help Contents")) {
+			} else if (((MenuItem) event.widget).getText().equals(Translator.get(DictKeys.MENU_HELP_CONTENTS))) {
 				// No default album is selected on help
 				Collector.refreshSWTAlbumList();
 				BrowserContent.loadHtmlPage(
 						getAlbumItemSWTBrowser(),
 						getShell().getClass().getClassLoader().getResourceAsStream("helpfiles/index.html"));
 				changeRightCompositeTo(PanelType.Help, CompositeFactory.getEmptyComposite(threePanelComposite));
-			} else if (((MenuItem) event.widget).getText().equals("About Sammelbox")) {
+			} else if (((MenuItem) event.widget).getText().equals(Translator.get(DictKeys.MENU_ABOUT))) {
 				// No default album is selected on help
 				Collector.refreshSWTAlbumList();
 				BrowserContent.loadHtmlPage(
 						getAlbumItemSWTBrowser(),
 						getShell().getClass().getClassLoader().getResourceAsStream("helpfiles/about.html"));				
 				changeRightCompositeTo(PanelType.Help, CompositeFactory.getEmptyComposite(threePanelComposite));
-			} else if (((MenuItem) event.widget).getText().equals("Synchronize")) {
+			} else if (((MenuItem) event.widget).getText().equals(Translator.get(DictKeys.MENU_SYNCHRONIZE))) {
 				changeRightCompositeTo(PanelType.Synchronization, CompositeFactory.getSynchronizeComposite(threePanelComposite));
-			} else if (((MenuItem) event.widget).getText().equals("Backup Albums to File...")) {
+			} else if (((MenuItem) event.widget).getText().equals(Translator.get(DictKeys.MENU_BACKUP_ALBUMS_TO_FILE))) {
 				FileDialog saveFileDialog = new FileDialog(getShell(), SWT.SAVE);
-				saveFileDialog.setText("Backup to File");
+				saveFileDialog.setText(Translator.get(DictKeys.DIALOG_BACKUP_TO_FILE));
 				saveFileDialog.setFilterPath(System.getProperty("user.home"));
 				String[] filterExt = { "*.cbk" };
 				saveFileDialog.setFilterExtensions(filterExt);
@@ -568,32 +567,35 @@ public class Collector implements UIObservable, UIObserver {
 				}		        
 			} else {
 				// --------------------------------------------------------------
-				// Ensure that the following context sensitive actions are applied only when an album has been selected.
+				// Ensure that the following context sensitive actions are applied only when an album has been selected. // TODO comment style
 				// --------------------------------------------------------------
 				if (!Collector.hasSelectedAlbum()) {
-					ComponentFactory.showErrorDialog(Collector.getShell(), "No album has been selected", "Please select an album from the list or create one first.");
+					ComponentFactory.showErrorDialog(
+							Collector.getShell(), 
+							Translator.get(DictKeys.DIALOG_TITLE_NO_ALBUM_SELECTED), 
+							Translator.get(DictKeys.DIALOG_CONTENT_NO_ALBUM_SELECTED));
+					
 					return;
 				}
-				if (((MenuItem) event.widget).getText().equals("Delete selected Album")) {
+				if (((MenuItem) event.widget).getText().equals(Translator.get(DictKeys.MENU_DELETE_SELECTED_ALBUM))) {
 
 					MessageBox messageBox = new MessageBox(getShell(), SWT.ICON_WARNING | SWT.YES | SWT.NO);
-					messageBox.setMessage("Do you really want to delete the \"" + Collector.getSelectedAlbum() + "\" album? All data will be permanently lost!");
-					messageBox.setText("Delete");
+					messageBox.setText(Translator.get(DictKeys.DIALOG_TITLE_DELETE_ALBUM));
+					messageBox.setMessage(Translator.get(DictKeys.DIALOG_CONTENT_DELETE_ALBUM, Collector.getSelectedAlbum()));
 					if (messageBox.open() == SWT.YES) {
 						DatabaseWrapper.removeAlbum(getSelectedAlbum());
 						Collector.refreshSWTAlbumList();
 						BrowserContent.loadHtmlPage(Collector.getAlbumItemSWTBrowser(), getShell().getClass().getClassLoader().getResourceAsStream("htmlfiles/album_deleted.html"));
 					}
-				} else if (((MenuItem) event.widget).getText().equals("Alter selected Album")) {
+				} else if (((MenuItem) event.widget).getText().equals(Translator.get(DictKeys.MENU_ALTER_SELECTED_ALBUM))) {
 					changeRightCompositeTo(PanelType.AlterAlbum, CompositeFactory.getAlterAlbumComposite(threePanelComposite, getSelectedAlbum()));
-				} else if (((MenuItem) event.widget).getText().equals("Export Visible Items...")) {
+				} else if (((MenuItem) event.widget).getText().equals(Translator.get(DictKeys.MENU_EXPORT_VISIBLE_ITEMS))) {
 					FileDialog saveFileDialog = new FileDialog(getShell(), SWT.SAVE);
-					saveFileDialog.setText("Export Visible Items");
+					saveFileDialog.setText(Translator.get(DictKeys.DIALOG_EXPORT_VISIBLE_ITEMS));
 					saveFileDialog.setFilterPath(System.getProperty("user.home"));
 					String[] filterExt = { "*.html", "*.csv"};
 					saveFileDialog.setFilterExtensions(filterExt);
-					String[] filterNames = { "*.html (Print-friendly table)" , 
-					"*.csv (CSV export for spreadsheet applications)" };
+					String[] filterNames = { Translator.get(DictKeys.DIALOG_HTML_FOR_PRINT) , Translator.get(DictKeys.DIALOG_CSV_FOR_SPREADSHEET) };
 					saveFileDialog.setFilterNames(filterNames);
 
 					String filepath = saveFileDialog.open();
@@ -606,7 +608,7 @@ public class Collector implements UIObservable, UIObserver {
 							// TODO: support further export types. 
 						}
 					}
-				} else if (((MenuItem) event.widget).getText().equals("Advanced Search")) {
+				} else if (((MenuItem) event.widget).getText().equals(Translator.get(DictKeys.MENU_ADVANCED_SEARCH))) {
 					changeRightCompositeTo(PanelType.AdvancedSearch, CompositeFactory.getAdvancedSearchComposite(threePanelComposite, selectedAlbum));
 				}
 			}
@@ -639,8 +641,8 @@ public class Collector implements UIObservable, UIObserver {
 				randomFile.close();
 		    } else {
 		    	ComponentFactory.getMessageBox(getShell(), 
-		    			translator.get(DictKeys.PROGRAM_IS_RUNNING_DIALOG_TITLE), 
-		    			translator.get(DictKeys.PROGRAM_IS_RUNNING_DIALOG_CONTENT), 
+		    			Translator.get(DictKeys.DIALOG_TITLE_PROGRAM_IS_RUNNING), 
+		    			Translator.get(DictKeys.DIALOG_TITLE_PROGRAM_IS_RUNNING), 
 		    			SWT.ICON_INFORMATION).open();
 		    }
 	    } catch (Exception ex) {

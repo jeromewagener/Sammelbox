@@ -9,6 +9,8 @@ import collector.desktop.database.AlbumItem;
 import collector.desktop.database.AlbumItemStore;
 import collector.desktop.database.FieldType;
 import collector.desktop.database.OptionType;
+import collector.desktop.internationalization.DictKeys;
+import collector.desktop.internationalization.Translator;
 
 public class CSVExporter {
 	public static void exportVisibleItems(String filepath) {
@@ -40,11 +42,11 @@ public class CSVExporter {
 						}
 
 						if (albumItem.getField(i).getValue() == OptionType.Yes) {
-							dataBuilder.append("Yes");
+							dataBuilder.append(Translator.get(DictKeys.BROWSER_YES));
 						} else if (albumItem.getField(i).getValue() == OptionType.No) {
-							dataBuilder.append("No");
+							dataBuilder.append(Translator.get(DictKeys.BROWSER_NO));
 						} else {
-							dataBuilder.append("Unknown");
+							dataBuilder.append(Translator.get(DictKeys.BROWSER_UNKNOWN));
 						}
 						
 						if (i < albumItem.getFields().size()) {

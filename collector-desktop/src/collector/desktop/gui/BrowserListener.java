@@ -17,6 +17,8 @@ import collector.desktop.database.AlbumItem;
 import collector.desktop.database.DatabaseWrapper;
 import collector.desktop.database.FieldType;
 import collector.desktop.database.ItemField;
+import collector.desktop.internationalization.DictKeys;
+import collector.desktop.internationalization.Translator;
 
 public class BrowserListener implements LocationListener, ProgressListener, MenuDetectListener {
 	/** The parent composite to which this listener belongs to */
@@ -73,7 +75,10 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 			removeQuestionMarkAtTheEndIfPresent(id);//FIXME: the return value is never used. Happening this intentionally it does (Yoda)
 
 			int messageBoxStyle =  SWT.ICON_WARNING | SWT.YES | SWT.NO;			
-			MessageBox messageBox = ComponentFactory.getMessageBox(parentComposite.getShell(),"Delete album item", "Do you really want to delete this ablum item? This record will be permanently lost!", messageBoxStyle);
+			MessageBox messageBox = ComponentFactory.getMessageBox(parentComposite.getShell(),
+					Translator.get(DictKeys.DIALOG_TITLE_DELETE_ALBUM_ITEM), 
+					Translator.get(DictKeys.DIALOG_CONTENT_DELETE_ALBUM_ITEM), 
+					messageBoxStyle);
 
 			if (messageBox.open() == SWT.YES) {
 				DatabaseWrapper.deleteAlbumItem(Collector.getSelectedAlbum(), Long.parseLong(id));

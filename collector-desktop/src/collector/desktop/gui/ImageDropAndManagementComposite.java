@@ -30,6 +30,8 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Widget;
 
 import collector.desktop.Collector;
+import collector.desktop.internationalization.DictKeys;
+import collector.desktop.internationalization.Translator;
 
 public class ImageDropAndManagementComposite extends Composite implements DropTargetListener{
 	/** A list of image URIs pointing to already renamed and resized pictures in the corresponding album */
@@ -69,7 +71,7 @@ public class ImageDropAndManagementComposite extends Composite implements DropTa
 
 		Label dropTextLabel = new Label(this, SWT.BORDER | SWT.CENTER | SWT.VERTICAL);
 		dropTextLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		dropTextLabel.setText("Drop Image Here");
+		dropTextLabel.setText(Translator.get(DictKeys.LABEL_DROP_IMAGE_HERE));
 		addDropSupport(dropTextLabel);
 
 		imageScrolledComposite = new ScrolledComposite(this, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL );
@@ -123,7 +125,7 @@ public class ImageDropAndManagementComposite extends Composite implements DropTa
 			Label pictureLabel = new Label(imageComposite, SWT.NONE);
 			pictureLabel.setImage(scaledImage);
 			Button deleteButton = new Button(imageComposite, SWT.NONE);
-			deleteButton.setText("Remove");
+			deleteButton.setText(Translator.get(DictKeys.BUTTON_REMOVE));
 			deleteButton.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
@@ -207,7 +209,11 @@ public class ImageDropAndManagementComposite extends Composite implements DropTa
 	@Override
 	public void drop(DropTargetEvent event) {
 		if (!Collector.hasSelectedAlbum()) {
-			ComponentFactory.showErrorDialog(this, "No album has been selected", "Please select an album from the list or create one first.");
+			ComponentFactory.showErrorDialog(
+					Collector.getShell(), 
+					Translator.get(DictKeys.DIALOG_TITLE_NO_ALBUM_SELECTED), 
+					Translator.get(DictKeys.DIALOG_CONTENT_NO_ALBUM_SELECTED));
+			
 			return;
 		}
 		if (event.data instanceof String[]) {
@@ -234,8 +240,8 @@ public class ImageDropAndManagementComposite extends Composite implements DropTa
 	/** This method displays a message box informing the user of trying to drop the unsupported file.*/
 	public void showDroppedUnsupportedFileMessageBox(String filePathToUnsupportedFilegeBox){
 		MessageBox messageBox = new MessageBox(getShell(), SWT.ICON_ERROR);
-		messageBox.setText("Invalid File");
-	    messageBox.setMessage(filePathToUnsupportedFilegeBox +" is not valid a file or of supported type. The only supported file types are: BMP, ICO, JPEG, GIF, PNG and TIFF.");
+		messageBox.setText(Translator.get(DictKeys.DIALOG_TITLE_INVALID_IMAGE_FILE_FORMAT));
+	    messageBox.setMessage(filePathToUnsupportedFilegeBox + Translator.get(DictKeys.DIALOG_CONTENT_INVALID_IMAGE_FILE_FORMAT));
 	    messageBox.open();
 	}
 }

@@ -22,6 +22,8 @@ import collector.desktop.database.ItemField;
 import collector.desktop.database.MetaItemField;
 import collector.desktop.database.OptionType;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
+import collector.desktop.internationalization.DictKeys;
+import collector.desktop.internationalization.Translator;
 
 public class BrowserContent {
 	/** The anchor to which a jump is performed as soon as the page is fully loaded. 
@@ -80,13 +82,16 @@ public class BrowserContent {
 
 	public static void showPicture(String pathToPicture, long albumItemId) {
 		if (!Collector.hasSelectedAlbum()) {
-			ComponentFactory.showErrorDialog(Collector.getShell(), "No album has been selected", "Please select an album from the list or create one first.");
+			ComponentFactory.showErrorDialog(
+					Collector.getShell(), 
+					Translator.get(DictKeys.DIALOG_TITLE_NO_ALBUM_SELECTED), 
+					Translator.get(DictKeys.DIALOG_CONTENT_NO_ALBUM_SELECTED));
 			return;
 		}
 		StringBuilder smallPage = new StringBuilder();
 
 		StatusBarComposite.getInstance(
-				Collector.getShell()).writeStatus("Please click on the picture to return to your previous view!");
+				Collector.getShell()).writeStatus(Translator.get(DictKeys.STATUSBAR_CLICK_TO_RETURN));
 
 		AlbumItem albumItem = DatabaseWrapper.fetchAlbumItem(Collector.getSelectedAlbum(), albumItemId);
 		List<URI> uris = null;
@@ -173,7 +178,7 @@ public class BrowserContent {
 		// TODO: implement better diff with more verbose output of the changes. Left old, right new kind of display
 		htmlBuilder.append("<html><head><meta http-equiv=\"X-UA-Compatible\" content=\"IE=9\">" + styleCSS + " " + javaScript + "</head><body><div>");
 		
-		htmlBuilder.append("<form><table><tr><th>Before</th><th>After</th></tr>");	
+		htmlBuilder.append("<form><table><tr><th>" + Translator.get(DictKeys.BROWSER_BEFORE) + "</th><th>" + Translator.get(DictKeys.BROWSER_AFTER) + "</th></tr>");	
 		// Album names
 		htmlBuilder.append("<tr><td>");
 		htmlBuilder.append(oldAlbumName);// old album name
@@ -269,7 +274,7 @@ public class BrowserContent {
 			}
 		}
 			
-		htmlBuilder.append("</table><input type=\"button\" onclick=parent.location.href=\"show:///showDetailsViewOfAlbum\" value=\"Go back to album\"/>");
+		htmlBuilder.append("</table><input type=\"button\" onclick=parent.location.href=\"show:///showDetailsViewOfAlbum\" value=\"" + Translator.get(DictKeys.BROWSER_BACK_TO_ALBUM) + "\"/>");
 		htmlBuilder.append("</form></div></body></html>");
 		String finalPageAsHtml = htmlBuilder.toString();
 
@@ -282,7 +287,7 @@ public class BrowserContent {
 		String tdStartTag = !highlightField ? "<td>" : "<td  class=\"highlight\">";
 		htmlBuilder.append(tdStartTag);
 		htmlBuilder.append("<input type=\"checkbox\" ");
-		htmlBuilder.append(isQuickSearchable ? "checked/>" : "/>");// item
+		htmlBuilder.append(isQuickSearchable ? Translator.get(DictKeys.BROWSER_CHECKED) + "/>" : "/>");// item
 		htmlBuilder.append(itemValue);
 		htmlBuilder.append("<br></td>"); 
 		return htmlBuilder.toString();
@@ -353,7 +358,10 @@ public class BrowserContent {
 
 	private static void showDetailedAlbum(Browser browser) {
 		if (!Collector.hasSelectedAlbum()) {
-			ComponentFactory.showErrorDialog(Collector.getShell(), "No album has been selected", "Please select an album from the list or create one first.");
+			ComponentFactory.showErrorDialog(
+					Collector.getShell(), 
+					Translator.get(DictKeys.DIALOG_TITLE_NO_ALBUM_SELECTED), 
+					Translator.get(DictKeys.DIALOG_CONTENT_NO_ALBUM_SELECTED));
 			return;
 		}
 		StringBuilder albumItemTableRowHtml = new StringBuilder();
@@ -373,8 +381,7 @@ public class BrowserContent {
 
 		if (htmlDataColumnContent.length() == 0 && htmlPictureColumnContent.length() == 0) {
 			albumItemTableRowHtml.delete(0, albumItemTableRowHtml.length());
-			albumItemTableRowHtml.append("<tr> <td><h3>No Items found in " + Collector.getSelectedAlbum() + "!</h3> Either you just created this album and it is still empty <i>(In this case, please feel free to add as many items " +
-					"as you want using the \"Add a new Item to Album\" button or the corresponding file-menu-entry)</i> or you just performed a search which did not yield any results!</td></tr>");
+			albumItemTableRowHtml.append("<tr><td><h3>" + Translator.get(DictKeys.BROWSER_NO_ITEMS_FOUND, Collector.getSelectedAlbum()) + "</h3>" + Translator.get(DictKeys.BROWSER_NO_ITEMS_FOUND_EXPLANATION) + "</td></tr>");
 		}
 
 		String finalPageAsHtml = "<!DOCTYPE HTML>" +
@@ -456,11 +463,11 @@ public class BrowserContent {
 			}
 			else if (fieldItem.getType().equals(FieldType.Option)) {
 				if (fieldItem.getValue() == OptionType.Yes) {
-					htmlDataColumnContent.append("<span class=\"boldy\"> " + fieldItem.getName() + "</span> : Yes <br>");
+					htmlDataColumnContent.append("<span class=\"boldy\"> " + fieldItem.getName() + "</span> : " + Translator.get(DictKeys.BROWSER_YES) + " <br>");
 				} else if (fieldItem.getValue() == OptionType.No) {
-					htmlDataColumnContent.append("<span class=\"boldy\"> " + fieldItem.getName() + "</span> : No <br>");
+					htmlDataColumnContent.append("<span class=\"boldy\"> " + fieldItem.getName() + "</span> : " + Translator.get(DictKeys.BROWSER_NO) + " <br>");
 				} else {
-					htmlDataColumnContent.append("<span class=\"boldy\"> " + fieldItem.getName() + "</span> : Unknown <br>");
+					htmlDataColumnContent.append("<span class=\"boldy\"> " + fieldItem.getName() + "</span> : " + Translator.get(DictKeys.BROWSER_UNKNOWN) + " <br>");
 				}
 			} 
 			else if (fieldItem.getType().equals(FieldType.Date)) {
@@ -478,8 +485,8 @@ public class BrowserContent {
 		}	
 
 		htmlDataColumnContent.append("<form>");
-		htmlDataColumnContent.append("<input type=\"button\" onclick=parent.location.href=\"show:///updateComposite=" + id + "\" value=\"Update\">");
-		htmlDataColumnContent.append("<input type=\"button\" onclick=parent.location.href=\"show:///deleteComposite=" + id + "\" value=\"Delete\">");
+		htmlDataColumnContent.append("<input type=\"button\" onclick=parent.location.href=\"show:///updateComposite=" + id + "\" value=\"" + Translator.get(DictKeys.BROWSER_UPDATE) + "\">");
+		htmlDataColumnContent.append("<input type=\"button\" onclick=parent.location.href=\"show:///deleteComposite=" + id + "\" value=\"" + Translator.get(DictKeys.BROWSER_DELETE) + "\">");
 		htmlDataColumnContent.append("</form>");
 
 
@@ -526,19 +533,22 @@ public class BrowserContent {
 	}
 
 	public static String generateAlbumInformation() {
-		String welcomePage = "<h4>Album Information</h4>";
+		String welcomePage = "<h4>" + Translator.get(DictKeys.BROWSER_ALBUM_INFORMATION) + "</h4>";
 		welcomePage += "<ul>";
 				
 		boolean empty = true;
 		for (String album : AlbumManager.getInstance().getAlbums()) {
-			welcomePage += "<li>Album <b>" + album + "</b> <br> <font size=-1><i>(" + WelcomePageManager.getInstance().getNumberOfItemsInAlbum(album) 
-					+ " items - Last updated: " + WelcomePageManager.getInstance().getLastModifiedDate(album) + ")</i></font></li>";
+			welcomePage += "<li>Album <b>" + album + "</b> <br> <font size=-1><i>(" + 
+					Translator.get(DictKeys.BROWSER_NUMBER_OF_ITEMS_AND_LAST_UPDATED, 
+							WelcomePageManager.getInstance().getNumberOfItemsInAlbum(album),
+							WelcomePageManager.getInstance().getLastModifiedDate(album))
+					+ "</i></font></li>";
 			
 			empty = false;
 		}
 		
 		if (empty) {
-			welcomePage += "<li>No information available</li>";
+			welcomePage += "<li>" + Translator.get(DictKeys.BROWSER_NO_INFORMATION_AVAILABLE) + "</li>";
 		}
 		
 		welcomePage += "</ul>";
@@ -547,14 +557,14 @@ public class BrowserContent {
 	}
 	
 	public static String generateFavorites() {
-		String welcomePage = "<h4>Favorite Albums & Views</h4>";
+		String welcomePage = "<h4>" + Translator.get(DictKeys.BROWSER_FAVORITE_ALBUMS_AND_VIEWS) + "</h4>";
 		welcomePage += "<ol>";
 		
 		int favCounter = 0;
 		boolean empty = true;
 		for (String albumOrViewName : WelcomePageManager.getInstance().getAlbumAndViewsSortedByClicks().keySet()) {
 			welcomePage += "<li>" + albumOrViewName + "<font size=-1><i> " +
-					" - (Clicks: " + WelcomePageManager.getInstance().getAlbumAndViewsSortedByClicks().get(albumOrViewName) + ") </i></font></li>";
+					Translator.get(DictKeys.BROWSER_CLICKS_FOR_ALBUM, WelcomePageManager.getInstance().getAlbumAndViewsSortedByClicks().get(albumOrViewName)) + "</i></font></li>";
 			
 			if (++favCounter == 5) {
 				break;
@@ -564,7 +574,7 @@ public class BrowserContent {
 		}
 		
 		if (empty) {
-			welcomePage += "<li>No information available</li>";
+			welcomePage += "<li>" + Translator.get(DictKeys.BROWSER_NO_INFORMATION_AVAILABLE) + "</li>";
 		}
 		
 		welcomePage += "</ol>";

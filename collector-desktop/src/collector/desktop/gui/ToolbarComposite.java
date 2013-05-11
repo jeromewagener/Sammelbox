@@ -16,6 +16,8 @@ import org.eclipse.swt.widgets.Label;
 import collector.desktop.Collector;
 import collector.desktop.database.DatabaseWrapper;
 import collector.desktop.interfaces.UIObserver;
+import collector.desktop.internationalization.DictKeys;
+import collector.desktop.internationalization.Translator;
 
 public class ToolbarComposite implements UIObserver {
 	private static ToolbarComposite instance = null;
@@ -108,42 +110,41 @@ public class ToolbarComposite implements UIObserver {
 
 		homeBtn = new Button(innerComposite, SWT.PUSH);
 		homeBtn.setImage(homeActive);
-		homeBtn.setText("Home");
-		homeBtn.setToolTipText("Go to the welcome screen");
+		homeBtn.setText(Translator.get(DictKeys.BUTTON_HOME));
+		homeBtn.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_HOME));
 
 		addAlbumBtn = new Button(innerComposite, SWT.PUSH);
 		addAlbumBtn.setImage(addAlbum);
-		addAlbumBtn.setText("Add Album");
-		addAlbumBtn.setToolTipText("Create a new album");
+		addAlbumBtn.setText(Translator.get(DictKeys.BUTTON_ADD_ALBUM));
+		addAlbumBtn.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_ADD_ALBUM));
 
 		addEntryBtn = new Button(innerComposite, SWT.PUSH);
 		addEntryBtn.setImage(addEntry);
-		addEntryBtn.setText("Add Entry");
-		addEntryBtn
-				.setToolTipText("Add an entry to the currently active album");
+		addEntryBtn.setText(Translator.get(DictKeys.BUTTON_ADD_ENTRY));
+		addEntryBtn.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_ADD_ENTRY));
 		addEntryBtn.setEnabled(false);
 
 		viewBtn = new Button(innerComposite, SWT.PUSH);
 		viewBtn.setImage(detailedView);
-		viewBtn.setText("Toggle Views");
-		viewBtn.setToolTipText("Toggle to gallery mode");
+		viewBtn.setText(Translator.get(DictKeys.BUTTON_TOGGLE));
+		viewBtn.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_TOGGLE_TO_GALLERY));
 		viewBtn.setEnabled(false);
 
 		searchBtn = new Button(innerComposite, SWT.PUSH);
 		searchBtn.setImage(search);
-		searchBtn.setText("Search");
-		searchBtn.setToolTipText("Open the advanced search panel");
+		searchBtn.setText(Translator.get(DictKeys.BUTTON_SEARCH));
+		searchBtn.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_SEARCH));
 		searchBtn.setEnabled(false);
 
 		syncBtn = new Button(innerComposite, SWT.PUSH);
 		syncBtn.setImage(sync);
-		syncBtn.setText("Synchronize");
-		syncBtn.setToolTipText("Synchronize with mobile device");
+		syncBtn.setText(Translator.get(DictKeys.BUTTON_SYNCHRONIZE));
+		syncBtn.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_SYNCHRONIZE));
 
 		helpBtn = new Button(innerComposite, SWT.PUSH);
 		helpBtn.setImage(help);
-		helpBtn.setText("Help");
-		helpBtn.setToolTipText("Open the program's internal help");
+		helpBtn.setText(Translator.get(DictKeys.BUTTON_HELP));
+		helpBtn.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_HELP));
 
 		// ---------- Add Mouse Listeners ----------
 
@@ -164,7 +165,7 @@ public class ToolbarComposite implements UIObserver {
 
 				viewBtn.setEnabled(false);
 				viewBtn.setImage(detailedView);
-				viewBtn.setToolTipText("Toggle to gallery mode");
+				viewBtn.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_TOGGLE_TO_GALLERY));
 
 				searchBtn.setEnabled(false);
 			}
@@ -187,7 +188,7 @@ public class ToolbarComposite implements UIObserver {
 									.getCreateNewAlbumComposite(Collector
 											.getThreePanelComposite()));
 					StatusBarComposite.getInstance(parentComposite.getShell())
-							.writeStatus("You can now add a new album...");
+							.writeStatus(Translator.get(DictKeys.STATUSBAR_ADD_ALBUM_OPENED));
 
 					disableActiveButtons();
 					addAlbumBtn.setImage(addAlbumActive);
@@ -198,7 +199,7 @@ public class ToolbarComposite implements UIObserver {
 							CompositeFactory.getEmptyComposite(Collector
 									.getThreePanelComposite()));
 					StatusBarComposite.getInstance(parentComposite.getShell())
-							.writeStatus("Collector started...");
+							.writeStatus(Translator.get(DictKeys.STATUSBAR_PROGRAM_STARTED));
 
 					disableActiveButtons();
 					Collector.setCurrentRightPanelType(PanelType.Empty);
@@ -218,8 +219,11 @@ public class ToolbarComposite implements UIObserver {
 			@Override
 			public void mouseUp(MouseEvent arg0) {
 				if (!Collector.hasSelectedAlbum()) {
-					ComponentFactory.showErrorDialog(toolbarComposite,"No album has been selected",
-									"Please select an album from the list or create one first.");
+					ComponentFactory.showErrorDialog(
+							Collector.getShell(), 
+							Translator.get(DictKeys.DIALOG_TITLE_NO_ALBUM_SELECTED), 
+							Translator.get(DictKeys.DIALOG_CONTENT_NO_ALBUM_SELECTED));
+					
 					return;
 				}
 				if (Collector.getCurrentRightPanelType() != PanelType.AddEntry) {
@@ -229,8 +233,7 @@ public class ToolbarComposite implements UIObserver {
 									Collector.getSelectedAlbum()));
 					StatusBarComposite
 							.getInstance(parentComposite.getShell())
-							.writeStatus(
-									"You can now add an item to the currently active album...");
+							.writeStatus(Translator.get(DictKeys.STATUSBAR_ADD_ITEM_OPENED));
 
 					disableActiveButtons();
 					addEntryBtn.setImage(addEntryActive);
@@ -241,7 +244,7 @@ public class ToolbarComposite implements UIObserver {
 							CompositeFactory.getEmptyComposite(Collector
 									.getThreePanelComposite()));
 					StatusBarComposite.getInstance(parentComposite.getShell())
-							.writeStatus("Collector started...");
+							.writeStatus(Translator.get(DictKeys.STATUSBAR_PROGRAM_STARTED));
 
 					disableActiveButtons();
 					Collector.setCurrentRightPanelType(PanelType.Empty);
@@ -262,7 +265,7 @@ public class ToolbarComposite implements UIObserver {
 			public void mouseUp(MouseEvent arg0) {
 				if (!Collector.isViewDetailed()) {
 					viewBtn.setImage(pictureView);
-					viewBtn.setToolTipText("Toggle to gallery mode");
+					viewBtn.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_TOGGLE_TO_GALLERY));
 
 					Collector.setViewIsDetailed(true);
 
@@ -270,7 +273,7 @@ public class ToolbarComposite implements UIObserver {
 							.getAlbumItemSWTBrowser());
 				} else {
 					viewBtn.setImage(detailedView);
-					viewBtn.setToolTipText("Toggle to details view");
+					viewBtn.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_TOGGLE_TO_DETAILS));
 
 					Collector.setViewIsDetailed(false);
 
@@ -292,8 +295,10 @@ public class ToolbarComposite implements UIObserver {
 			@Override
 			public void mouseUp(MouseEvent arg0) {
 				if (!Collector.hasSelectedAlbum()) {
-					ComponentFactory.showErrorDialog(toolbarComposite,"No album has been selected",
-									"Please select an album from the list or create one first.");
+					ComponentFactory.showErrorDialog(
+							Collector.getShell(), 
+							Translator.get(DictKeys.DIALOG_TITLE_NO_ALBUM_SELECTED), 
+							Translator.get(DictKeys.DIALOG_CONTENT_NO_ALBUM_SELECTED));
 					return;
 				}
 				if (Collector.getCurrentRightPanelType() != PanelType.AdvancedSearch) {
@@ -303,8 +308,7 @@ public class ToolbarComposite implements UIObserver {
 									Collector.getSelectedAlbum()));
 					StatusBarComposite
 							.getInstance(parentComposite.getShell())
-							.writeStatus(
-									"You can now search for different items...");
+							.writeStatus(Translator.get(DictKeys.STATUSBAR_SEARCH_OPENED));
 
 					disableActiveButtons();
 					searchBtn.setImage(searchActive);
@@ -316,7 +320,7 @@ public class ToolbarComposite implements UIObserver {
 							CompositeFactory.getEmptyComposite(Collector
 									.getThreePanelComposite()));
 					StatusBarComposite.getInstance(parentComposite.getShell())
-							.writeStatus("Collector started...");
+							.writeStatus(Translator.get(DictKeys.STATUSBAR_PROGRAM_STARTED));
 
 					disableActiveButtons();
 					Collector.setCurrentRightPanelType(PanelType.Empty);
@@ -341,8 +345,7 @@ public class ToolbarComposite implements UIObserver {
 									.getThreePanelComposite()));
 					StatusBarComposite
 							.getInstance(parentComposite.getShell())
-							.writeStatus(
-									"You can now synchronize with your mobile device...");
+							.writeStatus(Translator.get(DictKeys.STATUSBAR_SYNCHRONIZE_OPENED));
 
 					disableActiveButtons();
 					syncBtn.setImage(syncActive);
@@ -354,7 +357,7 @@ public class ToolbarComposite implements UIObserver {
 							CompositeFactory.getEmptyComposite(Collector
 									.getThreePanelComposite()));
 					StatusBarComposite.getInstance(parentComposite.getShell())
-							.writeStatus("Collector started...");
+							.writeStatus(Translator.get(DictKeys.STATUSBAR_PROGRAM_STARTED));
 
 					disableActiveButtons();
 					Collector.setCurrentRightPanelType(PanelType.Empty);
@@ -379,7 +382,7 @@ public class ToolbarComposite implements UIObserver {
 							CompositeFactory.getEmptyComposite(Collector
 									.getThreePanelComposite()));
 					StatusBarComposite.getInstance(parentComposite.getShell())
-							.writeStatus("You can now browse the help...");
+							.writeStatus(Translator.get(DictKeys.STATUSBAR_HELP_OPENED));
 
 					disableActiveButtons();
 					helpBtn.setImage(helpActive);
@@ -390,7 +393,7 @@ public class ToolbarComposite implements UIObserver {
 							CompositeFactory.getEmptyComposite(Collector
 									.getThreePanelComposite()));
 					StatusBarComposite.getInstance(parentComposite.getShell())
-							.writeStatus("Collector started...");
+							.writeStatus(Translator.get(DictKeys.STATUSBAR_PROGRAM_STARTED));
 
 					disableActiveButtons();
 					Collector.setCurrentRightPanelType(PanelType.Empty);
@@ -445,7 +448,7 @@ public class ToolbarComposite implements UIObserver {
 
 		if (DatabaseWrapper.albumHasPictureField(albumName)) {
 			viewBtn.setImage(pictureView);
-			viewBtn.setToolTipText("Toggle to gallery mode");
+			viewBtn.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_TOGGLE_TO_GALLERY));
 			viewBtn.setEnabled(true);
 
 			Collector.setViewIsDetailed(true);

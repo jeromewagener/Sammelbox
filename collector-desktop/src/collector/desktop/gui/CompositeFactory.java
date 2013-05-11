@@ -45,9 +45,10 @@ import collector.desktop.database.MetaItemField;
 import collector.desktop.database.OptionType;
 import collector.desktop.database.StarRating;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
-import collector.desktop.gui.AlbumViewManager.AlbumView;
 import collector.desktop.gui.QueryBuilder.QueryComponent;
 import collector.desktop.gui.QueryBuilder.QueryOperator;
+import collector.desktop.internationalization.DictKeys;
+import collector.desktop.internationalization.Translator;
 import collector.desktop.networking.NetworkGateway;
 
 public class CompositeFactory {
@@ -67,7 +68,7 @@ public class CompositeFactory {
 
 		// quick-search label
 		Label quickSearchLabel = new Label(quickControlComposite, SWT.NONE);
-		quickSearchLabel.setText("Quicksearch:");
+		quickSearchLabel.setText(Translator.get(DictKeys.LABEL_QUICKSEARCH));
 		quickSearchLabel.setFont(new Font(parentComposite.getDisplay(), quickSearchLabel.getFont().getFontData()[0].getName(), 11, SWT.BOLD));
 
 		// quick-search text-box
@@ -81,7 +82,7 @@ public class CompositeFactory {
 
 		// select album label
 		Label selectAlbumLabel = new Label(quickControlComposite, SWT.NONE);
-		selectAlbumLabel.setText("Album List:");
+		selectAlbumLabel.setText(Translator.get(DictKeys.LABEL_ALBUM_LIST));
 		selectAlbumLabel.setFont(new Font(parentComposite.getDisplay(), selectAlbumLabel.getFont().getFontData()[0].getName(), 11, SWT.BOLD));
 
 		// the list of albums (listener is added later)
@@ -100,7 +101,7 @@ public class CompositeFactory {
 
 		// select album label
 		Label selectViewLabel = new Label(quickControlComposite, SWT.NONE);
-		selectViewLabel.setText("Saved Searches:");
+		selectViewLabel.setText(Translator.get(DictKeys.LABEL_SAVED_SEARCHES));
 		selectViewLabel.setFont(new Font(parentComposite.getDisplay(), selectAlbumLabel.getFont().getFontData()[0].getName(), 11, SWT.BOLD));
 
 		// the list of albums (listener is added later)
@@ -134,28 +135,28 @@ public class CompositeFactory {
 		Menu albumPopupMenu = new Menu(albumList);
 
 		MenuItem moveAlbumTop = new MenuItem(albumPopupMenu, SWT.NONE);
-		moveAlbumTop.setText("Move selected to top..");
+		moveAlbumTop.setText(Translator.get(DictKeys.DROPDOWN_MOVE_TO_TOP));
 		moveAlbumTop.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				AlbumManager.getInstance().moveToFront(albumList.getSelectionIndex());
 			}
 		});
 		MenuItem moveAlbumOneUp = new MenuItem(albumPopupMenu, SWT.NONE);
-		moveAlbumOneUp.setText("Move selected one up..");
+		moveAlbumOneUp.setText(Translator.get(DictKeys.DROPDOWN_MOVE_ONE_UP));
 		moveAlbumOneUp.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				AlbumManager.getInstance().moveOneUp(albumList.getSelectionIndex());
 			}
 		});
 		MenuItem moveAlbumOneDown = new MenuItem(albumPopupMenu, SWT.NONE);
-		moveAlbumOneDown.setText("Move selected one down..");
+		moveAlbumOneDown.setText(Translator.get(DictKeys.DROPDOWN_MOVE_ONE_DOWN));
 		moveAlbumOneDown.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				AlbumManager.getInstance().moveOneDown(albumList.getSelectionIndex());
 			}
 		});
 		MenuItem moveAlbumBottom = new MenuItem(albumPopupMenu, SWT.NONE);
-		moveAlbumBottom.setText("Move selected to bottom..");
+		moveAlbumBottom.setText(Translator.get(DictKeys.DROPDOWN_MOVE_TO_BOTTOM));
 		moveAlbumBottom.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				AlbumManager.getInstance().moveToBottom(albumList.getSelectionIndex());
@@ -165,7 +166,7 @@ public class CompositeFactory {
 		new MenuItem(albumPopupMenu, SWT.SEPARATOR);
 
 		MenuItem createNewAlbum = new MenuItem(albumPopupMenu, SWT.NONE);
-		createNewAlbum.setText("Create new album..");
+		createNewAlbum.setText(Translator.get(DictKeys.DROPDOWN_CREATE_NEW_ALBUM));
 		createNewAlbum.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				Collector.changeRightCompositeTo(
@@ -173,7 +174,7 @@ public class CompositeFactory {
 			}
 		});
 		MenuItem alterAlbum = new MenuItem(albumPopupMenu, SWT.NONE);
-		alterAlbum.setText("Modify the structure of the selected album..");
+		alterAlbum.setText(Translator.get(DictKeys.DROPDOWN_ALTER_ALBUM));
 		alterAlbum.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				Collector.changeRightCompositeTo(
@@ -185,12 +186,12 @@ public class CompositeFactory {
 		new MenuItem(albumPopupMenu, SWT.SEPARATOR);
 
 		MenuItem removeAlbum = new MenuItem(albumPopupMenu, SWT.NONE);
-		removeAlbum.setText("Remove selected album");
+		removeAlbum.setText(Translator.get(DictKeys.DROPDOWN_REMOVE));
 		removeAlbum.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				MessageBox messageBox = new MessageBox(Collector.getShell(), SWT.ICON_WARNING | SWT.YES | SWT.NO);
-				messageBox.setMessage("Do you really want to delete the \"" + Collector.getSelectedAlbum() + "\" album? All data will be permanently lost!");
-				messageBox.setText("Delete");
+				messageBox.setText(Translator.get(DictKeys.DIALOG_TITLE_DELETE_ALBUM));
+				messageBox.setMessage(Translator.get(DictKeys.DIALOG_TITLE_DELETE_ALBUM, Collector.getSelectedAlbum()));
 				if (messageBox.open() == SWT.YES) {
 					DatabaseWrapper.removeAlbum(Collector.getSelectedAlbum());
 					Collector.refreshSWTAlbumList();
@@ -268,7 +269,7 @@ public class CompositeFactory {
 		Menu popupMenu = new Menu(viewList);
 
 		MenuItem moveTop = new MenuItem(popupMenu, SWT.NONE);
-		moveTop.setText("Move selected to top..");
+		moveTop.setText(Translator.get(DictKeys.DROPDOWN_MOVE_TO_TOP));
 		moveTop.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (viewList.getSelectionIndex() > 0) {
@@ -278,7 +279,7 @@ public class CompositeFactory {
 		});
 
 		MenuItem moveOneUp = new MenuItem(popupMenu, SWT.NONE);
-		moveOneUp.setText("Move selected one up..");
+		moveOneUp.setText(Translator.get(DictKeys.DROPDOWN_MOVE_ONE_UP));
 		moveOneUp.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (viewList.getSelectionIndex() > 0) {
@@ -288,7 +289,7 @@ public class CompositeFactory {
 		});
 
 		MenuItem moveOneDown = new MenuItem(popupMenu, SWT.NONE);
-		moveOneDown.setText("Move selected one down..");
+		moveOneDown.setText(Translator.get(DictKeys.DROPDOWN_MOVE_ONE_DOWN));
 		moveOneDown.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (viewList.getSelectionIndex() > 0) {
@@ -298,7 +299,7 @@ public class CompositeFactory {
 		});
 
 		MenuItem moveBottom = new MenuItem(popupMenu, SWT.NONE);
-		moveBottom.setText("Move selected to bottom..");
+		moveBottom.setText(Translator.get(DictKeys.DROPDOWN_MOVE_TO_BOTTOM));
 		moveBottom.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (viewList.getSelectionIndex() < viewList.getItemCount()-1) {
@@ -310,13 +311,13 @@ public class CompositeFactory {
 		new MenuItem(popupMenu, SWT.SEPARATOR);
 
 		MenuItem removeSavedSearch = new MenuItem(popupMenu, SWT.NONE);
-		removeSavedSearch.setText("Remove selected saved search..");
+		removeSavedSearch.setText(Translator.get(DictKeys.DROPDOWN_REMOVE));
 		removeSavedSearch.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (viewList.getSelectionIndex() > 0) {
 					MessageBox messageBox = new MessageBox(Collector.getShell(), SWT.ICON_WARNING | SWT.YES | SWT.NO);
-					messageBox.setMessage("Do you really want to delete the \"" + viewList.getItem(viewList.getSelectionIndex()) + "\" saved search");
-					messageBox.setText("Delete");
+					messageBox.setText(Translator.get(DictKeys.DIALOG_TITLE_DELETE_SAVED_SEARCH));
+					messageBox.setMessage(Translator.get(DictKeys.DIALOG_TITLE_DELETE_SAVED_SEARCH, viewList.getItem(viewList.getSelectionIndex())));
 					if (messageBox.open() == SWT.YES) {
 						AlbumViewManager.removeAlbumView(viewList.getItem(viewList.getSelectionIndex()));
 					}
@@ -327,7 +328,7 @@ public class CompositeFactory {
 		new MenuItem(popupMenu, SWT.SEPARATOR);
 
 		MenuItem addSavedSearch = new MenuItem(popupMenu, SWT.NONE);
-		addSavedSearch.setText("Add another saved search..");
+		addSavedSearch.setText(Translator.get(DictKeys.DROPDOWN_ADD_ANOTHER_SAVED_SEARCH));
 		addSavedSearch.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (viewList.getSelectionIndex() > 0) {
@@ -353,14 +354,14 @@ public class CompositeFactory {
 		advancedSearchComposite.setLayout(new GridLayout(1, false));
 		advancedSearchComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		ComponentFactory.getPanelHeaderComposite(advancedSearchComposite, "Advanced Search");
+		ComponentFactory.getPanelHeaderComposite(advancedSearchComposite, Translator.get(DictKeys.LABEL_ADVANCED_SEARCH));
 
 		Composite innerComposite = new Composite(advancedSearchComposite, SWT.BORDER);
 		innerComposite.setLayout(new GridLayout(2, false));
 		innerComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		Label fieldToSearchLabel = new Label(innerComposite, SWT.NONE);
-		fieldToSearchLabel.setText("Field to search: ");
+		fieldToSearchLabel.setText(Translator.get(DictKeys.LABEL_FIELD_TO_SEARCH));
 		final Combo fieldToSearchCombo = new Combo(innerComposite, SWT.DROP_DOWN);
 		fieldToSearchCombo.setLayoutData(new GridData(GridData.FILL_BOTH));
 
@@ -371,12 +372,12 @@ public class CompositeFactory {
 				getValidFieldNamesAsStringArray(DatabaseWrapper.getAlbumItemFieldNamesAndTypes(album)));	
 
 		Label searchOperatorLabel = new Label(innerComposite, SWT.NONE);
-		searchOperatorLabel.setText("Search Operator: ");
+		searchOperatorLabel.setText(Translator.get(DictKeys.LABEL_SEARCH_OPERATOR));
 		final Combo searchOperatorCombo = new Combo(innerComposite, SWT.DROP_DOWN);	
 		searchOperatorCombo.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		Label valueToSearchLabel = new Label(innerComposite, SWT.NONE);
-		valueToSearchLabel.setText("Value to Search: ");
+		valueToSearchLabel.setText(Translator.get(DictKeys.LABEL_VALUE_TO_SEARCH));
 		final Text valueToSearchText = new Text(innerComposite, SWT.BORDER);
 		valueToSearchText.setLayoutData(new GridData(GridData.FILL_BOTH));
 
@@ -405,7 +406,7 @@ public class CompositeFactory {
 		});		
 
 		Button addToSearchButton = new Button(innerComposite, SWT.PUSH);
-		addToSearchButton.setText("Add to search");
+		addToSearchButton.setText(Translator.get(DictKeys.BUTTON_ADD_TO_SEARCH));
 		GridData gridData = new GridData(GridData.FILL_BOTH);
 		gridData.horizontalSpan = 2;
 		addToSearchButton.setLayoutData(gridData);
@@ -425,8 +426,8 @@ public class CompositeFactory {
 						|| valueToSearchText.getText().equals("")) {				
 					MessageBox messageBox = ComponentFactory.getMessageBox(
 							parentComposite.getShell(),
-							"Collector-Warning",
-							"You must select a field and an operator, as well as a value to search for!",
+							Translator.get(DictKeys.DIALOG_TITLE_SELECT_QUERY_COMPONENTS),
+							Translator.get(DictKeys.DIALOG_CONTENT_SELECT_QUERY_COMPONENTS),
 							SWT.ICON_WARNING | SWT.OK);
 					messageBox.open();
 					return;
@@ -442,11 +443,11 @@ public class CompositeFactory {
 
 		// Setup table
 		TableColumn fieldNameColumn = new TableColumn(searchQueryTable, SWT.NONE);
-		fieldNameColumn.setText("Field Name");
+		fieldNameColumn.setText(Translator.get(DictKeys.TABLE_COLUMN_FIELD_NAME));
 		TableColumn operatorColumn = new TableColumn(searchQueryTable, SWT.NONE);
-		operatorColumn.setText("Operator");
+		operatorColumn.setText(Translator.get(DictKeys.TABLE_COLUMN_OPERATOR));
 		TableColumn valueColumn = new TableColumn(searchQueryTable, SWT.NONE);
-		valueColumn.setText("Value");
+		valueColumn.setText(Translator.get(DictKeys.TABLE_COLUMN_VALUE));
 		searchQueryTable.getColumn(0).pack ();
 		searchQueryTable.getColumn(1).pack ();
 		searchQueryTable.getColumn(2).pack ();
@@ -454,7 +455,7 @@ public class CompositeFactory {
 		// Pop-Up menu
 		Menu popupMenu = new Menu(searchQueryTable);
 		MenuItem remove = new MenuItem(popupMenu, SWT.NONE);
-		remove.setText("Remove");
+		remove.setText(Translator.get(DictKeys.DROPDOWN_REMOVE));
 		remove.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (searchQueryTable.getSelectionIndex() != -1) {
@@ -464,7 +465,7 @@ public class CompositeFactory {
 		});
 
 		MenuItem removeAll = new MenuItem(popupMenu, SWT.NONE);
-		removeAll.setText("Remove all");
+		removeAll.setText(Translator.get(DictKeys.DROPDOWN_REMOVE_ALL));
 		removeAll.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (searchQueryTable.getSelectionIndex() != -1) {
@@ -482,20 +483,20 @@ public class CompositeFactory {
 		data.heightHint = 150;
 		searchQueryTable.setLayoutData(data);	
 
-		ComponentFactory.getSmallBoldItalicLabel(advancedSearchComposite, "Connect search terms by: ");
+		ComponentFactory.getSmallBoldItalicLabel(advancedSearchComposite, Translator.get(DictKeys.LABEL_CONNECT_SEARCH_TERMS_BY));
 
 		Composite composite = new Composite(advancedSearchComposite, SWT.BORDER);
 		composite.setLayout(new RowLayout());
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 
 		final Button andButton = new Button(composite, SWT.RADIO);
-		andButton.setText("AND");
+		andButton.setText(Translator.get(DictKeys.BUTTON_AND));
 		andButton.setSelection(true);
 		Button orButton = new Button(composite, SWT.RADIO);
-		orButton.setText("OR");
+		orButton.setText(Translator.get(DictKeys.BUTTON_OR));
 
 		Button searchButton = new Button(advancedSearchComposite, SWT.PUSH);
-		searchButton.setText("Execute search");
+		searchButton.setText(Translator.get(DictKeys.BUTTON_EXECUTE_SEARCH));
 		searchButton.setLayoutData(new GridData(GridData.FILL_BOTH));
 		searchButton.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -519,13 +520,17 @@ public class CompositeFactory {
 		});
 
 		Button saveAsViewButton = new Button(advancedSearchComposite, SWT.PUSH);
-		saveAsViewButton.setText("Save this search");
+		saveAsViewButton.setText(Translator.get(DictKeys.BUTTON_SAVE_THIS_SEARCH));
 		saveAsViewButton.setLayoutData(new GridData(GridData.FILL_BOTH));
 		saveAsViewButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (!Collector.hasSelectedAlbum()) {
-					ComponentFactory.showErrorDialog(advancedSearchComposite, "No album has been selected", "Please select an album from the list or create one first.");
+					ComponentFactory.showErrorDialog(
+							Collector.getShell(), 
+							Translator.get(DictKeys.DIALOG_TITLE_NO_ALBUM_SELECTED), 
+							Translator.get(DictKeys.DIALOG_CONTENT_NO_ALBUM_SELECTED));
+					
 					return;
 				}
 
@@ -544,12 +549,20 @@ public class CompositeFactory {
 				}
 
 				TextInputDialog textInputDialog = new TextInputDialog(parentComposite.getShell());
-				String viewName = textInputDialog.open("Please enter a name for the search", "Search Name: ", "My Search", "Save");
+				String viewName = textInputDialog.open(
+						Translator.get(DictKeys.DIALOG_TITLE_ENTER_VIEW_NAME), 
+						Translator.get(DictKeys.DIALOG_CONTENT_ENTER_VIEW_NAME), 
+						Translator.get(DictKeys.DIALOG_TEXTBOX_ENTER_VIEW_NAME),
+						Translator.get(DictKeys.DIALOG_BUTTON_ENTER_VIEW_NAME));
 
 				if (viewName != null && !AlbumViewManager.hasViewWithName(viewName)) {
 					AlbumViewManager.addAlbumView(viewName, Collector.getSelectedAlbum(), QueryBuilder.buildQuery(queryComponents, connectByAnd, album));
 				} else {
-					ComponentFactory.getMessageBox(parentComposite, "Name already in use", "This name is already used by another saved search. Please choose another name.", SWT.ICON_INFORMATION).open();
+					ComponentFactory.getMessageBox(
+							parentComposite, 
+							Translator.get(DictKeys.DIALOG_TITLE_VIEW_NAME_ALREADY_USED), 
+							Translator.get(DictKeys.DIALOG_CONTENT_VIEW_NAME_ALREADY_USED), 
+							SWT.ICON_INFORMATION).open();
 				}
 			}
 		});
@@ -603,35 +616,35 @@ public class CompositeFactory {
 		createNewAlbumComposite.setLayout(new GridLayout());
 
 		// description (header) label
-		ComponentFactory.getPanelHeaderComposite(createNewAlbumComposite, "Creating a new Album");
+		ComponentFactory.getPanelHeaderComposite(createNewAlbumComposite, Translator.get(DictKeys.LABEL_CREATE_NEW_ALBUM));
 
 		// album name label & text-box to enter album name
 		Label albumNameLabel = new Label(createNewAlbumComposite, SWT.NONE);
-		albumNameLabel.setText("The name of the new Album:");
+		albumNameLabel.setText(Translator.get(DictKeys.LABEL_NAME_OF_NEW_ALBUM));
 		final Text albumNameText = new Text(createNewAlbumComposite, SWT.BORDER);
 		albumNameText.setLayoutData(new GridData(GridData.FILL_BOTH));
-		albumNameText.setText("My new Album");
+		albumNameText.setText(Translator.get(DictKeys.TEXTBOX_MY_NEW_ALBUM));
 
 		// picture question label & radio buttons
 		Label label = new Label(createNewAlbumComposite, SWT.NONE);
-		label.setText("Should this album contain pictures?");
+		label.setText(Translator.get(DictKeys.LABEL_SHOULD_CONTAIN_IMAGES));
 		Composite composite = new Composite(createNewAlbumComposite, SWT.NULL);
 		composite.setLayout(new RowLayout());
 		final Button yesButtonForIncludingImages = new Button(composite, SWT.RADIO);
-		yesButtonForIncludingImages.setText("Yes");
+		yesButtonForIncludingImages.setText(Translator.get(DictKeys.BUTTON_YES));
 		yesButtonForIncludingImages.setSelection(true);
 		Button noButtonForIncludingImages = new Button(composite, SWT.RADIO);
-		noButtonForIncludingImages.setText("No");
+		noButtonForIncludingImages.setText(Translator.get(DictKeys.BUTTON_NO));
 
 		// fieldname label and text-box to enter the name of the field
 		Label fieldNameLabel = new Label(createNewAlbumComposite, SWT.NONE);
-		fieldNameLabel.setText("Name of the field:");
+		fieldNameLabel.setText(Translator.get(DictKeys.LABEL_FIELD_NAME));
 		final Text fieldNameText = new Text(createNewAlbumComposite, SWT.BORDER);
 		fieldNameText.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		// fieldtype label and combo-box to enter the type of the field
 		Label fieldTypeLabel = new Label(createNewAlbumComposite, SWT.NONE);
-		fieldTypeLabel.setText("Type of the field:");
+		fieldTypeLabel.setText(Translator.get(DictKeys.LABEL_FIELD_TYPE));
 		final Combo fieldTypeCombo = new Combo(createNewAlbumComposite, SWT.DROP_DOWN);
 		fieldTypeCombo.setItems(FieldType.toUserTypeStringArray());	    
 		fieldTypeCombo.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -639,7 +652,7 @@ public class CompositeFactory {
 
 		// Add-field-button --> listener comes after table
 		Button addFieldButton = new Button(createNewAlbumComposite, SWT.PUSH);
-		addFieldButton.setText("Add field to Album");
+		addFieldButton.setText(Translator.get(DictKeys.BUTTON_ADD_FIELD));
 		addFieldButton.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		// Field table
@@ -650,7 +663,7 @@ public class CompositeFactory {
 
 		Menu popupMenu = new Menu(albumFieldNamesAndTypesTable);
 		MenuItem moveUp = new MenuItem(popupMenu, SWT.NONE);
-		moveUp.setText("Move one up..");
+		moveUp.setText(Translator.get(DictKeys.DROPDOWN_MOVE_ONE_DOWN));
 		moveUp.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (albumFieldNamesAndTypesTable.getSelectionIndex() > 0) {
@@ -667,7 +680,7 @@ public class CompositeFactory {
 		});
 
 		MenuItem moveDown = new MenuItem(popupMenu, SWT.NONE);
-		moveDown.setText("Move one down..");
+		moveDown.setText(Translator.get(DictKeys.DROPDOWN_MOVE_ONE_DOWN));
 		moveDown.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (albumFieldNamesAndTypesTable.getSelectionIndex() != albumFieldNamesAndTypesTable.getItemCount()) {
@@ -685,13 +698,16 @@ public class CompositeFactory {
 
 		new MenuItem(popupMenu, SWT.SEPARATOR);
 		MenuItem rename = new MenuItem(popupMenu, SWT.NONE);
-		rename.setText("Rename");
+		rename.setText(Translator.get(DictKeys.DROPDOWN_RENAME));
 		rename.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				TableItem item = albumFieldNamesAndTypesTable.getItem(albumFieldNamesAndTypesTable.getSelectionIndex());
 
 				TextInputDialog textInputDialog = new TextInputDialog(parentComposite.getShell());
-				String newName = textInputDialog.open("Renaming the field", "Rename: ", item.getText(1), "Rename!");
+				String newName = textInputDialog.open(
+						Translator.get(DictKeys.DIALOG_TITLE_RENAME_FIELD), 
+						Translator.get(DictKeys.DIALOG_CONTENT_RENAME_FIELD), item.getText(1), 
+						Translator.get(DictKeys.DIALOG_BUTTON_RENAME_FIELD));
 
 				if (newName != null) {
 					item.setText(1, newName);
@@ -701,7 +717,7 @@ public class CompositeFactory {
 
 		new MenuItem(popupMenu, SWT.SEPARATOR);
 		MenuItem delete = new MenuItem(popupMenu, SWT.NONE);
-		delete.setText("Remove");
+		delete.setText(Translator.get(DictKeys.DROPDOWN_REMOVE));
 		delete.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (albumFieldNamesAndTypesTable.getSelectionIndex() != -1) {
@@ -715,11 +731,11 @@ public class CompositeFactory {
 
 		// Setup table
 		TableColumn isImportantColumn = new TableColumn(albumFieldNamesAndTypesTable, SWT.NONE);
-		isImportantColumn.setText("QuickSearch");
+		isImportantColumn.setText(Translator.get(DictKeys.TABLE_COLUMN_QUICKSEARCH));
 		TableColumn fieldNameColumn = new TableColumn(albumFieldNamesAndTypesTable, SWT.NONE);
-		fieldNameColumn.setText("Field Name");
+		fieldNameColumn.setText(Translator.get(DictKeys.TABLE_COLUMN_FIELD_NAME));
 		TableColumn fieldTypeColumn = new TableColumn(albumFieldNamesAndTypesTable, SWT.NONE);
-		fieldTypeColumn.setText("Field Type");
+		fieldTypeColumn.setText(Translator.get(DictKeys.TABLE_COLUMN_FIELD_TYPE));
 		albumFieldNamesAndTypesTable.getColumn(0).pack ();
 		albumFieldNamesAndTypesTable.getColumn(1).pack ();
 		albumFieldNamesAndTypesTable.getColumn(2).pack ();
@@ -738,7 +754,10 @@ public class CompositeFactory {
 			public void widgetSelected(SelectionEvent e) {
 				if (fieldNameText.getText().isEmpty()) {				
 					MessageBox messageBox = ComponentFactory.getMessageBox(
-							parentComposite.getShell(), "Collector-Warning", "You must give your field a name!", SWT.ICON_WARNING | SWT.OK);
+							parentComposite.getShell(),
+							Translator.get(DictKeys.DIALOG_TITLE_FIELD_MUST_HAVE_NAME),
+							Translator.get(DictKeys.DIALOG_CONTENT_FIELD_MUST_HAVE_NAME),
+							SWT.ICON_WARNING | SWT.OK);
 					messageBox.open();
 					return;
 				}
@@ -752,7 +771,7 @@ public class CompositeFactory {
 
 		// Create album button
 		Button createAlbumButton = new Button(createNewAlbumComposite, SWT.PUSH);
-		createAlbumButton.setText("Create the Album");
+		createAlbumButton.setText(Translator.get(DictKeys.BUTTON_CREATE_ALBUM));
 		createAlbumButton.setLayoutData(new GridData(GridData.FILL_BOTH));
 		createAlbumButton.addSelectionListener(new SelectionListener() {
 			@Override
@@ -763,7 +782,11 @@ public class CompositeFactory {
 				String albumName = albumNameText.getText();
 
 				if (! DatabaseWrapper.albumNameIsAvailable(albumName)) {
-					ComponentFactory.getMessageBox(parentComposite, "Name already in use", "This name is already used by another album. Please choose another name.", SWT.ICON_INFORMATION).open();
+					ComponentFactory.getMessageBox(
+							parentComposite, 
+							Translator.get(DictKeys.DIALOG_TITLE_ALBUM_NAME_ALREADY_USED), 
+							Translator.get(DictKeys.DIALOG_CONTENT_ALBUM_NAME_ALREADY_USED), 
+							SWT.ICON_INFORMATION).open();
 					return;
 				}
 				
@@ -826,7 +849,7 @@ public class CompositeFactory {
 		alterAlbumComposite.setLayout(new GridLayout());
 
 		// description (header) label
-		ComponentFactory.getPanelHeaderComposite(alterAlbumComposite, "Alter an existing Album!");
+		ComponentFactory.getPanelHeaderComposite(alterAlbumComposite, Translator.get(DictKeys.LABEL_ALTER_ALBUM));
 
 		// album name label & text-box to enter album name
 		Label albumNameLabel = new Label(alterAlbumComposite, SWT.NONE);
@@ -838,7 +861,7 @@ public class CompositeFactory {
 
 		// Rename album button
 		Button renameAlbumButton = new Button(alterAlbumComposite, SWT.PUSH);
-		renameAlbumButton.setText("Rename the Album");
+		renameAlbumButton.setText(Translator.get(DictKeys.BUTTON_RENAME_ALBUM));
 		renameAlbumButton.setLayoutData(new GridData(GridData.FILL_BOTH));
 		renameAlbumButton.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -847,7 +870,11 @@ public class CompositeFactory {
 
 				boolean isAlbumNameValid = DatabaseWrapper.albumNameIsAvailable(newAlbumName); 
 				if (!isAlbumNameValid) {
-					ComponentFactory.getMessageBox(parentComposite, "Name already in use", "This name is already used by another album. Please choose another name.", SWT.ICON_INFORMATION).open();
+					ComponentFactory.getMessageBox(
+							parentComposite, 
+							Translator.get(DictKeys.DIALOG_TITLE_ALBUM_NAME_ALREADY_USED), 
+							Translator.get(DictKeys.DIALOG_CONTENT_ALBUM_NAME_ALREADY_USED), 
+							SWT.ICON_INFORMATION).open();
 					return;
 				}					
 				
@@ -888,11 +915,11 @@ public class CompositeFactory {
 
 		// picture question label & radio buttons
 		Label label = new Label(innerComposite, SWT.NONE);
-		label.setText("Should this album contain pictures?");
+		label.setText(Translator.get(DictKeys.LABEL_SHOULD_CONTAIN_IMAGES));
 		Composite composite = new Composite(innerComposite, SWT.NULL);
 		composite.setLayout(new RowLayout());
 		final Button yesButtonForIncludingImages = new Button(composite, SWT.RADIO);
-		yesButtonForIncludingImages.setText("Yes");
+		yesButtonForIncludingImages.setText(Translator.get(DictKeys.BUTTON_YES));
 		yesButtonForIncludingImages.setSelection(DatabaseWrapper.albumHasPictureField(album));
 		yesButtonForIncludingImages.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -914,7 +941,7 @@ public class CompositeFactory {
 			}
 		});
 		final Button noButtonForIncludingImages = new Button(composite, SWT.RADIO);
-		noButtonForIncludingImages.setText("No");
+		noButtonForIncludingImages.setText(Translator.get(DictKeys.BUTTON_NO));
 		noButtonForIncludingImages.setSelection(!DatabaseWrapper.albumHasPictureField(album));
 		noButtonForIncludingImages.addSelectionListener(new SelectionAdapter() {
 
@@ -922,9 +949,9 @@ public class CompositeFactory {
 			public void widgetSelected(SelectionEvent e) {
 				String currentAlbumName = albumNameText.getData().toString();
 				if (DatabaseWrapper.albumHasPictureField(currentAlbumName)) {
-					boolean removalConfirmed = ComponentFactory.showYesNoDialog(alterAlbumComposite, "Delete album pictures", 
-							"All pictures this album may contain will bed permanently removed along with the picture field itself.\n " +
-							"Do you want to proceed?");
+					boolean removalConfirmed = ComponentFactory.showYesNoDialog(alterAlbumComposite, 
+							Translator.get(DictKeys.DIALOG_TITLE_DELETE_ALBUM_PICTURES), 
+							Translator.get(DictKeys.DIALOG_CONTENT_DELETE_ALBUM_PICTURES));
 					if (removalConfirmed) {
 						String albumName = albumNameText.getData().toString();
 						java.util.List<MetaItemField> oldAlbumMetaFields = DatabaseWrapper.getAlbumItemFieldNamesAndTypes(albumName);
@@ -951,13 +978,13 @@ public class CompositeFactory {
 
 		// fieldname label and text-box to enter the name of the field
 		Label fieldNameLabel = new Label(innerComposite, SWT.NONE);
-		fieldNameLabel.setText("Name of the additional field:");
+		fieldNameLabel.setText(Translator.get(DictKeys.LABEL_FIELD_NAME));
 		final Text fieldNameText = new Text(innerComposite, SWT.BORDER);
 		fieldNameText.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		// fieldtype label and combo-box to enter the type of the field
 		Label fieldTypeLabel = new Label(innerComposite, SWT.NONE);
-		fieldTypeLabel.setText("Type of the field:");
+		fieldTypeLabel.setText(Translator.get(DictKeys.LABEL_FIELD_TYPE));
 		final Combo fieldTypeCombo = new Combo(innerComposite, SWT.DROP_DOWN);
 		fieldTypeCombo.setItems(FieldType.toUserTypeStringArray());	    
 		fieldTypeCombo.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -975,7 +1002,7 @@ public class CompositeFactory {
 
 		Menu popupMenu = new Menu(albumFieldNamesAndTypesTable);
 		MenuItem moveUp = new MenuItem(popupMenu, SWT.NONE);
-		moveUp.setText("Move one up..");
+		moveUp.setText(Translator.get(DictKeys.DROPDOWN_MOVE_ONE_UP));
 		moveUp.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (albumFieldNamesAndTypesTable.getSelectionIndex() > 0) {
@@ -1020,7 +1047,7 @@ public class CompositeFactory {
 		});
 
 		MenuItem moveDown = new MenuItem(popupMenu, SWT.NONE);
-		moveDown.setText("Move one down..");
+		moveDown.setText(Translator.get(DictKeys.DROPDOWN_MOVE_ONE_DOWN));
 		moveDown.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (albumFieldNamesAndTypesTable.getSelectionIndex() < (albumFieldNamesAndTypesTable.getItemCount() - 1)) {
@@ -1065,13 +1092,16 @@ public class CompositeFactory {
 
 		new MenuItem(popupMenu, SWT.SEPARATOR);
 		MenuItem rename = new MenuItem(popupMenu, SWT.NONE);
-		rename.setText("Rename");
+		rename.setText(Translator.get(DictKeys.DROPDOWN_RENAME));
 		rename.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				TableItem item = albumFieldNamesAndTypesTable.getItem(albumFieldNamesAndTypesTable.getSelectionIndex());
 
 				TextInputDialog textInputDialog = new TextInputDialog(parentComposite.getShell());
-				String newFieldName = textInputDialog.open("Renaming the field", "Rename: ", item.getText(1), "Rename!");
+				String newFieldName = textInputDialog.open(
+						Translator.get(DictKeys.DIALOG_TITLE_RENAME_FIELD),
+						Translator.get(DictKeys.DIALOG_CONTENT_RENAME_FIELD), item.getText(1), 
+						Translator.get(DictKeys.DIALOG_BUTTON_RENAME_FIELD));
 						
 				if (newFieldName != null) {	    			
 					MetaItemField oldMetaItemField = new MetaItemField(item.getText(1),  FieldType.valueOf(item.getText(2)), item.getChecked());
@@ -1095,11 +1125,14 @@ public class CompositeFactory {
 
 		new MenuItem(popupMenu, SWT.SEPARATOR);
 		MenuItem delete = new MenuItem(popupMenu, SWT.NONE);
-		delete.setText("Remove");
+		delete.setText(Translator.get(DictKeys.DROPDOWN_REMOVE));
 		delete.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (albumFieldNamesAndTypesTable.getSelectionIndex() != -1) {	    	
-					boolean removalConfirmed = ComponentFactory.showYesNoDialog(alterAlbumComposite,"Delete album field", "The album item will be permanently deleted.\n Do you want to proceed?");
+					boolean removalConfirmed = ComponentFactory.showYesNoDialog(
+							alterAlbumComposite,
+							Translator.get(DictKeys.DIALOG_TITLE_DELETE_ALBUM_ITEM), 
+							Translator.get(DictKeys.DIALOG_CONTENT_DELETE_ALBUM_ITEM));
 					if (removalConfirmed) {
 						TableItem item = albumFieldNamesAndTypesTable.getItem(albumFieldNamesAndTypesTable.getSelectionIndex());
 
@@ -1126,11 +1159,11 @@ public class CompositeFactory {
 
 		// Setup table
 		TableColumn isImportantColumn = new TableColumn(albumFieldNamesAndTypesTable, SWT.NONE);
-		isImportantColumn.setText("QuickSearch");
+		isImportantColumn.setText(Translator.get(DictKeys.TABLE_COLUMN_QUICKSEARCH));
 		TableColumn fieldNameColumn = new TableColumn(albumFieldNamesAndTypesTable, SWT.NONE);
-		fieldNameColumn.setText("Field Name");
+		fieldNameColumn.setText(Translator.get(DictKeys.TABLE_COLUMN_FIELD_NAME));
 		TableColumn fieldTypeColumn = new TableColumn(albumFieldNamesAndTypesTable, SWT.NONE);
-		fieldTypeColumn.setText("Field Type");
+		fieldTypeColumn.setText(Translator.get(DictKeys.TABLE_COLUMN_FIELD_TYPE));
 		albumFieldNamesAndTypesTable.getColumn(0).pack ();
 		albumFieldNamesAndTypesTable.getColumn(1).pack ();
 		albumFieldNamesAndTypesTable.getColumn(2).pack ();
@@ -1190,7 +1223,10 @@ public class CompositeFactory {
 			public void widgetSelected(SelectionEvent e) {
 				if (fieldNameText.getText().isEmpty()) {				
 					MessageBox messageBox = ComponentFactory.getMessageBox(
-							parentComposite.getShell(), "Collector-Warning", "You must give your field a name!", SWT.ICON_WARNING | SWT.OK);
+							parentComposite.getShell(),
+							Translator.get(DictKeys.DIALOG_TITLE_FIELD_MUST_HAVE_NAME),
+							Translator.get(DictKeys.DIALOG_CONTENT_FIELD_MUST_HAVE_NAME),
+							SWT.ICON_WARNING | SWT.OK);
 					messageBox.open();
 					return;
 				}
@@ -1202,7 +1238,10 @@ public class CompositeFactory {
 
 				if (!DatabaseWrapper.itemFieldNameIsAvailable(albumName, metaItemField.getName())) {
 					MessageBox messageBox = ComponentFactory.getMessageBox(
-							parentComposite.getShell(), "Collector-Warning", "The field name is already in use for this album!", SWT.ICON_WARNING | SWT.OK);
+							parentComposite.getShell(),
+							Translator.get(DictKeys.DIALOG_TITLE_FIELD_NAME_ALREADY_USED),
+							Translator.get(DictKeys.DIALOG_CONTENT_FIELD_NAME_ALREADY_USED),
+							SWT.ICON_WARNING | SWT.OK);
 					messageBox.open();
 					fieldNameText.selectAll();
 					fieldNameText.setFocus();
@@ -1494,7 +1533,7 @@ public class CompositeFactory {
 				yesNoComposite.setData("FieldName", fieldName);
 
 				Button yesButton = new Button(yesNoComposite, SWT.RADIO);
-				yesButton.setText("Yes");
+				yesButton.setText(Translator.get(DictKeys.BUTTON_YES));
 				yesButton.setData("yesButton", true);
 				yesButton.setData("noButton", false);
 				yesButton.setData("unknownButton", false);
@@ -1507,7 +1546,7 @@ public class CompositeFactory {
 				}
 
 				Button noButton = new Button(yesNoComposite, SWT.RADIO);
-				noButton.setText("No");
+				noButton.setText(Translator.get(DictKeys.BUTTON_NO));
 				noButton.setData("yesButton", false);
 				noButton.setData("noButton", true);
 				noButton.setData("unknownButton", false);
@@ -1520,7 +1559,7 @@ public class CompositeFactory {
 				}
 
 				Button unknownButton = new Button(yesNoComposite, SWT.RADIO);
-				unknownButton.setText("Unknown");
+				unknownButton.setText(Translator.get(DictKeys.BUTTON_UNKNOWN));
 				unknownButton.setData("yesButton", false);
 				unknownButton.setData("noButton", false);
 				unknownButton.setData("unknownButton", true);
@@ -1564,7 +1603,11 @@ public class CompositeFactory {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (!Collector.hasSelectedAlbum()) {
-					ComponentFactory.showErrorDialog(composite,"No album has been selected", "Please select an album from the list or create one first.");
+					ComponentFactory.showErrorDialog(
+							Collector.getShell(), 
+							Translator.get(DictKeys.DIALOG_TITLE_NO_ALBUM_SELECTED), 
+							Translator.get(DictKeys.DIALOG_CONTENT_NO_ALBUM_SELECTED));
+					
 					return;
 				}
 				AlbumItem albumItem = new AlbumItem(Collector.getSelectedAlbum());
@@ -1711,7 +1754,7 @@ public class CompositeFactory {
 		resizeComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
 		// description (header) label
-		ComponentFactory.getPanelHeaderComposite(resizeComposite, "Add Entry");
+		ComponentFactory.getPanelHeaderComposite(resizeComposite, Translator.get(DictKeys.LABEL_ADD_ENTRY));
 
 		// Setup ScrolledComposite containing an normal (basic) Composite
 		ScrolledComposite scrolledComposite = new ScrolledComposite(resizeComposite,  SWT.NONE | SWT.H_SCROLL | SWT.V_SCROLL );
@@ -1725,7 +1768,7 @@ public class CompositeFactory {
 
 		// Add Button
 		Button addButton = new Button(addAlbumItemComposite, SWT.PUSH);
-		addButton.setText("Add Entry");
+		addButton.setText(Translator.get(DictKeys.BUTTON_ADD_ENTRY));
 		addButton.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		addButton.addSelectionListener(getSelectionListenerForAddAndUpdateAlbumItemComposite(addAlbumItemComposite, false, 0));
 
@@ -1748,7 +1791,7 @@ public class CompositeFactory {
 		resizeComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
 		// description (header) label
-		ComponentFactory.getPanelHeaderComposite(resizeComposite, "Update Entry");
+		ComponentFactory.getPanelHeaderComposite(resizeComposite, Translator.get(DictKeys.LABEL_UPDATE_ENTRY));
 
 		// Setup ScrolledComposite containing an normal (basic) Composite
 		ScrolledComposite scrolledComposite = new ScrolledComposite(resizeComposite,  SWT.NONE | SWT.H_SCROLL | SWT.V_SCROLL );
@@ -1763,7 +1806,7 @@ public class CompositeFactory {
 
 		// Add Button
 		Button updateButton = new Button(updateAlbumItemComposite, SWT.PUSH);
-		updateButton.setText("Update Item");
+		updateButton.setText(Translator.get(DictKeys.BUTTON_UPDATE_ITEM));
 		updateButton.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		updateButton.addSelectionListener(
 				getSelectionListenerForAddAndUpdateAlbumItemComposite(updateAlbumItemComposite, true, albumItemId));
@@ -1782,14 +1825,14 @@ public class CompositeFactory {
 		synchronizeComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		// label header
-		ComponentFactory.getPanelHeaderComposite(synchronizeComposite, "Synchronize");
+		ComponentFactory.getPanelHeaderComposite(synchronizeComposite, Translator.get(DictKeys.LABEL_SYNCHRONIZE));
 
 		// min height griddata
 		GridData minHeightGridData = new GridData(GridData.FILL_BOTH);
 		minHeightGridData.minimumHeight = 20;
 
 		final Button startButton = new Button(synchronizeComposite, SWT.PUSH);
-		startButton.setText("Start Synchronization");
+		startButton.setText(Translator.get(DictKeys.BUTTON_START_SYNCHRONIZATION));
 		startButton.setLayoutData(new GridData(GridData.FILL_BOTH));
 		// listener after cancel button since this button reference is needed
 
@@ -1798,22 +1841,22 @@ public class CompositeFactory {
 
 		final HashMap<SynchronizeStep, Label> synchronizeStepsToLabelsMap = new HashMap<SynchronizeStep, Label>();
 
-		final Label establishConnectionLabel = ComponentFactory.getH4Label(synchronizeComposite, "\u25CF Establishing Connection");
+		final Label establishConnectionLabel = ComponentFactory.getH4Label(synchronizeComposite, "\u25CF " + Translator.get(DictKeys.LABEL_ESTABLISHING_CONNECTION));
 		establishConnectionLabel.setLayoutData(minHeightGridData);
 		establishConnectionLabel.setEnabled(false);
 		synchronizeStepsToLabelsMap.put(SynchronizeStep.ESTABLISH_CONNECTION, establishConnectionLabel);
 
-		final Label uploadDataLabel = ComponentFactory.getH4Label(synchronizeComposite, "\u25CF Upload Data");
+		final Label uploadDataLabel = ComponentFactory.getH4Label(synchronizeComposite, "\u25CF " + Translator.get(DictKeys.LABEL_UPLOAD_DATA));
 		uploadDataLabel.setLayoutData(minHeightGridData);
 		uploadDataLabel.setEnabled(false);
 		synchronizeStepsToLabelsMap.put(SynchronizeStep.UPLOAD_DATA, uploadDataLabel);
 
-		final Label installDataLabel = ComponentFactory.getH4Label(synchronizeComposite, "\u25CF Install Data");
+		final Label installDataLabel = ComponentFactory.getH4Label(synchronizeComposite, "\u25CF " + Translator.get(DictKeys.LABEL_INSTALL_DATA));
 		installDataLabel.setLayoutData(minHeightGridData);
 		installDataLabel.setEnabled(false);
 		synchronizeStepsToLabelsMap.put(SynchronizeStep.INSTALL_DATA, installDataLabel);
 
-		final Label finishLabel = ComponentFactory.getH4Label(synchronizeComposite, "\u25CF Finish");
+		final Label finishLabel = ComponentFactory.getH4Label(synchronizeComposite, "\u25CF " + Translator.get(DictKeys.LABEL_FINISH));
 		finishLabel.setLayoutData(minHeightGridData);
 		finishLabel.setEnabled(false);
 		synchronizeStepsToLabelsMap.put(SynchronizeStep.FINISH, finishLabel);
@@ -1827,7 +1870,7 @@ public class CompositeFactory {
 		new Label(synchronizeComposite, SWT.SEPARATOR | SWT.HORIZONTAL).setLayoutData(minHeightGridData);
 
 		final Button cancelButton = new Button(synchronizeComposite, SWT.PUSH);
-		cancelButton.setText("Cancel Synchronization");
+		cancelButton.setText(Translator.get(DictKeys.BUTTON_CANCEL_SYNCHRONIZATION));
 		cancelButton.setEnabled(false);
 		cancelButton.setLayoutData(new GridData(GridData.FILL_BOTH));
 

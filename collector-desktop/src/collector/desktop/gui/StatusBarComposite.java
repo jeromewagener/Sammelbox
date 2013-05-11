@@ -7,6 +7,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
+import collector.desktop.internationalization.DictKeys;
+import collector.desktop.internationalization.Translator;
+
 public class StatusBarComposite {
 	private static StatusBarComposite instance = null;
 	private Composite statusbarComposite = null;
@@ -32,7 +35,7 @@ public class StatusBarComposite {
 		
 		new Label(statusbarComposite, SWT.SEPARATOR | SWT.HORIZONTAL).setLayoutData(seperatorGridData);
 
-		statusLabel = ComponentFactory.getSmallItalicLabel(statusbarComposite, "Collector started...");
+		statusLabel = ComponentFactory.getSmallItalicLabel(statusbarComposite, Translator.get(DictKeys.STATUSBAR_PROGRAM_STARTED));
 
 		gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		statusLabel.setLayoutData(gridData);

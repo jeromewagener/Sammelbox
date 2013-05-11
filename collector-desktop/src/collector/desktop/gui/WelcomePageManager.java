@@ -11,6 +11,8 @@ import java.util.Map;
 
 import collector.desktop.database.DatabaseWrapper;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
+import collector.desktop.internationalization.DictKeys;
+import collector.desktop.internationalization.Translator;
 
 public class WelcomePageManager {
 	private static WelcomePageManager instance;
@@ -69,7 +71,7 @@ public class WelcomePageManager {
 			}
 		}
 
-		return "Never";
+		return Translator.get(DictKeys.BROWSER_NEVER);
 	}
 
 	public Long getNumberOfItemsInAlbum(String albumName) {

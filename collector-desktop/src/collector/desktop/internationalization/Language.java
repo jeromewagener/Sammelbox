@@ -7,13 +7,13 @@ public enum Language {
 	public static String getDictionaryBundle(Language language) {
 		switch (language) {
 		case EN:
-			return "i18n/dict_en";
+			return "internationalization/dict_en";
 
 		case DE:
-			return "i18n/dict_de";
+			return "internationalization/dict_de";
 		
 		default:
-			return "i18n/dict_en";
+			return "internationalization/dict_en";
 		}
 	}
 }

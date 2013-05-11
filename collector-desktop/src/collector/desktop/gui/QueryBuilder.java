@@ -178,7 +178,7 @@ public class QueryBuilder {
 			}
 		}
 		
-		System.out.println("Advanced Search: " + query.toString());
+		System.out.println("Advanced Search: " + query.toString()); // TODO log
 		return query.toString();
 	}
 
