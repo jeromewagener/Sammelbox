@@ -3,6 +3,7 @@ package collector.desktop.gui;
 import java.util.Collection;
 import java.util.LinkedList;
 
+import collector.desktop.database.DatabaseWrapper;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
 import collector.desktop.interfaces.UIObservable;
 import collector.desktop.interfaces.UIObserver;
@@ -18,7 +19,7 @@ public class AlbumViewManager implements UIObservable {
 	
 	/** Initializes album views without notifying any attached observers */
 	public static void initialize() {
-		albumViews = FileSystemAccessWrapper.loadViews();
+		AlbumViewManager.loadViews();
 	}
 	
 	public static Collection<AlbumView> getAlbumViews(String albumName) {
@@ -72,7 +73,16 @@ public class AlbumViewManager implements UIObservable {
 	}
 	
 	public static void loadViews() {
-		AlbumViewManager.setAlbumViews(FileSystemAccessWrapper.loadViews());
+		Collection<AlbumView> validAlbumViews = new LinkedList<AlbumView>();
+		
+		for (AlbumView albumView : FileSystemAccessWrapper.loadViews()) {
+			if (DatabaseWrapper.listAllAlbums().contains(albumView.getAlbum())) {
+				validAlbumViews.add(albumView);
+			}
+		}
+		
+		AlbumViewManager.setAlbumViews(validAlbumViews);
+		AlbumViewManager.storeViews();
 	}
 	
 	public static class AlbumView {
@@ -197,6 +207,18 @@ public class AlbumViewManager implements UIObservable {
 		AlbumView tmp = ((LinkedList<AlbumView>) albumViews).get(selectionIndex);
 		((LinkedList<AlbumView>) albumViews).remove(selectionIndex);
 		((LinkedList<AlbumView>) albumViews).addLast(tmp);
+		
+		storeViews();
+		
+		instance.notifyObservers();
+	}
+
+	public static void removeAlbumViews(String selectedAlbum) {
+		for (AlbumView albumView : albumViews) {
+			if (albumView.getAlbum().equals(selectedAlbum)) {
+				albumViews.remove(albumView);
+			}
+		}
 		
 		storeViews();
 		
