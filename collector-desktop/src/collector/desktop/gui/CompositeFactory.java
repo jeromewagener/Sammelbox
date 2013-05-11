@@ -485,7 +485,6 @@ public class CompositeFactory {
 		searchQueryTable.setLayoutData(data);	
 
 		ComponentFactory.getSmallBoldItalicLabel(advancedSearchComposite, Translator.get(DictKeys.LABEL_CONNECT_SEARCH_TERMS_BY));
-
 		Composite composite = new Composite(advancedSearchComposite, SWT.BORDER);
 		composite.setLayout(new RowLayout());
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
@@ -496,6 +495,26 @@ public class CompositeFactory {
 		Button orButton = new Button(composite, SWT.RADIO);
 		orButton.setText(Translator.get(DictKeys.BUTTON_OR));
 
+		ComponentFactory.getSmallBoldItalicLabel(advancedSearchComposite, Translator.get(DictKeys.LABEL_SORT_BY));
+		composite = new Composite(advancedSearchComposite, SWT.BORDER);
+		composite.setLayout(new GridLayout(2, false));
+		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+
+		Label fieldToSortLabel = new Label(composite, SWT.NONE);
+		fieldToSortLabel.setText(Translator.get(DictKeys.LABEL_FIELD_TO_SORT));
+		final Combo fieldToSortCombo = new Combo(composite, SWT.DROP_DOWN);
+		fieldToSortCombo.setLayoutData(new GridData(GridData.FILL_BOTH));
+		
+		// Fill the comboBox
+		fieldToSortCombo.setData("validMetaItemFields", getValidMetaItemFields(DatabaseWrapper.getAlbumItemFieldNamesAndTypes(album)));
+		fieldToSortCombo.setItems(getValidFieldNamesAsStringArray(DatabaseWrapper.getAlbumItemFieldNamesAndTypes(album)));
+		
+		final Button sortAscendingButton = new Button(composite, SWT.RADIO);
+		sortAscendingButton.setText(Translator.get(DictKeys.BUTTON_SORT_ASCENDING));
+		sortAscendingButton.setSelection(true);
+		Button sortDescendingButton = new Button(composite, SWT.RADIO);
+		sortDescendingButton.setText(Translator.get(DictKeys.BUTTON_SORT_DESCENDING));
+		
 		Button searchButton = new Button(advancedSearchComposite, SWT.PUSH);
 		searchButton.setText(Translator.get(DictKeys.BUTTON_EXECUTE_SEARCH));
 		searchButton.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -516,7 +535,11 @@ public class CompositeFactory {
 					connectByAnd = true;
 				}
 
-				QueryBuilder.buildQueryAndExecute(queryComponents, connectByAnd, album);
+				if (fieldToSortCombo.getSelectionIndex() != -1) {
+					QueryBuilder.buildQueryAndExecute(queryComponents, connectByAnd, album, fieldToSortCombo.getItem(fieldToSortCombo.getSelectionIndex()), sortAscendingButton.getSelection());
+				} else {
+					QueryBuilder.buildQueryAndExecute(queryComponents, connectByAnd, album);
+				}
 			}
 		});
 
@@ -557,7 +580,9 @@ public class CompositeFactory {
 						Translator.get(DictKeys.DIALOG_BUTTON_ENTER_VIEW_NAME));
 
 				if (viewName != null && !AlbumViewManager.hasViewWithName(viewName)) {
-					AlbumViewManager.addAlbumView(viewName, Collector.getSelectedAlbum(), QueryBuilder.buildQuery(queryComponents, connectByAnd, album));
+					AlbumViewManager.addAlbumView(
+							viewName, Collector.getSelectedAlbum(), 
+							QueryBuilder.buildQuery(queryComponents, connectByAnd, album));
 				} else {
 					ComponentFactory.getMessageBox(
 							parentComposite, 

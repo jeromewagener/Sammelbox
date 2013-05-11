@@ -42,12 +42,11 @@ import collector.desktop.gui.ToolbarComposite;
 import collector.desktop.interfaces.UIObservable;
 import collector.desktop.interfaces.UIObserver;
 import collector.desktop.internationalization.DictKeys;
-import collector.desktop.internationalization.Language;
 import collector.desktop.internationalization.Translator;
 import collector.desktop.settings.ApplicationSettingsManager;
 
 public class Collector implements UIObservable, UIObserver {
-	private static final int RIGHT_PANEL_LARGE_WIDTH = 300;
+	private static final int RIGHT_PANEL_LARGE_WIDTH = 320;
 	private static final int RIGHT_PANEL_MEDIUM_WIDTH = 225;
 	private static final int RIGHT_PANEL_SMALL_WIDTH = 150;
 	private static final int RIGHT_PANEL_NO_WIDTH = 0;
@@ -55,7 +54,7 @@ public class Collector implements UIObservable, UIObserver {
 	/** The minimum width of the shell in pixels. The shell can never have a smaller width than this. */
 	private static final int MIN_SHELL_WIDTH = 1150;
 	/** The minimum height of the shell in pixels. The shell can never have a smaller height than this. */
-	private static final int MIN_SHELL_HEIGHT = 700;
+	private static final int MIN_SHELL_HEIGHT = 740;
 	/** A reference to the main display */
 	private final static Display display = new Display();
 	/** A reference to the main shell */

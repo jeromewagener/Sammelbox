@@ -103,6 +103,8 @@ public class DictKeys {
 	public static final String BUTTON_AND = "collector.button.caption.AND";
 	public static final String BUTTON_OR = "collector.button.caption.OR";
 	public static final String BUTTON_ADD_TO_SEARCH = "collector.button.caption.ADD_TO_SEARCH";
+	public static final String BUTTON_SORT_ASCENDING = "collector.button.caption.BUTTON_SORT_ASCENDING";
+	public static final String BUTTON_SORT_DESCENDING = "collector.button.caption.BUTTON_SORT_DESCENDING";
 	
 	/*   Labels   */
 	public static final String LABEL_ADD_ENTRY = "collector.label.caption.ADD_ENTRY";
@@ -127,6 +129,8 @@ public class DictKeys {
 	public static final String LABEL_ALBUM_LIST = "collector.label.caption.ALBUM_LIST";
 	public static final String LABEL_SAVED_SEARCHES = "collector.label.caption.SAVED_SEARCHES";
 	public static final String LABEL_DROP_IMAGE_HERE = "collector.label.caption.DROP_IMAGE_HERE";
+	public static final String LABEL_SORT_BY = "collector.label.caption.SORT_BY";
+	public static final String LABEL_FIELD_TO_SORT = "collector.label.caption.FIELD_TO_SORT";
 	
 	/*   Textbox   */
 	public static final String TEXTBOX_MY_NEW_ALBUM = "collector.textbox.content.MY_NEW_ALBUM";
