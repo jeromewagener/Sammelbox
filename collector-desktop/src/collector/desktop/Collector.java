@@ -44,6 +44,7 @@ import collector.desktop.interfaces.UIObserver;
 import collector.desktop.internationalization.DictKeys;
 import collector.desktop.internationalization.Language;
 import collector.desktop.internationalization.Translator;
+import collector.desktop.settings.ApplicationSettingsManager;
 
 public class Collector implements UIObservable, UIObserver {
 	private static final int RIGHT_PANEL_LARGE_WIDTH = 300;
@@ -93,7 +94,6 @@ public class Collector implements UIObservable, UIObserver {
 		FileSystemAccessWrapper.updateCollectorFileStructure();
 		DatabaseWrapper.openConnection();
 		FileSystemAccessWrapper.updateAlbumFileStructure(DatabaseWrapper.getConnection());
-		Translator.setLanguage(Language.DE);
 		
 		instance = this;
 	}
@@ -618,7 +618,9 @@ public class Collector implements UIObservable, UIObserver {
 	/** The main method initializes the database (using the collector constructor) and establishes the user interface */
 	public static void main(String[] args) throws ClassNotFoundException {
 	    try {
-			RandomAccessFile randomFile = new RandomAccessFile(FileSystemAccessWrapper.LOCK_FILE, "rw");
+	    	ApplicationSettingsManager.loadFromSettingsFile();
+	    	Translator.setLanguageFromSettingsOrSystem();
+	    	RandomAccessFile randomFile = new RandomAccessFile(FileSystemAccessWrapper.LOCK_FILE, "rw");
 		    FileChannel channel = randomFile.getChannel();
 		    
 		    if (channel.tryLock() != null) {

@@ -4,6 +4,8 @@ import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import collector.desktop.settings.ApplicationSettingsManager;
+
 public class Translator {
 	private static Language language = null;
 	private static ResourceBundle languageBundle = null;
@@ -11,16 +13,22 @@ public class Translator {
 	private Translator() {}
 	
 	public static void setLanguageFromSettingsOrSystem() {
-		switch (System.getProperty("user.language")) {
-		case "de":
-			setLanguage(Language.DE);
-			break;
-		default:
-			setLanguage(Language.EN);
+		Language language = ApplicationSettingsManager.getUserDefinedLanguage();
+		
+		if (language != Language.UNKNOWN) {
+			setLanguageManually(language);
+		} else {
+			switch (System.getProperty("user.language")) {
+			case "de":
+				setLanguageManually(Language.DE);
+				break;
+			default:
+				setLanguageManually(Language.EN);
+			}
 		}
 	}
 	
-	public static void setLanguage(Language language) {		
+	public static void setLanguageManually(Language language) {		
 		try {
 			Translator.language = language;
 			languageBundle = ResourceBundle.getBundle(Language.getDictionaryBundle(language));
@@ -28,10 +36,6 @@ public class Translator {
 			System.err.println("properties not found"); // TODO log me
 		}
 	}
-	/*
-	public static String get(String key) {
-		return get(key, new Object[]{});
-	}*/
 	
 	public static String get(String key, Object... parameters) {
 		if (languageBundle == null) {

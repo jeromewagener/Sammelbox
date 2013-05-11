@@ -13,7 +13,6 @@ import java.io.PrintWriter;
 import java.io.StringReader;
 import java.net.URI;
 import java.sql.Connection;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -38,6 +37,8 @@ import org.xml.sax.InputSource;
 
 import collector.desktop.database.DatabaseWrapper;
 import collector.desktop.gui.AlbumViewManager.AlbumView;
+import collector.desktop.internationalization.Language;
+import collector.desktop.settings.ApplicationSettingsManager.ApplicationSettings;
 
 public class FileSystemAccessWrapper {
 	public static final String COLLECTOR_HOME 					= System.getProperty("user.home") + File.separatorChar + ".collector";
@@ -51,7 +52,8 @@ public class FileSystemAccessWrapper {
 	public static final String DATABASE 						= COLLECTOR_HOME + File.separatorChar + DATABASE_NAME;
 	public static final String DATABASE_TO_RESTORE				= COLLECTOR_HOME + File.separatorChar + DATABASE_TO_RESTORE_NAME;
 	public static final String VIEW_FILE						= COLLECTOR_HOME_APPDATA + File.separatorChar + "views.xml";
-	public static final String ALBUM_FILE            			= COLLECTOR_HOME_APPDATA + File.separatorChar + "albums.xml"; 
+	public static final String ALBUM_FILE            			= COLLECTOR_HOME_APPDATA + File.separatorChar + "albums.xml";
+	public static final String SETTINGS_FILE					= COLLECTOR_HOME_APPDATA + File.separatorChar + "settings.xml";
 	public static final String WELCOME_PAGE_FILE				= COLLECTOR_HOME_APPDATA + File.separatorChar + "welcome.xml";
 	public static final String LOCK_FILE						= COLLECTOR_HOME_APPDATA + File.separatorChar + ".lock";
 	
@@ -755,5 +757,57 @@ public class FileSystemAccessWrapper {
 			}
 		}
 		return true;
+	}
+
+	public static ApplicationSettings loadSettings() {
+		String applicationSettingsAsXml = readFileAsString(SETTINGS_FILE);
+		
+		ApplicationSettings applicationSettings = new ApplicationSettings();
+		
+		if (applicationSettingsAsXml.isEmpty()) {
+			return applicationSettings;
+		}
+		
+		try {
+			DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+			InputSource inputSource = new InputSource();
+			inputSource.setCharacterStream(new StringReader(applicationSettingsAsXml));
+
+			Document document = documentBuilder.parse(inputSource);
+			Node root = document.getFirstChild();
+
+			if (!root.getNodeName().equals("settings")) {
+				throw new Exception("Invalid Settings File");
+			} else {
+				NodeList settingNodes = root.getChildNodes();
+								
+				for (int i = 0; i < settingNodes.getLength(); i++) {
+					Node node = settingNodes.item(i);
+
+					if (node.getNodeType() == Node.ELEMENT_NODE) {
+						Element element = (Element) node;
+						
+						if (element.getNodeName().equals("userDefinedLanguage")) {
+							applicationSettings.setUserDefinedLanguage(Language.valueOf(element.getFirstChild().getNodeValue()));
+						}
+					}
+				}
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		
+		return applicationSettings;
+	}
+
+	public static void storeSettings(ApplicationSettings applicationSettings) {
+		StringBuilder xmlOutput = new StringBuilder();
+		
+		xmlOutput.append("<settings>\n");
+		xmlOutput.append("\t<userDefinedLanguage>" + applicationSettings.getUserDefinedLanguage().toString() + "<userDefinedLanguage>\n");
+		xmlOutput.append("</settings>\n");
+		
+		writeToFile(xmlOutput.toString(), SETTINGS_FILE);
 	}
 }
