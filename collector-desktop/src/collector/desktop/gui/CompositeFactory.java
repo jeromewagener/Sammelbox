@@ -191,8 +191,9 @@ public class CompositeFactory {
 			public void widgetSelected(SelectionEvent e) {
 				MessageBox messageBox = new MessageBox(Collector.getShell(), SWT.ICON_WARNING | SWT.YES | SWT.NO);
 				messageBox.setText(Translator.get(DictKeys.DIALOG_TITLE_DELETE_ALBUM));
-				messageBox.setMessage(Translator.get(DictKeys.DIALOG_TITLE_DELETE_ALBUM, Collector.getSelectedAlbum()));
+				messageBox.setMessage(Translator.get(DictKeys.DIALOG_CONTENT_DELETE_ALBUM, Collector.getSelectedAlbum()));
 				if (messageBox.open() == SWT.YES) {
+					AlbumViewManager.removeAlbumViews(Collector.getSelectedAlbum());
 					DatabaseWrapper.removeAlbum(Collector.getSelectedAlbum());
 					Collector.refreshSWTAlbumList();
 					BrowserContent.loadHtmlPage(Collector.getAlbumItemSWTBrowser(), Collector.getShell().getClass().getClassLoader().getResourceAsStream("htmlfiles/album_deleted.html"));

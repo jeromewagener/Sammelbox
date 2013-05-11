@@ -65,7 +65,7 @@ public class DictKeys {
 	public static final String DIALOG_TITLE_ENTER_VIEW_NAME = "collector.dialog.title.ENTER_VIEW_NAME";
 	public static final String DIALOG_CONTENT_ENTER_VIEW_NAME = "collector.dialog.content.ENTER_VIEW_NAME";
 	public static final String DIALOG_TEXTBOX_ENTER_VIEW_NAME = "collector.dialog.textbox.ENTER_VIEW_NAME";
-	public static final String DIALOG_BUTTON_ENTER_VIEW_NAME = "collector.dialog.button.SAVE";
+	public static final String DIALOG_BUTTON_ENTER_VIEW_NAME = "collector.dialog.button.ENTER_VIEW_NAME";
 	public static final String DIALOG_TITLE_SELECT_QUERY_COMPONENTS = "collector.dialog.title.SELECT_QUERY_COMPONENTS";
 	public static final String DIALOG_CONTENT_SELECT_QUERY_COMPONENTS = "collector.dialog.content.SELECT_QUERY_COMPONENTS";
 	public static final String DIALOG_TITLE_DELETE_SAVED_SEARCH = "collector.dialog.title.DELETE_SAVED_SEARCH";
