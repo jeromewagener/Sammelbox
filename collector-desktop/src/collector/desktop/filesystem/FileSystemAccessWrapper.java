@@ -756,6 +756,14 @@ public class FileSystemAccessWrapper {
 				return false;
 			}
 		}
+		
+		// Tests if an album with 'name' could actually create a valid albumPictureFolder		
+		File testFile = new File (getFilePathForAlbum(name));
+		try {
+			testFile.getCanonicalPath();
+		} catch (IOException e) {
+			return false;
+		}
 		return true;
 	}
 
