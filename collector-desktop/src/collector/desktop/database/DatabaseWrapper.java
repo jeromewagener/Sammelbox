@@ -11,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Savepoint;
 import java.sql.Statement;
 import java.sql.Time;
 import java.util.ArrayList;
@@ -104,8 +105,22 @@ public class DatabaseWrapper  {
 	 * @return True if the creation album succeeded. False otherwise.
 	 */
 	public static boolean createNewAlbum(String albumName, List<MetaItemField> fields, boolean hasAlbumPictureField) {
-		// TODO: validate input
 		if (fields == null || !albumNameIsAvailable(albumName)) {
+			return false;
+		}
+		boolean previousAutoCommitState = false;
+		try {
+			previousAutoCommitState = connection.getAutoCommit();
+		} catch (SQLException e2) {
+			e2.printStackTrace();
+			System.err.println("Could not save the autocommit state before album creation");
+		}
+
+		try {
+			connection.setAutoCommit(false);
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+			System.err.println("Autocommit could not be diabled before album creation");
 			return false;
 		}
 		Boolean result = true;
@@ -119,13 +134,31 @@ public class DatabaseWrapper  {
 				}
 			}
 			createIndex(albumName, quickSearchableColumnNames);			
-			FileSystemAccessWrapper.updateAlbumFileStructure(connection);
+			if ( !FileSystemAccessWrapper.updateAlbumFileStructure(connection) ) {
+				try {
+					connection.rollback();
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+					System.err.println("Could not rollback to a save point before creating the album");
+				}
+				return false;
+			}
 			updateLastDatabaseChangeTimeStamp();
 		} catch (SQLException e) {
 			e.printStackTrace();
+			try {
+				connection.rollback();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+				System.err.println("Could not rollback to a save point before creating the album");
+			}
 			result = false;
 		} finally {
-
+			try {
+				connection.setAutoCommit(previousAutoCommitState);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 		return result;
 	}
@@ -456,7 +489,7 @@ public class DatabaseWrapper  {
 	 */
 	public static boolean setQuickSearchable(String albumName, MetaItemField metaItemField) {
 		boolean result = true;
-		
+
 		List<String> quickSearchableColumnNames = getIndexedColumnNames(albumName);
 		// Enable for quicksearch feature
 		if (metaItemField.quickSearchable && !quickSearchableColumnNames.contains(metaItemField.getName())) {
@@ -664,6 +697,7 @@ public class DatabaseWrapper  {
 	 * @param tableName The name of the table to be created.
 	 * @param hasAlbumPicture True indicates that the table will contain a picture column.
 	 * @throws SQLException Exception thrown if any part of the operation fails.
+	 * @return The name of the table that has been created.
 	 */
 	private static String createNewAlbumTable(List<MetaItemField> fields, String tableName, boolean hasAlbumPicture) throws SQLException {
 		String typeInfoTableName = "";
@@ -699,7 +733,8 @@ public class DatabaseWrapper  {
 		sb.append(createTempTableSQL);
 
 		sb.append(" TABLE ");
-		sb.append(transformNameToDBName(tableName));
+		tableName = transformNameToDBName(tableName);
+		sb.append(tableName);
 		sb.append(" ( id INTEGER PRIMARY KEY");
 
 
@@ -727,7 +762,6 @@ public class DatabaseWrapper  {
 
 		// Create the Album table
 		Statement statement = connection.createStatement();
-		System.out.println(createMainTableString);
 		statement.executeUpdate(createMainTableString);
 		statement.close();
 		return tableName;
@@ -744,7 +778,7 @@ public class DatabaseWrapper  {
 		if (metaItemField.getType().equals(FieldType.ID) || metaItemField.getType().equals(FieldType.Picture) || metaItemField == null || !itemFieldNameIsAvailable(albumName, metaItemField.getName())) {
 			return false;
 		}
-		
+
 		if ( appendNewTableColumn(albumName, metaItemField) ) {
 			//TODO: implement this directly in a single operation such that the picture field
 			// is always the last column
@@ -755,7 +789,7 @@ public class DatabaseWrapper  {
 			updateLastDatabaseChangeTimeStamp();
 			return true;
 		}
-		
+
 		return false;
 	}
 	/**
@@ -918,7 +952,7 @@ public class DatabaseWrapper  {
 		}
 		return "[" + fieldName + "]";
 	}
-	
+
 	/**
 	 * Transforms a value of an album Item and escapes single quotes.
 	 * @param value The value which must not be enclosed in single quotes.
@@ -1166,7 +1200,7 @@ public class DatabaseWrapper  {
 		if (indexName == null) {			
 			return true;
 		}
-		
+
 		indexName = DatabaseWrapper.transformNameToDBName(indexName);
 		String sqlStatement = "DROP INDEX IF EXISTS "+ indexName;
 		Statement statement= null;
@@ -1204,12 +1238,12 @@ public class DatabaseWrapper  {
 			System.err.println("DatabaseWrapper::addNewAlbumItem(), item has no albumName");
 			return -1;
 		}
-		
-//		// Check if specified album Item is valid
-//		if (!item.isValid()) {
-//			System.err.println("DatabaseWrapper::addNewAlbumItem(), item is invalid");
-//			return -1;
-//		}
+
+		//		// Check if specified album Item is valid
+		//		if (!item.isValid()) {
+		//			System.err.println("DatabaseWrapper::addNewAlbumItem(), item is invalid");
+		//			return -1;
+		//		}
 
 		// Check if content version should be carried over if yes ensure a content version is present
 		if (updateContentVersion == false && item.getContentVersion() == null) {
@@ -1422,7 +1456,7 @@ public class DatabaseWrapper  {
 				sb.append("=? ");
 				firstAppended = false;				
 			}
-			
+
 		}
 
 		updateAlbumItemString = sb.toString();
@@ -1519,11 +1553,11 @@ public class DatabaseWrapper  {
 		try {
 			statement = connection.createStatement();
 			resultSet = statement.executeQuery("SELECT COUNT(*) AS numberOfItems FROM " + transformNameToDBName(albumName));
-			
+
 			if (resultSet.next()) {
 				return resultSet.getLong("numberOfItems");
 			}
-			
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -1538,10 +1572,10 @@ public class DatabaseWrapper  {
 				e.printStackTrace();
 			}
 		}
-		
+
 		return 0;
 	}
-	
+
 	private static void updateContentVersion(String albumName, long itemID, UUID newUuid) throws SQLException {	
 		StringBuilder sb = new StringBuilder("UPDATE ");
 		sb.append(transformNameToDBName(albumName));
@@ -1747,7 +1781,7 @@ public class DatabaseWrapper  {
 	public static List<String> getIndexedColumnNames(String tableName) {
 		List<String> indexedColumns = new ArrayList<String>();
 		ResultSet indexRS = null;
-		
+
 		try {
 			DatabaseMetaData dbmetadata =  connection.getMetaData();
 			indexRS = dbmetadata.getIndexInfo(null, null, tableName, false, true);
@@ -1797,7 +1831,7 @@ public class DatabaseWrapper  {
 		}
 		return indexName;
 	}
-	
+
 	/**
 	 * Retrieves a list of MetaItemFields, excluding those that are for internal use only. Meta item fields describe the items of the album
 	 * @param albumName The name of the album of which to retrieve the information.
@@ -1806,11 +1840,11 @@ public class DatabaseWrapper  {
 	public static List<MetaItemField> getAlbumItemFieldNamesAndTypes(String albumName) {
 		List<MetaItemField> itemMetadata = new ArrayList<MetaItemField>();
 		Statement statement = null;
-		
+
 		if (albumNameIsAvailable(albumName)) {
 			return itemMetadata;
 		}
-				
+
 		List<String> quickSearchableColumnNames = getIndexedColumnNames(albumName);
 		List<String> internalColumnNames = Arrays.asList("id", TYPE_INFO_COLUMN_NAME, CONTENT_VERSION_COLUMN_NAME);
 
@@ -1821,7 +1855,7 @@ public class DatabaseWrapper  {
 		try {
 			statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
 			String dbAlbumName = transformNameToDBName(albumName);
-			
+
 			// Select query
 			ResultSet rs = statement.executeQuery("SELECT * FROM "+ dbAlbumName);
 
@@ -2089,7 +2123,7 @@ public class DatabaseWrapper  {
 			return false;
 		}	
 	}
-	
+
 	/**
 	 * Tests if the proposed album name is not already in use by another album.
 	 * @param requestedAlbumName The proposed album name to be tested of availability.
@@ -2103,7 +2137,7 @@ public class DatabaseWrapper  {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Tests if the proposed item field name is not already in use by another field of the same album.
 	 * @param albumName The album name that contains the fields that the name is checked against.
@@ -2411,7 +2445,7 @@ public class DatabaseWrapper  {
 				successState = false;
 			}
 		}
-		
+
 		FileSystemAccessWrapper.deleteDatabaseRestoreFile();
 		//TODO: Check if executing this only when success creates undesired side effects.
 		if (successState == true){
@@ -2420,11 +2454,11 @@ public class DatabaseWrapper  {
 			// Update timestamp
 			updateLastDatabaseChangeTimeStamp();
 		}
-		
-		
+
+
 		return successState;		
 	}
-	
+
 	/**
 	 * Gets the time stamp when the last change to the database happened.
 	 * @return The time in milliseconds when the last change to the database occured. -1 If not initialized.
@@ -2432,7 +2466,7 @@ public class DatabaseWrapper  {
 	public static long getLastDatabaseChangeTimeStamp() {
 		return lastChangeTimeStamp;
 	}
-	
+
 	private static void updateLastDatabaseChangeTimeStamp() {
 		lastChangeTimeStamp = System.currentTimeMillis();
 	}

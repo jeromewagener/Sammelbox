@@ -54,6 +54,12 @@ public class DictKeys {
 	public static final String DIALOG_CONTENT_DELETE_ALBUM_PICTURES = "collector.dialog.content.DELETE_ALBUM_PICTURES";
 	public static final String DIALOG_TITLE_ALBUM_NAME_ALREADY_USED = "collector.dialog.title.ALBUM_NAME_ALREADY_USED";
 	public static final String DIALOG_CONTENT_ALBUM_NAME_ALREADY_USED = "collector.dialog.content.ALBUM_NAME_ALREADY_USED";
+	
+	public static final String DIALOG_TITLE_ALBUM_CREATE_ERROR = "collector.dialog.title.ALBUM_CREATE_ERROR";
+	public static final String DIALOG_CONTENT_ALBUM_CREATE_ERROR = "collector.dialog.content.ALBUM_CREATE_ERROR";
+	
+	public static final String DIALOG_TITLE_ALBUM_NAME_INVALID = "collector.dialog.title.ALBUM_NAME_INVALID";
+	public static final String DIALOG_CONTENT_ALBUM_NAME_INVALID = "collector.dialog.content.ALBUM_NAME_INVALID";
 	public static final String DIALOG_TITLE_VIEW_NAME_ALREADY_USED = "collector.dialog.title.VIEW_NAME_ALREADY_USED";
 	public static final String DIALOG_CONTENT_VIEW_NAME_ALREADY_USED = "collector.dialog.content.VIEW_NAME_ALREADY_USED";
 	public static final String DIALOG_TITLE_ENTER_VIEW_NAME = "collector.dialog.title.ENTER_VIEW_NAME";

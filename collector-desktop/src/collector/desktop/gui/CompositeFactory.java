@@ -819,7 +819,7 @@ public class CompositeFactory {
 				if (!FileSystemAccessWrapper.isNameFileSystemCompliant(albumName)) {
 					// Purge the [ and ] enclosing the string of reservedCharacters. // TODO: tidy this up
 					String reservedFileSystemCharactersAsString = FileSystemAccessWrapper.reservedFileSystemCharacters.toString().substring(1, FileSystemAccessWrapper.reservedFileSystemCharacters.toString().length()-1).replace(",", " ");
-					ComponentFactory.getMessageBox(parentComposite, "Naming error", " The album name must not contain any of the following characters: "+ reservedFileSystemCharactersAsString, SWT.ICON_WARNING).open();					
+					ComponentFactory.getMessageBox(parentComposite, Translator.get(DictKeys.DIALOG_TITLE_ALBUM_NAME_INVALID), Translator.get(DictKeys.DIALOG_CONTENT_ALBUM_NAME_INVALID,reservedFileSystemCharactersAsString), SWT.ICON_WARNING).open();					
 					return;
 				}				
 
@@ -840,7 +840,7 @@ public class CompositeFactory {
 
 				boolean albumCreationSuccessful = DatabaseWrapper.createNewAlbum(albumName, metaItemFields, willContainImages);
 				if (!albumCreationSuccessful) {
-					ComponentFactory.getMessageBox(parentComposite, "Album creation error", "Unfortunately an error occured while trying to create thealbum", SWT.ICON_ERROR).open();
+					ComponentFactory.getMessageBox(parentComposite, Translator.get(DictKeys.DIALOG_TITLE_ALBUM_CREATE_ERROR), Translator.get(DictKeys.DIALOG_CONTENT_ALBUM_CREATE_ERROR, albumName), SWT.ICON_ERROR).open();
 					return;
 				}
 
@@ -906,8 +906,8 @@ public class CompositeFactory {
 				
 				if (!FileSystemAccessWrapper.isNameFileSystemCompliant(newAlbumName)) {
 					// Purge the [ and ] enclosing the string of reservedCharacters. // TODO: tidy this up
-					String reservedFileSystemCharactersAsString = FileSystemAccessWrapper.reservedFileSystemCharacters.toString().substring(1, FileSystemAccessWrapper.reservedFileSystemCharacters.toString().length()-1).replace(",", " ");
-					ComponentFactory.getMessageBox(parentComposite, "Naming error", " The album name must not contain any of the following characters: "+ reservedFileSystemCharactersAsString, SWT.ICON_WARNING).open();					
+					String reservedFileSystemCharactersAsString = FileSystemAccessWrapper.reservedFileSystemCharacters.toString().substring(1, FileSystemAccessWrapper.reservedFileSystemCharacters.toString().length()-1).replace(",", " ");			
+					ComponentFactory.getMessageBox(parentComposite, Translator.get(DictKeys.DIALOG_TITLE_ALBUM_NAME_INVALID), Translator.get(DictKeys.DIALOG_CONTENT_ALBUM_NAME_INVALID,reservedFileSystemCharactersAsString), SWT.ICON_WARNING).open();
 					return;
 				}
 
