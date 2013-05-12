@@ -105,11 +105,11 @@ public class Collector implements UIObservable, UIObserver {
 		GridLayout shellGridLayout = new GridLayout(1, false);
 		shellGridLayout.marginHeight = 0;
 		shellGridLayout.marginWidth = 0;
-
-		// setup the Shell
-		shell.setText(Translator.get(DictKeys.TITLE_MAIN_WINDOW));
+		
 		shell.setMinimumSize(MIN_SHELL_WIDTH, MIN_SHELL_HEIGHT);
-		shell.setSize(MIN_SHELL_WIDTH, MIN_SHELL_HEIGHT);
+		//shell.setSize(MIN_SHELL_WIDTH, MIN_SHELL_HEIGHT);TODO: check if needed or not
+		// setup the Shell
+		shell.setText(Translator.get(DictKeys.TITLE_MAIN_WINDOW));				
 		shell.setLayout(shellGridLayout);
 
 		// center the shell to primary screen
@@ -184,9 +184,15 @@ public class Collector implements UIObservable, UIObserver {
 
 		// Create the menu bar
 		createMenuBar(shell);
+		
+		
 
 		// SWT display management
 		shell.pack();
+		Rectangle displayClientArea = display.getClientArea();
+		if (maximizeShellOnStartUp(displayClientArea.width, displayClientArea.height)){
+			shell.setMaximized(true);
+		}
 		shell.open();
 
 		selectDefaultAndShowWelcomePage();		
@@ -712,6 +718,19 @@ public class Collector implements UIObservable, UIObserver {
 				viewSWTList.setEnabled(true);
 			}
 		}
+	}
+	
+	/**
+	 * When the horizontal or vertical screen resolution is smaller than their respective thresholds
+	 * {@value #MIN_DISPLAY_WIDTH_BEFORE_MAXIMIZE} and {@link #MIN_DISPLAY_HEIGHT_BEFORE_MAXIMIZE} then
+	 * it returns true, False otherwise.
+	 */
+	private static boolean maximizeShellOnStartUp(int screenWidth, int screenHeight) {
+		if (MIN_SHELL_WIDTH >= screenWidth || MIN_SHELL_HEIGHT >= screenHeight){
+			return true;
+		}
+		
+		return false;
 	}
 
 	
