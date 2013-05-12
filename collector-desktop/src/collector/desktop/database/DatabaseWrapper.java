@@ -2470,4 +2470,24 @@ public class DatabaseWrapper  {
 	private static void updateLastDatabaseChangeTimeStamp() {
 		lastChangeTimeStamp = System.currentTimeMillis();
 	}
+
+	public static boolean isDateField(String albumName, String fieldName) {
+		for (MetaItemField metaItemField : getAllAlbumItemMetaItemFields(albumName)) {
+			if (metaItemField.getName().equals(fieldName) && metaItemField.getType().equals(FieldType.Date)) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	public static boolean isOptionField(String albumName, String fieldName) {
+		for (MetaItemField metaItemField : getAllAlbumItemMetaItemFields(albumName)) {
+			if (metaItemField.getName().equals(fieldName) && metaItemField.getType().equals(FieldType.Option)) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
 }

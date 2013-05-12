@@ -3,6 +3,9 @@ package collector.desktop.gui;
 import java.net.URI;
 import java.sql.Date;
 import java.sql.Time;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -50,6 +53,7 @@ import collector.desktop.gui.QueryBuilder.QueryOperator;
 import collector.desktop.internationalization.DictKeys;
 import collector.desktop.internationalization.Translator;
 import collector.desktop.networking.NetworkGateway;
+import collector.desktop.settings.ApplicationSettingsManager;
 
 public class CompositeFactory {
 	private static final int SCROLL_SPEED_MULTIPLICATOR = 3;
@@ -391,14 +395,25 @@ public class CompositeFactory {
 						if (metaItemField.getName().equals(fieldToSearchCombo.getItem(fieldToSearchCombo.getSelectionIndex()))) {
 							if (metaItemField.getType() == FieldType.Text) {
 								searchOperatorCombo.setItems(QueryOperator.toTextOperatorStringArray());
+								valueToSearchText.setText("");
 							} else if (metaItemField.getType() == FieldType.Number) {
-								searchOperatorCombo.setItems(QueryOperator.toNumberAndDateOperatorStringArray());
+								searchOperatorCombo.setItems(QueryOperator.toNumberOperatorStringArray());
+								valueToSearchText.setText("");
 							} else if (metaItemField.getType() == FieldType.Date) {
-								searchOperatorCombo.setItems(QueryOperator.toNumberAndDateOperatorStringArray());
+								searchOperatorCombo.setItems(QueryOperator.toDateOperatorStringArray());
+								
+								SimpleDateFormat sdfmt = new SimpleDateFormat();
+								sdfmt.applyPattern("d/M/yyyy");
+
+								valueToSearchText.setText(sdfmt.format(new Date(System.currentTimeMillis())));
 							} else if (metaItemField.getType() == FieldType.Time) {
-								searchOperatorCombo.setItems(QueryOperator.toNumberAndDateOperatorStringArray());
+								searchOperatorCombo.setItems(QueryOperator.toDateOperatorStringArray());
+								valueToSearchText.setText("");
 							} else if (metaItemField.getType() == FieldType.Option) {
-								searchOperatorCombo.setItems(QueryOperator.toYesNoOperatorStringArray());							
+								searchOperatorCombo.setItems(QueryOperator.toYesNoOperatorStringArray());
+								
+								searchOperatorCombo.select(0);
+								valueToSearchText.setText(Translator.get(DictKeys.BROWSER_YES) + " | " + Translator.get(DictKeys.BROWSER_NO) + " | " + Translator.get(DictKeys.BROWSER_UNKNOWN));
 							}							
 						}
 					}
@@ -524,10 +539,59 @@ public class CompositeFactory {
 				ArrayList<QueryComponent> queryComponents = new ArrayList<QueryComponent>();
 
 				for ( int i=0 ; i < searchQueryTable.getItemCount() ; i++ ) {					
-					queryComponents.add(QueryBuilder.getQueryComponent(
-							searchQueryTable.getItem(i).getText(0),
-							QueryOperator.toQueryOperator(searchQueryTable.getItem(i).getText(1)),
-							searchQueryTable.getItem(i).getText(2)));
+					// In case of a date
+					if (DatabaseWrapper.isDateField(Collector.getSelectedAlbum(), searchQueryTable.getItem(i).getText(0))) {
+						// Convert string to milliseconds
+						DateFormat df = new SimpleDateFormat("d/M/yyyy");
+					    java.util.Date result = null;
+						try {
+							result = df.parse(searchQueryTable.getItem(i).getText(2));
+							long dateInMilliseconds = result.getTime();
+							
+							queryComponents.add(QueryBuilder.getQueryComponent(
+									searchQueryTable.getItem(i).getText(0),
+									QueryOperator.toQueryOperator(searchQueryTable.getItem(i).getText(1)),
+									String.valueOf(dateInMilliseconds)));
+						} catch (ParseException e1) {
+							MessageBox messageBox = ComponentFactory.getMessageBox(
+									parentComposite.getShell(),
+									Translator.get(DictKeys.DIALOG_TITLE_DATE_FORMAT),
+									Translator.get(DictKeys.DIALOG_CONTENT_DATE_FORMAT),
+									SWT.ICON_WARNING | SWT.OK);
+							messageBox.open();
+						}
+					// In case of an option
+					} else if (DatabaseWrapper.isOptionField(Collector.getSelectedAlbum(), searchQueryTable.getItem(i).getText(0))) {
+						String value = searchQueryTable.getItem(i).getText(2);
+						
+						if (value.equals(Translator.get(DictKeys.BROWSER_YES)) || 
+								value.equals(Translator.get(DictKeys.BROWSER_NO)) || 
+								value.equals(Translator.get(DictKeys.BROWSER_UNKNOWN))) {
+							
+							if (value.equals(Translator.get(DictKeys.BROWSER_UNKNOWN))) {
+								value = "Option"; // TODO stupid
+							}
+							
+							queryComponents.add(QueryBuilder.getQueryComponent(
+									searchQueryTable.getItem(i).getText(0),
+									QueryOperator.toQueryOperator(searchQueryTable.getItem(i).getText(1)),
+									value));
+						} else {
+							MessageBox messageBox = ComponentFactory.getMessageBox(
+									parentComposite.getShell(),
+									Translator.get(DictKeys.DIALOG_TITLE_ENTER_OPTION),
+									Translator.get(DictKeys.DIALOG_CONTENT_ENTER_OPTION),
+									SWT.ICON_WARNING | SWT.OK);
+							messageBox.open();
+						}
+					
+					// All other cases
+					} else {
+						queryComponents.add(QueryBuilder.getQueryComponent(
+								searchQueryTable.getItem(i).getText(0),
+								QueryOperator.toQueryOperator(searchQueryTable.getItem(i).getText(1)),
+								searchQueryTable.getItem(i).getText(2)));
+					}
 				}
 
 				boolean connectByAnd = false;

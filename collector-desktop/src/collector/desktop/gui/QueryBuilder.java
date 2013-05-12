@@ -28,7 +28,12 @@ public class QueryBuilder {
 		smallerThan, 
 		smallerOrEqualThan, 
 		biggerThan,
-		biggerOrEqualThan;
+		biggerOrEqualThan,
+		dateEquals,
+		dateBefore,
+		dateBeforeEquals,
+		dateAfterEquals,
+		dateAfter;
 		
 		/** Returns all operators suited for text queries 
 		 * @return an string array containing all operators suited for text queries */
@@ -40,15 +45,27 @@ public class QueryBuilder {
 			};
 		}
 		
-		/** Returns all operators suited for number and date queries 
-		 * @return an string array containing all operators suited for number and date queries */
-		public static String[] toNumberAndDateOperatorStringArray() {
+		/** Returns all operators suited for number queries 
+		 * @return an string array containing all operators suited for number queries */
+		public static String[] toNumberOperatorStringArray() {
 			return new String[] { 	
 					"=",
 					"<",
 					"<=",
 					">",
 					">="
+			};
+		}
+		
+		/** Returns all operators suited for date queries 
+		 * @return an string array containing all operators suited for date queries */
+		public static String[] toDateOperatorStringArray() {
+			return new String[] { 	
+					"equals", // TODO translate
+					"before",
+					"before or equals",
+					"after or equals",
+					"after"
 			};
 		}
 		
@@ -84,6 +101,21 @@ public class QueryBuilder {
 			}
 			else if (queryOperator.equals(QueryOperator.biggerOrEqualThan)) {
 				return ">=";
+			} 
+			else if (queryOperator.equals(QueryOperator.dateEquals)) {
+				return "=";
+			} 
+			else if (queryOperator.equals(QueryOperator.dateBefore)) {
+				return "<";
+			} 
+			else if (queryOperator.equals(QueryOperator.dateBeforeEquals)) {
+				return "<=";
+			} 
+			else if (queryOperator.equals(QueryOperator.dateAfterEquals)) {
+				return ">";
+			} 
+			else if (queryOperator.equals(QueryOperator.dateAfter)) {
+				return ">=";
 			}
 
 			return null;
@@ -113,7 +145,22 @@ public class QueryBuilder {
 			}
 			else if (sqlOperator.equals(">=")) {
 				return QueryOperator.biggerOrEqualThan;
-			} 
+			}
+			else if (sqlOperator.equals("equals")) {
+				return QueryOperator.dateEquals;
+			}
+			else if (sqlOperator.equals("before")) {
+				return QueryOperator.dateBefore;
+			}
+			else if (sqlOperator.equals("before or equals")) {
+				return QueryOperator.dateBeforeEquals;
+			}
+			else if (sqlOperator.equals("after or equals")) {
+				return QueryOperator.dateAfterEquals;
+			}
+			else if (sqlOperator.equals("after")) {
+				return QueryOperator.dateAfter;
+			}
 			else {
 				return null;
 			}

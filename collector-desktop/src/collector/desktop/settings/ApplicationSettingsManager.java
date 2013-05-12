@@ -1,5 +1,7 @@
 package collector.desktop.settings;
 
+import java.util.Locale;
+
 import collector.desktop.filesystem.FileSystemAccessWrapper;
 import collector.desktop.internationalization.Language;
 
@@ -16,6 +18,17 @@ public class ApplicationSettingsManager {
 	
 	public static void storeToSettingsFile() {
 		FileSystemAccessWrapper.storeSettings(applicationSettings);
+	}
+	
+	public static Locale getUserDefinedLocale() {
+		// TODO allow user to define locale
+		switch (applicationSettings.getUserDefinedLanguage()) {
+		case DE:
+			return Locale.GERMAN;
+
+		default:
+			return Locale.ENGLISH;
+		}
 	}
 	
 	public static class ApplicationSettings {

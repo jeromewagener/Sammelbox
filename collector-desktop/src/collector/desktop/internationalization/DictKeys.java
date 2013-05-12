@@ -70,6 +70,10 @@ public class DictKeys {
 	public static final String DIALOG_CONTENT_SELECT_QUERY_COMPONENTS = "collector.dialog.content.SELECT_QUERY_COMPONENTS";
 	public static final String DIALOG_TITLE_DELETE_SAVED_SEARCH = "collector.dialog.title.DELETE_SAVED_SEARCH";
 	public static final String DIALOG_CONTENT_DELETE_SAVED_SEARCH = "collector.dialog.content.DELETE_SAVED_SEARCH";
+	public static final String DIALOG_TITLE_DATE_FORMAT = "collector.dialog.title.DIALOG_TITLE_DATE_FORMAT";
+	public static final String DIALOG_CONTENT_DATE_FORMAT = "collector.dialog.content.DIALOG_CONTENT_DATE_FORMAT";
+	public static final String DIALOG_TITLE_ENTER_OPTION = "collector.dialog.title.DIALOG_TITLE_ENTER_OPTION";
+	public static final String DIALOG_CONTENT_ENTER_OPTION = "collector.dialog.content.DIALOG_CONTENT_ENTER_OPTION";
 	
 	/*   Open & Save Dialogs   */
 	public static final String DIALOG_BACKUP_TO_FILE = "collector.savedialog.title.BACKUP_TO_FILE";

@@ -6,7 +6,6 @@ import java.net.URI;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.Locale;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
@@ -24,6 +23,7 @@ import collector.desktop.database.OptionType;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
 import collector.desktop.internationalization.DictKeys;
 import collector.desktop.internationalization.Translator;
+import collector.desktop.settings.ApplicationSettingsManager;
 
 public class BrowserContent {
 	/** The anchor to which a jump is performed as soon as the page is fully loaded. 
@@ -475,8 +475,7 @@ public class BrowserContent {
 
 				java.util.Date utilDate = new java.util.Date(sqlDate.getTime());
 
-				// TODO set date format via preferences
-				SimpleDateFormat f = (SimpleDateFormat) DateFormat.getDateInstance(DateFormat.LONG, Locale.ENGLISH);
+				SimpleDateFormat f = (SimpleDateFormat) DateFormat.getDateInstance(DateFormat.LONG, ApplicationSettingsManager.getUserDefinedLocale());
 
 				htmlDataColumnContent.append("<span class=\"boldy\"> " + fieldItem.getName() + "</span> : " + f.format(utilDate) + "<br>");
 			} else {
