@@ -651,6 +651,11 @@ public class CompositeFactory {
 		albumNameText.setLayoutData(new GridData(GridData.FILL_BOTH));
 		albumNameText.setText(Translator.get(DictKeys.TEXTBOX_MY_NEW_ALBUM));
 
+		Label seperator = new Label(createNewAlbumComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
+		GridData gridDataForSeperator = new GridData(GridData.FILL_BOTH);
+		gridDataForSeperator.heightHint = 15;
+		seperator.setLayoutData(gridDataForSeperator);
+		
 		// picture question label & radio buttons
 		Label label = new Label(createNewAlbumComposite, SWT.NONE);
 		label.setText(Translator.get(DictKeys.LABEL_SHOULD_CONTAIN_IMAGES));
@@ -662,6 +667,9 @@ public class CompositeFactory {
 		Button noButtonForIncludingImages = new Button(composite, SWT.RADIO);
 		noButtonForIncludingImages.setText(Translator.get(DictKeys.BUTTON_NO));
 
+		seperator = new Label(createNewAlbumComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
+		seperator.setLayoutData(gridDataForSeperator);
+		
 		// fieldname label and text-box to enter the name of the field
 		Label fieldNameLabel = new Label(createNewAlbumComposite, SWT.NONE);
 		fieldNameLabel.setText(Translator.get(DictKeys.LABEL_FIELD_NAME));
@@ -681,6 +689,9 @@ public class CompositeFactory {
 		addFieldButton.setText(Translator.get(DictKeys.BUTTON_ADD_FIELD));
 		addFieldButton.setLayoutData(new GridData(GridData.FILL_BOTH));
 
+		seperator = new Label(createNewAlbumComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
+		seperator.setLayoutData(gridDataForSeperator);
+		
 		// Field table
 		final Table albumFieldNamesAndTypesTable = 
 				new Table(createNewAlbumComposite, SWT.CHECK | SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION);
@@ -795,6 +806,9 @@ public class CompositeFactory {
 			}
 		});
 
+		seperator = new Label(createNewAlbumComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
+		seperator.setLayoutData(gridDataForSeperator);
+		
 		// Create album button
 		Button createAlbumButton = new Button(createNewAlbumComposite, SWT.PUSH);
 		createAlbumButton.setText(Translator.get(DictKeys.BUTTON_CREATE_ALBUM));
@@ -937,8 +951,9 @@ public class CompositeFactory {
 		seperator.setLayoutData(gridData);
 
 		Composite innerComposite = new Composite(alterAlbumComposite, SWT.BORDER);
-		innerComposite.setLayout(new GridLayout());
-
+		innerComposite.setLayout(new GridLayout(1, false));
+		innerComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		
 		// picture question label & radio buttons
 		Label label = new Label(innerComposite, SWT.NONE);
 		label.setText(Translator.get(DictKeys.LABEL_SHOULD_CONTAIN_IMAGES));
@@ -1002,6 +1017,11 @@ public class CompositeFactory {
 			}
 		});
 
+		Label innerSeperator = new Label(innerComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
+		GridData gridDataForInnerSeperator = new GridData(GridData.FILL_BOTH);
+		gridDataForInnerSeperator.heightHint = 15;
+		innerSeperator.setLayoutData(gridDataForInnerSeperator);
+		
 		// fieldname label and text-box to enter the name of the field
 		Label fieldNameLabel = new Label(innerComposite, SWT.NONE);
 		fieldNameLabel.setText(Translator.get(DictKeys.LABEL_FIELD_NAME));

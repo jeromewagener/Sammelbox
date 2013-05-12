@@ -514,6 +514,7 @@ public class BrowserContent {
 
 		welcomePage += "<html width=100% height=80%>";
 		welcomePage += "<body width=100% height=80%>";
+		welcomePage += "	<font face=\"" + getDefaultSystemFont() + "\">";
 		welcomePage += "	<br>";
 		welcomePage += "	<table width=100% height=80%>";
 		welcomePage += "		<tr width=100% height=80%>";
@@ -532,6 +533,7 @@ public class BrowserContent {
 		welcomePage += "			</td>";
 		welcomePage += "		</tr>";
 		welcomePage += "	</table>";
+		welcomePage += "	</font>";
 		welcomePage += "</body>";
 		welcomePage += "</html>";
 
