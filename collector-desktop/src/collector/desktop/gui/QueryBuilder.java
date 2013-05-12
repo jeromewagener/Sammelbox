@@ -196,7 +196,7 @@ public class QueryBuilder {
 	 * @param album the name of the album which should be queried. 
 	 * @return a valid SQL query as a string. By default a 'SELECT *' is performed on the field/column names. */
 	public static String buildQuery(ArrayList<QueryComponent> queryComponents, boolean connectByAnd, String album) {
-		return buildQuery(queryComponents, connectByAnd, album);
+		return buildQuery(queryComponents, connectByAnd, album, null, false);
 	}
 	
 	/** This method builds a SQL query string out of multiple query components 

@@ -53,7 +53,6 @@ import collector.desktop.gui.QueryBuilder.QueryOperator;
 import collector.desktop.internationalization.DictKeys;
 import collector.desktop.internationalization.Translator;
 import collector.desktop.networking.NetworkGateway;
-import collector.desktop.settings.ApplicationSettingsManager;
 
 public class CompositeFactory {
 	private static final int SCROLL_SPEED_MULTIPLICATOR = 3;
@@ -319,7 +318,7 @@ public class CompositeFactory {
 		removeSavedSearch.setText(Translator.get(DictKeys.DROPDOWN_REMOVE));
 		removeSavedSearch.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				if (viewList.getSelectionIndex() > 0) {
+				if (viewList.getSelectionIndex() >= 0) {
 					MessageBox messageBox = new MessageBox(Collector.getShell(), SWT.ICON_WARNING | SWT.YES | SWT.NO);
 					messageBox.setText(Translator.get(DictKeys.DIALOG_TITLE_DELETE_SAVED_SEARCH));
 					messageBox.setMessage(Translator.get(DictKeys.DIALOG_TITLE_DELETE_SAVED_SEARCH, viewList.getItem(viewList.getSelectionIndex())));
@@ -536,63 +535,7 @@ public class CompositeFactory {
 		searchButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				ArrayList<QueryComponent> queryComponents = new ArrayList<QueryComponent>();
-
-				for ( int i=0 ; i < searchQueryTable.getItemCount() ; i++ ) {					
-					// In case of a date
-					if (DatabaseWrapper.isDateField(Collector.getSelectedAlbum(), searchQueryTable.getItem(i).getText(0))) {
-						// Convert string to milliseconds
-						DateFormat df = new SimpleDateFormat("d/M/yyyy");
-					    java.util.Date result = null;
-						try {
-							result = df.parse(searchQueryTable.getItem(i).getText(2));
-							long dateInMilliseconds = result.getTime();
-							
-							queryComponents.add(QueryBuilder.getQueryComponent(
-									searchQueryTable.getItem(i).getText(0),
-									QueryOperator.toQueryOperator(searchQueryTable.getItem(i).getText(1)),
-									String.valueOf(dateInMilliseconds)));
-						} catch (ParseException e1) {
-							MessageBox messageBox = ComponentFactory.getMessageBox(
-									parentComposite.getShell(),
-									Translator.get(DictKeys.DIALOG_TITLE_DATE_FORMAT),
-									Translator.get(DictKeys.DIALOG_CONTENT_DATE_FORMAT),
-									SWT.ICON_WARNING | SWT.OK);
-							messageBox.open();
-						}
-					// In case of an option
-					} else if (DatabaseWrapper.isOptionField(Collector.getSelectedAlbum(), searchQueryTable.getItem(i).getText(0))) {
-						String value = searchQueryTable.getItem(i).getText(2);
-						
-						if (value.equals(Translator.get(DictKeys.BROWSER_YES)) || 
-								value.equals(Translator.get(DictKeys.BROWSER_NO)) || 
-								value.equals(Translator.get(DictKeys.BROWSER_UNKNOWN))) {
-							
-							if (value.equals(Translator.get(DictKeys.BROWSER_UNKNOWN))) {
-								value = "Option"; // TODO stupid
-							}
-							
-							queryComponents.add(QueryBuilder.getQueryComponent(
-									searchQueryTable.getItem(i).getText(0),
-									QueryOperator.toQueryOperator(searchQueryTable.getItem(i).getText(1)),
-									value));
-						} else {
-							MessageBox messageBox = ComponentFactory.getMessageBox(
-									parentComposite.getShell(),
-									Translator.get(DictKeys.DIALOG_TITLE_ENTER_OPTION),
-									Translator.get(DictKeys.DIALOG_CONTENT_ENTER_OPTION),
-									SWT.ICON_WARNING | SWT.OK);
-							messageBox.open();
-						}
-					
-					// All other cases
-					} else {
-						queryComponents.add(QueryBuilder.getQueryComponent(
-								searchQueryTable.getItem(i).getText(0),
-								QueryOperator.toQueryOperator(searchQueryTable.getItem(i).getText(1)),
-								searchQueryTable.getItem(i).getText(2)));
-					}
-				}
+				ArrayList<QueryComponent> queryComponents = getQueryComponentsForAdvancedSearch(parentComposite, searchQueryTable);
 
 				boolean connectByAnd = false;
 				if (andButton.getSelection() == true) {
@@ -622,14 +565,7 @@ public class CompositeFactory {
 					return;
 				}
 
-				ArrayList<QueryComponent> queryComponents = new ArrayList<QueryComponent>();
-
-				for ( int i=0 ; i < searchQueryTable.getItemCount() ; i++ ) {					
-					queryComponents.add(QueryBuilder.getQueryComponent(
-							searchQueryTable.getItem(i).getText(0),
-							QueryOperator.toQueryOperator(searchQueryTable.getItem(i).getText(1)),
-							searchQueryTable.getItem(i).getText(2)));
-				}
+				ArrayList<QueryComponent> queryComponents = getQueryComponentsForAdvancedSearch(parentComposite, searchQueryTable);
 
 				boolean connectByAnd = false;
 				if (andButton.getSelection() == true) {
@@ -643,10 +579,17 @@ public class CompositeFactory {
 						Translator.get(DictKeys.DIALOG_TEXTBOX_ENTER_VIEW_NAME),
 						Translator.get(DictKeys.DIALOG_BUTTON_ENTER_VIEW_NAME));
 
-				if (viewName != null && !AlbumViewManager.hasViewWithName(viewName)) {
-					AlbumViewManager.addAlbumView(
-							viewName, Collector.getSelectedAlbum(), 
-							QueryBuilder.buildQuery(queryComponents, connectByAnd, album));
+				if (viewName != null && !AlbumViewManager.hasViewWithName(viewName)) {				
+					if (fieldToSortCombo.getSelectionIndex() != -1) {
+						AlbumViewManager.addAlbumView(
+								viewName, Collector.getSelectedAlbum(), 
+								QueryBuilder.buildQuery(queryComponents, connectByAnd, album, 
+										fieldToSortCombo.getItem(fieldToSortCombo.getSelectionIndex()), sortAscendingButton.getSelection()));
+					} else {
+						AlbumViewManager.addAlbumView(
+								viewName, Collector.getSelectedAlbum(), 
+								QueryBuilder.buildQuery(queryComponents, connectByAnd, album));						
+					}
 				} else {
 					ComponentFactory.getMessageBox(
 							parentComposite, 
@@ -660,6 +603,69 @@ public class CompositeFactory {
 		return advancedSearchComposite;
 	}
 
+	private static ArrayList<QueryComponent> getQueryComponentsForAdvancedSearch(Composite parentComposite, Table searchQueryTable) {
+		ArrayList<QueryComponent> queryComponents = new ArrayList<QueryComponent>();
+		
+		for ( int i=0 ; i < searchQueryTable.getItemCount() ; i++ ) {					
+			// In case of a date
+			if (DatabaseWrapper.isDateField(Collector.getSelectedAlbum(), searchQueryTable.getItem(i).getText(0))) {
+				// Convert string to milliseconds
+				DateFormat df = new SimpleDateFormat("d/M/yyyy");
+				java.util.Date result = null;
+				try {
+					result = df.parse(searchQueryTable.getItem(i).getText(2));
+					long dateInMilliseconds = result.getTime();
+
+					queryComponents.add(QueryBuilder.getQueryComponent(
+							searchQueryTable.getItem(i).getText(0),
+							QueryOperator.toQueryOperator(searchQueryTable.getItem(i).getText(1)),
+							String.valueOf(dateInMilliseconds)));
+				} catch (ParseException e1) {
+					MessageBox messageBox = ComponentFactory.getMessageBox(
+							parentComposite.getShell(),
+							Translator.get(DictKeys.DIALOG_TITLE_DATE_FORMAT),
+							Translator.get(DictKeys.DIALOG_CONTENT_DATE_FORMAT),
+							SWT.ICON_WARNING | SWT.OK);
+					messageBox.open();
+				}
+				
+			// In case of an option
+			} else if (DatabaseWrapper.isOptionField(Collector.getSelectedAlbum(), searchQueryTable.getItem(i).getText(0))) {
+				String value = searchQueryTable.getItem(i).getText(2);
+
+				if (value.equals(Translator.get(DictKeys.BROWSER_YES)) || 
+						value.equals(Translator.get(DictKeys.BROWSER_NO)) || 
+						value.equals(Translator.get(DictKeys.BROWSER_UNKNOWN))) {
+
+					if (value.equals(Translator.get(DictKeys.BROWSER_UNKNOWN))) {
+						value = "Option"; // TODO stupid
+					}
+
+					queryComponents.add(QueryBuilder.getQueryComponent(
+							searchQueryTable.getItem(i).getText(0),
+							QueryOperator.toQueryOperator(searchQueryTable.getItem(i).getText(1)),
+							value));
+				} else {
+					MessageBox messageBox = ComponentFactory.getMessageBox(
+							parentComposite.getShell(),
+							Translator.get(DictKeys.DIALOG_TITLE_ENTER_OPTION),
+							Translator.get(DictKeys.DIALOG_CONTENT_ENTER_OPTION),
+							SWT.ICON_WARNING | SWT.OK);
+					messageBox.open();
+				}
+
+			// All other cases
+			} else {
+				queryComponents.add(QueryBuilder.getQueryComponent(
+						searchQueryTable.getItem(i).getText(0),
+						QueryOperator.toQueryOperator(searchQueryTable.getItem(i).getText(1)),
+						searchQueryTable.getItem(i).getText(2)));
+			}
+		}
+		
+		return queryComponents;
+	}
+	
 	/** Returns a browser composite which is used to render HTML.
 	 * @param parentComposite the parent composite
 	 * @param browserListener a class of various listeners for the browser
