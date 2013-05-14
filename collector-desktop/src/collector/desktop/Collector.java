@@ -185,8 +185,6 @@ public class Collector implements UIObservable, UIObserver {
 		// Create the menu bar
 		createMenuBar(shell);
 		
-		
-
 		// SWT display management
 		shell.pack();
 		Rectangle displayClientArea = display.getClientArea();

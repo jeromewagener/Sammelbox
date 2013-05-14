@@ -168,6 +168,8 @@ public class ToolbarComposite implements UIObserver {
 				viewBtn.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_TOGGLE_TO_GALLERY));
 
 				searchBtn.setEnabled(false);
+				
+				Collector.setSelectedAlbum("");
 			}
 
 			@Override
