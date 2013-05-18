@@ -165,7 +165,7 @@ public class CompositeFactory {
 				AlbumManager.getInstance().moveToBottom(albumList.getSelectionIndex());
 			}
 		});
-		
+
 		new MenuItem(albumPopupMenu, SWT.SEPARATOR);
 
 		MenuItem createNewAlbum = new MenuItem(albumPopupMenu, SWT.NONE);
@@ -185,7 +185,7 @@ public class CompositeFactory {
 								Collector.getThreePanelComposite(), Collector.getSelectedAlbum()));
 			}
 		});
-		
+
 		new MenuItem(albumPopupMenu, SWT.SEPARATOR);
 
 		MenuItem removeAlbum = new MenuItem(albumPopupMenu, SWT.NONE);
@@ -228,7 +228,7 @@ public class CompositeFactory {
 		for (String album : AlbumManager.getInstance().getAlbums()) {
 			albumList.add(album);
 
-			
+
 			//TODO: remove since no album is selected by default on startup->we4lcome page is shown.
 			// If the first album retrieved is not quick-searchable, then disable the related textbox
 			// If the first album retrieved has no views attached, then disable the related list
@@ -250,24 +250,24 @@ public class CompositeFactory {
 
 				first = false;
 			}*/
-//			if (first) {
-//				if (!DatabaseWrapper.isAlbumQuicksearchable(album)) {
-//					quickSearchText.setEnabled(false);
-//				}
-//
-//				if (!AlbumViewManager.hasAlbumViewsAttached(album)) {
-//					viewList.setEnabled(false);
-//				} else {
-//
-//					for (AlbumView albumView : AlbumViewManager.getAlbumViews(albumList.getItem(0))) {
-//						viewList.add(albumView.getName());
-//					}
-//
-//					viewList.setEnabled(true);
-//				}
-//
-//				first = false;
-//			}
+			//			if (first) {
+			//				if (!DatabaseWrapper.isAlbumQuicksearchable(album)) {
+			//					quickSearchText.setEnabled(false);
+			//				}
+			//
+			//				if (!AlbumViewManager.hasAlbumViewsAttached(album)) {
+			//					viewList.setEnabled(false);
+			//				} else {
+			//
+			//					for (AlbumView albumView : AlbumViewManager.getAlbumViews(albumList.getItem(0))) {
+			//						viewList.add(albumView.getName());
+			//					}
+			//
+			//					viewList.setEnabled(true);
+			//				}
+			//
+			//				first = false;
+			//			}
 		}		
 
 		Menu popupMenu = new Menu(viewList);
@@ -400,7 +400,7 @@ public class CompositeFactory {
 								valueToSearchText.setText("");
 							} else if (metaItemField.getType() == FieldType.Date) {
 								searchOperatorCombo.setItems(QueryOperator.toDateOperatorStringArray());
-								
+
 								SimpleDateFormat sdfmt = new SimpleDateFormat();
 								sdfmt.applyPattern("d/M/yyyy");
 
@@ -410,7 +410,7 @@ public class CompositeFactory {
 								valueToSearchText.setText("");
 							} else if (metaItemField.getType() == FieldType.Option) {
 								searchOperatorCombo.setItems(QueryOperator.toYesNoOperatorStringArray());
-								
+
 								searchOperatorCombo.select(0);
 								valueToSearchText.setText(Translator.get(DictKeys.BROWSER_YES) + " | " + Translator.get(DictKeys.BROWSER_NO) + " | " + Translator.get(DictKeys.BROWSER_UNKNOWN));
 							}							
@@ -495,7 +495,7 @@ public class CompositeFactory {
 
 		// Set table layout data
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
-		data.heightHint = 150;
+		data.heightHint = 110;
 		searchQueryTable.setLayoutData(data);	
 
 		ComponentFactory.getSmallBoldItalicLabel(advancedSearchComposite, Translator.get(DictKeys.LABEL_CONNECT_SEARCH_TERMS_BY));
@@ -518,17 +518,17 @@ public class CompositeFactory {
 		fieldToSortLabel.setText(Translator.get(DictKeys.LABEL_FIELD_TO_SORT));
 		final Combo fieldToSortCombo = new Combo(composite, SWT.DROP_DOWN);
 		fieldToSortCombo.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+
 		// Fill the comboBox
 		fieldToSortCombo.setData("validMetaItemFields", getValidMetaItemFields(DatabaseWrapper.getAlbumItemFieldNamesAndTypes(album)));
 		fieldToSortCombo.setItems(getValidFieldNamesAsStringArray(DatabaseWrapper.getAlbumItemFieldNamesAndTypes(album)));
-		
+
 		final Button sortAscendingButton = new Button(composite, SWT.RADIO);
 		sortAscendingButton.setText(Translator.get(DictKeys.BUTTON_SORT_ASCENDING));
 		sortAscendingButton.setSelection(true);
 		Button sortDescendingButton = new Button(composite, SWT.RADIO);
 		sortDescendingButton.setText(Translator.get(DictKeys.BUTTON_SORT_DESCENDING));
-		
+
 		Button searchButton = new Button(advancedSearchComposite, SWT.PUSH);
 		searchButton.setText(Translator.get(DictKeys.BUTTON_EXECUTE_SEARCH));
 		searchButton.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -561,7 +561,7 @@ public class CompositeFactory {
 							Collector.getShell(), 
 							Translator.get(DictKeys.DIALOG_TITLE_NO_ALBUM_SELECTED), 
 							Translator.get(DictKeys.DIALOG_CONTENT_NO_ALBUM_SELECTED));
-					
+
 					return;
 				}
 
@@ -605,7 +605,7 @@ public class CompositeFactory {
 
 	private static ArrayList<QueryComponent> getQueryComponentsForAdvancedSearch(Composite parentComposite, Table searchQueryTable) {
 		ArrayList<QueryComponent> queryComponents = new ArrayList<QueryComponent>();
-		
+
 		for ( int i=0 ; i < searchQueryTable.getItemCount() ; i++ ) {					
 			// In case of a date
 			if (DatabaseWrapper.isDateField(Collector.getSelectedAlbum(), searchQueryTable.getItem(i).getText(0))) {
@@ -628,8 +628,8 @@ public class CompositeFactory {
 							SWT.ICON_WARNING | SWT.OK);
 					messageBox.open();
 				}
-				
-			// In case of an option
+
+				// In case of an option
 			} else if (DatabaseWrapper.isOptionField(Collector.getSelectedAlbum(), searchQueryTable.getItem(i).getText(0))) {
 				String value = searchQueryTable.getItem(i).getText(2);
 
@@ -654,7 +654,7 @@ public class CompositeFactory {
 					messageBox.open();
 				}
 
-			// All other cases
+				// All other cases
 			} else {
 				queryComponents.add(QueryBuilder.getQueryComponent(
 						searchQueryTable.getItem(i).getText(0),
@@ -662,10 +662,10 @@ public class CompositeFactory {
 						searchQueryTable.getItem(i).getText(2)));
 			}
 		}
-		
+
 		return queryComponents;
 	}
-	
+
 	/** Returns a browser composite which is used to render HTML.
 	 * @param parentComposite the parent composite
 	 * @param browserListener a class of various listeners for the browser
@@ -725,7 +725,7 @@ public class CompositeFactory {
 		GridData gridDataForSeperator = new GridData(GridData.FILL_BOTH);
 		gridDataForSeperator.heightHint = 15;
 		seperator.setLayoutData(gridDataForSeperator);
-		
+
 		// picture question label & radio buttons
 		Label label = new Label(createNewAlbumComposite, SWT.NONE);
 		label.setText(Translator.get(DictKeys.LABEL_SHOULD_CONTAIN_IMAGES));
@@ -739,7 +739,7 @@ public class CompositeFactory {
 
 		seperator = new Label(createNewAlbumComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
 		seperator.setLayoutData(gridDataForSeperator);
-		
+
 		// fieldname label and text-box to enter the name of the field
 		Label fieldNameLabel = new Label(createNewAlbumComposite, SWT.NONE);
 		fieldNameLabel.setText(Translator.get(DictKeys.LABEL_FIELD_NAME));
@@ -761,7 +761,7 @@ public class CompositeFactory {
 
 		seperator = new Label(createNewAlbumComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
 		seperator.setLayoutData(gridDataForSeperator);
-		
+
 		// Field table
 		final Table albumFieldNamesAndTypesTable = 
 				new Table(createNewAlbumComposite, SWT.CHECK | SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION);
@@ -849,7 +849,7 @@ public class CompositeFactory {
 
 		// Set table layout data
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
-		data.heightHint = 150;
+		data.heightHint = 110;
 		albumFieldNamesAndTypesTable.setLayoutData(data);
 
 		// Add listener to Add-field-button
@@ -878,7 +878,7 @@ public class CompositeFactory {
 
 		seperator = new Label(createNewAlbumComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
 		seperator.setLayoutData(gridDataForSeperator);
-		
+
 		// Create album button
 		Button createAlbumButton = new Button(createNewAlbumComposite, SWT.PUSH);
 		createAlbumButton.setText(Translator.get(DictKeys.BUTTON_CREATE_ALBUM));
@@ -899,7 +899,7 @@ public class CompositeFactory {
 							SWT.ICON_INFORMATION).open();
 					return;
 				}
-				
+
 				if (!FileSystemAccessWrapper.isNameFileSystemCompliant(albumName)) {
 					// Purge the [ and ] enclosing the string of reservedCharacters. // TODO: tidy this up
 					String reservedFileSystemCharactersAsString = FileSystemAccessWrapper.reservedFileSystemCharacters.toString().substring(1, FileSystemAccessWrapper.reservedFileSystemCharacters.toString().length()-1).replace(",", " ");
@@ -987,7 +987,7 @@ public class CompositeFactory {
 							SWT.ICON_INFORMATION).open();
 					return;
 				}					
-				
+
 				if (!FileSystemAccessWrapper.isNameFileSystemCompliant(newAlbumName)) {
 					// Purge the [ and ] enclosing the string of reservedCharacters. // TODO: tidy this up
 					String reservedFileSystemCharactersAsString = FileSystemAccessWrapper.reservedFileSystemCharacters.toString().substring(1, FileSystemAccessWrapper.reservedFileSystemCharacters.toString().length()-1).replace(",", " ");			
@@ -1023,7 +1023,7 @@ public class CompositeFactory {
 		Composite innerComposite = new Composite(alterAlbumComposite, SWT.BORDER);
 		innerComposite.setLayout(new GridLayout(1, false));
 		innerComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+
 		// picture question label & radio buttons
 		Label label = new Label(innerComposite, SWT.NONE);
 		label.setText(Translator.get(DictKeys.LABEL_SHOULD_CONTAIN_IMAGES));
@@ -1091,7 +1091,7 @@ public class CompositeFactory {
 		GridData gridDataForInnerSeperator = new GridData(GridData.FILL_BOTH);
 		gridDataForInnerSeperator.heightHint = 15;
 		innerSeperator.setLayoutData(gridDataForInnerSeperator);
-		
+
 		// fieldname label and text-box to enter the name of the field
 		Label fieldNameLabel = new Label(innerComposite, SWT.NONE);
 		fieldNameLabel.setText(Translator.get(DictKeys.LABEL_FIELD_NAME));
@@ -1218,7 +1218,7 @@ public class CompositeFactory {
 						Translator.get(DictKeys.DIALOG_TITLE_RENAME_FIELD),
 						Translator.get(DictKeys.DIALOG_CONTENT_RENAME_FIELD), item.getText(1), 
 						Translator.get(DictKeys.DIALOG_BUTTON_RENAME_FIELD));
-						
+
 				if (newFieldName != null) {	    			
 					MetaItemField oldMetaItemField = new MetaItemField(item.getText(1),  FieldType.valueOf(item.getText(2)), item.getChecked());
 					MetaItemField newMetaItemField = new MetaItemField(newFieldName,  FieldType.valueOf(item.getText(2)), item.getChecked());
@@ -1295,7 +1295,7 @@ public class CompositeFactory {
 
 		// Set table layout data
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
-		data.heightHint = 150;
+		data.heightHint = 110;
 		albumFieldNamesAndTypesTable.setLayoutData(data);
 
 		albumFieldNamesAndTypesTable.addListener(SWT.Selection, new Listener() {
@@ -1346,7 +1346,7 @@ public class CompositeFactory {
 					messageBox.open();
 					return;
 				}
-				
+
 
 				MetaItemField metaItemField = new MetaItemField(fieldNameText.getText(), FieldType.valueOf(fieldTypeCombo.getText()), false);
 				String albumName = albumNameText.getData().toString();
@@ -1363,12 +1363,12 @@ public class CompositeFactory {
 					fieldNameText.setFocus();
 					return;
 				}
-				
+
 				if ( DatabaseWrapper.appendNewAlbumField(albumName, metaItemField) ) {
 					TableItem item = new TableItem(albumFieldNamesAndTypesTable, SWT.NONE);
 					item.setText(1, fieldNameText.getText());
 					item.setText(2, fieldTypeCombo.getText());
-					
+
 					java.util.List<MetaItemField> newAlbumMetaFields = DatabaseWrapper.getAlbumItemFieldNamesAndTypes(albumName);
 					// Display the html page showing the alter album changes
 					BrowserContent.showAlteredAlbumPage(Collector.getAlbumItemSWTBrowser(), 
@@ -1723,7 +1723,7 @@ public class CompositeFactory {
 							Collector.getShell(), 
 							Translator.get(DictKeys.DIALOG_TITLE_NO_ALBUM_SELECTED), 
 							Translator.get(DictKeys.DIALOG_CONTENT_NO_ALBUM_SELECTED));
-					
+
 					return;
 				}
 				AlbumItem albumItem = new AlbumItem(Collector.getSelectedAlbum());
@@ -2054,5 +2054,17 @@ public class CompositeFactory {
 		}
 
 		return validMetaItemFieldsAsStringArray;
+	}
+
+	public static Composite getSettingsComposite(Composite parentComposite) {		
+		// setup synchronize composite
+		Composite settingsComposite = new Composite(parentComposite, SWT.NONE);
+		settingsComposite.setLayout(new GridLayout(1, false));
+		settingsComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+		// label header
+		ComponentFactory.getPanelHeaderComposite(settingsComposite, Translator.get(DictKeys.LABEL_SETTINGS));
+
+		return settingsComposite;
 	}
 }

@@ -19,6 +19,7 @@ public class DictKeys {
 	public static final String MENU_ALBUM = "collector.menu.ALBUM";
 	public static final String MENU_ADVANCED_SEARCH = "collector.menu.ADVANCED_SEARCH";
 	public static final String MENU_COLLECTOR = "collector.menu.COLLECTOR";
+	public static final String MENU_SETTINGS = "collector.menu.SETTINGS";
 	
 	/*   Dropdown Menu   */
 	public static final String DROPDOWN_REMOVE = "collector.dropdown.menu.REMOVE";
@@ -141,6 +142,7 @@ public class DictKeys {
 	public static final String LABEL_DROP_IMAGE_HERE = "collector.label.caption.DROP_IMAGE_HERE";
 	public static final String LABEL_SORT_BY = "collector.label.caption.SORT_BY";
 	public static final String LABEL_FIELD_TO_SORT = "collector.label.caption.FIELD_TO_SORT";
+	public static final String LABEL_SETTINGS = "collector.label.caption.SETTINGS";
 	
 	/*   Textbox   */
 	public static final String TEXTBOX_MY_NEW_ALBUM = "collector.textbox.content.MY_NEW_ALBUM";

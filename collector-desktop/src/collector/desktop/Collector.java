@@ -54,7 +54,7 @@ public class Collector implements UIObservable, UIObserver {
 	/** The minimum width of the shell in pixels. The shell can never have a smaller width than this. */
 	private static final int MIN_SHELL_WIDTH = 1150;
 	/** The minimum height of the shell in pixels. The shell can never have a smaller height than this. */
-	private static final int MIN_SHELL_HEIGHT = 740;
+	private static final int MIN_SHELL_HEIGHT = 700;
 	/** A reference to the main display */
 	private final static Display display = new Display();
 	/** A reference to the main shell */
@@ -248,6 +248,8 @@ public class Collector implements UIObservable, UIObserver {
 		albumItem.setText(Translator.get(DictKeys.MENU_ALBUM));
 		MenuItem synchronizeItem = new MenuItem(menu, SWT.CASCADE);
 		synchronizeItem.setText(Translator.get(DictKeys.MENU_SYNCHRONIZE));
+		MenuItem settingsItem = new MenuItem(menu, SWT.CASCADE);
+		settingsItem.setText(Translator.get(DictKeys.MENU_SETTINGS));
 		MenuItem helpItem = new MenuItem(menu, SWT.CASCADE);
 		helpItem.setText(Translator.get(DictKeys.MENU_HELP));
 
@@ -300,6 +302,15 @@ public class Collector implements UIObservable, UIObserver {
 		Synchronize.setText(Translator.get(DictKeys.MENU_SYNCHRONIZE));
 		Synchronize.addSelectionListener(instance.new MenuActionListener());
 
+		// Create the Settings item's dropdown menu
+		Menu settingsMenu = new Menu(menu);
+		settingsItem.setMenu(settingsMenu);
+
+		// Create all the items in the Settings dropdown menu
+		MenuItem settings = new MenuItem(settingsMenu, SWT.NONE);
+		settings.setText(Translator.get(DictKeys.MENU_SETTINGS));
+		settings.addSelectionListener(instance.new MenuActionListener());
+		
 		// Create the Help item's dropdown menu
 		Menu helpMenu = new Menu(menu);
 		helpItem.setMenu(helpMenu);
@@ -557,6 +568,8 @@ public class Collector implements UIObservable, UIObserver {
 				changeRightCompositeTo(PanelType.Help, CompositeFactory.getEmptyComposite(threePanelComposite));
 			} else if (((MenuItem) event.widget).getText().equals(Translator.get(DictKeys.MENU_SYNCHRONIZE))) {
 				changeRightCompositeTo(PanelType.Synchronization, CompositeFactory.getSynchronizeComposite(threePanelComposite));
+			} else if (((MenuItem) event.widget).getText().equals(Translator.get(DictKeys.MENU_SETTINGS))) {
+				changeRightCompositeTo(PanelType.Settings, CompositeFactory.getSettingsComposite(threePanelComposite));
 			} else if (((MenuItem) event.widget).getText().equals(Translator.get(DictKeys.MENU_BACKUP_ALBUMS_TO_FILE))) {
 				FileDialog saveFileDialog = new FileDialog(getShell(), SWT.SAVE);
 				saveFileDialog.setText(Translator.get(DictKeys.DIALOG_BACKUP_TO_FILE));
