@@ -8,13 +8,10 @@ public class AlbumItemStore {
 	private static final int DEFAULT_STOP_INDEX = 40;
 	
 	private static List<AlbumItem> albumItems = new ArrayList<AlbumItem>();
-	private static String currentAlbumName = "";
 	private static int stopIndex = DEFAULT_STOP_INDEX;
 	private static int previousStopIndex = DEFAULT_STOP_INDEX;
 	
 	public static void reinitializeStore(AlbumItemResultSet albumItemResultSet) {
-		
-		currentAlbumName = albumItemResultSet.getAlbumName();
 		albumItems.clear();
 		stopIndex = DEFAULT_STOP_INDEX;
 		previousStopIndex = DEFAULT_STOP_INDEX;
@@ -84,5 +81,15 @@ public class AlbumItemStore {
 
 	public static List<AlbumItem> getAllVisibleAlbumItems() {
 		return getAlbumItems(getStopIndex());
+	}
+
+	public static AlbumItem getAlbumItem(long albumItemId) {
+		for (AlbumItem albumItem : albumItems) {
+			if (albumItem.getItemID() == albumItemId) {
+				return albumItem;
+			}
+		}
+		
+		return null;
 	}
 }

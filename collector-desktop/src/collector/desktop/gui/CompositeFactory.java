@@ -1842,21 +1842,16 @@ public class CompositeFactory {
 
 				// Update Database and Browser
 				if (isUpdateAlbumItemComposite) {
-					albumItem.addField(
-							"id",
-							FieldType.ID,
-							albumItemId);
+					albumItem.addField("id", FieldType.ID, albumItemId);
 
 					DatabaseWrapper.updateAlbumItem(albumItem);
-					BrowserContent.setFutureJumpAnchor(BrowserContent.getAnchorForAlbumItemId(albumItemId));
+					BrowserContent.generatAlbumItemUpdatedPage(albumItemId);
 				} else {			
-					BrowserContent.setFutureJumpAnchor(BrowserContent.getAnchorForAlbumItemId(DatabaseWrapper.addNewAlbumItem(albumItem, false, true)));
+					BrowserContent.generateAlbumItemAddedPage(DatabaseWrapper.addNewAlbumItem(albumItem, false, true));
 				}
 
 				Collector.changeRightCompositeTo(PanelType.Empty, CompositeFactory.getEmptyComposite(Collector.getThreePanelComposite()));
 				WelcomePageManager.getInstance().updateLastModifiedWithCurrentDate(Collector.getSelectedAlbum());
-
-				BrowserContent.performBrowserQueryAndShow(Collector.getAlbumItemSWTBrowser(), DatabaseWrapper.createSelectStarQuery(Collector.getSelectedAlbum()));
 			}
 		};
 	}

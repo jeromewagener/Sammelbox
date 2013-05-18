@@ -11,7 +11,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.sql.Savepoint;
 import java.sql.Statement;
 import java.sql.Time;
 import java.util.ArrayList;
@@ -25,10 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import org.eclipse.swt.SWT;
-
 import collector.desktop.filesystem.FileSystemAccessWrapper;
-import collector.desktop.gui.ComponentFactory;
 import collector.desktop.gui.QueryBuilder;
 import collector.desktop.gui.QueryBuilder.QueryComponent;
 import collector.desktop.gui.QueryBuilder.QueryOperator;
@@ -2266,8 +2262,7 @@ public class DatabaseWrapper  {
 		}
 
 		return list;
-	}
-
+	}	
 
 	/**
 	 * Creates a simple select * from albumName with a properly formatted albumName

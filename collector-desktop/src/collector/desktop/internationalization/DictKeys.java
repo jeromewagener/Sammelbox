@@ -168,6 +168,8 @@ public class DictKeys {
 	public static String BROWSER_BACK_TO_ALBUM = "collector.browser.text.BACK_TO_ALBUM";
 	public static String BROWSER_BEFORE = "collector.browser.text.BEFORE";
 	public static String BROWSER_AFTER = "collector.browser.text.AFTER";
+	public static String BROWSER_ITEM_ADDED = "collector.browser.text.ITEM_ADDED";
+	public static String BROWSER_ITEM_UPDATED = "collector.browser.text.ITEM_UPDATED";
 	
 	/*   Status Bar   */
 	public static final String STATUSBAR_PROGRAM_STARTED = "collector.statusbar.PROGRAM_STARTED";

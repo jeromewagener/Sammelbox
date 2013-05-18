@@ -211,25 +211,9 @@ public class Collector implements UIObservable, UIObserver {
 		return threePanelComposite;
 	}
 
-	/** This method is used during the creation of the user interface. It ensures that 
-	 * the first album is selected and its items are presented */
-	private static void selectDefaultAndShowSelectedAlbum() {
-// TODO Remove if not needed
-//		if (albumSWTList.getItemCount() > 0) {
-//			albumSWTList.setSelection(0);
-//			Collector.setSelectedAlbum(albumSWTList.getItem(albumSWTList.getSelectionIndex()));
-//			BrowserContent.performBrowserQueryAndShow(
-//					Collector.getAlbumItemSWTBrowser(), 
-//					DatabaseWrapper.createSelectStarQuery(albumSWTList.getItem(albumSWTList.getSelectionIndex())));
-//		}
-		System.err.println("selectDefaultAndShowSelectedAlbum() is not implemented");
-	}
-
-	// TODO fix Issue #20
 	private static void selectDefaultAndShowWelcomePage() {
 		if (albumSWTList.getItemCount() > 0) {
 			albumSWTList.setSelection(-1);
-			//Collector.setSelectedAlbum(albumSWTList.getItem(albumSWTList.getSelectionIndex()));
 		}
 
 		BrowserContent.loadWelcomePage();
