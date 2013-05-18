@@ -21,9 +21,8 @@ public class ApplicationSettingsManager {
 	}
 	
 	public static Locale getUserDefinedLocale() {
-		// TODO allow user to define locale
 		switch (applicationSettings.getUserDefinedLanguage()) {
-		case DE:
+		case Deutsch:
 			return Locale.GERMAN;
 
 		default:
@@ -31,8 +30,12 @@ public class ApplicationSettingsManager {
 		}
 	}
 	
+	public static void setUserDefinedLanguage(Language language) {
+		applicationSettings.setUserDefinedLanguage(language);
+	}
+	
 	public static class ApplicationSettings {
-		private Language userDefinedLanguage = Language.UNKNOWN;
+		private Language userDefinedLanguage = Language.Unknown;
 
 		public ApplicationSettings() {}
 		

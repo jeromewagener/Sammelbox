@@ -55,10 +55,8 @@ public class DictKeys {
 	public static final String DIALOG_CONTENT_DELETE_ALBUM_PICTURES = "collector.dialog.content.DELETE_ALBUM_PICTURES";
 	public static final String DIALOG_TITLE_ALBUM_NAME_ALREADY_USED = "collector.dialog.title.ALBUM_NAME_ALREADY_USED";
 	public static final String DIALOG_CONTENT_ALBUM_NAME_ALREADY_USED = "collector.dialog.content.ALBUM_NAME_ALREADY_USED";
-	
 	public static final String DIALOG_TITLE_ALBUM_CREATE_ERROR = "collector.dialog.title.ALBUM_CREATE_ERROR";
 	public static final String DIALOG_CONTENT_ALBUM_CREATE_ERROR = "collector.dialog.content.ALBUM_CREATE_ERROR";
-	
 	public static final String DIALOG_TITLE_ALBUM_NAME_INVALID = "collector.dialog.title.ALBUM_NAME_INVALID";
 	public static final String DIALOG_CONTENT_ALBUM_NAME_INVALID = "collector.dialog.content.ALBUM_NAME_INVALID";
 	public static final String DIALOG_TITLE_VIEW_NAME_ALREADY_USED = "collector.dialog.title.VIEW_NAME_ALREADY_USED";
@@ -75,6 +73,8 @@ public class DictKeys {
 	public static final String DIALOG_CONTENT_DATE_FORMAT = "collector.dialog.content.DIALOG_CONTENT_DATE_FORMAT";
 	public static final String DIALOG_TITLE_ENTER_OPTION = "collector.dialog.title.DIALOG_TITLE_ENTER_OPTION";
 	public static final String DIALOG_CONTENT_ENTER_OPTION = "collector.dialog.content.DIALOG_CONTENT_ENTER_OPTION";
+	public static final String DIALOG_TITLE_RESTART_NEEDED_FOR_SETTINGS	 = "collector.dialog.title.DIALOG_TITLE_RESTART_NEEDED_FOR_SETTINGS";
+	public static final String DIALOG_CONTENT_RESTART_NEEDED_FOR_SETTINGS	 = "collector.dialog.content.DIALOG_TITLE_RESTART_NEEDED_FOR_SETTINGS";
 	
 	/*   Open & Save Dialogs   */
 	public static final String DIALOG_BACKUP_TO_FILE = "collector.savedialog.title.BACKUP_TO_FILE";
@@ -116,6 +116,7 @@ public class DictKeys {
 	public static final String BUTTON_ADD_TO_SEARCH = "collector.button.caption.ADD_TO_SEARCH";
 	public static final String BUTTON_SORT_ASCENDING = "collector.button.caption.BUTTON_SORT_ASCENDING";
 	public static final String BUTTON_SORT_DESCENDING = "collector.button.caption.BUTTON_SORT_DESCENDING";
+	public static final String BUTTON_SAVE_SETTINGS = "collector.button.caption.BUTTON_SAVE_SETTINGS";
 	
 	/*   Labels   */
 	public static final String LABEL_ADD_ENTRY = "collector.label.caption.ADD_ENTRY";
@@ -143,6 +144,7 @@ public class DictKeys {
 	public static final String LABEL_SORT_BY = "collector.label.caption.SORT_BY";
 	public static final String LABEL_FIELD_TO_SORT = "collector.label.caption.FIELD_TO_SORT";
 	public static final String LABEL_SETTINGS = "collector.label.caption.SETTINGS";
+	public static final String LABEL_LANGUAGE = "collector.label.caption.LANGUAGE";
 	
 	/*   Textbox   */
 	public static final String TEXTBOX_MY_NEW_ALBUM = "collector.textbox.content.MY_NEW_ALBUM";
