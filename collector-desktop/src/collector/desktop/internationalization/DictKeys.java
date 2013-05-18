@@ -24,7 +24,7 @@ public class DictKeys {
 	/*   Dropdown Menu   */
 	public static final String DROPDOWN_REMOVE = "collector.dropdown.menu.REMOVE";
 	public static final String DROPDOWN_REMOVE_ALL = "collector.dropdown.menu.REMOVE_ALL";
-	public static final String DROPDOWN_RENAME = "collector.dropdown.menu.REMOVE";
+	public static final String DROPDOWN_RENAME = "collector.dropdown.menu.RENAME";
 	public static final String DROPDOWN_MOVE_TO_TOP = "collector.dropdown.menu.MOVE_TO_TOP";
 	public static final String DROPDOWN_MOVE_ONE_UP = "collector.dropdown.menu.MOVE_ONE_UP";
 	public static final String DROPDOWN_MOVE_ONE_DOWN = "collector.dropdown.menu.MOVE_ONE_DOWN";
