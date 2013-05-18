@@ -463,11 +463,11 @@ public class BrowserContent {
 			}
 			else if (fieldItem.getType().equals(FieldType.Option)) {
 				if (fieldItem.getValue() == OptionType.Yes) {
-					htmlDataColumnContent.append("<span class=\"boldy\"> " + fieldItem.getName() + "</span> : " + Translator.get(DictKeys.BROWSER_YES) + " <br>");
+					htmlDataColumnContent.append("<span class=\"boldy\"> " + escapeHtmlString(fieldItem.getName()) + "</span> : " + Translator.get(DictKeys.BROWSER_YES) + " <br>");
 				} else if (fieldItem.getValue() == OptionType.No) {
-					htmlDataColumnContent.append("<span class=\"boldy\"> " + fieldItem.getName() + "</span> : " + Translator.get(DictKeys.BROWSER_NO) + " <br>");
+					htmlDataColumnContent.append("<span class=\"boldy\"> " + escapeHtmlString(fieldItem.getName()) + "</span> : " + Translator.get(DictKeys.BROWSER_NO) + " <br>");
 				} else {
-					htmlDataColumnContent.append("<span class=\"boldy\"> " + fieldItem.getName() + "</span> : " + Translator.get(DictKeys.BROWSER_UNKNOWN) + " <br>");
+					htmlDataColumnContent.append("<span class=\"boldy\"> " + escapeHtmlString(fieldItem.getName()) + "</span> : " + Translator.get(DictKeys.BROWSER_UNKNOWN) + " <br>");
 				}
 			} 
 			else if (fieldItem.getType().equals(FieldType.Date)) {
@@ -477,9 +477,9 @@ public class BrowserContent {
 
 				SimpleDateFormat f = (SimpleDateFormat) DateFormat.getDateInstance(DateFormat.LONG, ApplicationSettingsManager.getUserDefinedLocale());
 
-				htmlDataColumnContent.append("<span class=\"boldy\"> " + fieldItem.getName() + "</span> : " + f.format(utilDate) + "<br>");
+				htmlDataColumnContent.append("<span class=\"boldy\"> " + escapeHtmlString(fieldItem.getName()) + "</span> : " + f.format(utilDate) + "<br>");
 			} else {
-				htmlDataColumnContent.append("<span class=\"boldy\"> " + fieldItem.getName() + "</span> : " + fieldItem.getValue() + "<br>");
+				htmlDataColumnContent.append("<span class=\"boldy\"> " + escapeHtmlString(fieldItem.getName()) + "</span> : " + escapeHtmlString(fieldItem.getValue().toString()) + "<br>");
 			}
 		}	
 
@@ -629,5 +629,15 @@ public class BrowserContent {
 				Collector.getAlbumItemSWTBrowser().execute(javascript);
 			}
 		}
+	}
+	
+	public static String escapeHtmlString(String htmlString) {
+		String escapedString = htmlString;
+		
+		escapedString = escapedString.replace("&", "&amp;");
+		escapedString = escapedString.replace("<", "&lt;");
+		escapedString = escapedString.replace(">", "&gt;");
+
+		return escapedString;
 	}
 }
