@@ -1532,7 +1532,6 @@ public class CompositeFactory {
 						newString.getChars(0, chars.length, chars, 0);
 
 						for (int i = 0; i < chars.length; i++) {
-							System.out.println(hasPoint);
 							if (!hasPoint) {
 								if (!('0' <= chars[i] && chars[i] <= '9'|| chars[i] == '.')) {
 									e.doit = false;
@@ -1544,7 +1543,7 @@ public class CompositeFactory {
 									return;
 								}
 							}
-						}						
+						}
 					}
 				});
 
@@ -1565,7 +1564,7 @@ public class CompositeFactory {
 				integerText.addListener(SWT.Verify, new Listener() {
 					public void handleEvent(Event e) {
 						String newString = e.text;
-
+						
 						char[] chars = new char[newString.length()];
 						newString.getChars(0, chars.length, chars, 0);
 
@@ -1574,7 +1573,16 @@ public class CompositeFactory {
 								e.doit = false;
 								return;
 							}
-						}						
+						}
+						
+						try {
+							if (!integerText.getText().isEmpty()) {
+								Integer.parseInt(integerText.getText() + e.text);
+							}
+						} catch (NumberFormatException nfe) {
+							e.doit = false;
+							return;
+						}
 					}
 				});
 
