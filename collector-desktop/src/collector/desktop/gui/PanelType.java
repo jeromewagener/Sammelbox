@@ -8,5 +8,6 @@ public enum PanelType {
 	UpdateEntry,
 	AdvancedSearch,
 	Synchronization,
+	Settings,
 	Help
 }

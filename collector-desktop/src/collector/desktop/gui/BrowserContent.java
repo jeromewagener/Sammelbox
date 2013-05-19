@@ -463,11 +463,11 @@ public class BrowserContent {
 			}
 			else if (fieldItem.getType().equals(FieldType.Option)) {
 				if (fieldItem.getValue() == OptionType.Yes) {
-					htmlDataColumnContent.append("<span class=\"boldy\"> " + fieldItem.getName() + "</span> : " + Translator.get(DictKeys.BROWSER_YES) + " <br>");
+					htmlDataColumnContent.append("<span class=\"boldy\"> " + escapeHtmlString(fieldItem.getName()) + "</span> : " + Translator.get(DictKeys.BROWSER_YES) + " <br>");
 				} else if (fieldItem.getValue() == OptionType.No) {
-					htmlDataColumnContent.append("<span class=\"boldy\"> " + fieldItem.getName() + "</span> : " + Translator.get(DictKeys.BROWSER_NO) + " <br>");
+					htmlDataColumnContent.append("<span class=\"boldy\"> " + escapeHtmlString(fieldItem.getName()) + "</span> : " + Translator.get(DictKeys.BROWSER_NO) + " <br>");
 				} else {
-					htmlDataColumnContent.append("<span class=\"boldy\"> " + fieldItem.getName() + "</span> : " + Translator.get(DictKeys.BROWSER_UNKNOWN) + " <br>");
+					htmlDataColumnContent.append("<span class=\"boldy\"> " + escapeHtmlString(fieldItem.getName()) + "</span> : " + Translator.get(DictKeys.BROWSER_UNKNOWN) + " <br>");
 				}
 			} 
 			else if (fieldItem.getType().equals(FieldType.Date)) {
@@ -477,9 +477,9 @@ public class BrowserContent {
 
 				SimpleDateFormat f = (SimpleDateFormat) DateFormat.getDateInstance(DateFormat.LONG, ApplicationSettingsManager.getUserDefinedLocale());
 
-				htmlDataColumnContent.append("<span class=\"boldy\"> " + fieldItem.getName() + "</span> : " + f.format(utilDate) + "<br>");
+				htmlDataColumnContent.append("<span class=\"boldy\"> " + escapeHtmlString(fieldItem.getName()) + "</span> : " + f.format(utilDate) + "<br>");
 			} else {
-				htmlDataColumnContent.append("<span class=\"boldy\"> " + fieldItem.getName() + "</span> : " + fieldItem.getValue() + "<br>");
+				htmlDataColumnContent.append("<span class=\"boldy\"> " + escapeHtmlString(fieldItem.getName()) + "</span> : " + escapeHtmlString(fieldItem.getValue().toString()) + "<br>");
 			}
 		}	
 
@@ -628,6 +628,54 @@ public class BrowserContent {
 
 				Collector.getAlbumItemSWTBrowser().execute(javascript);
 			}
+		}
+	}
+	
+	public static String escapeHtmlString(String htmlString) {
+		String escapedString = htmlString;
+		
+		escapedString = escapedString.replace("&", "&amp;");
+		escapedString = escapedString.replace("<", "&lt;");
+		escapedString = escapedString.replace(">", "&gt;");
+
+		return escapedString;
+	}
+
+	public static void generatAlbumItemUpdatedPage(long albumItemId) {
+		String javaScript = "<script src=\"file://" + FileSystemAccessWrapper.COLLECTOR_HOME_APPDATA + File.separatorChar + "effects.js" + "\"></script>";
+		String styleCSS = "<link rel=stylesheet href=\"file://"+ FileSystemAccessWrapper.COLLECTOR_HOME_APPDATA + File.separatorChar + "style.css" + "\"></link>";
+
+		AlbumItem addedAlbumItem = DatabaseWrapper.fetchAlbumItem(Collector.getSelectedAlbum(), albumItemId);
+
+		if (addedAlbumItem != null) {
+			String addedItemHtml = getAlbumItemTableRowHtml(addedAlbumItem);
+		
+			String finalPageAsHtml = "<!DOCTYPE HTML><html><head><meta http-equiv=\"X-UA-Compatible\" content=\"IE=9\" >" 
+										+ styleCSS + " " + javaScript + "</head><body bgcolor=white><font face=\"" + getDefaultSystemFont() 
+										+ "\"><h1>" + Translator.get(DictKeys.BROWSER_ITEM_UPDATED) + "</h1><table id=\"albumItems\" border=0>" + addedItemHtml + "</table></font>" 
+										+ "<br><form><input type=\"button\" onclick=parent.location.href=\"show:///showDetailsViewOfAlbum\" value=\"" 
+										+ Translator.get(DictKeys.BROWSER_BACK_TO_ALBUM) + "\"></form></body></html>";
+	
+			Collector.getAlbumItemSWTBrowser().setText(finalPageAsHtml);
+		}
+	}
+
+	public static void generateAlbumItemAddedPage(long albumItemId) {
+		String javaScript = "<script src=\"file://" + FileSystemAccessWrapper.COLLECTOR_HOME_APPDATA + File.separatorChar + "effects.js" + "\"></script>";
+		String styleCSS = "<link rel=stylesheet href=\"file://"+ FileSystemAccessWrapper.COLLECTOR_HOME_APPDATA + File.separatorChar + "style.css" + "\"></link>";
+
+		AlbumItem addedAlbumItem = DatabaseWrapper.fetchAlbumItem(Collector.getSelectedAlbum(), albumItemId);
+
+		if (addedAlbumItem != null) {
+			String addedItemHtml = getAlbumItemTableRowHtml(addedAlbumItem);
+		
+			String finalPageAsHtml = "<!DOCTYPE HTML><html><head><meta http-equiv=\"X-UA-Compatible\" content=\"IE=9\" >" 
+										+ styleCSS + " " + javaScript + "</head><body bgcolor=white><font face=\"" + getDefaultSystemFont() 
+										+ "\"><h1>" + Translator.get(DictKeys.BROWSER_ITEM_ADDED) + "</h1><table id=\"albumItems\" border=0>" + addedItemHtml + "</table></font>" 
+										+ "<br><form><input type=\"button\" onclick=parent.location.href=\"show:///showDetailsViewOfAlbum\" value=\"" 
+										+ Translator.get(DictKeys.BROWSER_BACK_TO_ALBUM) + "\"></form></body></html>";
+	
+			Collector.getAlbumItemSWTBrowser().setText(finalPageAsHtml);
 		}
 	}
 }

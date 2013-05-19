@@ -1,21 +1,34 @@
 package collector.desktop.internationalization;
 
-public enum Language {
-	EN,
-	DE,
-	UNKNOWN;
 
+public enum Language {
+	Unknown,
+	English,
+	Deutsch;
+	
 	public static String getDictionaryBundle(Language language) {
 		switch (language) {
-		case EN:
+		case English:
 			return "internationalization/dict_en";
 
-		case DE:
+		case Deutsch:
 			return "internationalization/dict_de";
 		
-		case UNKNOWN:
 		default:
 			return "internationalization/dict_en";
 		}
+	}
+	
+	public static String[] allLanguages() {
+		String[] allLanguages = new String[values().length - 1];
+		
+		int i=0;
+		for (Language language : values()) {
+			if (language != Unknown) {
+				allLanguages[i++] = language.toString();
+			}
+		}
+		
+		return allLanguages;
 	}
 }

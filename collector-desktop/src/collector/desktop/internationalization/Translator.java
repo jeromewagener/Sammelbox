@@ -15,15 +15,15 @@ public class Translator {
 	public static void setLanguageFromSettingsOrSystem() {
 		Language language = ApplicationSettingsManager.getUserDefinedLanguage();
 		
-		if (language != Language.UNKNOWN) {
+		if (language != Language.Unknown) {
 			setLanguageManually(language);
 		} else {
 			switch (System.getProperty("user.language")) {
 			case "de":
-				setLanguageManually(Language.DE);
+				setLanguageManually(Language.Deutsch);
 				break;
 			default:
-				setLanguageManually(Language.EN);
+				setLanguageManually(Language.English);
 			}
 		}
 	}
@@ -35,6 +35,14 @@ public class Translator {
 		} catch (MissingResourceException mre) {
 			System.err.println("properties not found"); // TODO log me
 		}
+	}
+	
+	public static Language getUsedLanguage() {
+		if (language == Language.Unknown) {
+			return Language.English;
+		}
+		
+		return language;
 	}
 	
 	public static String get(String key, Object... parameters) {

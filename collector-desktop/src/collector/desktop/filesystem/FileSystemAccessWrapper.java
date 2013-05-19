@@ -838,7 +838,7 @@ public class FileSystemAccessWrapper {
 		StringBuilder xmlOutput = new StringBuilder();
 		
 		xmlOutput.append("<settings>\n");
-		xmlOutput.append("\t<userDefinedLanguage>" + applicationSettings.getUserDefinedLanguage().toString() + "<userDefinedLanguage>\n");
+		xmlOutput.append("\t<userDefinedLanguage>" + applicationSettings.getUserDefinedLanguage().toString() + "</userDefinedLanguage>\n");
 		xmlOutput.append("</settings>\n");
 		
 		writeToFile(xmlOutput.toString(), SETTINGS_FILE);
