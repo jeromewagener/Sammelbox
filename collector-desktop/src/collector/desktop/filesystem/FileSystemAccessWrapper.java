@@ -13,15 +13,13 @@ import java.io.PrintWriter;
 import java.io.StringReader;
 import java.net.URI;
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
@@ -58,9 +56,11 @@ public class FileSystemAccessWrapper {
 	public static final String LOCK_FILE						= COLLECTOR_HOME_APPDATA + File.separatorChar + ".lock";
 	
 	private static final boolean OVERWRITE_EXISITING_FILES = true;
-	// TODO Set this set back to private when no longer needed in gui messagebox.
-	public static Set<String> reservedFileSystemCharacters 		= getImmutableReservedFileSystemCharacters();
-	
+	/**
+	 *  A simple regex to prevent album names whose folders of the same name cause problems on the filesystem
+	 * Minimum length is 3 alphanumeric characters possibly white spaces, underscores (u005F) hyphen_minuses (u002D). 
+	 * */
+	private static final String albumNameRegex = "^(\\w|\\u005F|\\s|\\u002D){3,}$"; 
 	/**
 	 * Instance to itself used in the process to located stored resources. 
 	 */
@@ -190,6 +190,19 @@ public class FileSystemAccessWrapper {
 	public static void copyDirectory(File sourceLocation , File targetLocation)
 			throws IOException {
 
+		copyDirectory(sourceLocation, targetLocation, null);
+	}
+	
+	/**
+	 * Recursively copies a directory and its content from the source to the target location.
+	 * @param sourceLocation The file handle to the source directory.
+	 * @param targetLocation The file handle to the target directory.
+	 * @param excludeFileRegex Excludes files from being copies that match this regex. Null or empty string will match no file.
+	 * @throws IOException Exception raised if a problem is encountered during the copy process.
+	 */
+	public static void copyDirectory(File sourceLocation , File targetLocation, String excludeFileRegex)
+			throws IOException {
+
 		if (sourceLocation.isDirectory()) {
 			if (!targetLocation.exists()) {
 				targetLocation.mkdir();
@@ -197,10 +210,14 @@ public class FileSystemAccessWrapper {
 
 			String[] children = sourceLocation.list();
 			for (int i=0; i<children.length; i++) {
-				copyDirectory(new File(sourceLocation, children[i]),
-						new File(targetLocation, children[i]));
+				copyDirectory(	new File(sourceLocation, children[i]),
+						new File(targetLocation, children[i]),
+						excludeFileRegex);
 			}
 		} else {
+			if ( excludeFileRegex != null && !excludeFileRegex.isEmpty() && sourceLocation.getCanonicalFile().getName().matches(excludeFileRegex)) {
+				return;
+			}
 			copyFile(sourceLocation, targetLocation);
 		}
 	}
@@ -414,6 +431,33 @@ public class FileSystemAccessWrapper {
 	public static void deleteDatabaseRestoreFile() {
 		File file = new File(DATABASE_TO_RESTORE);
 		file.delete();
+	}
+	
+	/**
+	 * Retrieves a list of files whose file name matches the provided regex. Only files in the appdate folder (no directories) are matched.
+	 * @param fileNameRegex The regular expression to match files in the collector home against.
+	 * @return A list of file handles to the matching files. Empty list if none are found.
+	 */
+	public static List<File> getAllMatchingFilesInCollectorHome(String fileNameRegex) {
+		List<File> matchingFiles = new ArrayList<File>();
+		File path = new File(COLLECTOR_HOME_APPDATA);
+		File[] files = path.listFiles();
+		for(int i=0; i<files.length; i++) {
+			if(!files[i].isDirectory()) {
+				File currentFile;
+				try {
+					currentFile = files[i].getCanonicalFile();
+				} catch (IOException e) {
+					e.printStackTrace();
+					// TODO log.
+					continue;
+				}
+				if (currentFile.getName().matches(fileNameRegex)){
+					matchingFiles.add(currentFile);
+				}
+			}
+		}		
+		return matchingFiles;		
 	}
 
 	public static void writeToFile(String content, String filepath) {
@@ -733,28 +777,9 @@ public class FileSystemAccessWrapper {
 		return extension;
 	}
 	
-	private static Set<String> getImmutableReservedFileSystemCharacters() {
-		
-		Set<String> characterSet = new HashSet<String>();
-		characterSet.add("/");
-		characterSet.add("\\");
-		characterSet.add("?");
-		characterSet.add("%");
-		characterSet.add("*");
-		characterSet.add(":");
-		characterSet.add("|");
-		characterSet.add("\"");
-		characterSet.add("<");
-		characterSet.add(">");
-		characterSet.add(".");
-		return Collections.unmodifiableSet(characterSet);
-	}
-	
 	public static boolean isNameFileSystemCompliant(String name) {
-		for (String reservedFileSystemCharacter : reservedFileSystemCharacters) {
-			if (name.contains(reservedFileSystemCharacter)){
-				return false;
-			}
+		if (!name.matches(albumNameRegex)) {
+			return false;
 		}
 		
 		// Tests if an album with 'name' could actually create a valid albumPictureFolder		

@@ -902,8 +902,7 @@ public class CompositeFactory {
 				
 				if (!FileSystemAccessWrapper.isNameFileSystemCompliant(albumName)) {
 					// Purge the [ and ] enclosing the string of reservedCharacters. // TODO: tidy this up
-					String reservedFileSystemCharactersAsString = FileSystemAccessWrapper.reservedFileSystemCharacters.toString().substring(1, FileSystemAccessWrapper.reservedFileSystemCharacters.toString().length()-1).replace(",", " ");
-					ComponentFactory.getMessageBox(parentComposite, Translator.get(DictKeys.DIALOG_TITLE_ALBUM_NAME_INVALID), Translator.get(DictKeys.DIALOG_CONTENT_ALBUM_NAME_INVALID,reservedFileSystemCharactersAsString), SWT.ICON_WARNING).open();					
+					ComponentFactory.getMessageBox(parentComposite, Translator.get(DictKeys.DIALOG_TITLE_ALBUM_NAME_INVALID), Translator.get(DictKeys.DIALOG_CONTENT_ALBUM_NAME_INVALID), SWT.ICON_WARNING).open();					
 					return;
 				}				
 
@@ -989,9 +988,8 @@ public class CompositeFactory {
 				}					
 				
 				if (!FileSystemAccessWrapper.isNameFileSystemCompliant(newAlbumName)) {
-					// Purge the [ and ] enclosing the string of reservedCharacters. // TODO: tidy this up
-					String reservedFileSystemCharactersAsString = FileSystemAccessWrapper.reservedFileSystemCharacters.toString().substring(1, FileSystemAccessWrapper.reservedFileSystemCharacters.toString().length()-1).replace(",", " ");			
-					ComponentFactory.getMessageBox(parentComposite, Translator.get(DictKeys.DIALOG_TITLE_ALBUM_NAME_INVALID), Translator.get(DictKeys.DIALOG_CONTENT_ALBUM_NAME_INVALID,reservedFileSystemCharactersAsString), SWT.ICON_WARNING).open();
+							
+					ComponentFactory.getMessageBox(parentComposite, Translator.get(DictKeys.DIALOG_TITLE_ALBUM_NAME_INVALID), Translator.get(DictKeys.DIALOG_CONTENT_ALBUM_NAME_INVALID), SWT.ICON_WARNING).open();
 					return;
 				}
 

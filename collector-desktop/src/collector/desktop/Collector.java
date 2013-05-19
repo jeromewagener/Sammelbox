@@ -1,5 +1,6 @@
 package collector.desktop;
 
+import java.io.File;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
@@ -15,9 +16,11 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.List;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.MessageBox;
@@ -36,6 +39,7 @@ import collector.desktop.gui.BrowserContent;
 import collector.desktop.gui.BrowserListener;
 import collector.desktop.gui.ComponentFactory;
 import collector.desktop.gui.CompositeFactory;
+import collector.desktop.gui.LoadingOverlayShell;
 import collector.desktop.gui.PanelType;
 import collector.desktop.gui.StatusBarComposite;
 import collector.desktop.gui.ToolbarComposite;
@@ -82,16 +86,22 @@ public class Collector implements UIObservable, UIObserver {
 	private static ArrayList<UIObserver> observers = new ArrayList<UIObserver>();
 	/** An instance to the main collector */
 	private static Collector instance = null;
+	/** The overlay shell displayed while the database is being backed up*/
+	private static LoadingOverlayShell loadingOverlayShell  = null;
 	
 	/**
 	 * The default constructor initializes the file structure and opens the database connections.
 	 * Furthermore the constructor creates the program instance which is used to register observers
+	 * @throws Exception Either a class not found excpetion if the jdbc driver could not be initialized or
+	 * an exception if the database connection could not be established.
 	 */
-	private Collector() throws ClassNotFoundException {
+	private Collector() throws Exception {
 		Class.forName("org.sqlite.JDBC");
 
 		FileSystemAccessWrapper.updateCollectorFileStructure();
-		DatabaseWrapper.openConnection();
+		if (!DatabaseWrapper.openConnection()) {			
+			throw new Exception("Could not open a database connection and no autosave available");			
+		}
 		FileSystemAccessWrapper.updateAlbumFileStructure(DatabaseWrapper.getConnection());
 		
 		instance = this;
@@ -100,7 +110,7 @@ public class Collector implements UIObservable, UIObserver {
 	/** This method creates the main user interface. This involves the creation of different sub-composites 
 	 * using the CompositeFactory 
 	 * @param shell the shell used to create the user interface */
-	public static void createCollectorShell(Shell shell) {
+	public static void createCollectorShell(final Shell shell) {				
 		// setup the Layout for the shell
 		GridLayout shellGridLayout = new GridLayout(1, false);
 		shellGridLayout.marginHeight = 0;
@@ -187,10 +197,15 @@ public class Collector implements UIObservable, UIObserver {
 		
 		// SWT display management
 		shell.pack();
-		Rectangle displayClientArea = display.getClientArea();
+
+		Rectangle displayClientArea = display.getPrimaryMonitor().getClientArea();
 		if (maximizeShellOnStartUp(displayClientArea.width, displayClientArea.height)){
 			shell.setMaximized(true);
 		}
+		
+		// Setup database backup overlay
+		loadingOverlayShell = createAutosaveOverlay();
+
 		shell.open();
 
 		selectDefaultAndShowWelcomePage();		
@@ -730,8 +745,57 @@ public class Collector implements UIObservable, UIObserver {
 		
 		return false;
 	}
-
 	
+	private static void launchLoadingOverlayShell(final LoadingOverlayShell shell, boolean useWorkerThread) {
+		shell.start();
+		if (useWorkerThread){
+			final Thread performer = new Thread(new Runnable() {
+				@Override
+				public void run() {
+					executeTask(shell);
+				}
+			}, "perform action");
+			performer.start();
+		}else {
+			executeTask(shell);
+		}
+	}
+
+	private static void executeTask(LoadingOverlayShell shell) {
+		// Do work in parallel to UI Thread
+		// Backup database 
+		try {
+			Thread.sleep(0);
+			if(!DatabaseWrapper.backupAutoSave() ){
+				System.err.println("Error while autosaving!!");
+			}
+			
+			FileSystemAccessWrapper.recursiveDeleteFSObject(new File("C:/Users/ameos/.collector/app-data/0ebced74-1187-4519-965d-aad1b699d3a8"));
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		// After task is completed stop the shell
+		shell.stop();
+	}	
+	
+	private static LoadingOverlayShell createAutosaveOverlay () {
+		// TODO: replace message text by international string
+		final LoadingOverlayShell loadingOverlayShell = new LoadingOverlayShell(shell, " Autosaving the database");
+		loadingOverlayShell.setCloseParentWhenDone(true);
+		shell.addListener(SWT.Close, new Listener() {			
+			@Override
+			public void handleEvent(Event event) {
+				// Back up db file while displaying the loading overlay
+				if (!loadingOverlayShell.isDone()) {
+					// Setup the database backup overlay
+					launchLoadingOverlayShell(loadingOverlayShell, false);					
+					event.doit =  false;
+				}
+			}
+		});
+		
+		return loadingOverlayShell;
+	}
 }
 
 

@@ -56,21 +56,29 @@ public class DatabaseWrapper  {
 	private static long lastChangeTimeStamp = -1;
 	private static String sqliteConnectionString = "jdbc:sqlite:";
 	private static Connection connection = null;
+	private static final String autoSaveExtension = "autosave";
+	public static final String autoSaveFileRegex = "(\\w)+(\\u005F([0-9]+)+\\."+autoSaveExtension+")$";
+	/** The maximum amount of autosaves that can be stored until the oldes it overwritten */
+	private static int autoSaveLimit = 8;
 
 	/**
 	 * Opens the default connection for the FileSystemAccessWrapper.DATABASE database. Only opens a new connection if none is currently open.
 	 * @return
 	 */
 	public static boolean openConnection() {
-		boolean result = true;
+		boolean result = false;
 		try {
 			if (connection == null || connection.isClosed()) {
 				connection = DriverManager.getConnection(sqliteConnectionString + FileSystemAccessWrapper.DATABASE);
+				System.out.println(connection.isClosed());
+				result  = true;
 			}
-		} 
-		catch (SQLException e) {
+			// Run a query to check if db is ok
+			result = isConnectionReady();
+		} catch (SQLException e) {
 			System.err.println(e.getMessage());
-			result  = false;
+			
+			return false;
 		} 
 		return result;
 	}
@@ -86,6 +94,51 @@ public class DatabaseWrapper  {
 			result = false;
 		}
 		return result;
+	}
+	
+	/**
+	 * Test if the connection is open and ready to be used. 
+	 * @return True if the connection can be safely used to query and manipulate the database.
+	 */
+	public static boolean isConnectionReady() {
+		//TODO do some logging when this method fails.
+		try {
+			if (connection == null || connection.isClosed()) {
+				return false;
+			}
+		} catch (SQLException e1) {
+			return false;
+		}
+		boolean isConnectionReady = false;
+		// Querying all tables should not be successful on all working db 
+		// independently of the stored tables.
+		Statement statement = null;
+		ResultSet rs = null;
+		try {			
+			statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
+			rs = statement.executeQuery("SELECT name FROM sqlite_master WHERE type='table'");
+			isConnectionReady = true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			isConnectionReady = false;
+		}finally {
+			try {
+				if (rs != null) {
+					rs.close();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			try {
+				if (statement != null) {
+					statement.close();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}						
+		}	
+		
+		return isConnectionReady;
 	}
 
 	/**
@@ -1702,17 +1755,22 @@ public class DatabaseWrapper  {
 			e.printStackTrace();
 		}finally {
 			try {
-				rs.close();
+				if (rs != null) {
+					rs.close();
+				}
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 			try {
-				statement.close();
+				if (statement != null) {
+					statement.close();
+				}
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
-		}
-		return tableList;		
+			
+		}	
+		return tableList;
 	}
 
 	// TODO AlbumManager should be used instead
@@ -2363,14 +2421,13 @@ public class DatabaseWrapper  {
 
 	/**
 	 * Backs the database entries along the properties and pictures up to the specified file.
-	 * @param fileName The name of the file under which the backup will be stored.
+	 * @param filePath The path ending with the file name under which the backup will be stored.
 	 * @return True if the operation was successful, false otherwise.
 	 */
-	public static boolean backupToFile(String fileName) {
+	public static boolean backupToFile(String filePath) {
 		Statement statement = null;
-		File dbTargetFile = new File(fileName);
 		String tempDirName=  java.util.UUID.randomUUID().toString();
-		File tempDir = new File(dbTargetFile.getParentFile(),tempDirName);
+		File tempDir = new File(System.getProperty("user.home")+File.separator,tempDirName);
 		if( !tempDir.exists() ) {
 			tempDir.mkdir();
 		}
@@ -2388,7 +2445,8 @@ public class DatabaseWrapper  {
 		File tempAppDataDir = new File(tempDir.getPath() + File.separatorChar + "app-data");
 		File sourceAppDataDir = new File(FileSystemAccessWrapper.COLLECTOR_HOME_APPDATA);
 		try {
-			FileSystemAccessWrapper.copyDirectory(sourceAppDataDir, tempAppDataDir);
+			String lockFileRegex = "^\\.lock$"; 
+			FileSystemAccessWrapper.copyDirectory(sourceAppDataDir, tempAppDataDir, lockFileRegex);
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
@@ -2410,7 +2468,7 @@ public class DatabaseWrapper  {
 		}	
 
 		// Zip the whole temp folder
-		FileSystemAccessWrapper.zipFolderToFile(tempDir.getPath(), fileName);
+		FileSystemAccessWrapper.zipFolderToFile(tempDir.getPath(), filePath);
 
 		// delete temp folder
 		FileSystemAccessWrapper.recursiveDeleteFSObject(tempDir);
@@ -2421,19 +2479,22 @@ public class DatabaseWrapper  {
 
 	/**
 	 * Restores the database entries along the properties and pictures from the specified backup file
-	 * @param fileName The name of the file from which the backup will be restored.
+	 * @param filePath The path of the file ending with the file name from which the backup will be restored.
 	 * @return True if the operation was successful, false otherwise.
 	 */
-	public static boolean restoreFromFile(String fileName) {
+	public static boolean restoreFromFile(String filePath) {		
 		FileSystemAccessWrapper.clearCollectorHome();
-		FileSystemAccessWrapper.unzipFileToFolder(fileName, FileSystemAccessWrapper.COLLECTOR_HOME);
+		FileSystemAccessWrapper.unzipFileToFolder(filePath, FileSystemAccessWrapper.COLLECTOR_HOME);
 
 		Statement statement = null;
 		boolean successState = true;
 		try {
 			statement = connection.createStatement();
 			statement.executeUpdate("restore from '" + FileSystemAccessWrapper.DATABASE_TO_RESTORE+"'");
-			lastChangeTimeStamp =  System.currentTimeMillis();
+			lastChangeTimeStamp =  extractTimeStamp(new File(filePath));
+			if (lastChangeTimeStamp==-1){
+				lastChangeTimeStamp = System.currentTimeMillis();
+			}
 		} catch (SQLException e) {
 			successState = false;
 			e.printStackTrace();
@@ -2489,5 +2550,104 @@ public class DatabaseWrapper  {
 		}
 		
 		return false;
+	}
+	
+	/**
+	 * Gets the list of existing autosaves sorted by filename timestamp, newest to oldest.
+	 * @return List of files of previous autosaves. Empty list if none exist
+	 */
+	public static List<File> getAllAutoSaves() {
+		List<File> autoSaves = FileSystemAccessWrapper.getAllMatchingFilesInCollectorHome(autoSaveFileRegex);
+		Collections.sort(autoSaves, new Comparator<File>() {
+
+			@Override
+			public int compare(File file1, File file2) {
+				
+				return Long.compare(extractTimeStamp(file2),  extractTimeStamp(file1));
+			}
+		});
+		return autoSaves;
+	}
+	
+	/**
+	 * Extracts the database last change timestamp from the autosave file. Requires the correct format of the name.
+	 * @param autoSaveFile
+	 * @return A long integer representing the last change of the database.
+	 */
+	private static long extractTimeStamp(File autoSaveFile) {
+		try {
+			String fileName = autoSaveFile.getCanonicalFile().getName();
+			if ( !fileName.matches(autoSaveFileRegex) ) {
+				return -1;
+			}
+			try {
+				long databaseChangeTimeStamp =Long.parseLong(fileName.substring(fileName.indexOf("_")+1, fileName.indexOf(".")));
+				return databaseChangeTimeStamp;
+			} catch (NumberFormatException e) {
+				e.printStackTrace();
+				return -1;
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+			return -1;
+		}
+	}
+	
+	/**
+	 * Creates an automatic backup when the current state of the database is newer than the most recent autosave.   
+	 * @return True when the last state of the database is saved i.e. either the backup was 
+	 * saved successfully or it was older or on par to the last autosave which does nothing. False when the operation
+	 * encountered an error.
+	 */
+	public static boolean backupAutoSave() {		
+		// TODO: implement programm version. Zip up the autosaves of older versions or try to upgrade them?
+		String programVersion = ""; 		
+		// TODO: convert timestamp to UTC to compensate for backup/restores across timezones
+		String timeStamp = Long.toString(getLastDatabaseChangeTimeStamp());		
+		
+		String autoSaveFilePath = 	FileSystemAccessWrapper.COLLECTOR_HOME_APPDATA + 
+				File.separator +
+				"periodicalBackup"+
+				programVersion+
+				"_";// separator for the timestamp	
+
+		List<File> previousAutoSaveList = getAllAutoSaves();
+		
+		if(autoSaveLimit<1) {			
+			return true;
+		};
+
+		if (previousAutoSaveList.isEmpty()) {
+			// When no changes were made then the timestamp is the current time
+			if (getLastDatabaseChangeTimeStamp() == -1) {
+				timeStamp = Long.toString(System.currentTimeMillis());
+			}
+			autoSaveFilePath = autoSaveFilePath +timeStamp+"."+ autoSaveExtension;
+			backupToFile(autoSaveFilePath);
+		}else {// Autosaves detected
+			
+			// No need to overwrite the last autosave when no changes were made.
+			if (getLastDatabaseChangeTimeStamp() == -1 ) {
+				return true;
+			}
+						
+			// Auto save limit reached, delete the oldest
+			if (previousAutoSaveList.size()>=autoSaveLimit) {
+				File oldestAutoSave = previousAutoSaveList.get(previousAutoSaveList.size()-1);
+				if (oldestAutoSave.exists()) {
+					if (!oldestAutoSave.delete()){
+						System.err.println("Autosave - cannot delete old autosave");
+						return false;
+					}
+				}
+			}
+			autoSaveFilePath = autoSaveFilePath +timeStamp+"."+ autoSaveExtension;
+			if (!backupToFile(autoSaveFilePath)){
+				System.err.println("Autosave - backup failed");
+				return false;
+			}
+		}
+
+		return true;
 	}
 }
