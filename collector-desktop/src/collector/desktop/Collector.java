@@ -124,7 +124,7 @@ public class Collector implements UIObservable, UIObserver {
 
 		// center the shell to primary screen
 		Monitor primaryMonitor = display.getPrimaryMonitor();
-		Rectangle primaryMonitorBounds = primaryMonitor.getBounds();
+		Rectangle primaryMonitorBounds = primaryMonitor.getClientArea();
 		Rectangle shellBounds = shell.getBounds();
 		int xCoordinateForShell = primaryMonitorBounds.x + (primaryMonitorBounds.width - shellBounds.width) / 2;
 		int yCoordinateForShell = primaryMonitorBounds.y + (primaryMonitorBounds.height - shellBounds.height) / 2;
