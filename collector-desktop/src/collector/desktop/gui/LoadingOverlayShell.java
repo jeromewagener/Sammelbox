@@ -19,7 +19,7 @@ public class LoadingOverlayShell {
 	private Shell parent = null;
 	private Font textFont = null;
 	private Color textColor = null;
-	private String displayedText = "Loading ...";
+	private String displayedText = "Loading ..."; // TODO move into dict
 	private boolean done = false;
 	private boolean closeParentWhenDone = false;
 	
