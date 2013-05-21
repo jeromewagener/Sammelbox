@@ -39,6 +39,7 @@ import collector.desktop.internationalization.Language;
 import collector.desktop.settings.ApplicationSettingsManager.ApplicationSettings;
 
 public class FileSystemAccessWrapper {
+	public static final String USER_HOME 						= System.getProperty("user.home");
 	public static final String COLLECTOR_HOME 					= System.getProperty("user.home") + File.separatorChar + ".collector";
 	public static final String COLLECTOR_HOME_APPDATA 			= COLLECTOR_HOME + File.separatorChar + "app-data";
 	public static final String ALBUM_PICTURES					= "album-pictures";
@@ -97,7 +98,15 @@ public class FileSystemAccessWrapper {
 				return false;
 			}
 		}
-
+		
+		// Add the lock file
+		File lockFile = new File(LOCK_FILE);
+		try {
+			lockFile.createNewFile();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 		// Add presentation files to application data directory
 		File placeholderPNG = new File(COLLECTOR_HOME_APPDATA + File.separatorChar + "placeholder.png");
 		if (!placeholderPNG.exists() || OVERWRITE_EXISITING_FILES) {		
@@ -306,7 +315,7 @@ public class FileSystemAccessWrapper {
 				fileInputStream.close();
 			}
 			catch(IOException ioe){
-				System.err.println("FileSystemAccessWrapper: " + ioe.getMessage());
+				System.err.println("FileSystemAccessWrapper.addDirectory: " + ioe.getMessage());
 			}
 		}
 	}
@@ -327,7 +336,7 @@ public class FileSystemAccessWrapper {
 			zipOutputStream.close();
 		}
 		catch(IOException ioe) {
-			System.err.println("FileSystemAccessWrapper: " + ioe.getMessage());
+			System.err.println("FileSystemAccessWrapper.zipFolderToFile: " + ioe.getMessage());
 		}
 	}
 
