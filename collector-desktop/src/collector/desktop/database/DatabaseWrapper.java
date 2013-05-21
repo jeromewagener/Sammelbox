@@ -54,26 +54,25 @@ public class DatabaseWrapper  {
 	private static Connection connection = null;
 	private static final String autoSaveExtension = "autosave";
 	public static final String autoSaveFileRegex = "(\\w)+(\\u005F([0-9]+)+\\."+autoSaveExtension+")$";
+	private static final String corruptDatabaseSnapshotPrefix = ".corruptDatabaseSnapshot_";
 	/** The maximum amount of autosaves that can be stored until the oldes it overwritten */
 	private static int autoSaveLimit = 8;
 
 	/**
 	 * Opens the default connection for the FileSystemAccessWrapper.DATABASE database. Only opens a new connection if none is currently open.
-	 * @return
+	 * @return True when a connection to the program database file is established, false if the connection is corrupt or not established.
 	 */
 	public static boolean openConnection() {
 		boolean result = false;
 		try {
 			if (connection == null || connection.isClosed()) {
 				connection = DriverManager.getConnection(sqliteConnectionString + FileSystemAccessWrapper.DATABASE);
-				System.out.println(connection.isClosed());
 				result  = true;
 			}
 			// Run a query to check if db is ok
 			result = isConnectionReady();
 		} catch (SQLException e) {
-			System.err.println(e.getMessage());
-			
+			System.err.println(e.getMessage());			
 			return false;
 		} 
 		return result;
@@ -115,7 +114,6 @@ public class DatabaseWrapper  {
 			rs = statement.executeQuery("SELECT name FROM sqlite_master WHERE type='table'");
 			isConnectionReady = true;
 		} catch (SQLException e) {
-			e.printStackTrace();
 			isConnectionReady = false;
 		}finally {
 			try {
@@ -123,18 +121,59 @@ public class DatabaseWrapper  {
 					rs.close();
 				}
 			} catch (SQLException e) {
-				e.printStackTrace();
 			}
 			try {
 				if (statement != null) {
 					statement.close();
 				}
 			} catch (SQLException e) {
-				e.printStackTrace();
 			}						
 		}	
 		
 		return isConnectionReady;
+	}
+	
+	/**
+	 * This method can be used when the database connection cannot be opened (e.g. corrupt db file).
+	 * I saves the collector home for manual inspection, then clears the whole  collector home including the db
+	 * and opens a connection to a blank db.
+	 * @return True if a connection is available, false if an error occurred in the process.
+	 */
+	public static boolean openCleanConnection() {
+		if (isConnectionReady()) {
+			return true;
+		}
+		
+		if (!closeConnection()) {
+			return false;
+		}
+		String corruptSnapshotFileName = corruptDatabaseSnapshotPrefix + System.currentTimeMillis();
+		File corruptTemporarySnapshotFile = new File(FileSystemAccessWrapper.USER_HOME + File.separator + corruptSnapshotFileName);
+		corruptTemporarySnapshotFile.deleteOnExit();
+		try {
+			FileSystemAccessWrapper.copyFile(new File(FileSystemAccessWrapper.DATABASE), corruptTemporarySnapshotFile);
+		} catch (IOException e1) {
+			//TODO log failure
+			return false;
+		}
+		
+		FileSystemAccessWrapper.removeCollectorHome();
+		
+		String corruptSnapshotFilePath = FileSystemAccessWrapper.COLLECTOR_HOME_APPDATA + File.separator + corruptSnapshotFileName;
+		File corruptSnapshotFile = new File(corruptSnapshotFilePath);	
+		
+		try {
+			FileSystemAccessWrapper.copyFile(corruptTemporarySnapshotFile, corruptSnapshotFile);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+		
+		if (!openConnection()) {
+			return false;
+		}
+		
+		return FileSystemAccessWrapper.updateCollectorFileStructure();
 	}
 
 	/**
@@ -2589,13 +2628,15 @@ public class DatabaseWrapper  {
 	}
 	
 	/**
-	 * Creates an automatic backup when the current state of the database is newer than the most recent autosave.   
+	 * Creates an automatic backup when the current state of the database is newer than the most recent autosave.  
+	 * To reduce the memory footprint of the backup (i.e. in case of a large amount of pictures) only the db file is
+	 * backed up. 
 	 * @return True when the last state of the database is saved i.e. either the backup was 
 	 * saved successfully or it was older or on par to the last autosave which does nothing. False when the operation
 	 * encountered an error.
 	 */
 	public static boolean backupAutoSave() {		
-		// TODO: implement programm version. Zip up the autosaves of older versions or try to upgrade them?
+		// TODO: implement programm version.
 		String programVersion = ""; 		
 		// TODO: convert timestamp to UTC to compensate for backup/restores across timezones
 		String timeStamp = Long.toString(getLastDatabaseChangeTimeStamp());		
@@ -2618,7 +2659,12 @@ public class DatabaseWrapper  {
 				timeStamp = Long.toString(System.currentTimeMillis());
 			}
 			autoSaveFilePath = autoSaveFilePath +timeStamp+"."+ autoSaveExtension;
-			backupToFile(autoSaveFilePath);
+			try {
+				FileSystemAccessWrapper.copyFile(new File(FileSystemAccessWrapper.DATABASE), new File(autoSaveFilePath));
+			} catch (IOException e) {
+				System.err.println("Autosave - backup failed");
+				return false;
+			}
 		}else {// Autosaves detected
 			
 			// No need to overwrite the last autosave when no changes were made.
@@ -2637,7 +2683,10 @@ public class DatabaseWrapper  {
 				}
 			}
 			autoSaveFilePath = autoSaveFilePath +timeStamp+"."+ autoSaveExtension;
-			if (!backupToFile(autoSaveFilePath)){
+			
+			try {
+				FileSystemAccessWrapper.copyFile(new File(FileSystemAccessWrapper.DATABASE), new File(autoSaveFilePath));
+			} catch (IOException e) {
 				System.err.println("Autosave - backup failed");
 				return false;
 			}

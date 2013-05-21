@@ -86,9 +86,8 @@ public class Collector implements UIObservable, UIObserver {
 	private static ArrayList<UIObserver> observers = new ArrayList<UIObserver>();
 	/** An instance to the main collector */
 	private static Collector instance = null;
-	/** The overlay shell displayed while the database is being backed up*/
-	private static LoadingOverlayShell loadingOverlayShell  = null;
-	
+	/** This flag indicates if an error (e.g. corrupt db) was encountered during startup*/
+	private static boolean normalStartup = true;
 	/**
 	 * The default constructor initializes the file structure and opens the database connections.
 	 * Furthermore the constructor creates the program instance which is used to register observers
@@ -97,12 +96,13 @@ public class Collector implements UIObservable, UIObserver {
 	 */
 	private Collector() throws Exception {
 		Class.forName("org.sqlite.JDBC");
-
-		FileSystemAccessWrapper.updateCollectorFileStructure();
-		if (!DatabaseWrapper.openConnection()) {			
-			throw new Exception("Could not open a database connection and no autosave available");			
+		
+		if (!DatabaseWrapper.openConnection()) {	
+			normalStartup =  false;
+			if (DatabaseWrapper.openCleanConnection() == false) {
+				throw new Exception("Could not open a database connection");
+			}
 		}
-		FileSystemAccessWrapper.updateAlbumFileStructure(DatabaseWrapper.getConnection());
 		
 		instance = this;
 	}
@@ -203,15 +203,16 @@ public class Collector implements UIObservable, UIObserver {
 			shell.setMaximized(true);
 		}
 		
-		// Setup database backup overlay
-		loadingOverlayShell = createAutosaveOverlay();
-
+		createAutosaveOverlay();		
+		
 		shell.open();
+		
+		if (!normalStartup) {
+			//TODO: make international
+			ComponentFactory.getMessageBox(shell, "Fatal error occured during startup", "The database is corrupt and was removed. A snapshot can be found in the program folder", SWT.ICON_INFORMATION).open();
+		}
 
 		selectDefaultAndShowWelcomePage();		
-		//selectDefaultAndShowSelectedAlbum();
-		// TODO remove
-		//CSVImporter.importCSV();
 
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch()) {
@@ -635,6 +636,9 @@ public class Collector implements UIObservable, UIObserver {
 	    try {
 	    	ApplicationSettingsManager.loadFromSettingsFile();
 	    	Translator.setLanguageFromSettingsOrSystem();
+	    	// Ensure that folder structure including lock file exists before locking
+	    	FileSystemAccessWrapper.updateCollectorFileStructure();
+	    	
 	    	RandomAccessFile randomFile = new RandomAccessFile(FileSystemAccessWrapper.LOCK_FILE, "rw");
 		    FileChannel channel = randomFile.getChannel();
 		    
