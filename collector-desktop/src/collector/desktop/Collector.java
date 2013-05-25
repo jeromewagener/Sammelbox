@@ -743,39 +743,8 @@ public class Collector implements UIObservable, UIObserver {
 		if (MIN_SHELL_WIDTH >= screenWidth || MIN_SHELL_HEIGHT >= screenHeight){
 			return true;
 		}
-		
 		return false;
 	}
-	
-	private static void launchLoadingOverlayShell(final LoadingOverlayShell shell, boolean useWorkerThread) {
-		shell.start();
-		if (useWorkerThread){
-			final Thread performer = new Thread(new Runnable() {
-				@Override
-				public void run() {
-					executeTask(shell);
-				}
-			}, "perform action");
-			performer.start();
-		}else {
-			executeTask(shell);
-		}
-	}
-
-	private static void executeTask(LoadingOverlayShell shell) {
-		// Do work in parallel to UI Thread
-		// Backup database 
-		try {
-			Thread.sleep(0);
-			if(!DatabaseWrapper.backupAutoSave() ){
-				System.err.println("Error while autosaving!!");
-			}
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		// After task is completed stop the shell
-		shell.stop();
-	}	
 	
 	private static LoadingOverlayShell createAutosaveOverlay () {
 		// TODO: replace message text by international string
@@ -784,17 +753,38 @@ public class Collector implements UIObservable, UIObserver {
 		shell.addListener(SWT.Close, new Listener() {			
 			@Override
 			public void handleEvent(Event event) {
-				// Back up db file while displaying the loading overlay
+				// Show the loading overlay while creating a database autosave. 
 				if (!loadingOverlayShell.isDone()) {
-					// Setup the database backup overlay
 					launchLoadingOverlayShell(loadingOverlayShell, false);					
 					event.doit =  false;
 				}
 			}
-		});
-		
+		});		
 		return loadingOverlayShell;
 	}
+	
+	private static void launchLoadingOverlayShell(final LoadingOverlayShell shell, boolean useWorkerThread) {
+		shell.start();
+		if (useWorkerThread){
+			final Thread performer = new Thread(new Runnable() {
+				@Override
+				public void run() {
+					createAutoSaveOfDatabase(shell);
+				}
+			});
+			performer.start();
+		}else {
+			createAutoSaveOfDatabase(shell);
+		}
+	}
+
+	private static void createAutoSaveOfDatabase(LoadingOverlayShell shell) {
+		// Backup the database in a Thread running in parallel to the SWT UI Thread. 
+		if(!DatabaseWrapper.backupAutoSave() ){
+			System.err.println("Error while autosaving!!");
+		}
+		shell.stop();
+	}	
 }
 
 
