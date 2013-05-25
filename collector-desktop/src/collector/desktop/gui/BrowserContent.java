@@ -117,7 +117,7 @@ public class BrowserContent {
 					}
 
 					smallPictures.append("<a onMouseover='change(\"bigimg\", \"" + uri.toString() + "\")'>");  
-					smallPictures.append("<img border=\"1\" onMouseOver='this.style.cursor=\"pointer\"' id=\"smallimage" + counter + "\" style=\"width:120px;\" src=\"" + uri.toString() + "\">");
+					smallPictures.append("<img border=\"1\" onMouseOver='this.style.cursor=\"pointer\"' id=\"smallimage" + counter + "\" style=\"width:120px; margin-top:10px;\" src=\"" + uri.toString() + "\">");
 					smallPictures.append("</a>");
 					smallPictures.append("</br>");
 
@@ -140,8 +140,8 @@ public class BrowserContent {
 		smallPage.append("<td align=\"center\" valign=\"top\">");
 		smallPage.append(smallPictures.toString());		
 		smallPage.append("</td>");
-		smallPage.append("<td align=\"center\">");
-		smallPage.append("<img id=\"bigimg\" src=\"" + originalPathToPicture + "\" onMouseOver=\"changeCursorToHand('bigimg')\" onclick=\"parent.location.href='show:///lastPage'\">");		
+		smallPage.append("<td align=\"left\" valign=\"top\">");
+		smallPage.append("<img style=\"max-width: 100%; max-height: 100%;\" id=\"bigimg\" src=\"" + originalPathToPicture + "\" onMouseOver=\"changeCursorToHand('bigimg')\" onclick=\"parent.location.href='show:///lastPage'\">");
 		smallPage.append("</td>");
 		smallPage.append("</tr>");
 		smallPage.append("</table>");
