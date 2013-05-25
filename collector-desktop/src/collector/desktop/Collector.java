@@ -770,8 +770,6 @@ public class Collector implements UIObservable, UIObserver {
 			if(!DatabaseWrapper.backupAutoSave() ){
 				System.err.println("Error while autosaving!!");
 			}
-			
-			FileSystemAccessWrapper.recursiveDeleteFSObject(new File("C:/Users/ameos/.collector/app-data/0ebced74-1187-4519-965d-aad1b699d3a8"));
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
