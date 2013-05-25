@@ -1,6 +1,5 @@
 package collector.desktop;
 
-import java.io.File;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
@@ -208,8 +207,11 @@ public class Collector implements UIObservable, UIObserver {
 		shell.open();
 		
 		if (!normalStartup) {
-			//TODO: make international
-			ComponentFactory.getMessageBox(shell, "Fatal error occured during startup", "The database is corrupt and was removed. A snapshot can be found in the program folder", SWT.ICON_INFORMATION).open();
+			ComponentFactory.getMessageBox(shell, 
+					Translator.toBeTranslated("Fatal error occured during startup"), 
+					Translator.toBeTranslated("The database is corrupt and was removed. A snapshot can be found in the program folder"),
+					SWT.ICON_INFORMATION)
+				.open();
 		}
 
 		selectDefaultAndShowWelcomePage();		

@@ -1,6 +1,9 @@
 package collector.desktop.internationalization;
 
 public class DictKeys {	
+	/* Special Translation Keys */
+	public static final String TO_BE_TRANSLATED = "collector.special.TO_BE_TRANSLATED";
+	
 	/*   Windows   */
 	public static final String TITLE_MAIN_WINDOW = "collector.window.title.MAIN_WINDOW";
 	
