@@ -212,7 +212,7 @@ public class DatabaseWrapper  {
 		boolean success = true;
 		PreparedStatement preparedStatement = null;
 		try {
-			preparedStatement = connection.prepareStatement("PRAGMA foreign_keys = ON;");
+			preparedStatement = connection.prepareStatement("PRAGMA foreign_keys = ON");
 			preparedStatement.executeUpdate();
 
 		} catch (SQLException e) {
@@ -1824,18 +1824,24 @@ public class DatabaseWrapper  {
 	 */
 	public static List<String> listAllAlbums() {
 		List<String> albumList = new ArrayList<String>();
-		String queryAllAlbumsSQL = createSelectColumnQueryWhere( albumMasterTableName, 
-										ALBUM_TABLENAME_IN_ALBUM_MASTER_TABLE, TYPE_TABLENAME_ALBUM_MASTER_TABLE);		
-		PreparedStatement preparedStatement = null;
-		try {
-			preparedStatement = connection.prepareStatement(queryAllAlbumsSQL);
-			preparedStatement.execute();
+		String queryAllAlbumsSQL = "Select " + ALBUM_TABLENAME_IN_ALBUM_MASTER_TABLE + " FROM " + albumMasterTableName;		
+		Statement statement = null;
+		ResultSet rs = null;
+		try {			
+			// Select query
+			statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
+			rs = statement.executeQuery(queryAllAlbumsSQL);
+
+			while(rs.next())
+			{
+				albumList.add(rs.getString(1));
+			}
 		} catch (SQLException e1) {
 			// TODO:log
 		} finally {
 			try {
-				if (preparedStatement != null) {
-					preparedStatement.close();
+				if (statement != null) {
+					statement.close();
 				}
 			}catch (SQLException e) {
 				// TODO:log
