@@ -1,7 +1,14 @@
 package collector.desktop.database;
 
+import java.io.File;
+import java.math.BigDecimal;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+
+import collector.desktop.filesystem.FileSystemAccessWrapper;
+import collector.desktop.internationalization.Translator;
 
 public class AlbumItemStore {
 	private static final int DEFAULT_STOP_INDEX_INCREASE_AMOUNT = 10;
@@ -91,5 +98,69 @@ public class AlbumItemStore {
 		}
 		
 		return null;
+	}
+	
+	public static AlbumItem getSamplePictureAlbumItemWithoutFields() {
+		List<URI> pictureUris = new ArrayList<URI>();
+		
+		pictureUris.add(new File(FileSystemAccessWrapper.PLACEHOLDERIMAGE).toURI());
+		pictureUris.add(new File(FileSystemAccessWrapper.PLACEHOLDERIMAGE2).toURI());
+		
+		List<ItemField> itemFields = new ArrayList<ItemField>();
+		itemFields.add(new ItemField(DatabaseWrapper.PICTURE_COLUMN_NAME, FieldType.Picture, pictureUris));
+		itemFields.add(new ItemField(Translator.toBeTranslated("You have not added any fields yet!"), FieldType.Text, Translator.toBeTranslated("Please add fields using the \"Create new album sidepane\"")));		
+		
+		return new AlbumItem("DummyItem", itemFields);
+	}
+	
+	public static AlbumItem getSampleAlbumItem(boolean containsPictures, List<MetaItemField> metaItemFields) {
+		List<ItemField> itemFields = new ArrayList<ItemField>();
+		
+		if (containsPictures) {
+			List<URI> pictureUris = new ArrayList<URI>();
+			
+			pictureUris.add(new File(FileSystemAccessWrapper.PLACEHOLDERIMAGE).toURI());
+			pictureUris.add(new File(FileSystemAccessWrapper.PLACEHOLDERIMAGE2).toURI());
+			
+			itemFields.add(new ItemField(DatabaseWrapper.PICTURE_COLUMN_NAME, FieldType.Picture, pictureUris));
+		}
+		
+		if (metaItemFields.isEmpty()) {
+			itemFields.add(new ItemField(Translator.toBeTranslated("You have not added any fields yet!"), 
+					FieldType.Text, Translator.toBeTranslated("Please add fields using the \"Create new album sidepane\"")));
+		} else {
+			for (MetaItemField metaItemField : metaItemFields) {
+				if (metaItemField.getType().equals(FieldType.Text)) {
+					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), 
+							Translator.toBeTranslated("This is a sample " + metaItemField.getName() + " text" ), false));
+				} else if (metaItemField.getType().equals(FieldType.Date)) {
+					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), new java.sql.Date(System.currentTimeMillis()), false));
+				} else if (metaItemField.getType().equals(FieldType.Integer)) {
+					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), 10 + (int)(Math.random() * ((90) + 1)), false));
+				} else if (metaItemField.getType().equals(FieldType.Number)) {
+					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), 
+							new BigDecimal(String.valueOf(10 + (90) * new Random().nextDouble())).setScale(2, BigDecimal.ROUND_HALF_UP), false));
+				} else if (metaItemField.getType().equals(FieldType.Option)) {
+					int option = (int)(Math.random() * ((2) + 1));
+					
+					if (option == 0) {
+						itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), OptionType.No, false));
+					} else if (option != 1) {
+						itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), OptionType.Yes, false));
+					} else {
+						itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), OptionType.Option, false));
+					}
+					
+				} else if (metaItemField.getType().equals(FieldType.StarRating)) {
+					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), 0 + (int)(Math.random() * ((5) + 1)), false));
+				} else if (metaItemField.getType().equals(FieldType.Time)) {
+					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), System.currentTimeMillis(), false));
+				} else if (metaItemField.getType().equals(FieldType.URL)) {
+					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), "www.sammelbox.it", false));
+				}
+			}
+		}
+		
+		return new AlbumItem("DummyItem", itemFields);
 	}
 }

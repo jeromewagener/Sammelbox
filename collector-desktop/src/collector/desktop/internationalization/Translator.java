@@ -61,7 +61,7 @@ public class Translator {
 	 * Use this method to quickly add a string without the need to immediately translating it, or adding a key to the dictionary
 	 * If this method is used during the build of a release version, the build will fail
 	 * @param stringToBeTranslated the string that needs to be translated
-	 * @return the string entered as parameter, enclosed with a "translation missing" warning
+	 * @return the string entered as parameter, with a warning prefix
 	 * */
 	public static String toBeTranslated(String stringToBeTranslated) {
 		// TODO log that an untranslated string was used

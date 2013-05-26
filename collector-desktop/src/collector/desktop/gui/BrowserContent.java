@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
@@ -18,7 +19,6 @@ import collector.desktop.database.AlbumItemStore;
 import collector.desktop.database.DatabaseWrapper;
 import collector.desktop.database.FieldType;
 import collector.desktop.database.ItemField;
-import collector.desktop.database.MetaItemField;
 import collector.desktop.database.OptionType;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
 import collector.desktop.internationalization.DictKeys;
@@ -30,6 +30,9 @@ public class BrowserContent {
 	 * This field is used via the set and get methods by the browser progress listener */
 	private static String futureJumpAnchor = null;
 
+	/** A list of alterations, already performed via the alter album functionality */
+	private static LinkedList<String> alterations = new LinkedList<String>();
+	
 	public static String getAnchorForAlbumItemId(long albumItemId) {
 		return "albumId" + albumItemId;
 	}
@@ -159,6 +162,60 @@ public class BrowserContent {
 		}
 	}
 
+	public static void showCreateNewAlbumPage(Browser browser, AlbumItem albumItem) {
+		StringBuilder htmlBuilder = new StringBuilder();
+		String styleCSS = "<link rel=stylesheet href=\"file://"+ FileSystemAccessWrapper.COLLECTOR_HOME_APPDATA + File.separatorChar + "style.css" + "\"></link>";
+		String javaScript = "<script src=\"file://" + FileSystemAccessWrapper.COLLECTOR_HOME_APPDATA + File.separatorChar + "effects.js" + "\"></script>";
+		
+		htmlBuilder.append("<html><head>" + styleCSS + javaScript + "</head><body>");
+		htmlBuilder.append("<h1>" + Translator.toBeTranslated("Creating a new Album") + "</h1>");
+		htmlBuilder.append("<h4>" + Translator.toBeTranslated("Your Album will be able to store items in the following format:") + "</h4>");
+		htmlBuilder.append("<hr noshade size=\"1\">");
+		htmlBuilder.append("<table>" + getAlbumItemTableRowHtml(albumItem, false) + "</table>");
+		htmlBuilder.append("<hr noshade size=\"1\">");
+		htmlBuilder.append("</body></html>");
+		
+		browser.setText(htmlBuilder.toString());
+	}
+	
+	public static void showCreateAlterAlbumPage(Browser browser, AlbumItem albumItem) {
+		StringBuilder htmlBuilder = new StringBuilder();
+		String styleCSS = "<link rel=stylesheet href=\"file://"+ FileSystemAccessWrapper.COLLECTOR_HOME_APPDATA + File.separatorChar + "style.css" + "\"></link>";
+		String javaScript = "<script src=\"file://" + FileSystemAccessWrapper.COLLECTOR_HOME_APPDATA + File.separatorChar + "effects.js" + "\"></script>";
+		
+		htmlBuilder.append("<html><head>" + styleCSS + javaScript + "</head><body>");
+		htmlBuilder.append("<h1>" + Translator.toBeTranslated("Modifying ") + Collector.getSelectedAlbum() + "</h1>");
+		htmlBuilder.append("<h4>" + Translator.toBeTranslated("<u>Attention:</u> All changes will have <font color=red>imediate</font> effects!<br>" +
+				"Your Album is currently able to store items in the following format:") + "</h4>");
+		htmlBuilder.append("<hr noshade size=\"1\">");
+		htmlBuilder.append("<table>" + getAlbumItemTableRowHtml(albumItem, false) + "</table>");
+		htmlBuilder.append("<hr noshade size=\"1\">");
+		htmlBuilder.append("<ul>" + getAlterationsAsListItems() + "</ul>");
+		htmlBuilder.append("</body></html>");
+		
+		System.out.println(htmlBuilder.toString());
+		
+		browser.setText(htmlBuilder.toString());
+	}
+	
+	private static String getAlterationsAsListItems() {
+		StringBuilder listItems = new StringBuilder();
+		
+		for (String alteration : alterations) {
+			listItems.append("<li>" + alteration + "</li>");
+		}
+		
+		return listItems.toString();
+	}
+	
+	public static void clearAlterationList() {
+		alterations.clear();
+	}
+	
+	public static void addModificationToAlterationList(String modification) {
+		alterations.addFirst(modification);
+	}
+	
 	/**
 	 * Shows a page that allows to review the changes made to the album and reload the album to see the changes. 
 	 * Only one change is displayed. 
@@ -169,7 +226,7 @@ public class BrowserContent {
 	 * @param newAlbumName
 	 * @param newAlbumFields
 	 * @param newHasAlbumPictureField
-	 */
+	 */ /*
 	public static void showAlteredAlbumPage(Browser browser,String oldAlbumName, List<MetaItemField> oldAlbumFields,
 			String newAlbumName, List<MetaItemField> newAlbumFields) {
 		StringBuilder htmlBuilder = new StringBuilder();
@@ -291,7 +348,7 @@ public class BrowserContent {
 		htmlBuilder.append(itemValue);
 		htmlBuilder.append("<br></td>"); 
 		return htmlBuilder.toString();
-	}
+	}*/
 
 	private static void showOverviewAlbum(Browser browser) {
 		StringBuilder htmlBuilder = new StringBuilder();
@@ -393,11 +450,15 @@ public class BrowserContent {
 	}
 
 	private static String getAlbumItemTableRowHtml(AlbumItem albumItem) {
+		return getAlbumItemTableRowHtml(albumItem, true);
+	}
+	
+	private static String getAlbumItemTableRowHtml(AlbumItem albumItem, boolean showAddAndUpdateButtons) {
 		StringBuilder htmlDataColumnContent = new StringBuilder();
 		StringBuilder htmlPictureColumnContent = new StringBuilder();
 		StringBuilder albumItemTableRowHtml = new StringBuilder();
 
-		addAlbumItemTableRow(albumItem, htmlDataColumnContent, htmlPictureColumnContent, albumItemTableRowHtml);
+		addAlbumItemTableRow(albumItem, htmlDataColumnContent, htmlPictureColumnContent, albumItemTableRowHtml, showAddAndUpdateButtons);
 
 		return albumItemTableRowHtml.toString();
 	}
@@ -422,6 +483,10 @@ public class BrowserContent {
 	}
 
 	private static void addAlbumItemTableRow(AlbumItem albumItem, StringBuilder htmlDataColumnContent, StringBuilder htmlPictureColumnContent, StringBuilder albumItemTableRowHtml) {
+		addAlbumItemTableRow(albumItem, htmlDataColumnContent, htmlPictureColumnContent, albumItemTableRowHtml, true);
+	}
+	
+	private static void addAlbumItemTableRow(AlbumItem albumItem, StringBuilder htmlDataColumnContent, StringBuilder htmlPictureColumnContent, StringBuilder albumItemTableRowHtml, boolean showButtons) {
 		long id = 0;
 
 		for (ItemField fieldItem : albumItem.getFields()) {			
@@ -483,11 +548,12 @@ public class BrowserContent {
 			}
 		}	
 
-		htmlDataColumnContent.append("<form>");
-		htmlDataColumnContent.append("<input type=\"button\" onclick=parent.location.href=\"show:///updateComposite=" + id + "\" value=\"" + Translator.get(DictKeys.BROWSER_UPDATE) + "\">");
-		htmlDataColumnContent.append("<input type=\"button\" onclick=parent.location.href=\"show:///deleteComposite=" + id + "\" value=\"" + Translator.get(DictKeys.BROWSER_DELETE) + "\">");
-		htmlDataColumnContent.append("</form>");
-
+		if (showButtons) {
+			htmlDataColumnContent.append("<form>");
+			htmlDataColumnContent.append("<input type=\"button\" onclick=parent.location.href=\"show:///updateComposite=" + id + "\" value=\"" + Translator.get(DictKeys.BROWSER_UPDATE) + "\">");
+			htmlDataColumnContent.append("<input type=\"button\" onclick=parent.location.href=\"show:///deleteComposite=" + id + "\" value=\"" + Translator.get(DictKeys.BROWSER_DELETE) + "\">");
+			htmlDataColumnContent.append("</form>");
+		}
 
 		albumItemTableRowHtml.append("<tr id=\"albumId" + id + "\"><td>" + htmlPictureColumnContent + "</td><td width=90% bgcolor=" + getBackgroundColorOfWidgetInHex() + ">" + htmlDataColumnContent + "</td></tr><tr><td height=\"20\" colspan=\"2\"></td></tr>");		
 	}
