@@ -4,6 +4,8 @@ import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import collector.desktop.filesystem.BuildInformation;
+import collector.desktop.filesystem.BuildInformation.BuildType;
 import collector.desktop.settings.ApplicationSettingsManager;
 
 public class Translator {
@@ -59,14 +61,12 @@ public class Translator {
 	
 	/**
 	 * Use this method to quickly add a string without the need to immediately translating it, or adding a key to the dictionary
-	 * If this method is used during the build of a release version, the build will fail
+	 * This method should be unused if a release build is produced
 	 * @param stringToBeTranslated the string that needs to be translated
 	 * @return the string entered as parameter, with a warning prefix
 	 * */
 	public static String toBeTranslated(String stringToBeTranslated) {
-		// TODO log that an untranslated string was used
-		// TODO if the release flag is set, and the method is still in use, fail the build!
-	
+		// TODO log that an untranslated string was used	
 		return get(DictKeys.TO_BE_TRANSLATED, stringToBeTranslated);
 	}
 	

@@ -40,7 +40,7 @@ public class StatusBarComposite {
 		new Label(statusbarComposite, SWT.SEPARATOR | SWT.HORIZONTAL).setLayoutData(seperatorGridData);
 
 		statusLabel = ComponentFactory.getSmallItalicLabel(statusbarComposite, Translator.get(DictKeys.STATUSBAR_PROGRAM_STARTED, 
-				BuildInformation.instance().getVersion(), BuildInformation.instance().getBuildTimeStamp()));
+				BuildInformation.instance().getVersion(), BuildInformation.instance().getBuildTimeStamp(), BuildInformation.instance().getBuildType()));
 
 		gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		statusLabel.setLayoutData(gridData);

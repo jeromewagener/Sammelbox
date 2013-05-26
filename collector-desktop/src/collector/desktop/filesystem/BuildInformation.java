@@ -4,6 +4,12 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 public class BuildInformation {
+	public enum BuildType {
+	    DEVELOPMENT,
+	    TESTING,
+	    RELEASE
+	}
+	
 	private static ResourceBundle buildInfoBundle = null;
 	private static BuildInformation instance;
 	
@@ -24,10 +30,14 @@ public class BuildInformation {
 	}
 	
 	public String getVersion() {
-		return buildInfoBundle.getString("version");
+		return buildInfoBundle.getString("buildVersion");
 	}
 	
 	public String getBuildTimeStamp() {
-		return buildInfoBundle.getString("buildtime");
+		return buildInfoBundle.getString("buildTime");
+	}
+	
+	public BuildType getBuildType() {
+		return BuildType.valueOf(buildInfoBundle.getString("buildType"));
 	}
 }
