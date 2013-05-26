@@ -10,6 +10,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.sql.SQLClientInfoException;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Time;
@@ -55,14 +56,16 @@ public class DatabaseWrapper  {
 	/** The name of the album master table containing all stored album table names and their type table names*/
 	private static final String albumMasterTableName = "albumMasterTable";
 	/** The column name for the album table. */
-	private static final String TableNameInAlbumMasterTable = "albumTableName";
+	private static final String ALBUM_TABLENAME_IN_ALBUM_MASTER_TABLE= "albumTableName";
 	/** The column name for the album type table. */
-	private static final String TypeTableNameInAlbumMasterTable = "albumTypeTableName";
+	private static final String TYPE_TABLENAME_ALBUM_MASTER_TABLE = "albumTypeTableName";
 	public static final String ID_COLUMN_NAME = "id";
 	private static long lastChangeTimeStamp = -1;
 	private static String sqliteConnectionString = "jdbc:sqlite:";
 	private static Connection connection = null;
+	/** The extension used on file names for autosaves.*/
 	private static final String autoSaveExtension = "autosave";
+	/** Regular expression describing the file name format including the extension of auto saves.*/
 	public static final String autoSaveFileRegex = "(\\w)+(\\u005F([0-9]+)+\\."+autoSaveExtension+")$";
 	private static final String corruptDatabaseSnapshotPrefix = ".corruptDatabaseSnapshot_";
 	/** The maximum amount of autosaves that can be stored until the oldes it overwritten */
@@ -80,6 +83,10 @@ public class DatabaseWrapper  {
 			if (connection == null || connection.isClosed()) {
 				connection = DriverManager.getConnection(sqliteConnectionString + FileSystemAccessWrapper.DATABASE);
 				connection =  ConnectionLoggingProxy.wrap(connection);
+				
+				if (enableForeignKeySupportForCurrentSession() == false) {
+					return false;
+				}
 				result  = true;
 			}
 			// Create the album master table if it is not present 
@@ -162,7 +169,8 @@ public class DatabaseWrapper  {
 		
 		if (!closeConnection()) {
 			return false;
-		}
+		}				
+		
 		String corruptSnapshotFileName = corruptDatabaseSnapshotPrefix + System.currentTimeMillis();
 		File corruptTemporarySnapshotFile = new File(FileSystemAccessWrapper.USER_HOME + File.separator + corruptSnapshotFileName);
 		corruptTemporarySnapshotFile.deleteOnExit();
@@ -200,6 +208,27 @@ public class DatabaseWrapper  {
 		return connection;
 	}
 
+	private static boolean enableForeignKeySupportForCurrentSession() {
+		boolean success = true;
+		PreparedStatement preparedStatement = null;
+		try {
+			preparedStatement = connection.prepareStatement("PRAGMA foreign_keys = ON;");
+			preparedStatement.executeUpdate();
+
+		} catch (SQLException e) {
+			success = false;
+		} finally {
+			try {
+				if (preparedStatement != null) {
+					preparedStatement.close();
+				}
+			} catch (SQLException e) {
+				success = false;
+			}	
+		}
+		return success;
+	}
+
 	/**
 	 * Creates a new album according to the specified properties.
 	 * @param albumName The name of the album to be created.
@@ -216,14 +245,12 @@ public class DatabaseWrapper  {
 		try {
 			previousAutoCommitState = connection.getAutoCommit();
 		} catch (SQLException e2) {
-			e2.printStackTrace();
 			System.err.println("Could not save the autocommit state before album creation");
 		}
 
 		try {
 			connection.setAutoCommit(false);
 		} catch (SQLException e1) {
-			e1.printStackTrace();
 			System.err.println("Autocommit could not be diabled before album creation");
 			return false;
 		}
@@ -276,73 +303,67 @@ public class DatabaseWrapper  {
 	 * @return True if the renaming of the album succeeded. False otherwise.
 	 */
 	public static boolean renameAlbum(String oldAlbumName, String newAlbumName) {
-		boolean result = true;
-		String newTypeInfoTableName = "";
+		boolean result = true;		
 
+		// Rename the album table
+		if ( renameTable(oldAlbumName, newAlbumName) == false ) {
+			return false;
+		}
+
+		// Rename the type info table		
+		String oldTypeInfoTableName = makeTypeInfoTableName(oldAlbumName);
+		String newTypeInfoTableName = makeTypeInfoTableName(newAlbumName);
+
+		if ( renameTable(oldTypeInfoTableName, newTypeInfoTableName) == false ) {
+			//TODO rollback
+			return false;
+		}
+
+		// Change the entry in the album master table.
+		if ( modifyAlbumInAlbumMasterTable(oldAlbumName, newAlbumName, newTypeInfoTableName) == false) {
+			//TODO rollback
+			return false;
+		}
+
+		updateLastDatabaseChangeTimeStamp();
+		return result;
+	}
+
+	/**
+	 * Renames a table. All referenced columns and indices
+	 * @param oldTableName The name of the table to be renamed.
+	 * @param newTableName The new name of the table.
+	 * @return True if the operation was successful, false otherwise.
+	 */
+	private static boolean renameTable(String oldTableName, String newTableName) {
+		boolean success = true;
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append("ALTER TABLE ");
+		sb.append(transformNameToDBName(oldTableName));
+		sb.append(" RENAME TO ");
+		sb.append(transformNameToDBName(newTableName));
+		String renameTableSQLString = sb.toString();
+		
+		PreparedStatement preparedStatement = null;
 		try {
-			connection.setAutoCommit(false);
-			// Backup the old data in java objects
-			List<AlbumItem> albumItems = fetchAlbumItemsFromDatabase(createSelectStarQuery(oldAlbumName));
-			Map<Long, String> rawPicFieldMap = new HashMap<Long, String>();
-			boolean hasPictureField = albumHasPictureField(oldAlbumName);
-			List<MetaItemField> newFields =  getAllAlbumItemMetaItemFields(oldAlbumName);			
-			
-			for (AlbumItem albumItem : albumItems) {
-				// store the old uri List of all albumItems to restore later
-				long albumItemID = (Long) albumItem.getField("id").getValue();
-				String rawPicString = null;
-				if ( hasPictureField ) {
-					rawPicString = fetchRAWDBPictureString(albumItem.getAlbumName(), albumItemID);
-				}
-				rawPicFieldMap.put(albumItemID, rawPicString);
-			}
-
-			// the following three columns are automatically created by createNewAlbumTable
-			newFields = removeFieldFromMetaItemList(new MetaItemField("id", FieldType.ID), newFields);
-			newFields = removeFieldFromMetaItemList(new MetaItemField(TYPE_INFO_COLUMN_NAME, FieldType.ID), newFields);
-			newFields = removeFieldFromMetaItemList(new MetaItemField(PICTURE_COLUMN_NAME, FieldType.Picture), newFields);
-
-			// Drop the old table + typeTable
-			removeAlbum(oldAlbumName);
-
-			// Create the new table pointing to new typeinfo
-			newTypeInfoTableName = createNewAlbumTable(	newFields, 
-					newAlbumName, 
-					hasPictureField);	
-
-			// Restore the old data from the java objects in the new tables [rename album]
-			for (AlbumItem albumItem : albumItems) {
-				albumItem.setAlbumName(newAlbumName);
-				if (hasPictureField) {
-					long albumItemID = (Long) albumItem.getField("id").getValue();
-					albumItem.setFieldValue(PICTURE_COLUMN_NAME,rawPicFieldMap.get(albumItemID));
-				}
-				if (addNewAlbumItem(albumItem, true, false) == -1) {
-					result = false;
-					break;
-				}
-			}	
-
-			result =( result && FileSystemAccessWrapper.renameAlbumPictureFolder(oldAlbumName, newAlbumName));
-			rebuildIndexForTable(newAlbumName, newFields);
-			
-
-			if ( modifyAlbumInAlbumMasterTable(oldAlbumName, newAlbumName, newTypeInfoTableName) == false) {
-				//TODO log and rollback
-				result = false;
-			}
-			
-			updateLastDatabaseChangeTimeStamp();
+			preparedStatement = connection.prepareStatement(renameTableSQLString);
+			preparedStatement.executeUpdate();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			//TODO log
+			success = false;
 		}finally {
 			try {
-				connection.setAutoCommit(true);
+				if (preparedStatement != null) {
+					preparedStatement.close();
+				}
 			} catch (SQLException e) {
-				e.printStackTrace();
+				success = false;
+				// TODO log
 			}
 		}
-		return result;
+		return success;
+		
 	}
 
 	/**
@@ -1135,6 +1156,13 @@ public class DatabaseWrapper  {
 		// Add the entry about the type info in the newly create TypeInfo table 
 		addTypeInfo(typeInfoTableName, metafields);
 	}
+	
+	private static String makeTypeInfoTableName(String albumTableName) {
+		if (albumTableName == null || albumTableName.isEmpty()) {
+			return "";
+		}
+		return albumTableName + TYPE_INFO_SUFFIX;
+	}
 
 
 	/**
@@ -1789,75 +1817,32 @@ public class DatabaseWrapper  {
 		return executeSQLQuery(query, albumName);
 	}
 
-
-	/**
-	 * Lists a all tables in the default database.
-	 * @return A list of names of all the albums/tables in the database.
-	 * @throws SQLException Exception thrown if any part of the operation fails.
-	 */
-	private static List<String> listAllTables() 
-	{
-		List<String> tableList = new ArrayList<String>();
-		Statement statement = null;
-		ResultSet rs = null;
-		try {
-			// Select query
-			statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
-
-			rs = statement.executeQuery("SELECT name FROM sqlite_master WHERE type='table'");
-
-			while(rs.next())
-			{
-				tableList.add(rs.getString(1));
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}finally {
-			try {
-				if (rs != null) {
-					rs.close();
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-			try {
-				if (statement != null) {
-					statement.close();
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-			
-		}	
-		return tableList;
-	}
-
-	// TODO AlbumManager should be used instead
+	// TODO AlbumManager should be used instead. not until a proper 
 	/**
 	 * Lists all albums currently stored in the database.
 	 * @return A list of albumnames. May be empty if no albums were created yet. Null in case of an error.
 	 */
 	public static List<String> listAllAlbums() {
-		List<String> albumList;
-		albumList = listAllTables();
-
-		List<String> deleteList = new ArrayList<String>();
-
-		for (String albumName : albumList) {
-			deleteList.add(getTypeInfoTableName(albumName));
-		}
-
-		albumList.removeAll(deleteList);
-		Collections.sort(albumList, new Comparator<String>() {
-			@Override
-			public int compare(String string1, String string2) {
-				return string1.toLowerCase().compareTo(string2.toLowerCase());
+		List<String> albumList = new ArrayList<String>();
+		String queryAllAlbumsSQL = createSelectColumnQueryWhere( albumMasterTableName, 
+										ALBUM_TABLENAME_IN_ALBUM_MASTER_TABLE, TYPE_TABLENAME_ALBUM_MASTER_TABLE);		
+		PreparedStatement preparedStatement = null;
+		try {
+			preparedStatement = connection.prepareStatement(queryAllAlbumsSQL);
+			preparedStatement.execute();
+		} catch (SQLException e1) {
+			// TODO:log
+		} finally {
+			try {
+				if (preparedStatement != null) {
+					preparedStatement.close();
+				}
+			}catch (SQLException e) {
+				// TODO:log
 			}
-		});
-
+		}		
 		return albumList;
 	}
-
 
 	/** 
 	 * Retrieves the name of the table containing the type information about it.
@@ -2722,16 +2707,18 @@ public class DatabaseWrapper  {
 	private static void createAlbumMasterTableIfNotExits() throws SQLException  {
 		StringBuilder sb = new StringBuilder("CREATE TABLE IF NOT EXISTS ");
 		sb.append(albumMasterTableName);
-		sb.append(" ( id INTEGER PRIMARY KEY");
+		sb.append(" ( ");
+		sb.append(ID_COLUMN_NAME);
+		sb.append(" INTEGER PRIMARY KEY");
 		
 		// Add the table name column
 		sb.append(" , ");
-		sb.append(TableNameInAlbumMasterTable);
+		sb.append(ALBUM_TABLENAME_IN_ALBUM_MASTER_TABLE);
 		sb.append(" TEXT ");
 		
 		// Add the table's type info table name column
 		sb.append(" , ");
-		sb.append(TypeTableNameInAlbumMasterTable);
+		sb.append(TYPE_TABLENAME_ALBUM_MASTER_TABLE);
 		sb.append(" TEXT )");
 		
 		String createAlbumMasterableString = sb.toString();
@@ -2746,9 +2733,9 @@ public class DatabaseWrapper  {
 		StringBuilder sb = new StringBuilder("INSERT INTO ");	
 		sb.append(transformNameToDBName(albumMasterTableName));
 		sb.append(" (");
-		sb.append(TableNameInAlbumMasterTable);
+		sb.append(ALBUM_TABLENAME_IN_ALBUM_MASTER_TABLE);
 		sb.append(", ");
-		sb.append(TypeTableNameInAlbumMasterTable);
+		sb.append(TYPE_TABLENAME_ALBUM_MASTER_TABLE);
 		sb.append(") VALUES( ?, ?)");
 		
 		String registerNewAlbumToAlbumMasterableString = sb.toString();
@@ -2767,7 +2754,9 @@ public class DatabaseWrapper  {
 			success = false;
 		} finally {
 			try {
-				preparedStatement.close();				
+				if (preparedStatement != null) {
+					preparedStatement.close();
+				}
 			} catch (SQLException e) {
 				// TODO log
 				success = false;
@@ -2780,7 +2769,7 @@ public class DatabaseWrapper  {
 		StringBuilder sb = new StringBuilder("DELETE FROM ");	
 		sb.append(transformNameToDBName(albumMasterTableName));
 		sb.append(" WHERE ");
-		sb.append(TableNameInAlbumMasterTable);
+		sb.append(ALBUM_TABLENAME_IN_ALBUM_MASTER_TABLE);
 		sb.append(" = ?");
 		
 		String unRegisterNewAlbumFromAlbumMasterableString = sb.toString();
@@ -2798,7 +2787,9 @@ public class DatabaseWrapper  {
 			success = false;
 		}finally {
 			try {
-				preparedStatement.close();
+				if (preparedStatement != null) {
+					preparedStatement.close();
+				}
 			} catch (SQLException e) {
 				// TODO log
 				success = false;
@@ -2812,11 +2803,11 @@ public class DatabaseWrapper  {
 		StringBuilder sb = new StringBuilder("UPDATE ");		
 		sb.append(albumMasterTableName);
 		sb.append(" SET ");
-		sb.append(TableNameInAlbumMasterTable);
+		sb.append(ALBUM_TABLENAME_IN_ALBUM_MASTER_TABLE);
 		sb.append(" = ?, ");
-		sb.append(TypeTableNameInAlbumMasterTable);
+		sb.append(TYPE_TABLENAME_ALBUM_MASTER_TABLE);
 		sb.append(" = ? WHERE ");
-		sb.append(TableNameInAlbumMasterTable);
+		sb.append(ALBUM_TABLENAME_IN_ALBUM_MASTER_TABLE);
 		sb.append(" = ?");
 		
 		String unRegisterNewAlbumFromAlbumMasterableString = sb.toString();
@@ -2837,7 +2828,9 @@ public class DatabaseWrapper  {
 			success = false;
 		}finally {
 			try {
-				preparedStatement.close();
+				if (preparedStatement != null) {
+					preparedStatement.close();
+				}
 			} catch (SQLException e) {
 				// TODO log
 				success = false;

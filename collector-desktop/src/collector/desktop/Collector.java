@@ -26,6 +26,8 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import collector.desktop.database.DatabaseWrapper;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
@@ -87,6 +89,8 @@ public class Collector implements UIObservable, UIObserver {
 	private static Collector instance = null;
 	/** This flag indicates if an error (e.g. corrupt db) was encountered during startup*/
 	private static boolean normalStartup = true;
+	
+	private final static Logger logger = LoggerFactory.getLogger(Collector.class.getCanonicalName());
 	/**
 	 * The default constructor initializes the file structure and opens the database connections.
 	 * Furthermore the constructor creates the program instance which is used to register observers
@@ -102,7 +106,6 @@ public class Collector implements UIObservable, UIObserver {
 				throw new Exception("Could not open a database connection");
 			}
 		}
-		
 		instance = this;
 	}
 
