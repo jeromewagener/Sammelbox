@@ -24,6 +24,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.jdbcdslog.ConnectionLoggingProxy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import collector.desktop.filesystem.FileSystemAccessWrapper;
 import collector.desktop.gui.QueryBuilder;
 import collector.desktop.gui.QueryBuilder.QueryComponent;
@@ -48,6 +52,12 @@ public class DatabaseWrapper  {
 	protected static final String SCHEMA_VERSION_COLUMN_NAME = "schemaVersion";
 	/** The final name of the content version column. Updated at each change of the content of the field.*/
 	protected static final String CONTENT_VERSION_COLUMN_NAME = "contentVersion";
+	/** The name of the album master table containing all stored album table names and their type table names*/
+	private static final String albumMasterTableName = "albumMasterTable";
+	/** The column name for the album table. */
+	private static final String TableNameInAlbumMasterTable = "albumTableName";
+	/** The column name for the album type table. */
+	private static final String TypeTableNameInAlbumMasterTable = "albumTypeTableName";
 	public static final String ID_COLUMN_NAME = "id";
 	private static long lastChangeTimeStamp = -1;
 	private static String sqliteConnectionString = "jdbc:sqlite:";
@@ -57,6 +67,8 @@ public class DatabaseWrapper  {
 	private static final String corruptDatabaseSnapshotPrefix = ".corruptDatabaseSnapshot_";
 	/** The maximum amount of autosaves that can be stored until the oldes it overwritten */
 	private static int autoSaveLimit = 8;
+	
+	private static final Logger logger = LoggerFactory.getLogger(DatabaseWrapper.class);
 
 	/**
 	 * Opens the default connection for the FileSystemAccessWrapper.DATABASE database. Only opens a new connection if none is currently open.
@@ -67,8 +79,12 @@ public class DatabaseWrapper  {
 		try {
 			if (connection == null || connection.isClosed()) {
 				connection = DriverManager.getConnection(sqliteConnectionString + FileSystemAccessWrapper.DATABASE);
+				connection =  ConnectionLoggingProxy.wrap(connection);
 				result  = true;
 			}
+			// Create the album master table if it is not present 
+			createAlbumMasterTableIfNotExits();
+			
 			// Run a query to check if db is ok
 			result = isConnectionReady();
 		} catch (SQLException e) {
@@ -150,6 +166,7 @@ public class DatabaseWrapper  {
 		String corruptSnapshotFileName = corruptDatabaseSnapshotPrefix + System.currentTimeMillis();
 		File corruptTemporarySnapshotFile = new File(FileSystemAccessWrapper.USER_HOME + File.separator + corruptSnapshotFileName);
 		corruptTemporarySnapshotFile.deleteOnExit();
+		// Copy file to temporary location
 		try {
 			FileSystemAccessWrapper.copyFile(new File(FileSystemAccessWrapper.DATABASE), corruptTemporarySnapshotFile);
 		} catch (IOException e1) {
@@ -158,10 +175,9 @@ public class DatabaseWrapper  {
 		}
 		
 		FileSystemAccessWrapper.removeCollectorHome();
-		
+		// Copy the corrupt snapshot from the temporary location into the app data folder 
 		String corruptSnapshotFilePath = FileSystemAccessWrapper.COLLECTOR_HOME_APPDATA + File.separator + corruptSnapshotFileName;
-		File corruptSnapshotFile = new File(corruptSnapshotFilePath);	
-		
+		File corruptSnapshotFile = new File(corruptSnapshotFilePath);			
 		try {
 			FileSystemAccessWrapper.copyFile(corruptTemporarySnapshotFile, corruptSnapshotFile);
 		} catch (IOException e) {
@@ -231,6 +247,8 @@ public class DatabaseWrapper  {
 				}
 				return false;
 			}
+			String typeInfoTableName = getTypeInfoTableName(albumName);
+			addNewAlbumToAlbumMasterTable(albumName, typeInfoTableName);
 			updateLastDatabaseChangeTimeStamp();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -259,7 +277,7 @@ public class DatabaseWrapper  {
 	 */
 	public static boolean renameAlbum(String oldAlbumName, String newAlbumName) {
 		boolean result = true;
-		String newTableName = "";
+		String newTypeInfoTableName = "";
 
 		try {
 			connection.setAutoCommit(false);
@@ -267,7 +285,8 @@ public class DatabaseWrapper  {
 			List<AlbumItem> albumItems = fetchAlbumItemsFromDatabase(createSelectStarQuery(oldAlbumName));
 			Map<Long, String> rawPicFieldMap = new HashMap<Long, String>();
 			boolean hasPictureField = albumHasPictureField(oldAlbumName);
-			List<MetaItemField> newFields =  getAllAlbumItemMetaItemFields(oldAlbumName);
+			List<MetaItemField> newFields =  getAllAlbumItemMetaItemFields(oldAlbumName);			
+			
 			for (AlbumItem albumItem : albumItems) {
 				// store the old uri List of all albumItems to restore later
 				long albumItemID = (Long) albumItem.getField("id").getValue();
@@ -287,13 +306,13 @@ public class DatabaseWrapper  {
 			removeAlbum(oldAlbumName);
 
 			// Create the new table pointing to new typeinfo
-			newTableName = createNewAlbumTable(	newFields, 
+			newTypeInfoTableName = createNewAlbumTable(	newFields, 
 					newAlbumName, 
 					hasPictureField);	
 
 			// Restore the old data from the java objects in the new tables [rename album]
 			for (AlbumItem albumItem : albumItems) {
-				albumItem.setAlbumName(newTableName);
+				albumItem.setAlbumName(newAlbumName);
 				if (hasPictureField) {
 					long albumItemID = (Long) albumItem.getField("id").getValue();
 					albumItem.setFieldValue(PICTURE_COLUMN_NAME,rawPicFieldMap.get(albumItemID));
@@ -306,6 +325,13 @@ public class DatabaseWrapper  {
 
 			result =( result && FileSystemAccessWrapper.renameAlbumPictureFolder(oldAlbumName, newAlbumName));
 			rebuildIndexForTable(newAlbumName, newFields);
+			
+
+			if ( modifyAlbumInAlbumMasterTable(oldAlbumName, newAlbumName, newTypeInfoTableName) == false) {
+				//TODO log and rollback
+				result = false;
+			}
+			
 			updateLastDatabaseChangeTimeStamp();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -330,7 +356,6 @@ public class DatabaseWrapper  {
 	 */
 	public static boolean removeAlbumItemField(String albumName, MetaItemField metaItemField) {
 		boolean result = true;
-		String newTableName = "";
 
 		// Check if the specified columns exists.
 
@@ -374,14 +399,12 @@ public class DatabaseWrapper  {
 			newFields = removeFieldFromMetaItemList(new MetaItemField(TYPE_INFO_COLUMN_NAME, FieldType.ID), newFields);
 			newFields = removeFieldFromMetaItemList(new MetaItemField(PICTURE_COLUMN_NAME, FieldType.Picture), newFields);
 
-			newTableName = createNewAlbumTable(	newFields, 
-					albumName, 
-					keepPictureField);	
+			 createNewAlbumTable( newFields, albumName, keepPictureField);	
 
 			// Restore the old data from the java objects in the new tables [delete column]
 			List<AlbumItem> newAlbumItems = removeFieldFromAlbumItemList(metaItemField, albumItems);
 			for (AlbumItem albumItem : newAlbumItems) {
-				albumItem.setAlbumName(newTableName);
+				albumItem.setAlbumName(albumName);
 				if (keepPictureField ) {
 					long albumItemID = (Long) albumItem.getField("id").getValue();
 					albumItem.setFieldValue(PICTURE_COLUMN_NAME,rawPicFieldMap.get(albumItemID));
@@ -417,8 +440,7 @@ public class DatabaseWrapper  {
 	 */
 	public static boolean renameAlbumItemField(String albumName, MetaItemField oldMetaItemField, MetaItemField newMetaItemField) {
 		boolean result = true;
-		String newTableName = "";
-
+		
 		// Check if the specified columns exists.
 		List<MetaItemField> metaInfos =  getAllAlbumItemMetaItemFields(albumName);
 		if (!metaInfos.contains(oldMetaItemField) || oldMetaItemField.getType().equals(FieldType.ID)) {
@@ -457,7 +479,7 @@ public class DatabaseWrapper  {
 			newFields = removeFieldFromMetaItemList(new MetaItemField(TYPE_INFO_COLUMN_NAME, FieldType.ID), newFields);
 			newFields = removeFieldFromMetaItemList(new MetaItemField(PICTURE_COLUMN_NAME, FieldType.Picture), newFields);
 
-			newTableName = createNewAlbumTable(	newFields, 
+			createNewAlbumTable(	newFields, 
 					albumName, 
 					hasPictureField);	
 
@@ -465,7 +487,7 @@ public class DatabaseWrapper  {
 			List<AlbumItem> newAlbumItems = renameFieldInAlbumItemList(oldMetaItemField, newMetaItemField, albumItems);
 			// replace the empty picField with the saved raw PicField 
 			for (AlbumItem albumItem : newAlbumItems) {
-				albumItem.setAlbumName(newTableName);
+				albumItem.setAlbumName(albumName);
 				if (hasPictureField) {
 					long albumItemID = (Long) albumItem.getField("id").getValue();
 					albumItem.setFieldValue(PICTURE_COLUMN_NAME,rawPicFieldMap.get(albumItemID));
@@ -499,7 +521,6 @@ public class DatabaseWrapper  {
 	 */
 	public static boolean reorderAlbumItemField(String albumName, MetaItemField metaItemField, MetaItemField preceedingField) {
 		boolean result = true;
-		String newTableName = "";
 		// Check if the specified columns exists.
 
 		List<MetaItemField> metaInfos =  getAllAlbumItemMetaItemFields(albumName);
@@ -535,7 +556,7 @@ public class DatabaseWrapper  {
 			newFields = removeFieldFromMetaItemList(new MetaItemField(PICTURE_COLUMN_NAME, FieldType.Picture), newFields);
 
 			// Create the new table pointing to new typeinfo
-			newTableName = createNewAlbumTable(	newFields, 
+			createNewAlbumTable(	newFields, 
 					albumName, 
 					hasPictureField);
 
@@ -543,7 +564,7 @@ public class DatabaseWrapper  {
 			List<AlbumItem> newAlbumItems = reorderFieldInAlbumItemList(metaItemField, preceedingField, albumItems);
 			// replace the empty picField with the saved raw PicField 
 			for (AlbumItem albumItem : newAlbumItems) {
-				albumItem.setAlbumName(newTableName);
+				albumItem.setAlbumName(albumName);
 				if (hasPictureField) {
 					long albumItemID = (Long) albumItem.getField("id").getValue();
 					albumItem.setFieldValue(PICTURE_COLUMN_NAME,rawPicFieldMap.get(albumItemID));
@@ -752,10 +773,15 @@ public class DatabaseWrapper  {
 		try {
 			// Drop the main table
 			String typeInfoTableName = getTypeInfoTableName(albumName);
-			dropTable(albumName);// TODO: check if the albumname db compliant
+			dropTable(albumName);
 
 			// drop the typeInfo table
-			dropTable(typeInfoTableName);// TODO: check if the albumname db compliant
+			dropTable(typeInfoTableName);
+			
+			if ( !removeAlbumFromAlbumMasterTable(albumName) ) {
+				result = false;
+			}
+			
 			updateLastDatabaseChangeTimeStamp();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -763,7 +789,6 @@ public class DatabaseWrapper  {
 		}
 		return result;
 	}
-
 
 	/**
 	 * Drops a table if it exists. No error or side effects if it does not exist.
@@ -777,7 +802,6 @@ public class DatabaseWrapper  {
 		statement.close();
 	}
 
-
 	/**
 	 * Creates a new table with the specified fields. See fields parameter for temporary table creation.
 	 * Beware a temporary table does not show up in the list of all albums.
@@ -785,7 +809,7 @@ public class DatabaseWrapper  {
 	 * @param tableName The name of the table to be created.
 	 * @param hasAlbumPicture True indicates that the table will contain a picture column.
 	 * @throws SQLException Exception thrown if any part of the operation fails.
-	 * @return The name of the table that has been created.
+	 * @return The name of  type info table linked to the newly created album table
 	 */
 	private static String createNewAlbumTable(List<MetaItemField> fields, String tableName, boolean hasAlbumPicture) throws SQLException {
 		String typeInfoTableName = "";
@@ -852,7 +876,7 @@ public class DatabaseWrapper  {
 		Statement statement = connection.createStatement();
 		statement.executeUpdate(createMainTableString);
 		statement.close();
-		return tableName;
+		return typeInfoTableName;
 	}
 
 
@@ -2694,4 +2718,132 @@ public class DatabaseWrapper  {
 
 		return true;
 	}
+	
+	private static void createAlbumMasterTableIfNotExits() throws SQLException  {
+		StringBuilder sb = new StringBuilder("CREATE TABLE IF NOT EXISTS ");
+		sb.append(albumMasterTableName);
+		sb.append(" ( id INTEGER PRIMARY KEY");
+		
+		// Add the table name column
+		sb.append(" , ");
+		sb.append(TableNameInAlbumMasterTable);
+		sb.append(" TEXT ");
+		
+		// Add the table's type info table name column
+		sb.append(" , ");
+		sb.append(TypeTableNameInAlbumMasterTable);
+		sb.append(" TEXT )");
+		
+		String createAlbumMasterableString = sb.toString();
+
+		// Create the album master table.
+		PreparedStatement preparedStatement = connection.prepareStatement(createAlbumMasterableString);
+		preparedStatement.executeUpdate();
+		preparedStatement.close();
+	}
+	
+	private static boolean addNewAlbumToAlbumMasterTable(String albumTableName, String albumTypeInfoTableName) {		
+		StringBuilder sb = new StringBuilder("INSERT INTO ");	
+		sb.append(transformNameToDBName(albumMasterTableName));
+		sb.append(" (");
+		sb.append(TableNameInAlbumMasterTable);
+		sb.append(", ");
+		sb.append(TypeTableNameInAlbumMasterTable);
+		sb.append(") VALUES( ?, ?)");
+		
+		String registerNewAlbumToAlbumMasterableString = sb.toString();
+		PreparedStatement preparedStatement = null;
+		boolean success = true;
+		
+		try {
+			preparedStatement = connection.prepareStatement(registerNewAlbumToAlbumMasterableString);
+			// New album name
+			preparedStatement.setString(1, albumTableName);
+			// New type info name
+			preparedStatement.setString(2, albumTypeInfoTableName);
+			preparedStatement.executeUpdate();
+		} catch (SQLException e) {
+			// TODO log
+			success = false;
+		} finally {
+			try {
+				preparedStatement.close();				
+			} catch (SQLException e) {
+				// TODO log
+				success = false;
+			}			
+		}
+		return success;
+	}
+	
+	private static boolean removeAlbumFromAlbumMasterTable(String albumTableName)  {
+		StringBuilder sb = new StringBuilder("DELETE FROM ");	
+		sb.append(transformNameToDBName(albumMasterTableName));
+		sb.append(" WHERE ");
+		sb.append(TableNameInAlbumMasterTable);
+		sb.append(" = ?");
+		
+		String unRegisterNewAlbumFromAlbumMasterableString = sb.toString();
+		PreparedStatement preparedStatement = null;
+		boolean success = true;
+				
+		try {
+			preparedStatement = connection.prepareStatement(unRegisterNewAlbumFromAlbumMasterableString);
+			// WHERE album name
+			preparedStatement.setString(1, albumTableName);
+			preparedStatement.executeUpdate();
+			
+		} catch (SQLException e) {
+			// TODO: log
+			success = false;
+		}finally {
+			try {
+				preparedStatement.close();
+			} catch (SQLException e) {
+				// TODO log
+				success = false;
+			}
+		}
+		return success;		
+	}
+	
+	private static boolean modifyAlbumInAlbumMasterTable(String oldAlbumTableName, String newAlbumTableName, String newAlbumTypeInfoTableName)  {
+		
+		StringBuilder sb = new StringBuilder("UPDATE ");		
+		sb.append(albumMasterTableName);
+		sb.append(" SET ");
+		sb.append(TableNameInAlbumMasterTable);
+		sb.append(" = ?, ");
+		sb.append(TypeTableNameInAlbumMasterTable);
+		sb.append(" = ? WHERE ");
+		sb.append(TableNameInAlbumMasterTable);
+		sb.append(" = ?");
+		
+		String unRegisterNewAlbumFromAlbumMasterableString = sb.toString();
+		PreparedStatement preparedStatement = null;
+		boolean success = true;
+				
+		try {
+			preparedStatement = connection.prepareStatement(unRegisterNewAlbumFromAlbumMasterableString);
+			// New album name
+			preparedStatement.setString(1, newAlbumTableName);
+			// New type info name
+			preparedStatement.setString(2, newAlbumTypeInfoTableName);
+			// Where old album name
+			preparedStatement.setString(3, oldAlbumTableName);
+			preparedStatement.executeUpdate();
+		} catch (SQLException e) {
+			// TODO: log
+			success = false;
+		}finally {
+			try {
+				preparedStatement.close();
+			} catch (SQLException e) {
+				// TODO log
+				success = false;
+			}
+		}
+		return success;		
+	}
+	
 }
