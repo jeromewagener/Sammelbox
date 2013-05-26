@@ -45,6 +45,7 @@ public class FileSystemAccessWrapper {
 	public static final String ALBUM_PICTURES					= "album-pictures";
 	public static final String COLLECTOR_HOME_ALBUM_PICTURES 	= COLLECTOR_HOME + File.separatorChar + ALBUM_PICTURES;
 	public static final String PLACEHOLDERIMAGE 				= COLLECTOR_HOME_APPDATA + File.separatorChar + "placeholder.png";
+	public static final String PLACEHOLDERIMAGE2 				= COLLECTOR_HOME_APPDATA + File.separatorChar + "placeholder2.png";
 	public static final String LOGO 							= COLLECTOR_HOME_APPDATA + File.separatorChar + "logo.png";
 	public static final String DATABASE_NAME					= "collector.db";
 	public static final String DATABASE_TO_RESTORE_NAME			= "collector.restore.db";
@@ -108,9 +109,14 @@ public class FileSystemAccessWrapper {
 		}
 		
 		// Add presentation files to application data directory
-		File placeholderPNG = new File(COLLECTOR_HOME_APPDATA + File.separatorChar + "placeholder.png");
+		File placeholderPNG = new File(PLACEHOLDERIMAGE);
 		if (!placeholderPNG.exists() || OVERWRITE_EXISITING_FILES) {		
 			copyResourceToFile("graphics/placeholder.png", placeholderPNG);
+		}
+		
+		File placeholder2PNG = new File(PLACEHOLDERIMAGE2);
+		if (!placeholder2PNG.exists() || OVERWRITE_EXISITING_FILES) {		
+			copyResourceToFile("graphics/placeholder2.png", placeholder2PNG);
 		}
 
 		File logoPNG = new File(LOGO);

@@ -29,7 +29,7 @@ public class AlbumItem {
 	public AlbumItem(String albumName, List<ItemField> itemFields) {
 		this.albumName = albumName;
 		fields = itemFields;
-	}	
+	}
 	
 	/**
 	 * Getter for the AlbumName.
