@@ -8,6 +8,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
+import collector.desktop.filesystem.BuildInformation;
 import collector.desktop.internationalization.DictKeys;
 import collector.desktop.internationalization.Translator;
 
@@ -38,7 +39,8 @@ public class StatusBarComposite {
 
 		new Label(statusbarComposite, SWT.SEPARATOR | SWT.HORIZONTAL).setLayoutData(seperatorGridData);
 
-		statusLabel = ComponentFactory.getSmallItalicLabel(statusbarComposite, Translator.get(DictKeys.STATUSBAR_PROGRAM_STARTED));
+		statusLabel = ComponentFactory.getSmallItalicLabel(statusbarComposite, Translator.get(DictKeys.STATUSBAR_PROGRAM_STARTED, 
+				BuildInformation.instance().getVersion(), BuildInformation.instance().getBuildTimeStamp()));
 
 		gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		statusLabel.setLayoutData(gridData);
