@@ -106,7 +106,7 @@ public class Collector implements UIObservable, UIObserver {
 		if (!DatabaseWrapper.openConnection()) {	
 			normalStartup =  false;
 			if (DatabaseWrapper.openCleanConnection() == false) {
-				throw new Exception("Could not open a database connection");
+				logger.error("The database is probably corrupt since opening a connection failed. A dump of the db can be found in the program App folder.");
 			}
 		}		
 		instance = this;
@@ -641,7 +641,7 @@ public class Collector implements UIObservable, UIObserver {
 
 	/** The main method initializes the database (using the collector constructor) and establishes the user interface */
 	public static void main(String[] args) throws ClassNotFoundException {
-		gateLogger.trace("Collector started");
+		gateLogger.trace("Collector(build: " + BuildInformation.instance().getVersion() + " build on " + BuildInformation.instance().getBuildTimeStamp() +")started");
 	    try {
 	    	ApplicationSettingsManager.loadFromSettingsFile();
 	    	Translator.setLanguageFromSettingsOrSystem();
