@@ -55,7 +55,6 @@ import collector.desktop.gui.QueryBuilder.QueryOperator;
 import collector.desktop.internationalization.DictKeys;
 import collector.desktop.internationalization.Language;
 import collector.desktop.internationalization.Translator;
-import collector.desktop.networking.NetworkGateway;
 import collector.desktop.settings.ApplicationSettingsManager;
 
 public class CompositeFactory {
@@ -2003,7 +2002,6 @@ public class CompositeFactory {
 		// Add Observers
 		SynchronizeCompositeHelper synchronizeCompositeHelper = new SynchronizeCompositeHelper();
 		synchronizeCompositeHelper.storeSynchronizeCompositeLabels(synchronizeStepsToLabelsMap);
-		NetworkGateway.getInstance().addObserver(synchronizeCompositeHelper);
 
 		// separator
 		new Label(synchronizeComposite, SWT.SEPARATOR | SWT.HORIZONTAL).setLayoutData(minHeightGridData);
@@ -2019,8 +2017,6 @@ public class CompositeFactory {
 				establishConnectionLabel.setEnabled(true);
 				cancelButton.setEnabled(true);
 				startButton.setEnabled(false);
-
-				NetworkGateway.startSynchronization();
 			}
 		});
 
@@ -2033,8 +2029,6 @@ public class CompositeFactory {
 				finishLabel.setEnabled(false);
 				cancelButton.setEnabled(false);
 				startButton.setEnabled(true);
-
-				NetworkGateway.stopSynchronization();
 			}
 		});
 
