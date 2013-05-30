@@ -1,4 +1,4 @@
-package collector.desktop.gui;
+package collector.desktop.gui.browser;
 
 import java.util.List;
 
@@ -17,6 +17,11 @@ import collector.desktop.database.AlbumItem;
 import collector.desktop.database.DatabaseWrapper;
 import collector.desktop.database.FieldType;
 import collector.desktop.database.ItemField;
+import collector.desktop.gui.composites.StatusBarComposite;
+import collector.desktop.gui.sidepanes.EmptySidepane;
+import collector.desktop.gui.sidepanes.UpdateAlbumItemSidepane;
+import collector.desktop.gui.various.ComponentFactory;
+import collector.desktop.gui.various.PanelType;
 import collector.desktop.internationalization.DictKeys;
 import collector.desktop.internationalization.Translator;
 
@@ -64,7 +69,7 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 			removeQuestionMarkAtTheEndIfPresent(id);//FIXME: the return value is never used. Happening this intentionally it does (Yoda)
 
 			Collector.changeRightCompositeTo(PanelType.UpdateEntry,
-					CompositeFactory.getUpdateAlbumItemComposite(parentComposite, Collector.getSelectedAlbum(), Long.parseLong(id)));
+					UpdateAlbumItemSidepane.buildUpdateAlbumItemComposite(parentComposite, Collector.getSelectedAlbum(), Long.parseLong(id)));
 			BrowserContent.jumpToAnchor(BrowserContent.getAnchorForAlbumItemId(Integer.parseInt(id)));
 
 			// Do not change the page
@@ -132,7 +137,7 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 			removeQuestionMarkAtTheEndIfPresent(id);//FIXME: the return value is never used. Happening this intentionally it does (Yoda)
 
 			Collector.changeRightCompositeTo(PanelType.UpdateEntry,
-					CompositeFactory.getUpdateAlbumItemComposite(parentComposite, Collector.getSelectedAlbum(), Long.parseLong(id)));
+					UpdateAlbumItemSidepane.buildUpdateAlbumItemComposite(parentComposite, Collector.getSelectedAlbum(), Long.parseLong(id)));
 
 			BrowserContent.jumpToAnchor(BrowserContent.getAnchorForAlbumItemId(Long.parseLong(id)));
 
@@ -153,7 +158,7 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 			BrowserContent.performBrowserQueryAndShow(
 					Collector.getAlbumItemSWTBrowser(), DatabaseWrapper.createSelectStarQuery(Collector.getSelectedAlbum()));
 			
-			Collector.changeRightCompositeTo(PanelType.Empty, CompositeFactory.getEmptyComposite(Collector.getThreePanelComposite()));
+			Collector.changeRightCompositeTo(PanelType.Empty, EmptySidepane.buildEmptyComposite(Collector.getThreePanelComposite()));
 			// Do not change the page
 			event.doit = false;
 		}

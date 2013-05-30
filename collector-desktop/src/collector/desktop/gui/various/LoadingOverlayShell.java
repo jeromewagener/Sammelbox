@@ -1,4 +1,4 @@
-package collector.desktop.gui;
+package collector.desktop.gui.various;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;

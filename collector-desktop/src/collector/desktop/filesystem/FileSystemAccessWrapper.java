@@ -34,7 +34,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 import collector.desktop.database.DatabaseWrapper;
-import collector.desktop.gui.AlbumViewManager.AlbumView;
+import collector.desktop.gui.managers.AlbumViewManager.AlbumView;
 import collector.desktop.internationalization.Language;
 import collector.desktop.settings.ApplicationSettingsManager.ApplicationSettings;
 

@@ -1,4 +1,4 @@
-package collector.desktop.gui;
+package collector.desktop.gui.managers;
 
 import java.text.SimpleDateFormat;
 import java.util.Collections;

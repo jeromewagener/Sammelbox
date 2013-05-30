@@ -1,4 +1,4 @@
-package collector.desktop.gui;
+package collector.desktop.gui.image;
 
 import java.io.File;
 import java.io.InputStream;
@@ -30,6 +30,7 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Widget;
 
 import collector.desktop.Collector;
+import collector.desktop.gui.various.ComponentFactory;
 import collector.desktop.internationalization.DictKeys;
 import collector.desktop.internationalization.Translator;
 

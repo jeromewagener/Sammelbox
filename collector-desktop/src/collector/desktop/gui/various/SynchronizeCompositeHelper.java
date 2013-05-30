@@ -1,10 +1,11 @@
-package collector.desktop.gui;
+package collector.desktop.gui.various;
 
 import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
 
 import org.eclipse.swt.widgets.Label;
+
 
 public class SynchronizeCompositeHelper implements Observer {
 	private HashMap<SynchronizeStep, Label> synchronizeStepsToLabelsMap = null;

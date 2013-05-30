@@ -30,21 +30,27 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import collector.desktop.database.DatabaseWrapper;
-import collector.desktop.filesystem.BuildInformation;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
 import collector.desktop.filesystem.export.CSVExporter;
 import collector.desktop.filesystem.export.HTMLExporter;
-import collector.desktop.gui.AlbumManager;
-import collector.desktop.gui.AlbumViewManager;
-import collector.desktop.gui.AlbumViewManager.AlbumView;
-import collector.desktop.gui.BrowserContent;
-import collector.desktop.gui.BrowserListener;
-import collector.desktop.gui.ComponentFactory;
-import collector.desktop.gui.CompositeFactory;
-import collector.desktop.gui.LoadingOverlayShell;
-import collector.desktop.gui.PanelType;
-import collector.desktop.gui.StatusBarComposite;
-import collector.desktop.gui.ToolbarComposite;
+import collector.desktop.gui.browser.BrowserContent;
+import collector.desktop.gui.browser.BrowserListener;
+import collector.desktop.gui.composites.BrowserComposite;
+import collector.desktop.gui.composites.StatusBarComposite;
+import collector.desktop.gui.composites.ToolbarComposite;
+import collector.desktop.gui.managers.AlbumManager;
+import collector.desktop.gui.managers.AlbumViewManager;
+import collector.desktop.gui.managers.AlbumViewManager.AlbumView;
+import collector.desktop.gui.sidepanes.AdvancedSearchSidepane;
+import collector.desktop.gui.sidepanes.AlterAlbumSidepane;
+import collector.desktop.gui.sidepanes.CreateAlbumSidepane;
+import collector.desktop.gui.sidepanes.EmptySidepane;
+import collector.desktop.gui.sidepanes.QuickControlSidepane;
+import collector.desktop.gui.sidepanes.SettingsSidepane;
+import collector.desktop.gui.sidepanes.SynchronizeSidepane;
+import collector.desktop.gui.various.ComponentFactory;
+import collector.desktop.gui.various.LoadingOverlayShell;
+import collector.desktop.gui.various.PanelType;
 import collector.desktop.interfaces.UIObservable;
 import collector.desktop.interfaces.UIObserver;
 import collector.desktop.internationalization.DictKeys;
@@ -179,15 +185,15 @@ public class Collector implements UIObservable, UIObserver {
 		leftComposite = new Composite(threePanelComposite, SWT.NONE);
 		leftComposite.setLayout(new GridLayout(1, false));
 		leftComposite.setLayoutData(gridDataForLeftComposite);
-		upperLeftSubComposite = CompositeFactory.getQuickControlComposite(leftComposite);
+		upperLeftSubComposite = QuickControlSidepane.buildQuickControlComposite(leftComposite);
 		upperLeftSubComposite.setLayoutData(gridDataForUpperLeftComposite);
-		lowerLeftSubComposite = CompositeFactory.getEmptyComposite(leftComposite);		
+		lowerLeftSubComposite = EmptySidepane.buildEmptyComposite(leftComposite);		
 		lowerLeftSubComposite.setLayoutData(gridDataForLowerLeftComposite);
 		albumItemSWTBrowserListener = new BrowserListener(threePanelComposite);
-		centerComposite = CompositeFactory.getBrowserComposite(threePanelComposite, albumItemSWTBrowserListener);
+		centerComposite = BrowserComposite.getBrowserComposite(threePanelComposite, albumItemSWTBrowserListener);
 		centerComposite.setLayout(new GridLayout(1, false));
 		centerComposite.setLayoutData(gridDataForCenterComposite);
-		rightComposite = CompositeFactory.getEmptyComposite(threePanelComposite);
+		rightComposite = EmptySidepane.buildEmptyComposite(threePanelComposite);
 		rightComposite.setLayout(new GridLayout(1, false));
 		rightComposite.setLayoutData(gridDataForRightComposite);
 
@@ -541,9 +547,9 @@ public class Collector implements UIObservable, UIObserver {
 			if (((MenuItem) event.widget).getText().equals(Translator.get(DictKeys.MENU_EXIT))) {
 				getShell().close();
 			} else if (((MenuItem) event.widget).getText().equals(Translator.get(DictKeys.MENU_CREATE_NEW_ALBUM))) {
-				changeRightCompositeTo(PanelType.AddAlbum, CompositeFactory.getCreateNewAlbumComposite(threePanelComposite));
+				changeRightCompositeTo(PanelType.AddAlbum, CreateAlbumSidepane.buildCreateNewAlbumComposite(threePanelComposite));
 			} else if (((MenuItem) event.widget).getText().equals(Translator.get(DictKeys.MENU_RESTORE_ALBUM_FROM_FILE))) {
-				changeRightCompositeTo(PanelType.Empty, CompositeFactory.getEmptyComposite(Collector.threePanelComposite));
+				changeRightCompositeTo(PanelType.Empty, EmptySidepane.buildEmptyComposite(Collector.threePanelComposite));
 				
 				FileDialog openFileDialog = new FileDialog(getShell(), SWT.OPEN);
 				openFileDialog.setText(Translator.get(DictKeys.DIALOG_RESTORE_FROM_FILE));
@@ -564,18 +570,18 @@ public class Collector implements UIObservable, UIObserver {
 				BrowserContent.loadHtmlPage(
 						getAlbumItemSWTBrowser(),
 						getShell().getClass().getClassLoader().getResourceAsStream("helpfiles/index.html"));
-				changeRightCompositeTo(PanelType.Help, CompositeFactory.getEmptyComposite(threePanelComposite));
+				changeRightCompositeTo(PanelType.Help, EmptySidepane.buildEmptyComposite(threePanelComposite));
 			} else if (((MenuItem) event.widget).getText().equals(Translator.get(DictKeys.MENU_ABOUT))) {
 				// No default album is selected on help
 				Collector.refreshSWTAlbumList();
 				BrowserContent.loadHtmlPage(
 						getAlbumItemSWTBrowser(),
 						getShell().getClass().getClassLoader().getResourceAsStream("helpfiles/about.html"));				
-				changeRightCompositeTo(PanelType.Help, CompositeFactory.getEmptyComposite(threePanelComposite));
+				changeRightCompositeTo(PanelType.Help, EmptySidepane.buildEmptyComposite(threePanelComposite));
 			} else if (((MenuItem) event.widget).getText().equals(Translator.get(DictKeys.MENU_SYNCHRONIZE))) {
-				changeRightCompositeTo(PanelType.Synchronization, CompositeFactory.getSynchronizeComposite(threePanelComposite));
+				changeRightCompositeTo(PanelType.Synchronization, SynchronizeSidepane.buildSynchronizeComposite(threePanelComposite));
 			} else if (((MenuItem) event.widget).getText().equals(Translator.get(DictKeys.MENU_SETTINGS))) {
-				changeRightCompositeTo(PanelType.Settings, CompositeFactory.getSettingsComposite(threePanelComposite));
+				changeRightCompositeTo(PanelType.Settings, SettingsSidepane.buildSettingsComposite(threePanelComposite));
 			} else if (((MenuItem) event.widget).getText().equals(Translator.get(DictKeys.MENU_BACKUP_ALBUMS_TO_FILE))) {
 				FileDialog saveFileDialog = new FileDialog(getShell(), SWT.SAVE);
 				saveFileDialog.setText(Translator.get(DictKeys.DIALOG_BACKUP_TO_FILE));
@@ -610,7 +616,7 @@ public class Collector implements UIObservable, UIObserver {
 						BrowserContent.loadHtmlPage(Collector.getAlbumItemSWTBrowser(), getShell().getClass().getClassLoader().getResourceAsStream("htmlfiles/album_deleted.html"));
 					}
 				} else if (((MenuItem) event.widget).getText().equals(Translator.get(DictKeys.MENU_ALTER_SELECTED_ALBUM))) {
-					changeRightCompositeTo(PanelType.AlterAlbum, CompositeFactory.getAlterAlbumComposite(threePanelComposite, getSelectedAlbum()));
+					changeRightCompositeTo(PanelType.AlterAlbum, AlterAlbumSidepane.buildAlterAlbumComposite(threePanelComposite, getSelectedAlbum()));
 				} else if (((MenuItem) event.widget).getText().equals(Translator.get(DictKeys.MENU_EXPORT_VISIBLE_ITEMS))) {
 					FileDialog saveFileDialog = new FileDialog(getShell(), SWT.SAVE);
 					saveFileDialog.setText(Translator.get(DictKeys.DIALOG_EXPORT_VISIBLE_ITEMS));
@@ -631,7 +637,7 @@ public class Collector implements UIObservable, UIObserver {
 						}
 					}
 				} else if (((MenuItem) event.widget).getText().equals(Translator.get(DictKeys.MENU_ADVANCED_SEARCH))) {
-					changeRightCompositeTo(PanelType.AdvancedSearch, CompositeFactory.getAdvancedSearchComposite(threePanelComposite, selectedAlbum));
+					changeRightCompositeTo(PanelType.AdvancedSearch, AdvancedSearchSidepane.buildAdvancedSearchComposite(threePanelComposite, selectedAlbum));
 				}
 			}
 		}

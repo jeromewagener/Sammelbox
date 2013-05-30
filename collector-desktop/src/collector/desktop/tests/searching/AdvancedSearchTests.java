@@ -15,9 +15,9 @@ import org.junit.Test;
 import collector.desktop.database.AlbumItemResultSet;
 import collector.desktop.database.DatabaseWrapper;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
-import collector.desktop.gui.QueryBuilder;
-import collector.desktop.gui.QueryBuilder.QueryComponent;
-import collector.desktop.gui.QueryBuilder.QueryOperator;
+import collector.desktop.gui.tobemoved.QueryBuilder;
+import collector.desktop.gui.tobemoved.QueryBuilder.QueryComponent;
+import collector.desktop.gui.tobemoved.QueryBuilder.QueryOperator;
 import collector.desktop.tests.CollectorTestExecuter;
 
 public class AdvancedSearchTests {

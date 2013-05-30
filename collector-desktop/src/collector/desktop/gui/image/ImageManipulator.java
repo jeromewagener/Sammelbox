@@ -1,4 +1,4 @@
-package collector.desktop.gui;
+package collector.desktop.gui.image;
 
 import java.io.File;
 import java.io.IOException;

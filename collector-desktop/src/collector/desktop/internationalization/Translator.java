@@ -4,8 +4,6 @@ import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import collector.desktop.filesystem.BuildInformation;
-import collector.desktop.filesystem.BuildInformation.BuildType;
 import collector.desktop.settings.ApplicationSettingsManager;
 
 public class Translator {

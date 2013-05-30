@@ -10,7 +10,6 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
-import java.sql.SQLClientInfoException;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Time;
@@ -30,9 +29,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import collector.desktop.filesystem.FileSystemAccessWrapper;
-import collector.desktop.gui.QueryBuilder;
-import collector.desktop.gui.QueryBuilder.QueryComponent;
-import collector.desktop.gui.QueryBuilder.QueryOperator;
+import collector.desktop.gui.tobemoved.QueryBuilder;
+import collector.desktop.gui.tobemoved.QueryBuilder.QueryComponent;
+import collector.desktop.gui.tobemoved.QueryBuilder.QueryOperator;
 
 public class DatabaseWrapper  {
 	/** The final name of the picture column. Currently only a single column is supported, this is its name.*/

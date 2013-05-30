@@ -1,4 +1,4 @@
-package collector.desktop.gui;
+package collector.desktop.gui.browser;
 
 import java.io.File;
 import java.io.InputStream;
@@ -21,6 +21,10 @@ import collector.desktop.database.FieldType;
 import collector.desktop.database.ItemField;
 import collector.desktop.database.OptionType;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
+import collector.desktop.gui.composites.StatusBarComposite;
+import collector.desktop.gui.managers.AlbumManager;
+import collector.desktop.gui.managers.WelcomePageManager;
+import collector.desktop.gui.various.ComponentFactory;
 import collector.desktop.internationalization.DictKeys;
 import collector.desktop.internationalization.Translator;
 import collector.desktop.settings.ApplicationSettingsManager;

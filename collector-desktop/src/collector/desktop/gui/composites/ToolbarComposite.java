@@ -1,4 +1,4 @@
-package collector.desktop.gui;
+package collector.desktop.gui.composites;
 
 import java.io.InputStream;
 
@@ -15,6 +15,14 @@ import org.eclipse.swt.widgets.Label;
 
 import collector.desktop.Collector;
 import collector.desktop.database.DatabaseWrapper;
+import collector.desktop.gui.browser.BrowserContent;
+import collector.desktop.gui.sidepanes.AddAlbumItemSidepane;
+import collector.desktop.gui.sidepanes.AdvancedSearchSidepane;
+import collector.desktop.gui.sidepanes.CreateAlbumSidepane;
+import collector.desktop.gui.sidepanes.EmptySidepane;
+import collector.desktop.gui.sidepanes.SynchronizeSidepane;
+import collector.desktop.gui.various.ComponentFactory;
+import collector.desktop.gui.various.PanelType;
 import collector.desktop.interfaces.UIObserver;
 import collector.desktop.internationalization.DictKeys;
 import collector.desktop.internationalization.Translator;
@@ -153,7 +161,7 @@ public class ToolbarComposite implements UIObserver {
 			public void mouseUp(MouseEvent arg0) {
 				disableActiveButtons();
 
-				Collector.changeRightCompositeTo(PanelType.Empty, CompositeFactory.getEmptyComposite(Collector.getThreePanelComposite()));
+				Collector.changeRightCompositeTo(PanelType.Empty, EmptySidepane.buildEmptyComposite(Collector.getThreePanelComposite()));
 				
 				lastSelectedPanelType = PanelType.Empty;
 				
@@ -186,8 +194,8 @@ public class ToolbarComposite implements UIObserver {
 			public void mouseUp(MouseEvent arg0) {
 				if (Collector.getCurrentRightPanelType() != PanelType.AddAlbum) {
 					Collector.changeRightCompositeTo(PanelType.AddAlbum,
-							CompositeFactory
-									.getCreateNewAlbumComposite(Collector
+							CreateAlbumSidepane
+									.buildCreateNewAlbumComposite(Collector
 											.getThreePanelComposite()));
 					StatusBarComposite.getInstance(parentComposite.getShell())
 							.writeStatus(Translator.get(DictKeys.STATUSBAR_ADD_ALBUM_OPENED));
@@ -198,7 +206,7 @@ public class ToolbarComposite implements UIObserver {
 					lastSelectedPanelType = PanelType.AddAlbum;
 				} else {
 					Collector.changeRightCompositeTo(PanelType.Empty,
-							CompositeFactory.getEmptyComposite(Collector
+							EmptySidepane.buildEmptyComposite(Collector
 									.getThreePanelComposite()));
 					StatusBarComposite.getInstance(parentComposite.getShell())
 							.writeStatus(Translator.get(DictKeys.STATUSBAR_PROGRAM_STARTED));
@@ -230,7 +238,7 @@ public class ToolbarComposite implements UIObserver {
 				}
 				if (Collector.getCurrentRightPanelType() != PanelType.AddEntry) {
 					Collector.changeRightCompositeTo(PanelType.AddAlbum,
-							CompositeFactory.getAddAlbumItemComposite(
+							AddAlbumItemSidepane.buildAddAlbumItemComposite(
 									Collector.getThreePanelComposite(),
 									Collector.getSelectedAlbum()));
 					StatusBarComposite
@@ -243,7 +251,7 @@ public class ToolbarComposite implements UIObserver {
 					lastSelectedPanelType = PanelType.AddEntry;
 				} else {
 					Collector.changeRightCompositeTo(PanelType.Empty,
-							CompositeFactory.getEmptyComposite(Collector
+							EmptySidepane.buildEmptyComposite(Collector
 									.getThreePanelComposite()));
 					StatusBarComposite.getInstance(parentComposite.getShell())
 							.writeStatus(Translator.get(DictKeys.STATUSBAR_PROGRAM_STARTED));
@@ -305,7 +313,7 @@ public class ToolbarComposite implements UIObserver {
 				}
 				if (Collector.getCurrentRightPanelType() != PanelType.AdvancedSearch) {
 					Collector.changeRightCompositeTo(PanelType.AdvancedSearch,
-							CompositeFactory.getAdvancedSearchComposite(
+							AdvancedSearchSidepane.buildAdvancedSearchComposite(
 									Collector.getThreePanelComposite(),
 									Collector.getSelectedAlbum()));
 					StatusBarComposite
@@ -319,7 +327,7 @@ public class ToolbarComposite implements UIObserver {
 					lastSelectedPanelType = PanelType.AdvancedSearch;
 				} else {
 					Collector.changeRightCompositeTo(PanelType.Empty,
-							CompositeFactory.getEmptyComposite(Collector
+							EmptySidepane.buildEmptyComposite(Collector
 									.getThreePanelComposite()));
 					StatusBarComposite.getInstance(parentComposite.getShell())
 							.writeStatus(Translator.get(DictKeys.STATUSBAR_PROGRAM_STARTED));
@@ -343,7 +351,7 @@ public class ToolbarComposite implements UIObserver {
 			public void mouseUp(MouseEvent arg0) {
 				if (Collector.getCurrentRightPanelType() != PanelType.Synchronization) {
 					Collector.changeRightCompositeTo(PanelType.Synchronization,
-							CompositeFactory.getSynchronizeComposite(Collector
+							SynchronizeSidepane.buildSynchronizeComposite(Collector
 									.getThreePanelComposite()));
 					StatusBarComposite
 							.getInstance(parentComposite.getShell())
@@ -356,7 +364,7 @@ public class ToolbarComposite implements UIObserver {
 					lastSelectedPanelType = PanelType.Synchronization;
 				} else {
 					Collector.changeRightCompositeTo(PanelType.Empty,
-							CompositeFactory.getEmptyComposite(Collector
+							EmptySidepane.buildEmptyComposite(Collector
 									.getThreePanelComposite()));
 					StatusBarComposite.getInstance(parentComposite.getShell())
 							.writeStatus(Translator.get(DictKeys.STATUSBAR_PROGRAM_STARTED));
@@ -381,7 +389,7 @@ public class ToolbarComposite implements UIObserver {
 				if (Collector.getCurrentRightPanelType() != PanelType.Help) {
 					BrowserContent.loadHelpPage();
 					Collector.changeRightCompositeTo(PanelType.Help,
-							CompositeFactory.getEmptyComposite(Collector
+							EmptySidepane.buildEmptyComposite(Collector
 									.getThreePanelComposite()));
 					StatusBarComposite.getInstance(parentComposite.getShell())
 							.writeStatus(Translator.get(DictKeys.STATUSBAR_HELP_OPENED));
@@ -392,7 +400,7 @@ public class ToolbarComposite implements UIObserver {
 					lastSelectedPanelType = PanelType.Empty;
 				} else {
 					Collector.changeRightCompositeTo(PanelType.Empty,
-							CompositeFactory.getEmptyComposite(Collector
+							EmptySidepane.buildEmptyComposite(Collector
 									.getThreePanelComposite()));
 					StatusBarComposite.getInstance(parentComposite.getShell())
 							.writeStatus(Translator.get(DictKeys.STATUSBAR_PROGRAM_STARTED));

@@ -1,9 +1,10 @@
-package collector.desktop.gui;
+package collector.desktop.gui.tobemoved;
 
 import java.util.ArrayList;
 
 import collector.desktop.Collector;
 import collector.desktop.database.DatabaseWrapper;
+import collector.desktop.gui.browser.BrowserContent;
 
 public class QueryBuilder {
 	/** A singleton instance of the QueryBuilder class */

@@ -1,4 +1,4 @@
-package collector.desktop.gui;
+package collector.desktop.gui.various;
 
 public enum SynchronizeStep {
 	ESTABLISH_CONNECTION,

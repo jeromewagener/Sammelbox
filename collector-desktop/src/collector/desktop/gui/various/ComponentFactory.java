@@ -1,4 +1,4 @@
-package collector.desktop.gui;
+package collector.desktop.gui.various;
 
 import java.io.InputStream;
 
@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Tracker;
 
 import collector.desktop.Collector;
+import collector.desktop.gui.sidepanes.EmptySidepane;
 
 public class ComponentFactory {
 	/** Returns a styled label which is small bold and italic 
@@ -222,7 +223,7 @@ public class ComponentFactory {
 		closeButton.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseUp(MouseEvent e) {
-				Collector.changeRightCompositeTo(PanelType.Empty, CompositeFactory.getEmptyComposite(Collector.getThreePanelComposite()));
+				Collector.changeRightCompositeTo(PanelType.Empty, EmptySidepane.buildEmptyComposite(Collector.getThreePanelComposite()));
 			}
 
 			@Override

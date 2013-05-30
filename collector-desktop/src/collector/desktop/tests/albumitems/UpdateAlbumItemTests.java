@@ -202,7 +202,8 @@ public class UpdateAlbumItemTests {
 		final String albumName = "Books";
 
 		AlbumItem referenceAlbumItem = createReferenceAlbumItem(albumName);
-		long newAlbumID = DatabaseWrapper.addNewAlbumItem(referenceAlbumItem, false, false);
+		
+		DatabaseWrapper.addNewAlbumItem(referenceAlbumItem, false, false);
 	}
 
 	private AlbumItem createReferenceAlbumItem(String albumName) {

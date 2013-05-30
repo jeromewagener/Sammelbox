@@ -1,4 +1,4 @@
-package collector.desktop.gui;
+package collector.desktop.gui.listeners;
 
 import java.util.Arrays;
 
@@ -8,6 +8,8 @@ import org.eclipse.swt.widgets.Text;
 
 import collector.desktop.Collector;
 import collector.desktop.database.DatabaseWrapper;
+import collector.desktop.gui.browser.BrowserContent;
+import collector.desktop.gui.various.ComponentFactory;
 import collector.desktop.internationalization.DictKeys;
 import collector.desktop.internationalization.Translator;
 

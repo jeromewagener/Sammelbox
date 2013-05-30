@@ -1,4 +1,4 @@
-package collector.desktop.gui;
+package collector.desktop.gui.managers;
 
 import java.util.Collection;
 import java.util.LinkedList;
