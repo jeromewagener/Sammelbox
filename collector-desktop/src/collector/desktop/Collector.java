@@ -641,7 +641,7 @@ public class Collector implements UIObservable, UIObserver {
 
 	/** The main method initializes the database (using the collector constructor) and establishes the user interface */
 	public static void main(String[] args) throws ClassNotFoundException {
-		gateLogger.trace("Collector(build: " + BuildInformation.instance().getVersion() + " build on " + BuildInformation.instance().getBuildTimeStamp() +")started");
+		gateLogger.trace("Collector (build: " + BuildInformation.instance().getVersion() + " build on " + BuildInformation.instance().getBuildTimeStamp() +") started");
 	    try {
 	    	ApplicationSettingsManager.loadFromSettingsFile();
 	    	Translator.setLanguageFromSettingsOrSystem();
