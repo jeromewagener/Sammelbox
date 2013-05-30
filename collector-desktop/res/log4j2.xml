@@ -2,12 +2,22 @@
 <configuration status="WARN">
 	<appenders>
 		<Console name="Console" target="SYSTEM_OUT">
-		 	<PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+		 	<PatternLayout charset="UTF-8" pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger - %msg%n"/>
 		</Console>
-	</appenders>
-	<loggers>
-		<root level="debug">
+		<File name="error-log" fileName="logs/collector-error.log">
+			 <ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY"/>
+			<PatternLayout charset="UTF-8" pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger - %msg%n"/>
+		</File>
+		<File name="debug-log" fileName="logs/collector-debug.log">
+			<ThresholdFilter level="trace" onMatch="ACCEPT" onMismatch="DENY"/>
+			<PatternLayout charset="UTF-8" pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger - %msg%n"/>
+		</File>
+	</appenders>	
+	<loggers>		
+		<root level="trace">
 			<appender-ref ref="Console"/>
+			<appender-ref ref="error-log"/>
+			<appender-ref ref="debug-log"/>
 		</root>
 	</loggers>
 </configuration>

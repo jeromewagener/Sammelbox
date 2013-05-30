@@ -96,23 +96,25 @@ public class Collector implements UIObservable, UIObserver {
 	private static Collector instance = null;
 	/** This flag indicates if an error (e.g. corrupt db) was encountered during startup*/
 	private static boolean normalStartup = true;
-	
-	private final static Logger logger = LoggerFactory.getLogger(Collector.class.getCanonicalName());
+	/**The normal logger for all info, debug, error and warning in the collector class*/
+	private final static Logger logger = LoggerFactory.getLogger(Collector.class);
+	/**This logger must NOT be used since it always logs the start and end of the program.*/
+	private final static Logger gateLogger = LoggerFactory.getLogger("collector.desktop.GateLogger");
 	/**
 	 * The default constructor initializes the file structure and opens the database connections.
 	 * Furthermore the constructor creates the program instance which is used to register observers
 	 * @throws Exception Either a class not found excpetion if the jdbc driver could not be initialized or
 	 * an exception if the database connection could not be established.
 	 */
-	private Collector() throws Exception {
+	private Collector() throws Exception {		
 		Class.forName("org.sqlite.JDBC");
 		
 		if (!DatabaseWrapper.openConnection()) {	
 			normalStartup =  false;
 			if (DatabaseWrapper.openCleanConnection() == false) {
-				throw new Exception("Could not open a database connection");
+				logger.error("The database is probably corrupt since opening a connection failed. A dump of the db can be found in the program App folder.");
 			}
-		}
+		}		
 		instance = this;
 	}
 
@@ -645,6 +647,7 @@ public class Collector implements UIObservable, UIObserver {
 
 	/** The main method initializes the database (using the collector constructor) and establishes the user interface */
 	public static void main(String[] args) throws ClassNotFoundException {
+		gateLogger.trace("Collector (build: " + BuildInformation.instance().getVersion() + " build on " + BuildInformation.instance().getBuildTimeStamp() +") started");
 	    try {
 	    	ApplicationSettingsManager.loadFromSettingsFile();
 	    	Translator.setLanguageFromSettingsOrSystem();
@@ -679,7 +682,10 @@ public class Collector implements UIObservable, UIObserver {
 		    			SWT.ICON_INFORMATION).open();
 		    }
 	    } catch (Exception ex) {
-	    	System.out.println(ex.toString()); // TODO log me
+	    	System.out.println(ex.toString()); 
+	    	gateLogger.error("Collector crashed", ex);
+	    }finally {
+	    	gateLogger.trace("Collector ended");
 	    }
 	}
 	
