@@ -28,7 +28,7 @@ import collector.desktop.database.DatabaseWrapper;
 import collector.desktop.database.FieldType;
 import collector.desktop.database.MetaItemField;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
-import collector.desktop.gui.browser.BrowserContent;
+import collector.desktop.gui.browser.BrowserFacade;
 import collector.desktop.gui.various.ComponentFactory;
 import collector.desktop.gui.various.PanelType;
 import collector.desktop.gui.various.TextInputDialog;
@@ -41,7 +41,7 @@ public class CreateAlbumSidepane {
 	 * album name can be specified, as well as an undefined number of fields (columns) with user defined types etc..
 	 * @param parentComposite the parent composite
 	 * @return a new "create new album" composite */
-	public static Composite buildCreateNewAlbumComposite(final Composite parentComposite) {				
+	public static Composite build(final Composite parentComposite) {				
 		// setup create new album composite
 		Composite createNewAlbumComposite = new Composite(parentComposite, SWT.NONE);	
 		createNewAlbumComposite.setLayout(new GridLayout());
@@ -322,11 +322,9 @@ public class CreateAlbumSidepane {
 				Collector.refreshSWTAlbumList();
 				Collector.setSelectedAlbum(albumName);
 				
-				BrowserContent.performBrowserQueryAndShow(
-						Collector.getAlbumItemSWTBrowser(),
-						DatabaseWrapper.createSelectStarQuery(albumName));
+				BrowserFacade.performBrowserQueryAndShow(DatabaseWrapper.createSelectStarQuery(albumName));
 
-				Collector.changeRightCompositeTo(PanelType.Empty, EmptySidepane.buildEmptyComposite(parentComposite));
+				Collector.changeRightCompositeTo(PanelType.Empty, EmptySidepane.build(parentComposite));
 			}
 		});
 
@@ -336,7 +334,7 @@ public class CreateAlbumSidepane {
 		createNewAlbumComposite.setLayoutData(gridData);
 
 		// Load matching browser window
-		BrowserContent.showCreateNewAlbumPage(Collector.getAlbumItemSWTBrowser(), AlbumItemStore.getSamplePictureAlbumItemWithoutFields());
+		BrowserFacade.showCreateNewAlbumPage(AlbumItemStore.getSamplePictureAlbumItemWithoutFields());
 		
 		return createNewAlbumComposite;
 	}
@@ -357,6 +355,6 @@ public class CreateAlbumSidepane {
 							albumFieldNamesAndTypesTable.getItem(i).getChecked()));
 		}
 		
-		BrowserContent.showCreateNewAlbumPage(Collector.getAlbumItemSWTBrowser(), AlbumItemStore.getSampleAlbumItem(containsImages, metaItemFields));
+		BrowserFacade.showCreateNewAlbumPage(AlbumItemStore.getSampleAlbumItem(containsImages, metaItemFields));
 	}
 }

@@ -17,7 +17,7 @@ import org.eclipse.swt.widgets.Text;
 
 import collector.desktop.Collector;
 import collector.desktop.database.DatabaseWrapper;
-import collector.desktop.gui.browser.BrowserContent;
+import collector.desktop.gui.browser.BrowserFacade;
 import collector.desktop.gui.listeners.QuickSearchModifyListener;
 import collector.desktop.gui.managers.AlbumManager;
 import collector.desktop.gui.managers.AlbumViewManager;
@@ -31,7 +31,7 @@ public class QuickControlSidepane {
 	/** Returns a quick control composite (select-album-list, quick-search) used by the GUI 
 	 * @param parentComposite the parent composite
 	 * @return a new quick control composite */
-	public static Composite buildQuickControlComposite(final Composite parentComposite) {
+	public static Composite build(final Composite parentComposite) {
 		// setup quick control composite
 		Composite quickControlComposite = new Composite(parentComposite, SWT.NONE);
 		quickControlComposite.setLayout(new GridLayout());
@@ -99,7 +99,7 @@ public class QuickControlSidepane {
 
 					Collector.setSelectedAlbum(albumList.getItem(albumList.getSelectionIndex()));
 
-					Collector.changeRightCompositeTo(PanelType.Empty, EmptySidepane.buildEmptyComposite(Collector.getThreePanelComposite()));
+					Collector.changeRightCompositeTo(PanelType.Empty, EmptySidepane.build(Collector.getThreePanelComposite()));
 
 					WelcomePageManager.getInstance().increaseClickCountForAlbumOrView(albumList.getItem(albumList.getSelectionIndex()));
 				}
@@ -144,7 +144,7 @@ public class QuickControlSidepane {
 		createNewAlbum.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				Collector.changeRightCompositeTo(
-						PanelType.AddAlbum, CreateAlbumSidepane.buildCreateNewAlbumComposite(Collector.getThreePanelComposite()));
+						PanelType.AddAlbum, CreateAlbumSidepane.build(Collector.getThreePanelComposite()));
 			}
 		});
 		MenuItem alterAlbum = new MenuItem(albumPopupMenu, SWT.NONE);
@@ -152,7 +152,7 @@ public class QuickControlSidepane {
 		alterAlbum.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				Collector.changeRightCompositeTo(
-						PanelType.AlterAlbum, AlterAlbumSidepane.buildAlterAlbumComposite(
+						PanelType.AlterAlbum, AlterAlbumSidepane.build(
 								Collector.getThreePanelComposite(), Collector.getSelectedAlbum()));
 			}
 		});
@@ -170,7 +170,7 @@ public class QuickControlSidepane {
 					AlbumViewManager.removeAlbumViews(Collector.getSelectedAlbum());
 					DatabaseWrapper.removeAlbum(Collector.getSelectedAlbum());
 					Collector.refreshSWTAlbumList();
-					BrowserContent.loadHtmlPage(Collector.getAlbumItemSWTBrowser(), Collector.getShell().getClass().getClassLoader().getResourceAsStream("htmlfiles/album_deleted.html"));
+					BrowserFacade.loadHtmlFromInputStream(Collector.getShell().getClass().getClassLoader().getResourceAsStream("htmlfiles/album_deleted.html"));
 				}
 			}
 		});
@@ -183,8 +183,7 @@ public class QuickControlSidepane {
 
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {				
-				BrowserContent.performBrowserQueryAndShow(
-						Collector.getAlbumItemSWTBrowser(), 							
+				BrowserFacade.performBrowserQueryAndShow(					
 						AlbumViewManager.getSqlQueryByName(viewList.getItem(viewList.getSelectionIndex())));
 
 				WelcomePageManager.getInstance().increaseClickCountForAlbumOrView(viewList.getItem(viewList.getSelectionIndex()));
@@ -265,7 +264,7 @@ public class QuickControlSidepane {
 			public void widgetSelected(SelectionEvent e) {
 				if (viewList.getSelectionIndex() > 0) {
 					Collector.changeRightCompositeTo(PanelType.AdvancedSearch, 
-							AdvancedSearchSidepane.buildAdvancedSearchComposite(Collector.getThreePanelComposite(), Collector.getSelectedAlbum()));
+							AdvancedSearchSidepane.build(Collector.getThreePanelComposite(), Collector.getSelectedAlbum()));
 				}
 			}
 		});		

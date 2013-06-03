@@ -7,7 +7,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
 import collector.desktop.Collector;
-import collector.desktop.gui.browser.BrowserListener;
+import collector.desktop.gui.listeners.BrowserListener;
 
 public class BrowserComposite {
 	

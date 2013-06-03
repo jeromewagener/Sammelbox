@@ -20,7 +20,7 @@ public class UpdateAlbumItemSidepane {
 	 * @param album the name of the album to which an item should be added
 	 * @param albumItemId the id of the album item whose content is loaded into the fields
 	 * @return a new "update album item" composite */
-	public static Composite buildUpdateAlbumItemComposite(Composite parentComposite, final String album, final long albumItemId) {
+	public static Composite build(Composite parentComposite, final String album, final long albumItemId) {
 		Composite resizeComposite = new Composite(parentComposite, SWT.NONE);
 		resizeComposite.setLayout(new GridLayout(1, false));
 		resizeComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
@@ -32,7 +32,7 @@ public class UpdateAlbumItemSidepane {
 		ScrolledComposite scrolledComposite = new ScrolledComposite(resizeComposite,  SWT.NONE | SWT.H_SCROLL | SWT.V_SCROLL );
 		scrolledComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
-		final Composite updateAlbumItemComposite = BasicAlbumItemSidepane.buildBasicAlbumItemComposite(scrolledComposite, album, albumItemId);
+		final Composite updateAlbumItemComposite = BasicAlbumItemSidepane.build(scrolledComposite, album, albumItemId);
 		scrolledComposite.setContent(updateAlbumItemComposite);
 		scrolledComposite.setExpandHorizontal(true);
 		scrolledComposite.setExpandVertical(true);

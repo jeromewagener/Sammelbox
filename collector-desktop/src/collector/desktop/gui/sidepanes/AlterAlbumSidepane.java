@@ -29,7 +29,7 @@ import collector.desktop.database.DatabaseWrapper;
 import collector.desktop.database.FieldType;
 import collector.desktop.database.MetaItemField;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
-import collector.desktop.gui.browser.BrowserContent;
+import collector.desktop.gui.browser.BrowserFacade;
 import collector.desktop.gui.tobemoved.MetaItemFieldFilter;
 import collector.desktop.gui.various.ComponentFactory;
 import collector.desktop.gui.various.TextInputDialog;
@@ -44,7 +44,7 @@ public class AlterAlbumSidepane {
 	 * @param parentComposite the parent composite
 	 * @param album the album which should be altered
 	 * @return a new "alter album" composite */
-	public static Composite buildAlterAlbumComposite(final Composite parentComposite, final String album) {
+	public static Composite build(final Composite parentComposite, final String album) {
 		// setup alter album composite
 		final Composite alterAlbumComposite = new Composite(parentComposite, SWT.NONE);
 		alterAlbumComposite.setLayout(new GridLayout());
@@ -136,7 +136,7 @@ public class AlterAlbumSidepane {
 					if (newPosition == 0) {
 
 						if ( DatabaseWrapper.reorderAlbumItemField(albumName, metaItemField, null) ){
-							BrowserContent.addModificationToAlterationList(Translator.toBeTranslated("Field '" + metaItemField.getName() + "' has been moved up"));
+							BrowserFacade.addModificationToAlterationList(Translator.toBeTranslated("Field '" + metaItemField.getName() + "' has been moved up"));
 							AlterAlbumSidepane.updateAlterAlbumPage(yesButtonForIncludingImages, albumFieldNamesAndTypesTable);
 						}else {
 							// TODO: show error page in browser.
@@ -145,7 +145,7 @@ public class AlterAlbumSidepane {
 						TableItem moveAfterTableItem = albumFieldNamesAndTypesTable.getItem(newPosition-1);
 						MetaItemField moveAfterField = new MetaItemField(moveAfterTableItem.getText(1), FieldType.valueOf(moveAfterTableItem.getText(2)), moveAfterTableItem.getChecked());
 						if ( DatabaseWrapper.reorderAlbumItemField(albumName, metaItemField, moveAfterField) ) {
-							BrowserContent.addModificationToAlterationList(Translator.toBeTranslated("Field '" + metaItemField.getName() + "' has been moved up"));
+							BrowserFacade.addModificationToAlterationList(Translator.toBeTranslated("Field '" + metaItemField.getName() + "' has been moved up"));
 							AlterAlbumSidepane.updateAlterAlbumPage(yesButtonForIncludingImages, albumFieldNamesAndTypesTable);
 						}else {
 							// TODO: show error page in browser.
@@ -182,7 +182,7 @@ public class AlterAlbumSidepane {
 					Collector.refreshSWTAlbumList();
 					Collector.setSelectedAlbum(newAlbumName);
 
-					BrowserContent.addModificationToAlterationList(Translator.toBeTranslated("Album renamed from '" + oldAlbumName + "' to '" + newAlbumName + "'"));
+					BrowserFacade.addModificationToAlterationList(Translator.toBeTranslated("Album renamed from '" + oldAlbumName + "' to '" + newAlbumName + "'"));
 					AlterAlbumSidepane.updateAlterAlbumPage(yesButtonForIncludingImages, albumFieldNamesAndTypesTable);
 
 				}else {
@@ -199,7 +199,7 @@ public class AlterAlbumSidepane {
 
 				if (!DatabaseWrapper.albumHasPictureField(albumName)) {
 					if ( DatabaseWrapper.appendPictureField(albumName) ){
-						BrowserContent.addModificationToAlterationList(Translator.toBeTranslated("Pictures enabled for this album"));
+						BrowserFacade.addModificationToAlterationList(Translator.toBeTranslated("Pictures enabled for this album"));
 						AlterAlbumSidepane.updateAlterAlbumPage(yesButtonForIncludingImages, albumFieldNamesAndTypesTable);
 					}else{
 						//TODO: display failure page
@@ -219,7 +219,7 @@ public class AlterAlbumSidepane {
 					if (removalConfirmed) {
 
 						if ( DatabaseWrapper.removePictureField(currentAlbumName) ){
-							BrowserContent.addModificationToAlterationList(Translator.toBeTranslated("Pictures disabled for this album"));
+							BrowserFacade.addModificationToAlterationList(Translator.toBeTranslated("Pictures disabled for this album"));
 							AlterAlbumSidepane.updateAlterAlbumPage(yesButtonForIncludingImages, albumFieldNamesAndTypesTable);
 						}else {
 							//TODO: display failure page
@@ -253,7 +253,7 @@ public class AlterAlbumSidepane {
 					String albumName = albumNameText.getData().toString();
 					if (newPosition == 0) {
 						if ( DatabaseWrapper.reorderAlbumItemField(albumName, metaItemField, null) ) {
-							BrowserContent.addModificationToAlterationList(Translator.toBeTranslated("Field '" + metaItemField.getName() + "' has been moved down"));
+							BrowserFacade.addModificationToAlterationList(Translator.toBeTranslated("Field '" + metaItemField.getName() + "' has been moved down"));
 							AlterAlbumSidepane.updateAlterAlbumPage(yesButtonForIncludingImages, albumFieldNamesAndTypesTable);
 						}else {
 							// TODO: show error page in browser.
@@ -262,7 +262,7 @@ public class AlterAlbumSidepane {
 						TableItem moveAfterTableItem = albumFieldNamesAndTypesTable.getItem(newPosition - 1);
 						MetaItemField moveAfterField = new MetaItemField(moveAfterTableItem.getText(1), FieldType.valueOf(moveAfterTableItem.getText(2)), moveAfterTableItem.getChecked());
 						if ( DatabaseWrapper.reorderAlbumItemField(albumName, metaItemField, moveAfterField) ) {
-							BrowserContent.addModificationToAlterationList(Translator.toBeTranslated("Field '" + metaItemField.getName() + "' has been moved down"));
+							BrowserFacade.addModificationToAlterationList(Translator.toBeTranslated("Field '" + metaItemField.getName() + "' has been moved down"));
 							AlterAlbumSidepane.updateAlterAlbumPage(yesButtonForIncludingImages, albumFieldNamesAndTypesTable);
 						}else {
 							// TODO: show error page in browser.
@@ -291,7 +291,7 @@ public class AlterAlbumSidepane {
 
 					String albumName = albumNameText.getData().toString();
 					if ( DatabaseWrapper.renameAlbumItemField( albumName, oldMetaItemField, newMetaItemField)){
-						BrowserContent.addModificationToAlterationList(Translator.toBeTranslated("Field '" + oldMetaItemField.getName() + "' has been renamed to '" + newMetaItemField.getName() + "'"));
+						BrowserFacade.addModificationToAlterationList(Translator.toBeTranslated("Field '" + oldMetaItemField.getName() + "' has been renamed to '" + newMetaItemField.getName() + "'"));
 						AlterAlbumSidepane.updateAlterAlbumPage(yesButtonForIncludingImages, albumFieldNamesAndTypesTable);
 						item.setText(1, newFieldName);
 					}else {
@@ -316,7 +316,7 @@ public class AlterAlbumSidepane {
 
 						String albumName = albumNameText.getData().toString();
 						if ( DatabaseWrapper.removeAlbumItemField(albumName, new MetaItemField(item.getText(1), FieldType.valueOf(item.getText(2)), item.getChecked()))) {
-							BrowserContent.addModificationToAlterationList(Translator.toBeTranslated("Field '" + item.getText(1) + "' has been removed"));
+							BrowserFacade.addModificationToAlterationList(Translator.toBeTranslated("Field '" + item.getText(1) + "' has been removed"));
 							AlterAlbumSidepane.updateAlterAlbumPage(yesButtonForIncludingImages, albumFieldNamesAndTypesTable);
 						}else {
 							// TODO: show error page in browser.
@@ -374,7 +374,7 @@ public class AlterAlbumSidepane {
 
 					String albumName = albumNameText.getData().toString();
 					if ( DatabaseWrapper.setQuickSearchable(albumName, metaItemField) ) {
-						BrowserContent.addModificationToAlterationList(Translator.toBeTranslated(metaItemField.getName() + " is now quick-searchable"));
+						BrowserFacade.addModificationToAlterationList(Translator.toBeTranslated(metaItemField.getName() + " is now quick-searchable"));
 						AlterAlbumSidepane.updateAlterAlbumPage(yesButtonForIncludingImages, albumFieldNamesAndTypesTable);
 					}else {
 						// TODO: show error page in browser.
@@ -421,7 +421,7 @@ public class AlterAlbumSidepane {
 					item.setText(1, fieldNameText.getText());
 					item.setText(2, fieldTypeCombo.getText());
 
-					BrowserContent.addModificationToAlterationList(Translator.toBeTranslated("Added field '" + fieldNameText.getText() + "' of type '" + fieldTypeCombo.getText() + "'"));
+					BrowserFacade.addModificationToAlterationList(Translator.toBeTranslated("Added field '" + fieldNameText.getText() + "' of type '" + fieldTypeCombo.getText() + "'"));
 					AlterAlbumSidepane.updateAlterAlbumPage(yesButtonForIncludingImages, albumFieldNamesAndTypesTable);
 				}else {
 					// TODO: show error page in browser.
@@ -430,7 +430,7 @@ public class AlterAlbumSidepane {
 			}
 		});
 
-		BrowserContent.clearAlterationList();
+		BrowserFacade.clearAlterationList();
 		AlterAlbumSidepane.updateAlterAlbumPage(yesButtonForIncludingImages, albumFieldNamesAndTypesTable);
 		
 		return alterAlbumComposite;
@@ -452,6 +452,6 @@ public class AlterAlbumSidepane {
 							albumFieldNamesAndTypesTable.getItem(i).getChecked()));
 		}
 		
-		BrowserContent.showCreateAlterAlbumPage(Collector.getAlbumItemSWTBrowser(), AlbumItemStore.getSampleAlbumItem(containsImages, metaItemFields));
+		BrowserFacade.showCreateAlterAlbumPage(AlbumItemStore.getSampleAlbumItem(containsImages, metaItemFields));
 	}
 }

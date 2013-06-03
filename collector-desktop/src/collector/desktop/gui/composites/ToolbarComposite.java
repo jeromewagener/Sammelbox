@@ -15,7 +15,7 @@ import org.eclipse.swt.widgets.Label;
 
 import collector.desktop.Collector;
 import collector.desktop.database.DatabaseWrapper;
-import collector.desktop.gui.browser.BrowserContent;
+import collector.desktop.gui.browser.BrowserFacade;
 import collector.desktop.gui.sidepanes.AddAlbumItemSidepane;
 import collector.desktop.gui.sidepanes.AdvancedSearchSidepane;
 import collector.desktop.gui.sidepanes.CreateAlbumSidepane;
@@ -161,13 +161,13 @@ public class ToolbarComposite implements UIObserver {
 			public void mouseUp(MouseEvent arg0) {
 				disableActiveButtons();
 
-				Collector.changeRightCompositeTo(PanelType.Empty, EmptySidepane.buildEmptyComposite(Collector.getThreePanelComposite()));
+				Collector.changeRightCompositeTo(PanelType.Empty, EmptySidepane.build(Collector.getThreePanelComposite()));
 				
 				lastSelectedPanelType = PanelType.Empty;
 				
 				homeBtn.setImage(homeActive);
 
-				BrowserContent.loadWelcomePage();
+				BrowserFacade.loadWelcomePage();
 
 				addEntryBtn.setEnabled(false);
 
@@ -195,7 +195,7 @@ public class ToolbarComposite implements UIObserver {
 				if (Collector.getCurrentRightPanelType() != PanelType.AddAlbum) {
 					Collector.changeRightCompositeTo(PanelType.AddAlbum,
 							CreateAlbumSidepane
-									.buildCreateNewAlbumComposite(Collector
+									.build(Collector
 											.getThreePanelComposite()));
 					StatusBarComposite.getInstance(parentComposite.getShell())
 							.writeStatus(Translator.get(DictKeys.STATUSBAR_ADD_ALBUM_OPENED));
@@ -206,7 +206,7 @@ public class ToolbarComposite implements UIObserver {
 					lastSelectedPanelType = PanelType.AddAlbum;
 				} else {
 					Collector.changeRightCompositeTo(PanelType.Empty,
-							EmptySidepane.buildEmptyComposite(Collector
+							EmptySidepane.build(Collector
 									.getThreePanelComposite()));
 					StatusBarComposite.getInstance(parentComposite.getShell())
 							.writeStatus(Translator.get(DictKeys.STATUSBAR_PROGRAM_STARTED));
@@ -238,7 +238,7 @@ public class ToolbarComposite implements UIObserver {
 				}
 				if (Collector.getCurrentRightPanelType() != PanelType.AddEntry) {
 					Collector.changeRightCompositeTo(PanelType.AddAlbum,
-							AddAlbumItemSidepane.buildAddAlbumItemComposite(
+							AddAlbumItemSidepane.build(
 									Collector.getThreePanelComposite(),
 									Collector.getSelectedAlbum()));
 					StatusBarComposite
@@ -251,7 +251,7 @@ public class ToolbarComposite implements UIObserver {
 					lastSelectedPanelType = PanelType.AddEntry;
 				} else {
 					Collector.changeRightCompositeTo(PanelType.Empty,
-							EmptySidepane.buildEmptyComposite(Collector
+							EmptySidepane.build(Collector
 									.getThreePanelComposite()));
 					StatusBarComposite.getInstance(parentComposite.getShell())
 							.writeStatus(Translator.get(DictKeys.STATUSBAR_PROGRAM_STARTED));
@@ -276,20 +276,14 @@ public class ToolbarComposite implements UIObserver {
 				if (!Collector.isViewDetailed()) {
 					viewBtn.setImage(pictureView);
 					viewBtn.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_TOGGLE_TO_GALLERY));
-
 					Collector.setViewIsDetailed(true);
-
-					BrowserContent.performLastQuery(Collector
-							.getAlbumItemSWTBrowser());
 				} else {
 					viewBtn.setImage(detailedView);
 					viewBtn.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_TOGGLE_TO_DETAILS));
-
 					Collector.setViewIsDetailed(false);
-
-					BrowserContent.performLastQuery(Collector
-							.getAlbumItemSWTBrowser());
 				}
+				
+				BrowserFacade.rerunLastQuery();
 			}
 
 			@Override
@@ -313,7 +307,7 @@ public class ToolbarComposite implements UIObserver {
 				}
 				if (Collector.getCurrentRightPanelType() != PanelType.AdvancedSearch) {
 					Collector.changeRightCompositeTo(PanelType.AdvancedSearch,
-							AdvancedSearchSidepane.buildAdvancedSearchComposite(
+							AdvancedSearchSidepane.build(
 									Collector.getThreePanelComposite(),
 									Collector.getSelectedAlbum()));
 					StatusBarComposite
@@ -327,7 +321,7 @@ public class ToolbarComposite implements UIObserver {
 					lastSelectedPanelType = PanelType.AdvancedSearch;
 				} else {
 					Collector.changeRightCompositeTo(PanelType.Empty,
-							EmptySidepane.buildEmptyComposite(Collector
+							EmptySidepane.build(Collector
 									.getThreePanelComposite()));
 					StatusBarComposite.getInstance(parentComposite.getShell())
 							.writeStatus(Translator.get(DictKeys.STATUSBAR_PROGRAM_STARTED));
@@ -351,7 +345,7 @@ public class ToolbarComposite implements UIObserver {
 			public void mouseUp(MouseEvent arg0) {
 				if (Collector.getCurrentRightPanelType() != PanelType.Synchronization) {
 					Collector.changeRightCompositeTo(PanelType.Synchronization,
-							SynchronizeSidepane.buildSynchronizeComposite(Collector
+							SynchronizeSidepane.build(Collector
 									.getThreePanelComposite()));
 					StatusBarComposite
 							.getInstance(parentComposite.getShell())
@@ -364,7 +358,7 @@ public class ToolbarComposite implements UIObserver {
 					lastSelectedPanelType = PanelType.Synchronization;
 				} else {
 					Collector.changeRightCompositeTo(PanelType.Empty,
-							EmptySidepane.buildEmptyComposite(Collector
+							EmptySidepane.build(Collector
 									.getThreePanelComposite()));
 					StatusBarComposite.getInstance(parentComposite.getShell())
 							.writeStatus(Translator.get(DictKeys.STATUSBAR_PROGRAM_STARTED));
@@ -387,9 +381,9 @@ public class ToolbarComposite implements UIObserver {
 			@Override
 			public void mouseUp(MouseEvent arg0) {
 				if (Collector.getCurrentRightPanelType() != PanelType.Help) {
-					BrowserContent.loadHelpPage();
+					BrowserFacade.loadHelpPage();
 					Collector.changeRightCompositeTo(PanelType.Help,
-							EmptySidepane.buildEmptyComposite(Collector
+							EmptySidepane.build(Collector
 									.getThreePanelComposite()));
 					StatusBarComposite.getInstance(parentComposite.getShell())
 							.writeStatus(Translator.get(DictKeys.STATUSBAR_HELP_OPENED));
@@ -400,7 +394,7 @@ public class ToolbarComposite implements UIObserver {
 					lastSelectedPanelType = PanelType.Empty;
 				} else {
 					Collector.changeRightCompositeTo(PanelType.Empty,
-							EmptySidepane.buildEmptyComposite(Collector
+							EmptySidepane.build(Collector
 									.getThreePanelComposite()));
 					StatusBarComposite.getInstance(parentComposite.getShell())
 							.writeStatus(Translator.get(DictKeys.STATUSBAR_PROGRAM_STARTED));
@@ -452,27 +446,19 @@ public class ToolbarComposite implements UIObserver {
 
 	public void enableAlbumButtons(String albumName) {
 		homeBtn.setImage(home);
-
 		addEntryBtn.setEnabled(true);
-		viewBtn.setEnabled(true);
 
 		if (DatabaseWrapper.albumHasPictureField(albumName)) {
 			viewBtn.setImage(pictureView);
 			viewBtn.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_TOGGLE_TO_GALLERY));
 			viewBtn.setEnabled(true);
-
-			Collector.setViewIsDetailed(true);
-
-			BrowserContent.performLastQuery(Collector.getAlbumItemSWTBrowser());
 		} else {
 			viewBtn.setImage(detailedView);
 			viewBtn.setEnabled(false);
-
-			Collector.setViewIsDetailed(true);
-
-			BrowserContent.performLastQuery(Collector.getAlbumItemSWTBrowser());
 		}
 
+		Collector.setViewIsDetailed(true);
+		BrowserFacade.rerunLastQuery();
 		searchBtn.setEnabled(true);
 	}
 }

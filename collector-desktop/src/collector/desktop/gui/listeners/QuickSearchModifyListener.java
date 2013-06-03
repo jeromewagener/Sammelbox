@@ -8,7 +8,7 @@ import org.eclipse.swt.widgets.Text;
 
 import collector.desktop.Collector;
 import collector.desktop.database.DatabaseWrapper;
-import collector.desktop.gui.browser.BrowserContent;
+import collector.desktop.gui.browser.BrowserFacade;
 import collector.desktop.gui.various.ComponentFactory;
 import collector.desktop.internationalization.DictKeys;
 import collector.desktop.internationalization.Translator;
@@ -26,14 +26,9 @@ public class QuickSearchModifyListener implements ModifyListener {
 			return;
 		}
 		if (((Text) e.widget).getText().equals("")) {
-			BrowserContent.showResultSet(Collector.getAlbumItemSWTBrowser(), 
-					DatabaseWrapper.executeQuickSearch(
-							Collector.getSelectedAlbum(), 
-							null));
+			BrowserFacade.showResultSet(DatabaseWrapper.executeQuickSearch(Collector.getSelectedAlbum(), null));
 		} else {
-			BrowserContent.showResultSet(Collector.getAlbumItemSWTBrowser(), 
-					DatabaseWrapper.executeQuickSearch(
-							Collector.getSelectedAlbum(), 
+			BrowserFacade.showResultSet(DatabaseWrapper.executeQuickSearch(Collector.getSelectedAlbum(), 
 							Arrays.asList(((Text) e.widget).getText().split(" "))));
 		}
 	}

@@ -223,7 +223,7 @@ public class ComponentFactory {
 		closeButton.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseUp(MouseEvent e) {
-				Collector.changeRightCompositeTo(PanelType.Empty, EmptySidepane.buildEmptyComposite(Collector.getThreePanelComposite()));
+				Collector.changeRightCompositeTo(PanelType.Empty, EmptySidepane.build(Collector.getThreePanelComposite()));
 			}
 
 			@Override

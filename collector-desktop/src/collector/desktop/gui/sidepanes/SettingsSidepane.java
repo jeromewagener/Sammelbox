@@ -19,7 +19,7 @@ import collector.desktop.internationalization.Translator;
 import collector.desktop.settings.ApplicationSettingsManager;
 
 public class SettingsSidepane {
-	public static Composite buildSettingsComposite(Composite parentComposite) {		
+	public static Composite build(Composite parentComposite) {		
 		// setup settings composite
 		Composite settingsComposite = new Composite(parentComposite, SWT.NONE);
 		settingsComposite.setLayout(new GridLayout(1, false));

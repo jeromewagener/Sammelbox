@@ -2,9 +2,8 @@ package collector.desktop.gui.tobemoved;
 
 import java.util.ArrayList;
 
-import collector.desktop.Collector;
 import collector.desktop.database.DatabaseWrapper;
-import collector.desktop.gui.browser.BrowserContent;
+import collector.desktop.gui.browser.BrowserFacade;
 
 public class QueryBuilder {
 	/** A singleton instance of the QueryBuilder class */
@@ -260,7 +259,7 @@ public class QueryBuilder {
 	 * @param album the name of the album which should be queried */
 	public static void buildQueryAndExecute(ArrayList<QueryComponent> queryComponents, boolean connectByAnd, String album) {
 		String query = buildQuery(queryComponents, connectByAnd, album, null, false);
-		BrowserContent.performBrowserQueryAndShow(Collector.getAlbumItemSWTBrowser(), query);
+		BrowserFacade.performBrowserQueryAndShow(query);
 	}
 
 	/** This method builds a SQL query out of multiple query components and executes the resulting query. The result set is presented
@@ -273,7 +272,7 @@ public class QueryBuilder {
 	 * @param album the name of the album which should be queried */
 	public static void buildQueryAndExecute(ArrayList<QueryComponent> queryComponents, boolean connectByAnd, String album, String sortField, boolean sortAscending) {
 		String query = buildQuery(queryComponents, connectByAnd, album, sortField, sortAscending);
-		BrowserContent.performBrowserQueryAndShow(Collector.getAlbumItemSWTBrowser(), query);
+		BrowserFacade.performBrowserQueryAndShow(query);
 	}
 	
 	/** This method builds a SQL query out of multiple query components and returns the resulting query string.

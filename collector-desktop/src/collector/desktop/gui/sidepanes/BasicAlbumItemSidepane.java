@@ -31,7 +31,7 @@ import collector.desktop.database.FieldType;
 import collector.desktop.database.MetaItemField;
 import collector.desktop.database.OptionType;
 import collector.desktop.database.StarRating;
-import collector.desktop.gui.browser.BrowserContent;
+import collector.desktop.gui.browser.BrowserFacade;
 import collector.desktop.gui.image.ImageDropAndManagementComposite;
 import collector.desktop.gui.managers.WelcomePageManager;
 import collector.desktop.gui.various.ComponentFactory;
@@ -47,8 +47,8 @@ public class BasicAlbumItemSidepane {
 	 * @param album the name of the album to which an item should be added
 	 * @param caption the caption/header of the basic album item composite.
 	 * @return a new "basic album item" composite */
-	static Composite buildBasicAlbumItemComposite(Composite parentComposite, final String album) {
-		return buildBasicAlbumItemComposite(parentComposite, album, 0, false);
+	static Composite build(Composite parentComposite, final String album) {
+		return build(parentComposite, album, 0, false);
 	}
 
 	/** Returns a "basic album item" composite. This composite provides the fields (field names and value input fields) needed by the 
@@ -58,8 +58,8 @@ public class BasicAlbumItemSidepane {
 	 * @param albumItemId the id of the album item which should be used to fill the fields
 	 * @param caption the caption/header of the basic album item composite.
 	 * @return a new "basic album item" composite */
-	static Composite buildBasicAlbumItemComposite(Composite parentComposite, final String album, final long albumItemId) {		
-		return buildBasicAlbumItemComposite(parentComposite, album, albumItemId, true);
+	static Composite build(Composite parentComposite, final String album, final long albumItemId) {		
+		return build(parentComposite, album, albumItemId, true);
 	}
 
 	/** Returns a "basic album item" composite. This composite provides the fields (field names and value input fields) needed by the
@@ -72,7 +72,7 @@ public class BasicAlbumItemSidepane {
 	 * @param loadDataIntoFields if the content of the specified album item should be loaded into the fields, then this should be true.
 	 * If it should not be loaded (E.g. in case of the "add" composite, then this should be false
 	 * @return a new "basic album item" composite */
-	static Composite buildBasicAlbumItemComposite(Composite parentComposite, final String album, final long albumItemId, boolean loadDataIntoFields) {
+	static Composite build(Composite parentComposite, final String album, final long albumItemId, boolean loadDataIntoFields) {
 		// setup the basic composite
 		final Composite basicAlbumItemComposite = new Composite(parentComposite, SWT.NONE);
 		GridLayout gridLayout = new GridLayout(1, false);
@@ -508,12 +508,12 @@ public class BasicAlbumItemSidepane {
 					albumItem.addField("id", FieldType.ID, albumItemId);
 
 					DatabaseWrapper.updateAlbumItem(albumItem);
-					BrowserContent.generatAlbumItemUpdatedPage(albumItemId);
+					BrowserFacade.generatAlbumItemUpdatedPage(albumItemId);
 				} else {			
-					BrowserContent.generateAlbumItemAddedPage(DatabaseWrapper.addNewAlbumItem(albumItem, false, true));
+					BrowserFacade.generateAlbumItemAddedPage(DatabaseWrapper.addNewAlbumItem(albumItem, false, true));
 				}
 
-				Collector.changeRightCompositeTo(PanelType.Empty, EmptySidepane.buildEmptyComposite(Collector.getThreePanelComposite()));
+				Collector.changeRightCompositeTo(PanelType.Empty, EmptySidepane.build(Collector.getThreePanelComposite()));
 				WelcomePageManager.getInstance().updateLastModifiedWithCurrentDate(Collector.getSelectedAlbum());
 			}
 		};

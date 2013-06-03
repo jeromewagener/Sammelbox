@@ -45,7 +45,7 @@ public class AdvancedSearchSidepane {
 	 * @param parentComposite the parent composite
 	 * @param album the album upon which the query should be executed. The composite will be based on the fields of this album.
 	 * @return a new advanced search composite */
-	public static Composite buildAdvancedSearchComposite(final Composite parentComposite, final String album) {
+	public static Composite build(final Composite parentComposite, final String album) {
 		// setup advanced composite
 		final Composite advancedSearchComposite = new Composite(parentComposite, SWT.NONE);
 		advancedSearchComposite.setLayout(new GridLayout(1, false));

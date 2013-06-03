@@ -8,7 +8,7 @@ public class EmptySidepane {
 	/** Returns an empty composite
 	 * @param parentComposite the parent composite
 	 * @return a new empty composite */
-	public static Composite buildEmptyComposite(Composite parentComposite) {
+	public static Composite build(Composite parentComposite) {
 		// Setup empty composite
 		Composite emptyComposite = new Composite(parentComposite, SWT.NONE);
 

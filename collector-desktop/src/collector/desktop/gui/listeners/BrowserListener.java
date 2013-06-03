@@ -1,4 +1,4 @@
-package collector.desktop.gui.browser;
+package collector.desktop.gui.listeners;
 
 import java.util.List;
 
@@ -17,6 +17,7 @@ import collector.desktop.database.AlbumItem;
 import collector.desktop.database.DatabaseWrapper;
 import collector.desktop.database.FieldType;
 import collector.desktop.database.ItemField;
+import collector.desktop.gui.browser.BrowserFacade;
 import collector.desktop.gui.composites.StatusBarComposite;
 import collector.desktop.gui.sidepanes.EmptySidepane;
 import collector.desktop.gui.sidepanes.UpdateAlbumItemSidepane;
@@ -69,8 +70,8 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 			removeQuestionMarkAtTheEndIfPresent(id);//FIXME: the return value is never used. Happening this intentionally it does (Yoda)
 
 			Collector.changeRightCompositeTo(PanelType.UpdateEntry,
-					UpdateAlbumItemSidepane.buildUpdateAlbumItemComposite(parentComposite, Collector.getSelectedAlbum(), Long.parseLong(id)));
-			BrowserContent.jumpToAnchor(BrowserContent.getAnchorForAlbumItemId(Integer.parseInt(id)));
+					UpdateAlbumItemSidepane.build(parentComposite, Collector.getSelectedAlbum(), Long.parseLong(id)));
+			BrowserFacade.jumpToAnchor(BrowserFacade.getAnchorForAlbumItemId(Integer.parseInt(id)));
 
 			// Do not change the page
 			event.doit = false;
@@ -87,8 +88,7 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 
 			if (messageBox.open() == SWT.YES) {
 				DatabaseWrapper.deleteAlbumItem(Collector.getSelectedAlbum(), Long.parseLong(id));
-				BrowserContent.performBrowserQueryAndShow(
-						Collector.getAlbumItemSWTBrowser(), DatabaseWrapper.createSelectStarQuery(Collector.getSelectedAlbum()));
+				BrowserFacade.performBrowserQueryAndShow(DatabaseWrapper.createSelectStarQuery(Collector.getSelectedAlbum()));
 			}
 
 			// Do not change the page
@@ -100,13 +100,13 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 
 			String[] pathAndIdArray = pathAndIdString.split("\\?");
 
-			BrowserContent.showPicture(pathAndIdArray[0], Long.parseLong(pathAndIdArray[1].replace("imageId", "")));
-			BrowserContent.setFutureJumpAnchor(pathAndIdArray[1]);
+			BrowserFacade.showPicture(pathAndIdArray[0], Long.parseLong(pathAndIdArray[1].replace("imageId", "")));
+			BrowserFacade.setFutureJumpAnchor(pathAndIdArray[1]);
 
 			// Do not change the page
 			event.doit = false;
 		} else if (event.location.startsWith(showLastPage)) {
-			BrowserContent.goBackToLastPage();
+			BrowserFacade.goBackToLastPage();
 
 			// Do not change the page
 			event.doit = false;
@@ -137,9 +137,9 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 			removeQuestionMarkAtTheEndIfPresent(id);//FIXME: the return value is never used. Happening this intentionally it does (Yoda)
 
 			Collector.changeRightCompositeTo(PanelType.UpdateEntry,
-					UpdateAlbumItemSidepane.buildUpdateAlbumItemComposite(parentComposite, Collector.getSelectedAlbum(), Long.parseLong(id)));
+					UpdateAlbumItemSidepane.build(parentComposite, Collector.getSelectedAlbum(), Long.parseLong(id)));
 
-			BrowserContent.jumpToAnchor(BrowserContent.getAnchorForAlbumItemId(Long.parseLong(id)));
+			BrowserFacade.jumpToAnchor(BrowserFacade.getAnchorForAlbumItemId(Long.parseLong(id)));
 
 			// Do not change the page
 			event.doit = false;
@@ -150,15 +150,14 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 				event.doit = false;
 			}
 		} else if (event.location.equals(addAdditionalAlbumItems)) {
-			BrowserContent.addAdditionalAlbumItems();
+			BrowserFacade.addAdditionalAlbumItems();
 
 			// Do not change the page
 			event.doit = false;
 		}else if (event.location.equals(showDetailsViewOfAlbum)) {
-			BrowserContent.performBrowserQueryAndShow(
-					Collector.getAlbumItemSWTBrowser(), DatabaseWrapper.createSelectStarQuery(Collector.getSelectedAlbum()));
+			BrowserFacade.performBrowserQueryAndShow(DatabaseWrapper.createSelectStarQuery(Collector.getSelectedAlbum()));
 			
-			Collector.changeRightCompositeTo(PanelType.Empty, EmptySidepane.buildEmptyComposite(Collector.getThreePanelComposite()));
+			Collector.changeRightCompositeTo(PanelType.Empty, EmptySidepane.build(Collector.getThreePanelComposite()));
 			// Do not change the page
 			event.doit = false;
 		}
@@ -171,7 +170,7 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 	@Override
 	/** As soon as a page is completely loaded, it is possible to jump to a previously defined anchor */
 	public void completed(ProgressEvent event) {
-		BrowserContent.jumpToAnchor(BrowserContent.getFutureJumpAnchor());
+		BrowserFacade.jumpToAnchor(BrowserFacade.getFutureJumpAnchor());
 	}
 
 	@Override

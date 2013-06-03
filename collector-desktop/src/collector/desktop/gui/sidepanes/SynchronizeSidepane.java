@@ -18,7 +18,7 @@ import collector.desktop.internationalization.DictKeys;
 import collector.desktop.internationalization.Translator;
 
 public class SynchronizeSidepane {
-	public static Composite buildSynchronizeComposite(Composite parentComposite) {		
+	public static Composite build(Composite parentComposite) {		
 		// setup synchronize composite
 		Composite synchronizeComposite = new Composite(parentComposite, SWT.NONE);
 		synchronizeComposite.setLayout(new GridLayout(1, false));

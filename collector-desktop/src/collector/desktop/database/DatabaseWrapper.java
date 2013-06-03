@@ -25,8 +25,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.jdbcdslog.ConnectionLoggingProxy;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import collector.desktop.filesystem.FileSystemAccessWrapper;
 import collector.desktop.gui.tobemoved.QueryBuilder;
@@ -69,8 +67,6 @@ public class DatabaseWrapper  {
 	private static final String corruptDatabaseSnapshotPrefix = ".corruptDatabaseSnapshot_";
 	/** The maximum amount of autosaves that can be stored until the oldes it overwritten */
 	private static int autoSaveLimit = 8;
-	
-	private static final Logger logger = LoggerFactory.getLogger(DatabaseWrapper.class);
 
 	/**
 	 * Opens the default connection for the FileSystemAccessWrapper.DATABASE database. Only opens a new connection if none is currently open.
