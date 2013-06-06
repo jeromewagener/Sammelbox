@@ -1062,7 +1062,7 @@ public class DatabaseWrapper  {
 	 */
 	private static String removeEnclosingNameWithQuotes(String regularName) {
 		if (regularName.startsWith("'") && regularName.endsWith("'")) {
-			return regularName.substring(1, regularName.length()-2);
+			return regularName.substring(1, regularName.length()-1);
 		}
 		return regularName ;
 	}
