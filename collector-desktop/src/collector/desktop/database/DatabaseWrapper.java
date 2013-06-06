@@ -2839,5 +2839,37 @@ public class DatabaseWrapper  {
 		}
 		return success;		
 	}
-	
+
+	private static void createTableWithIdAsPrimaryKey(String tableName, List<MetaItemField> fields, boolean temparyTable, boolean ifNotExistsClause) throws SQLException  {
+			StringBuilder sb = new StringBuilder("CREATE ");
+			if (temparyTable) {
+				sb.append("TEMPORARY ");
+			}
+			
+			sb.append("TABLE ");
+			if (ifNotExistsClause) {
+				sb.append("IF NOT EXISTS "); 
+			}
+			
+			sb.append(transformNameToDBName(tableName));
+			sb.append(" ( ");
+			sb.append(ID_COLUMN_NAME);
+			sb.append(" INTEGER PRIMARY KEY");
+			
+			for (MetaItemField item : fields) {
+				sb.append(" , ");
+				sb.append(transformNameToDBName(item.getName()));	// " , 'fieldName'"  
+				sb.append(" ");										// " , 'fieldName' " 
+				sb.append(item.getType().toDatabaseTypeString());	// " , 'fieldName' TYPE"
+			}
+			
+			sb.append(" , parentItem INTEGER )");
+
+			String createTableString = sb.toString();
+
+			// Create the table.
+			PreparedStatement preparedStatement = connection.prepareStatement(createTableString);
+			preparedStatement.executeUpdate();
+			preparedStatement.close();
+		}
 }
