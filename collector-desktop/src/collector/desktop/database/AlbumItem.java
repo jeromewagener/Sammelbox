@@ -234,7 +234,7 @@ public class AlbumItem {
 	 * @return The string representing the properly formatted album name.
 	 */
 	public String getDBAlbumName() {
-		return DatabaseWrapper.transformNameToDBName(albumName);
+		return DatabaseWrapper.encloseNameWithQuotes(albumName);
 	}
 	
 	/**
@@ -243,7 +243,7 @@ public class AlbumItem {
 	 * @return The string representing the properly formatted field name.
 	 */
 	public static String getDBFieldName(String FieldName) {
-		return DatabaseWrapper.transformNameToDBName(FieldName);
+		return DatabaseWrapper.encloseNameWithQuotes(FieldName);
 	}
 
 	public UUID getContentVersion() {

@@ -122,33 +122,18 @@ public class DatabaseWrapper  {
 		} catch (SQLException e1) {
 			return false;
 		}
-		boolean isConnectionReady = false;
-		// Querying all tables should not be successful on all working db 
-		// independently of the stored tables.
-		Statement statement = null;
-		ResultSet rs = null;
-		try {			
-			statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
-			rs = statement.executeQuery("SELECT name FROM sqlite_master WHERE type='table'");
-			isConnectionReady = true;
-		} catch (SQLException e) {
-			isConnectionReady = false;
-		}finally {
-			try {
-				if (rs != null) {
-					rs.close();
-				}
-			} catch (SQLException e) {
-			}
-			try {
-				if (statement != null) {
-					statement.close();
-				}
-			} catch (SQLException e) {
-			}						
-		}	
 		
-		return isConnectionReady;
+		/*
+		 *  Querying all albums should be successful on all working dbs,
+		 *  independently of stored albums.
+		 */
+					
+		List<String> albums = listAllAlbums();
+		if (albums == null) {
+			return  false;
+		}
+		
+		return true;
 	}
 	
 	/**
@@ -256,7 +241,7 @@ public class DatabaseWrapper  {
 			List<String> quickSearchableColumnNames = new ArrayList<String>();
 			for (MetaItemField metaItemField : fields) {
 				if (metaItemField.quickSearchable){
-					quickSearchableColumnNames.add(transformNameToDBName(metaItemField.getName()));
+					quickSearchableColumnNames.add(encloseNameWithQuotes(metaItemField.getName()));
 				}
 			}
 			createIndex(albumName, quickSearchableColumnNames);			
@@ -269,8 +254,6 @@ public class DatabaseWrapper  {
 				}
 				return false;
 			}
-			String typeInfoTableName = getTypeInfoTableName(albumName);
-			addNewAlbumToAlbumMasterTable(albumName, typeInfoTableName);
 			updateLastDatabaseChangeTimeStamp();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -335,9 +318,9 @@ public class DatabaseWrapper  {
 		
 		StringBuilder sb = new StringBuilder();
 		sb.append("ALTER TABLE ");
-		sb.append(transformNameToDBName(oldTableName));
+		sb.append(encloseNameWithQuotes(oldTableName));
 		sb.append(" RENAME TO ");
-		sb.append(transformNameToDBName(newTableName));
+		sb.append(encloseNameWithQuotes(newTableName));
 		String renameTableSQLString = sb.toString();
 		
 		PreparedStatement preparedStatement = null;
@@ -814,7 +797,7 @@ public class DatabaseWrapper  {
 	private static void dropTable(String tableName) throws SQLException {
 		Statement statement = connection.createStatement();
 		statement.setQueryTimeout(5);
-		statement.execute("DROP TABLE IF EXISTS "+transformNameToDBName(tableName));
+		statement.execute("DROP TABLE IF EXISTS "+encloseNameWithQuotes(tableName));
 		statement.close();
 	}
 
@@ -861,7 +844,7 @@ public class DatabaseWrapper  {
 		sb.append(createTempTableSQL);
 
 		sb.append(" TABLE ");
-		tableName = transformNameToDBName(tableName);
+		tableName = encloseNameWithQuotes(tableName);
 		sb.append(tableName);
 		sb.append(" ( id INTEGER PRIMARY KEY");
 
@@ -869,7 +852,7 @@ public class DatabaseWrapper  {
 		fields = handleCreatePictureField(fields, hasAlbumPicture);
 		for (MetaItemField item : fields) {
 			sb.append(" , ");
-			sb.append(transformNameToDBName(item.getName()));	// " , 'fieldName'"  
+			sb.append(encloseNameWithQuotes(item.getName()));	// " , 'fieldName'"  
 			sb.append(" ");										// " , 'fieldName' " 
 			sb.append(item.getType().toDatabaseTypeString());	// " , 'fieldName' TYPE"
 		}
@@ -881,7 +864,7 @@ public class DatabaseWrapper  {
 		sb.append(" INTEGER, FOREIGN KEY(");
 		sb.append(TYPE_INFO_COLUMN_NAME);
 		sb.append(") REFERENCES ");
-		sb.append(transformNameToDBName(typeInfoTableName));
+		sb.append(encloseNameWithQuotes(typeInfoTableName));
 		sb.append("(id))");
 		createMainTableString = sb.toString();
 
@@ -892,6 +875,9 @@ public class DatabaseWrapper  {
 		Statement statement = connection.createStatement();
 		statement.executeUpdate(createMainTableString);
 		statement.close();
+		
+		// Add the album back to the album master table
+		addNewAlbumToAlbumMasterTable(tableName, typeInfoTableName);
 		return typeInfoTableName;
 	}
 
@@ -941,9 +927,9 @@ public class DatabaseWrapper  {
 
 			// Prepare the append column string for the main table.
 			StringBuilder sb = new StringBuilder("ALTER TABLE ");
-			sb.append(transformNameToDBName(albumName));
+			sb.append(encloseNameWithQuotes(albumName));
 			sb.append(" ADD COLUMN ");
-			sb.append(transformNameToDBName(metaItemField.getName()));
+			sb.append(encloseNameWithQuotes(metaItemField.getName()));
 			sb.append(" ");
 			sb.append(FieldType.Text.toDatabaseTypeString());
 
@@ -1055,19 +1041,31 @@ public class DatabaseWrapper  {
 
 
 	/**
-	 * Transforms a given album or field name into a name format the db accepts, except for columnNames in a select query.
+	 * Encloses a given album or field name with single quotes such that db accepts it, except for columnNames in a select query.
 	 * Use {@link #transformColumnNameToSelectQueryName(String)} instead for columnName in select queries.
 	 * Use quote marks to enclose columnnames or album names with spaces for example.    
 	 * @param regularName The usual name without special markup for low level db interaction.
 	 * @return The proper string for the database interaction.
 	 */
-	public static String transformNameToDBName(String regularName) {
+	public static String encloseNameWithQuotes(String regularName) {
 		if (regularName.startsWith("'") && regularName.endsWith("'")) {
 			return regularName;
 		}
 		return "'" + regularName + "'";
 	}
-
+	
+	/**
+	 * Removes one layer of any single quotes enclosing the name. Quotes are unnecessary if setString is used to
+	 * add the name to a query.    
+	 * @param regularName The usual name with possibly enclosing singhle quotes.
+	 * @return The proper string with one layer of single quotes removed if present.
+	 */
+	private static String removeEnclosingNameWithQuotes(String regularName) {
+		if (regularName.startsWith("'") && regularName.endsWith("'")) {
+			return regularName.substring(1, regularName.length()-2);
+		}
+		return regularName ;
+	}
 
 	/**
 	 * Transforms a given fieldName into a columnName format, the db accepts. Use squared brackets to enclose columnnames with spaces for example.    
@@ -1120,13 +1118,13 @@ public class DatabaseWrapper  {
 		}
 		// Add the table id column, id column of main table is not stored, id type is determined differently via dbMetaData.
 		sb.append("TABLE IF NOT EXISTS ");
-		sb.append(transformNameToDBName(typeInfoTableName));
+		sb.append(encloseNameWithQuotes(typeInfoTableName));
 		sb.append(" ( id INTEGER PRIMARY KEY");
 		// Add the main table columns sans id field or typeInfo column
 		Iterator<MetaItemField> iter = metafields.iterator();
 		while(iter.hasNext()) {
 			sb.append(" , ");// " , "
-			sb.append(transformNameToDBName(iter.next().getName()));// " , 'fieldName'"
+			sb.append(encloseNameWithQuotes(iter.next().getName()));// " , 'fieldName'"
 			sb.append(" TEXT");// " , 'fieldName' TEXT" //stored as text to ease transformation back to java enum.
 		}
 		// Add the schema version uuid column
@@ -1136,7 +1134,7 @@ public class DatabaseWrapper  {
 		createTypeInfoTableString = sb.toString();
 
 		// Drop old type info table.
-		PreparedStatement preparedStatement = connection.prepareStatement("DROP TABLE IF EXISTS "+ transformNameToDBName(typeInfoTableName));
+		PreparedStatement preparedStatement = connection.prepareStatement("DROP TABLE IF EXISTS "+ encloseNameWithQuotes(typeInfoTableName));
 		preparedStatement.executeUpdate();
 
 		// Create the createTypeInfo table
@@ -1167,11 +1165,11 @@ public class DatabaseWrapper  {
 	 * @throws SQLException Exception thrown if any part of the operation fails.
 	 */
 	private static void appendNewTypeInfoTableColumn(String tableName, MetaItemField metaItemField) throws SQLException {
-		String typeInfoTableName = transformNameToDBName(getTypeInfoTableName(tableName));
-		String columnName = transformNameToDBName(metaItemField.getName());
+		String typeInfoTableName = encloseNameWithQuotes(getTypeInfoTableName(tableName));
+		String columnName = encloseNameWithQuotes(metaItemField.getName());
 		// Prepare the append column string for the type table.
 		StringBuilder sb = new StringBuilder("ALTER TABLE ");
-		sb.append(transformNameToDBName(typeInfoTableName));
+		sb.append(encloseNameWithQuotes(typeInfoTableName));
 		sb.append(" ADD COLUMN ");
 		sb.append(columnName);
 		sb.append(" TEXT");
@@ -1207,12 +1205,12 @@ public class DatabaseWrapper  {
 		// Build the string with placeholders '?'
 		String insertIntoTableString = "";
 		StringBuilder sb = new StringBuilder("INSERT INTO ");
-		sb.append(transformNameToDBName(typeInfoTableName));
+		sb.append(encloseNameWithQuotes(typeInfoTableName));
 		sb.append(" ( ");
 
 		Iterator<MetaItemField> it = metafields.iterator();
 		while(it.hasNext()) {
-			String fieldName = transformNameToDBName(it.next().getName()); 
+			String fieldName = encloseNameWithQuotes(it.next().getName()); 
 			sb.append(fieldName);
 			if (it.hasNext())
 			{
@@ -1297,13 +1295,13 @@ public class DatabaseWrapper  {
 		}
 
 		PreparedStatement preparedStatement = null;
-		StringBuilder sqlStringbuiler = new StringBuilder(	"CREATE INDEX " + transformNameToDBName(albumName+ INDEX_NAME_SUFFIX) + " ON " + 
-				transformNameToDBName(albumName) + " (");
-		sqlStringbuiler.append(transformNameToDBName(columnNames.get(0)));		
+		StringBuilder sqlStringbuiler = new StringBuilder(	"CREATE INDEX " + encloseNameWithQuotes(albumName+ INDEX_NAME_SUFFIX) + " ON " + 
+				encloseNameWithQuotes(albumName) + " (");
+		sqlStringbuiler.append(encloseNameWithQuotes(columnNames.get(0)));		
 		if (columnNames.size()>=2) {
 			for (int i=1;i<columnNames.size(); i++) {
 				sqlStringbuiler.append(", ");
-				sqlStringbuiler.append(transformNameToDBName(columnNames.get(i))); 
+				sqlStringbuiler.append(encloseNameWithQuotes(columnNames.get(i))); 
 			}
 		}
 		sqlStringbuiler.append(")");
@@ -1336,7 +1334,7 @@ public class DatabaseWrapper  {
 			return true;
 		}
 
-		indexName = DatabaseWrapper.transformNameToDBName(indexName);
+		indexName = DatabaseWrapper.encloseNameWithQuotes(indexName);
 		String sqlStatement = "DROP INDEX IF EXISTS "+ indexName;
 		Statement statement= null;
 
@@ -1390,7 +1388,7 @@ public class DatabaseWrapper  {
 		// Build the string with placeholders '?'
 		String insertIntoTableString = "";
 		StringBuilder sb = new StringBuilder("INSERT INTO ");
-		sb.append(transformNameToDBName(item.getAlbumName()));
+		sb.append(encloseNameWithQuotes(item.getAlbumName()));
 		sb.append(" ( ");
 
 
@@ -1400,7 +1398,7 @@ public class DatabaseWrapper  {
 
 			String name = it.next().getName();
 			if (!name.equalsIgnoreCase(TYPE_INFO_COLUMN_NAME)) {
-				sb.append(transformNameToDBName(name));
+				sb.append(encloseNameWithQuotes(name));
 				sb.append(", ");
 			}
 		}
@@ -1573,7 +1571,7 @@ public class DatabaseWrapper  {
 		String updateAlbumItemString = "";
 
 		StringBuilder sb = new StringBuilder("UPDATE ");
-		sb.append(transformNameToDBName(item.getAlbumName()));
+		sb.append(encloseNameWithQuotes(item.getAlbumName()));
 		sb.append(" SET ");
 
 		// Add each field to be update by the query
@@ -1587,7 +1585,7 @@ public class DatabaseWrapper  {
 					sb.append(", ");
 
 				}
-				sb.append(transformNameToDBName(next.getName()));
+				sb.append(encloseNameWithQuotes(next.getName()));
 				sb.append("=? ");
 				firstAppended = false;				
 			}
@@ -1645,7 +1643,7 @@ public class DatabaseWrapper  {
 	public static boolean deleteAlbumItem(String albumName, long albumItemId) {
 		boolean result = true;
 
-		String deleteAlbumItemString = "DELETE FROM " + transformNameToDBName(albumName) + " WHERE id=" + albumItemId;
+		String deleteAlbumItemString = "DELETE FROM " + encloseNameWithQuotes(albumName) + " WHERE id=" + albumItemId;
 		System.out.println(deleteAlbumItemString);
 
 		PreparedStatement preparedStatement;
@@ -1687,7 +1685,7 @@ public class DatabaseWrapper  {
 		ResultSet resultSet = null;
 		try {
 			statement = connection.createStatement();
-			resultSet = statement.executeQuery("SELECT COUNT(*) AS numberOfItems FROM " + transformNameToDBName(albumName));
+			resultSet = statement.executeQuery("SELECT COUNT(*) AS numberOfItems FROM " + encloseNameWithQuotes(albumName));
 
 			if (resultSet.next()) {
 				return resultSet.getLong("numberOfItems");
@@ -1713,7 +1711,7 @@ public class DatabaseWrapper  {
 
 	private static void updateContentVersion(String albumName, long itemID, UUID newUuid) throws SQLException {	
 		StringBuilder sb = new StringBuilder("UPDATE ");
-		sb.append(transformNameToDBName(albumName));
+		sb.append(encloseNameWithQuotes(albumName));
 		sb.append(" SET ");
 		sb.append(CONTENT_VERSION_COLUMN_NAME);
 		sb.append(" = ? ");
@@ -1729,7 +1727,7 @@ public class DatabaseWrapper  {
 	private static void updateSchemaVersion(String albumName) throws SQLException {
 		String typeInfoTableName = getTypeInfoTableName(albumName);
 		StringBuilder sb = new StringBuilder("UPDATE ");
-		sb.append(transformNameToDBName(typeInfoTableName));
+		sb.append(encloseNameWithQuotes(typeInfoTableName));
 		sb.append(" SET ");
 		sb.append(SCHEMA_VERSION_COLUMN_NAME);
 		sb.append(" = ?");
@@ -1815,7 +1813,7 @@ public class DatabaseWrapper  {
 	// TODO AlbumManager should be used instead. not until a proper 
 	/**
 	 * Lists all albums currently stored in the database.
-	 * @return A list of albumnames. May be empty if no albums were created yet. Null in case of an error.
+	 * @return A list of album names. May be empty if no albums were created yet. Null in case of an error.
 	 */
 	public static List<String> listAllAlbums() {
 		List<String> albumList = new ArrayList<String>();
@@ -1832,14 +1830,14 @@ public class DatabaseWrapper  {
 				albumList.add(rs.getString(1));
 			}
 		} catch (SQLException e1) {
-			// TODO:log
+			albumList = null;
 		} finally {
 			try {
 				if (statement != null) {
 					statement.close();
 				}
 			}catch (SQLException e) {
-				// TODO:log
+				albumList =  null;
 			}
 		}		
 		return albumList;
@@ -1957,7 +1955,7 @@ public class DatabaseWrapper  {
 		}*/
 		try {
 			statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
-			String dbAlbumName = transformNameToDBName(albumName);
+			String dbAlbumName = encloseNameWithQuotes(albumName);
 
 			// Select query
 			ResultSet rs = statement.executeQuery("SELECT * FROM "+ dbAlbumName);
@@ -2005,7 +2003,7 @@ public class DatabaseWrapper  {
 		}*/
 		try {
 			statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
-			String dbAlbumName = transformNameToDBName(albumName);
+			String dbAlbumName = encloseNameWithQuotes(albumName);
 			// Select query
 			ResultSet rs = statement.executeQuery("SELECT * FROM "+ dbAlbumName);
 
@@ -2056,7 +2054,7 @@ public class DatabaseWrapper  {
 
 			// Select query
 			// Retrieve table metadata
-			set =	statement.executeQuery("SELECT * FROM "+transformNameToDBName(albumName.trim()));
+			set =	statement.executeQuery("SELECT * FROM "+encloseNameWithQuotes(albumName.trim()));
 			metaData = set.getMetaData();
 
 			int columnCount = metaData.getColumnCount();
@@ -2110,7 +2108,7 @@ public class DatabaseWrapper  {
 				return FieldType.ID;
 			}
 
-			String dbtypeInfoTableName = transformNameToDBName(getTypeInfoTableName(tableName));
+			String dbtypeInfoTableName = encloseNameWithQuotes(getTypeInfoTableName(tableName));
 
 			statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
 			statement.setQueryTimeout(30); // set timeout to 30 sec.
@@ -2377,7 +2375,7 @@ public class DatabaseWrapper  {
 	 * @return A string containing the proper SQL string.
 	 */
 	public static String createSelectStarQuery(String albumName) {
-		return "SELECT * FROM " + transformNameToDBName(albumName);
+		return "SELECT * FROM " + encloseNameWithQuotes(albumName);
 	}
 
 
@@ -2391,7 +2389,7 @@ public class DatabaseWrapper  {
 	public static String createSelectColumnQueryWhere(String albumName, String columnName, String whereColumn) {
 
 		return  "SELECT " + transformColumnNameToSelectQueryName(columnName)+ 
-				" FROM "+ transformNameToDBName(albumName)+ 
+				" FROM "+ encloseNameWithQuotes(albumName)+ 
 				" WHERE "+transformColumnNameToSelectQueryName(whereColumn)+ "=?";
 	}
 
@@ -2407,7 +2405,7 @@ public class DatabaseWrapper  {
 
 		boolean result = true;
 		try {
-			String sqlString = "UPDATE "+ transformNameToDBName(tableName)+ " SET " +transformNameToDBName(columnMetaInfo.getName()) + "=?";
+			String sqlString = "UPDATE "+ encloseNameWithQuotes(tableName)+ " SET " +encloseNameWithQuotes(columnMetaInfo.getName()) + "=?";
 			System.out.println(sqlString);
 			preparedStatement = connection.prepareStatement(sqlString);
 			switch (columnMetaInfo.getType()) {
@@ -2732,7 +2730,7 @@ public class DatabaseWrapper  {
 	
 	private static boolean addNewAlbumToAlbumMasterTable(String albumTableName, String albumTypeInfoTableName) {		
 		StringBuilder sb = new StringBuilder("INSERT INTO ");	
-		sb.append(transformNameToDBName(albumMasterTableName));
+		sb.append(encloseNameWithQuotes(albumMasterTableName));
 		sb.append(" (");
 		sb.append(ALBUM_TABLENAME_IN_ALBUM_MASTER_TABLE);
 		sb.append(", ");
@@ -2746,9 +2744,9 @@ public class DatabaseWrapper  {
 		try {
 			preparedStatement = connection.prepareStatement(registerNewAlbumToAlbumMasterableString);
 			// New album name
-			preparedStatement.setString(1, albumTableName);
+			preparedStatement.setString(1, removeEnclosingNameWithQuotes(albumTableName));
 			// New type info name
-			preparedStatement.setString(2, albumTypeInfoTableName);
+			preparedStatement.setString(2, removeEnclosingNameWithQuotes(albumTypeInfoTableName));
 			preparedStatement.executeUpdate();
 		} catch (SQLException e) {
 			// TODO log
@@ -2768,7 +2766,7 @@ public class DatabaseWrapper  {
 	
 	private static boolean removeAlbumFromAlbumMasterTable(String albumTableName)  {
 		StringBuilder sb = new StringBuilder("DELETE FROM ");	
-		sb.append(transformNameToDBName(albumMasterTableName));
+		sb.append(encloseNameWithQuotes(albumMasterTableName));
 		sb.append(" WHERE ");
 		sb.append(ALBUM_TABLENAME_IN_ALBUM_MASTER_TABLE);
 		sb.append(" = ?");
@@ -2851,14 +2849,14 @@ public class DatabaseWrapper  {
 				sb.append("IF NOT EXISTS "); 
 			}
 			
-			sb.append(transformNameToDBName(tableName));
+			sb.append(encloseNameWithQuotes(tableName));
 			sb.append(" ( ");
 			sb.append(ID_COLUMN_NAME);
 			sb.append(" INTEGER PRIMARY KEY");
 			
 			for (MetaItemField item : fields) {
 				sb.append(" , ");
-				sb.append(transformNameToDBName(item.getName()));	// " , 'fieldName'"  
+				sb.append(encloseNameWithQuotes(item.getName()));	// " , 'fieldName'"  
 				sb.append(" ");										// " , 'fieldName' " 
 				sb.append(item.getType().toDatabaseTypeString());	// " , 'fieldName' TYPE"
 			}

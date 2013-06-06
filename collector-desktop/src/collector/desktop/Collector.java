@@ -113,7 +113,7 @@ public class Collector implements UIObservable, UIObserver {
 		if (!DatabaseWrapper.openConnection()) {	
 			normalStartup =  false;
 			if (DatabaseWrapper.openCleanConnection() == false) {
-				logger.error("The database is probably corrupt since opening a connection failed. A dump of the db can be found in the program App folder.");
+				logger.error("The database is corrupt since opening a connection failed. A dump of the db can be found in the program App folder.");
 			}
 		}		
 		instance = this;
