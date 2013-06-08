@@ -27,6 +27,7 @@ import collector.desktop.album.FieldType;
 import collector.desktop.album.MetaItemField;
 import collector.desktop.database.AlbumItemStore;
 import collector.desktop.database.DatabaseWrapper;
+import collector.desktop.database.QueryBuilder;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
 import collector.desktop.gui.browser.BrowserFacade;
 import collector.desktop.gui.various.ComponentFactory;
@@ -322,7 +323,7 @@ public class CreateAlbumSidepane {
 				Collector.refreshSWTAlbumList();
 				Collector.setSelectedAlbum(albumName);
 				
-				BrowserFacade.performBrowserQueryAndShow(DatabaseWrapper.createSelectStarQuery(albumName));
+				BrowserFacade.performBrowserQueryAndShow(QueryBuilder.createSelectStarQuery(albumName));
 
 				Collector.changeRightCompositeTo(PanelType.Empty, EmptySidepane.build(parentComposite));
 			}

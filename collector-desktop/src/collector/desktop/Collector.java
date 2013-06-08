@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import collector.desktop.database.DatabaseWrapper;
+import collector.desktop.database.QueryBuilder;
 import collector.desktop.filesystem.BuildInformation;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
 import collector.desktop.filesystem.export.CSVExporter;
@@ -488,7 +489,7 @@ public class Collector implements UIObservable, UIObserver {
 		Collector.getQuickSearchTextField().setEnabled(
 				DatabaseWrapper.isAlbumQuicksearchable(albumName));
 
-		BrowserFacade.performBrowserQueryAndShow(DatabaseWrapper.createSelectStarQuery(albumName));
+		BrowserFacade.performBrowserQueryAndShow(QueryBuilder.createSelectStarQuery(albumName));
 		
 		Collector.getViewSWTList().setEnabled(AlbumViewManager.hasAlbumViewsAttached(albumName));
 		AlbumViewManager.getInstance().notifyObservers();

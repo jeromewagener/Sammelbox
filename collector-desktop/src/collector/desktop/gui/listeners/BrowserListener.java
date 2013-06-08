@@ -17,6 +17,7 @@ import collector.desktop.album.AlbumItem;
 import collector.desktop.album.FieldType;
 import collector.desktop.album.ItemField;
 import collector.desktop.database.DatabaseWrapper;
+import collector.desktop.database.QueryBuilder;
 import collector.desktop.gui.browser.BrowserFacade;
 import collector.desktop.gui.composites.StatusBarComposite;
 import collector.desktop.gui.sidepanes.EmptySidepane;
@@ -88,7 +89,7 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 
 			if (messageBox.open() == SWT.YES) {
 				DatabaseWrapper.deleteAlbumItem(Collector.getSelectedAlbum(), Long.parseLong(id));
-				BrowserFacade.performBrowserQueryAndShow(DatabaseWrapper.createSelectStarQuery(Collector.getSelectedAlbum()));
+				BrowserFacade.performBrowserQueryAndShow(QueryBuilder.createSelectStarQuery(Collector.getSelectedAlbum()));
 			}
 
 			// Do not change the page
@@ -155,7 +156,7 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 			// Do not change the page
 			event.doit = false;
 		}else if (event.location.equals(showDetailsViewOfAlbum)) {
-			BrowserFacade.performBrowserQueryAndShow(DatabaseWrapper.createSelectStarQuery(Collector.getSelectedAlbum()));
+			BrowserFacade.performBrowserQueryAndShow(QueryBuilder.createSelectStarQuery(Collector.getSelectedAlbum()));
 			
 			Collector.changeRightCompositeTo(PanelType.Empty, EmptySidepane.build(Collector.getThreePanelComposite()));
 			// Do not change the page

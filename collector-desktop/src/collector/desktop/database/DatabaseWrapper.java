@@ -377,7 +377,7 @@ public class DatabaseWrapper  {
 		try {
 			connection.setAutoCommit(false);
 			// Backup the old data in java objects
-			List<AlbumItem> albumItems = fetchAlbumItemsFromDatabase(createSelectStarQuery(albumName));
+			List<AlbumItem> albumItems = fetchAlbumItemsFromDatabase(QueryBuilder.createSelectStarQuery(albumName));
 			Map<Long, String> rawPicFieldMap = new HashMap<Long, String>();
 			// Create the new table pointing to new typeinfo
 			boolean keepPictureField = albumHasPictureField(albumName) && !metaItemField.getType().equals(FieldType.Picture);
@@ -459,7 +459,7 @@ public class DatabaseWrapper  {
 		try {
 			connection.setAutoCommit(false);
 			// Backup the old data in java objects
-			List<AlbumItem> albumItems = fetchAlbumItemsFromDatabase(createSelectStarQuery(albumName));
+			List<AlbumItem> albumItems = fetchAlbumItemsFromDatabase(QueryBuilder.createSelectStarQuery(albumName));
 			Map<Long, String> rawPicFieldMap = new HashMap<Long, String>();
 			// Create the new table pointing to new typeinfo
 			boolean hasPictureField = albumHasPictureField(albumName);
@@ -535,7 +535,7 @@ public class DatabaseWrapper  {
 		try {
 			connection.setAutoCommit(false);
 			// Backup the old data in java objects
-			List<AlbumItem> albumItems = fetchAlbumItemsFromDatabase(createSelectStarQuery(albumName));
+			List<AlbumItem> albumItems = fetchAlbumItemsFromDatabase(QueryBuilder.createSelectStarQuery(albumName));
 			Map<Long, String> rawPicFieldMap = new HashMap<Long, String>();
 			// Create the new table pointing to new typeinfo
 			boolean hasPictureField = albumHasPictureField(albumName);
@@ -638,7 +638,7 @@ public class DatabaseWrapper  {
 		ResultSet rs = null;
 		String rawDBString = null;
 		try {
-			preparedStatement = connection.prepareStatement(createSelectColumnQueryWhere(tableName, PICTURE_COLUMN_NAME, "id"));
+			preparedStatement = connection.prepareStatement(QueryBuilder.createSelectColumnQueryWhere(tableName, PICTURE_COLUMN_NAME, "id"));
 			preparedStatement.setLong(1, albumItemID);
 			rs = preparedStatement.executeQuery();
 			if (rs.next()) {
@@ -1690,8 +1690,7 @@ public class DatabaseWrapper  {
 		ResultSet resultSet = null;
 		try {
 			statement = connection.createStatement();
-			resultSet = statement.executeQuery("SELECT COUNT(*) AS numberOfItems FROM " + encloseNameWithQuotes(albumName));
-
+			resultSet = statement.executeQuery(QueryBuilder.createCountAsAliasStarWhere(albumName, "numberOfItems"));
 			if (resultSet.next()) {
 				return resultSet.getLong("numberOfItems");
 			}
@@ -1778,10 +1777,9 @@ public class DatabaseWrapper  {
 
 		// If no field is quicksearchable return select * from albumName or no terms have been entered
 		if (quicksearchFieldNames == null || quicksearchFieldNames.isEmpty() || quickSearchTerms == null || quickSearchTerms.isEmpty() ) {
-			query = createSelectStarQuery(albumName);
+			query = QueryBuilder.createSelectStarQuery(albumName);
 			return executeSQLQuery(query);
 		}
-		System.out.println("executeQuickSearch(), quickSearchTerms"+ quickSearchTerms);
 
 		boolean first = true;
 		for (String term : quickSearchTerms) {
@@ -1822,7 +1820,7 @@ public class DatabaseWrapper  {
 	 */
 	public static List<String> listAllAlbums() {
 		List<String> albumList = new ArrayList<String>();
-		String queryAllAlbumsSQL = "Select " + ALBUM_TABLENAME_IN_ALBUM_MASTER_TABLE + " FROM " + albumMasterTableName;		
+		String queryAllAlbumsSQL = QueryBuilder.createSelectColumnQuery(albumMasterTableName, ALBUM_TABLENAME_IN_ALBUM_MASTER_TABLE);
 		Statement statement = null;
 		ResultSet rs = null;
 		try {			
@@ -1963,7 +1961,7 @@ public class DatabaseWrapper  {
 			String dbAlbumName = encloseNameWithQuotes(albumName);
 
 			// Select query
-			ResultSet rs = statement.executeQuery("SELECT * FROM "+ dbAlbumName);
+			ResultSet rs = statement.executeQuery(QueryBuilder.createSelectStarQuery(dbAlbumName));
 
 			// Retrieve table metadata
 			ResultSetMetaData metaData = rs.getMetaData();
@@ -2008,9 +2006,8 @@ public class DatabaseWrapper  {
 		}*/
 		try {
 			statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
-			String dbAlbumName = encloseNameWithQuotes(albumName);
 			// Select query
-			ResultSet rs = statement.executeQuery("SELECT * FROM "+ dbAlbumName);
+			ResultSet rs = statement.executeQuery(QueryBuilder.createSelectStarQuery(albumName));
 
 			// Retrieve table metadata
 			ResultSetMetaData metaData = rs.getMetaData();
@@ -2059,7 +2056,7 @@ public class DatabaseWrapper  {
 
 			// Select query
 			// Retrieve table metadata
-			set =	statement.executeQuery("SELECT * FROM "+encloseNameWithQuotes(albumName.trim()));
+			set =	statement.executeQuery(QueryBuilder.createSelectStarQuery(albumName));
 			metaData = set.getMetaData();
 
 			int columnCount = metaData.getColumnCount();
@@ -2118,7 +2115,7 @@ public class DatabaseWrapper  {
 			statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
 			statement.setQueryTimeout(30); // set timeout to 30 sec.
 
-			typeRs = statement.executeQuery("SELECT "+ transformColumnNameToSelectQueryName(columnName) +" FROM "+ dbtypeInfoTableName);
+			typeRs = statement.executeQuery(QueryBuilder.createSelectColumnQuery(dbtypeInfoTableName, columnName));
 
 			type =  FieldType.valueOf(typeRs.getString(1));
 		} catch (Exception e) {
@@ -2303,7 +2300,7 @@ public class DatabaseWrapper  {
 	 * @return The requested albumItem. Null if no item with the specified id was found.
 	 */
 	public static AlbumItem fetchAlbumItem(String albumName, long albumItemId) {
-		String queryString =  createSelectStarQuery(albumName)+ " WHERE id=" + albumItemId;
+		String queryString =  QueryBuilder.createSelectStarQuery(albumName)+ " WHERE id=" + albumItemId;
 		List<AlbumItem> items = fetchAlbumItemsFromDatabase(queryString);
 		if (items.isEmpty()) {
 			return null;
@@ -2373,31 +2370,6 @@ public class DatabaseWrapper  {
 
 		return list;
 	}	
-
-	/**
-	 * Creates a simple select * from albumName with a properly formatted albumName
-	 * @param albumName The album on which the query should be performed.
-	 * @return A string containing the proper SQL string.
-	 */
-	public static String createSelectStarQuery(String albumName) {
-		return "SELECT * FROM " + encloseNameWithQuotes(albumName);
-	}
-
-
-	/**
-	 * Creates a simple select * from albumName with a properly formatted albumName and columnName
-	 * @param albumName The name of the album to which this query refers to.
-	 * @param columnName The name of the column to be queried.
-	 * @param whereColumn The name of the column which is referenced in the where clause.
-	 * @return The properly formatted select query containing a wildcard as the value for in th where clause.
-	 */
-	public static String createSelectColumnQueryWhere(String albumName, String columnName, String whereColumn) {
-
-		return  "SELECT " + transformColumnNameToSelectQueryName(columnName)+ 
-				" FROM "+ encloseNameWithQuotes(albumName)+ 
-				" WHERE "+transformColumnNameToSelectQueryName(whereColumn)+ "=?";
-	}
-
 
 	/**
 	 * Updates a table entry with a default value for the specific type of that column.

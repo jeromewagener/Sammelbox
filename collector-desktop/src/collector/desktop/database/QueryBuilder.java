@@ -283,4 +283,53 @@ public class QueryBuilder {
 	public static String buildQueryString(ArrayList<QueryComponent> queryComponents, boolean connectByAnd, String album) {
 		return buildQuery(queryComponents, connectByAnd, album, null, false);
 	}
+	
+	/**
+	 * Creates a simple select * from albumName with a properly formatted albumName
+	 * @param albumName The album on which the query should be performed.
+	 * @return A string containing the proper SQL string.
+	 */
+	public static String createSelectStarQuery(String albumName) {
+		return "SELECT * FROM " + DatabaseWrapper.encloseNameWithQuotes(albumName);
+	}
+
+
+	/**
+	 * Creates a simple select * from albumName with a properly formatted albumName and columnName and whereColumn = ? for proper value insertion.
+	 * @param albumName The name of the album to which this query refers to.
+	 * @param columnName The name of the column to be queried.
+	 * @param whereColumn The name of the column which is referenced in the where clause.
+	 * @return The properly formatted select query containing a wildcard as the value for in th where clause.
+	 */
+	public static String createSelectColumnQueryWhere(String albumName, String columnName, String whereColumn) {
+
+		return  createSelectColumnQuery(albumName, columnName)+
+				" WHERE "+ DatabaseWrapper.transformColumnNameToSelectQueryName(whereColumn)+ "=?";
+	}
+	
+	/**
+	 * Creates a simple select * from albumName with a properly formatted albumName and columnName
+	 * @param albumName The name of the album to which this query refers to.
+	 * @param columnName The name of the column to be queried.
+	 * @param whereColumn The name of the column which is referenced in the where clause.
+	 * @return The properly formatted select query containing a wildcard as the value for in th where clause.
+	 */
+	public static String createSelectColumnQuery(String albumName, String columnName) {
+
+		return  "SELECT " +  DatabaseWrapper.transformColumnNameToSelectQueryName(columnName)+ 
+				" FROM "+  DatabaseWrapper.encloseNameWithQuotes(albumName); 
+	}
+	
+	/**
+	 *  Creates a query in the form of "SELECT COUNT(*) AS alias FROM albumName WHERE whereColumn"
+	 * @param albumName
+	 * @param alias
+	 * @return The string containing the query.
+	 */
+	public static String createCountAsAliasStarWhere(String albumName, String alias) {
+
+		return 	"SELECT COUNT(*) AS " + alias + 
+				" FROM "+  DatabaseWrapper.encloseNameWithQuotes(albumName);
+		
+	}
 }
