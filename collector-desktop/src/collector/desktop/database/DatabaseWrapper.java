@@ -26,10 +26,15 @@ import java.util.UUID;
 
 import org.jdbcdslog.ConnectionLoggingProxy;
 
+import collector.desktop.album.AlbumItem;
+import collector.desktop.album.FieldType;
+import collector.desktop.album.ItemField;
+import collector.desktop.album.MetaItemField;
+import collector.desktop.album.OptionType;
+import collector.desktop.album.StarRating;
+import collector.desktop.database.QueryBuilder.QueryComponent;
+import collector.desktop.database.QueryBuilder.QueryOperator;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
-import collector.desktop.gui.tobemoved.QueryBuilder;
-import collector.desktop.gui.tobemoved.QueryBuilder.QueryComponent;
-import collector.desktop.gui.tobemoved.QueryBuilder.QueryOperator;
 
 public class DatabaseWrapper  {
 	/** The final name of the picture column. Currently only a single column is supported, this is its name.*/
@@ -240,7 +245,7 @@ public class DatabaseWrapper  {
 			// Indicate which fields are quicksearchable
 			List<String> quickSearchableColumnNames = new ArrayList<String>();
 			for (MetaItemField metaItemField : fields) {
-				if (metaItemField.quickSearchable){
+				if (metaItemField.isQuickSearchable()){
 					quickSearchableColumnNames.add(encloseNameWithQuotes(metaItemField.getName()));
 				}
 			}
@@ -600,12 +605,12 @@ public class DatabaseWrapper  {
 
 		List<String> quickSearchableColumnNames = getIndexedColumnNames(albumName);
 		// Enable for quicksearch feature
-		if (metaItemField.quickSearchable && !quickSearchableColumnNames.contains(metaItemField.getName())) {
+		if (metaItemField.isQuickSearchable() && !quickSearchableColumnNames.contains(metaItemField.getName())) {
 			quickSearchableColumnNames.add(metaItemField.getName());
 			result = dropIndex(albumName);
 			boolean createIndexRes = createIndex(albumName, quickSearchableColumnNames);
 			result = (result && createIndexRes);
-		}else if (!metaItemField.quickSearchable){	
+		}else if (!metaItemField.isQuickSearchable()){	
 			// Disable for quicksearch feature
 			quickSearchableColumnNames.remove(metaItemField.getName());
 			result = dropIndex(albumName);
@@ -1791,7 +1796,7 @@ public class DatabaseWrapper  {
 			queryFields = new ArrayList<QueryComponent>();
 			for (MetaItemField field : albumFields) {
 				// Only take quicksearchable fields into account
-				if (field.quickSearchable) {
+				if (field.isQuickSearchable()) {
 					System.out.println("executeQuickSearch(), quickSearchField: "+ field);
 					if (field.getType().equals(FieldType.Text)) {
 						queryFields.add(QueryBuilder.getQueryComponent(field.getName(), QueryOperator.like, term));

@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import collector.desktop.database.FieldType;
-import collector.desktop.database.MetaItemField;
+import collector.desktop.album.FieldType;
+import collector.desktop.album.MetaItemField;
 
 public class MetaItemFieldFilter {
 	

@@ -1,4 +1,4 @@
-package collector.desktop.database;
+package collector.desktop.album;
 
 import java.sql.Date;
 import java.sql.Time;
@@ -104,7 +104,7 @@ public enum FieldType {
 		case Option:
 			return OptionType.Option;
 		case StarRating :
-			return collector.desktop.database.StarRating.ZeroStars.toString();
+			return collector.desktop.album.StarRating.ZeroStars.toString();
 		// Default value is never reached, it would result in a null pointer exception.
 		// However method must return something.
 		default:

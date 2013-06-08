@@ -25,12 +25,12 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 
 import collector.desktop.Collector;
-import collector.desktop.database.AlbumItem;
+import collector.desktop.album.AlbumItem;
+import collector.desktop.album.FieldType;
+import collector.desktop.album.MetaItemField;
+import collector.desktop.album.OptionType;
+import collector.desktop.album.StarRating;
 import collector.desktop.database.DatabaseWrapper;
-import collector.desktop.database.FieldType;
-import collector.desktop.database.MetaItemField;
-import collector.desktop.database.OptionType;
-import collector.desktop.database.StarRating;
 import collector.desktop.gui.browser.BrowserFacade;
 import collector.desktop.gui.image.ImageDropAndManagementComposite;
 import collector.desktop.gui.managers.WelcomePageManager;

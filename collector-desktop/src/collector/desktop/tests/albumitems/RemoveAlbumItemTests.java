@@ -13,12 +13,12 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import collector.desktop.database.AlbumItem;
+import collector.desktop.album.AlbumItem;
+import collector.desktop.album.FieldType;
+import collector.desktop.album.ItemField;
+import collector.desktop.album.MetaItemField;
 import collector.desktop.database.AlbumItemResultSet;
 import collector.desktop.database.DatabaseWrapper;
-import collector.desktop.database.FieldType;
-import collector.desktop.database.ItemField;
-import collector.desktop.database.MetaItemField;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
 
 public class RemoveAlbumItemTests {

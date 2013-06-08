@@ -5,7 +5,7 @@ import java.io.File;
 import org.eclipse.swt.browser.Browser;
 
 import collector.desktop.Collector;
-import collector.desktop.database.AlbumItem;
+import collector.desktop.album.AlbumItem;
 import collector.desktop.database.AlbumItemStore;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
 import collector.desktop.gui.various.ComponentFactory;

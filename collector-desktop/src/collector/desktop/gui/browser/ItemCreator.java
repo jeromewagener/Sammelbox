@@ -5,10 +5,10 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
-import collector.desktop.database.AlbumItem;
-import collector.desktop.database.FieldType;
-import collector.desktop.database.ItemField;
-import collector.desktop.database.OptionType;
+import collector.desktop.album.AlbumItem;
+import collector.desktop.album.FieldType;
+import collector.desktop.album.ItemField;
+import collector.desktop.album.OptionType;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
 import collector.desktop.internationalization.DictKeys;
 import collector.desktop.internationalization.Translator;

@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import org.eclipse.swt.browser.Browser;
 
 import collector.desktop.Collector;
-import collector.desktop.database.AlbumItem;
+import collector.desktop.album.AlbumItem;
 import collector.desktop.database.DatabaseWrapper;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
 import collector.desktop.internationalization.DictKeys;

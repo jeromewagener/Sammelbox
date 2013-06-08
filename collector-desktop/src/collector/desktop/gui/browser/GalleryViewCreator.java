@@ -6,10 +6,10 @@ import java.util.List;
 
 import org.eclipse.swt.browser.Browser;
 
-import collector.desktop.database.AlbumItem;
+import collector.desktop.album.AlbumItem;
+import collector.desktop.album.FieldType;
+import collector.desktop.album.ItemField;
 import collector.desktop.database.AlbumItemStore;
-import collector.desktop.database.FieldType;
-import collector.desktop.database.ItemField;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
 
 public class GalleryViewCreator {

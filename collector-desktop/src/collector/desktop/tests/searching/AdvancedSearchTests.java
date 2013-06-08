@@ -14,10 +14,10 @@ import org.junit.Test;
 
 import collector.desktop.database.AlbumItemResultSet;
 import collector.desktop.database.DatabaseWrapper;
+import collector.desktop.database.QueryBuilder;
+import collector.desktop.database.QueryBuilder.QueryComponent;
+import collector.desktop.database.QueryBuilder.QueryOperator;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
-import collector.desktop.gui.tobemoved.QueryBuilder;
-import collector.desktop.gui.tobemoved.QueryBuilder.QueryComponent;
-import collector.desktop.gui.tobemoved.QueryBuilder.QueryOperator;
 import collector.desktop.tests.CollectorTestExecuter;
 
 public class AdvancedSearchTests {

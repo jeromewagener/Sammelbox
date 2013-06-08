@@ -1,4 +1,6 @@
-package collector.desktop.database;
+package collector.desktop.album;
+
+import collector.desktop.database.DatabaseWrapper;
 
 public class MetaItemField {
 
@@ -19,7 +21,7 @@ public class MetaItemField {
 	 * @param name The name of the field.
 	 * @param type The type of the field. All values inserted must be of the specified type.
 	 */
-	MetaItemField(String name, FieldType type) {
+	public MetaItemField(String name, FieldType type) {
 		this.name = name;
 		this.type = type;
 		this.quickSearchable = false;

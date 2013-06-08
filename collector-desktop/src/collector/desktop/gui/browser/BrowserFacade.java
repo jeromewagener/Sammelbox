@@ -3,7 +3,7 @@ package collector.desktop.gui.browser;
 import java.io.InputStream;
 
 import collector.desktop.Collector;
-import collector.desktop.database.AlbumItem;
+import collector.desktop.album.AlbumItem;
 import collector.desktop.database.AlbumItemResultSet;
 
 // TODO review method parameters - browser ref passed

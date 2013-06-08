@@ -1,10 +1,11 @@
-package collector.desktop.database;
+package collector.desktop.album;
 
 import java.net.URI;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
+import collector.desktop.database.DatabaseWrapper;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
 
 public class AlbumItem {

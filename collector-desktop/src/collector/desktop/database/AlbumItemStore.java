@@ -7,6 +7,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import collector.desktop.album.AlbumItem;
+import collector.desktop.album.FieldType;
+import collector.desktop.album.ItemField;
+import collector.desktop.album.MetaItemField;
+import collector.desktop.album.OptionType;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
 import collector.desktop.internationalization.Translator;
 

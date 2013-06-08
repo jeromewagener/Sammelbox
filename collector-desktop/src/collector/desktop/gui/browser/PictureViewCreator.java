@@ -5,10 +5,10 @@ import java.net.URI;
 import java.util.List;
 
 import collector.desktop.Collector;
-import collector.desktop.database.AlbumItem;
+import collector.desktop.album.AlbumItem;
+import collector.desktop.album.FieldType;
+import collector.desktop.album.ItemField;
 import collector.desktop.database.DatabaseWrapper;
-import collector.desktop.database.FieldType;
-import collector.desktop.database.ItemField;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
 import collector.desktop.gui.composites.StatusBarComposite;
 import collector.desktop.gui.various.ComponentFactory;

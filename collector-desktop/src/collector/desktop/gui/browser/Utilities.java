@@ -7,7 +7,7 @@ import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.widgets.Display;
 
 import collector.desktop.Collector;
-import collector.desktop.database.AlbumItem;
+import collector.desktop.album.AlbumItem;
 import collector.desktop.database.AlbumItemResultSet;
 import collector.desktop.database.AlbumItemStore;
 import collector.desktop.database.DatabaseWrapper;

@@ -1,4 +1,4 @@
-package collector.desktop.database;
+package collector.desktop.album;
 
 public enum StarRating {
 	ZeroStars,

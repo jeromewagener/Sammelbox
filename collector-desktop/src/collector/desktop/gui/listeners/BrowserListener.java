@@ -13,10 +13,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.MessageBox;
 
 import collector.desktop.Collector;
-import collector.desktop.database.AlbumItem;
+import collector.desktop.album.AlbumItem;
+import collector.desktop.album.FieldType;
+import collector.desktop.album.ItemField;
 import collector.desktop.database.DatabaseWrapper;
-import collector.desktop.database.FieldType;
-import collector.desktop.database.ItemField;
 import collector.desktop.gui.browser.BrowserFacade;
 import collector.desktop.gui.composites.StatusBarComposite;
 import collector.desktop.gui.sidepanes.EmptySidepane;

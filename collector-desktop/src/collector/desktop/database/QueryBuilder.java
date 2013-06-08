@@ -1,8 +1,7 @@
-package collector.desktop.gui.tobemoved;
+package collector.desktop.database;
 
 import java.util.ArrayList;
 
-import collector.desktop.database.DatabaseWrapper;
 import collector.desktop.gui.browser.BrowserFacade;
 
 public class QueryBuilder {

@@ -1,4 +1,4 @@
-package collector.desktop.database;
+package collector.desktop.album;
 
 import java.net.URI;
 import java.sql.Date;

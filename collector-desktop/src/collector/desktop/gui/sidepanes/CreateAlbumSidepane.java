@@ -23,10 +23,10 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
 import collector.desktop.Collector;
+import collector.desktop.album.FieldType;
+import collector.desktop.album.MetaItemField;
 import collector.desktop.database.AlbumItemStore;
 import collector.desktop.database.DatabaseWrapper;
-import collector.desktop.database.FieldType;
-import collector.desktop.database.MetaItemField;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
 import collector.desktop.gui.browser.BrowserFacade;
 import collector.desktop.gui.various.ComponentFactory;

@@ -8,6 +8,9 @@ import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 
+import collector.desktop.album.FieldType;
+import collector.desktop.album.MetaItemField;
+
 public class AlbumItemResultSet {
 	private ResultSet items;
 	private String albumName = "";
