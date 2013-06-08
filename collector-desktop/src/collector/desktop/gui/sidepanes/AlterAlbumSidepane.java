@@ -54,7 +54,7 @@ public class AlterAlbumSidepane {
 
 		// album name label & text-box to enter album name
 		Label albumNameLabel = new Label(alterAlbumComposite, SWT.NONE);
-		albumNameLabel.setText("The new name of the Album:");
+		albumNameLabel.setText(Translator.toBeTranslated("The new name of the Album:"));
 		final Text albumNameText = new Text(alterAlbumComposite, SWT.BORDER);
 		albumNameText.setLayoutData(new GridData(GridData.FILL_BOTH));
 		albumNameText.setText(album);
@@ -64,7 +64,6 @@ public class AlterAlbumSidepane {
 		Button renameAlbumButton = new Button(alterAlbumComposite, SWT.PUSH);
 		renameAlbumButton.setText(Translator.get(DictKeys.BUTTON_RENAME_ALBUM));
 		renameAlbumButton.setLayoutData(new GridData(GridData.FILL_BOTH));
-
 		Label seperator = new Label(alterAlbumComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
 		GridData gridData= new GridData(GridData.FILL_BOTH);
 		gridData.heightHint = 15;

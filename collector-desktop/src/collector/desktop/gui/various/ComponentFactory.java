@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Tracker;
 
 import collector.desktop.Collector;
 import collector.desktop.gui.sidepanes.EmptySidepane;
+import collector.desktop.internationalization.Translator;
 
 public class ComponentFactory {
 	/** Returns a styled label which is small bold and italic 
@@ -217,7 +218,7 @@ public class ComponentFactory {
 		Image closeImage = new Image(Display.getCurrent(), istream);
 		Button closeButton = new Button(headerComposite, SWT.PUSH);  
 		closeButton.setImage(closeImage);
-		closeButton.setToolTipText("Close");
+		closeButton.setToolTipText(Translator.toBeTranslated("Close"));
 		closeButton.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true));
 		closeButton.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 		closeButton.addMouseListener(new MouseListener() {
