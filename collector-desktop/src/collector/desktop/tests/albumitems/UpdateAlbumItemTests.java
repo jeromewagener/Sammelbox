@@ -111,7 +111,7 @@ public class UpdateAlbumItemTests {
 		AlbumItem originalAlbumItem = DatabaseWrapper.fetchAlbumItem("Books", 1);
 
 		// Change a text field
-		originalAlbumItem.getField("Lent out").setValue(false);
+		originalAlbumItem.getField("Lent out").setValue(OptionType.No);
 
 		DatabaseWrapper.updateAlbumItem(originalAlbumItem);
 

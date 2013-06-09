@@ -25,7 +25,10 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.jdbcdslog.ConnectionLoggingProxy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import collector.desktop.Collector;
 import collector.desktop.album.AlbumItem;
 import collector.desktop.album.FieldType;
 import collector.desktop.album.ItemField;
@@ -72,7 +75,8 @@ public class DatabaseWrapper  {
 	private static final String corruptDatabaseSnapshotPrefix = ".corruptDatabaseSnapshot_";
 	/** The maximum amount of autosaves that can be stored until the oldes it overwritten */
 	private static int autoSaveLimit = 8;
-
+	/**The normal logger for all info, debug, error and warning in this class*/
+	private final static Logger logger = LoggerFactory.getLogger(DatabaseWrapper.class);
 	/**
 	 * Opens the default connection for the FileSystemAccessWrapper.DATABASE database. Only opens a new connection if none is currently open.
 	 * @return True when a connection to the program database file is established, false if the connection is corrupt or not established.
@@ -818,15 +822,17 @@ public class DatabaseWrapper  {
 	private static String createNewAlbumTable(List<MetaItemField> fields, String tableName, boolean hasAlbumPicture) throws SQLException {
 		String typeInfoTableName = "";
 		String createTempTableSQL = "";
-		boolean temporary = (fields == null);
-
+		List<MetaItemField> columns =  new ArrayList<MetaItemField>(fields);
+		boolean temporary = (columns == null);
+		
+		
 		if (temporary) {
 			// Retrieve the typeInfo of the old Album before creating a new temp table
-			fields = getAllAlbumItemMetaItemFields(tableName);
+			columns = getAllAlbumItemMetaItemFields(tableName);
 			// Remove the id field from the old table
-			fields.remove(new MetaItemField("id", FieldType.ID));
+			columns.remove(new MetaItemField("id", FieldType.ID));
 			// Remove the id field from the old table
-			fields.remove(new MetaItemField(TYPE_INFO_COLUMN_NAME, FieldType.ID));
+			columns.remove(new MetaItemField(TYPE_INFO_COLUMN_NAME, FieldType.ID));
 			tableName =  tableName + TEMP_TABLE_SUFFIX;
 			typeInfoTableName =  tableName + TYPE_INFO_SUFFIX;
 			createTempTableSQL = "TEMPORARY";
@@ -836,9 +842,9 @@ public class DatabaseWrapper  {
 
 		// Ensures that the table has a contentVersion column
 		MetaItemField contentVersion = new MetaItemField(CONTENT_VERSION_COLUMN_NAME, FieldType.UUID);
-		if (!fields.contains(contentVersion)) {
-			System.out.println("createNewAlbumTable(), no content version "+fields);
-			fields.add(contentVersion);
+		if (!columns.contains(contentVersion)) {
+			System.out.println("createNewAlbumTable(), no content version "+columns);
+			columns.add(contentVersion);
 		}
 
 		// Prepare statement string
@@ -854,8 +860,8 @@ public class DatabaseWrapper  {
 		sb.append(" ( id INTEGER PRIMARY KEY");
 
 
-		fields = handleCreatePictureField(fields, hasAlbumPicture);
-		for (MetaItemField item : fields) {
+		columns = handleCreatePictureField(columns, hasAlbumPicture);
+		for (MetaItemField item : columns) {
 			sb.append(" , ");
 			sb.append(encloseNameWithQuotes(item.getName()));	// " , 'fieldName'"  
 			sb.append(" ");										// " , 'fieldName' " 
@@ -874,7 +880,7 @@ public class DatabaseWrapper  {
 		createMainTableString = sb.toString();
 
 		// Save the type informations in a separate table
-		createTypeInfoTable(typeInfoTableName, fields, temporary);
+		createTypeInfoTable(typeInfoTableName, columns, temporary);
 
 		// Create the Album table
 		Statement statement = connection.createStatement();
@@ -2816,35 +2822,95 @@ public class DatabaseWrapper  {
 	}
 
 	private static void createTableWithIdAsPrimaryKey(String tableName, List<MetaItemField> fields, boolean temparyTable, boolean ifNotExistsClause) throws SQLException  {
-			StringBuilder sb = new StringBuilder("CREATE ");
-			if (temparyTable) {
-				sb.append("TEMPORARY ");
-			}
-			
-			sb.append("TABLE ");
-			if (ifNotExistsClause) {
-				sb.append("IF NOT EXISTS "); 
-			}
-			
-			sb.append(encloseNameWithQuotes(tableName));
-			sb.append(" ( ");
-			sb.append(ID_COLUMN_NAME);
-			sb.append(" INTEGER PRIMARY KEY");
-			
-			for (MetaItemField item : fields) {
-				sb.append(" , ");
-				sb.append(encloseNameWithQuotes(item.getName()));	// " , 'fieldName'"  
-				sb.append(" ");										// " , 'fieldName' " 
-				sb.append(item.getType().toDatabaseTypeString());	// " , 'fieldName' TYPE"
-			}
-			
-			sb.append(" , parentItem INTEGER )");
-
-			String createTableString = sb.toString();
-
-			// Create the table.
-			PreparedStatement preparedStatement = connection.prepareStatement(createTableString);
-			preparedStatement.executeUpdate();
-			preparedStatement.close();
+		StringBuilder sb = new StringBuilder("CREATE ");
+		if (temparyTable) {
+			sb.append("TEMPORARY ");
 		}
+
+		sb.append("TABLE ");
+		if (ifNotExistsClause) {
+			sb.append("IF NOT EXISTS "); 
+		}
+
+		sb.append(encloseNameWithQuotes(tableName));
+		sb.append(" ( ");
+		sb.append(ID_COLUMN_NAME);
+		sb.append(" INTEGER PRIMARY KEY");
+
+		for (MetaItemField item : fields) {
+			sb.append(" , ");
+			sb.append(encloseNameWithQuotes(item.getName()));	// " , 'fieldName'"  
+			sb.append(" ");										// " , 'fieldName' " 
+			sb.append(item.getType().toDatabaseTypeString());	// " , 'fieldName' TYPE"
+		}
+
+		sb.append(" , parentItem INTEGER )");
+
+		String createTableString = sb.toString();
+
+		// Create the table.
+		PreparedStatement preparedStatement = connection.prepareStatement(createTableString);
+		preparedStatement.executeUpdate();
+		preparedStatement.close();
+	}
+
+	/**
+	 * Creates a savepoint to which the database state can be rolled back to. A new transaction is started.
+	 * @return The name of the created savepoint or null in case of failure. 
+	 */
+	public static String createSavepoint() {
+		String savepointName = UUID.randomUUID().toString();
+		PreparedStatement createSavepointStatement = null;
+
+		try {
+			createSavepointStatement = connection.prepareStatement("SAVEPOINT " + savepointName);
+			createSavepointStatement.execute();
+		} catch (SQLException e) {
+			logger.error("Creating the savepoint {} failed", savepointName);
+			savepointName = null;
+		}finally {
+
+			try {
+				if ( createSavepointStatement != null) {
+					createSavepointStatement.close();
+				}
+			} catch (SQLException e) {
+				logger.error("Cleaning up the create savepoint statement for savepoint {} failed", savepointName);
+				savepointName = null;
+			}
+		}
+
+		return savepointName;
+	}
+	
+	/**
+	 * Removes the savepoint from the internal stack such that it cannot be used for any future rollbacks.
+	 * If the transaction stack is empty all changes done since the creation of the saveopoint will be committed.
+	 * If the stack of transaction is not empty (i.e. inner transaction) then no changes are comitted but the savepoint
+	 * is removed nonetheless from the stack.
+	 * @return True if the operation was successful, false if it failed.
+	 */
+	public static boolean releaseSavepoint(String savepointName) {
+		boolean success = true;
+		PreparedStatement createSavepointStatement = null;
+		
+		try {
+			createSavepointStatement = connection.prepareStatement("ROLLBACK TO SAVEPOINT " + savepointName);
+			createSavepointStatement.execute();
+		} catch (SQLException e) {
+			logger.error("Releasing the savepoint {} failed", savepointName);
+			success = false;
+		}finally {
+			if ( createSavepointStatement != null) {
+				try {
+					createSavepointStatement.close();
+				} catch (SQLException e) {
+					logger.error("Cleaning up the release savepoint statement for savepoint {} failed", savepointName);
+					success = false;
+				}
+			}
+		}
+		
+		return success;
+	}
 }
