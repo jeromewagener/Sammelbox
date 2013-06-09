@@ -41,6 +41,8 @@ import collector.desktop.internationalization.Translator;
 
 public class BasicAlbumItemSidepane {
 
+	private static final int BASIC_ALBUM_SIDEPANE_WIDTH_IN_PIXELS = 200;
+
 	/** Returns a "basic album item" composite. This composite provides the fields (field names and value input fields)
 	 *  needed by the add item composite.
 	 * @param parentComposite the parent composite
@@ -125,11 +127,10 @@ public class BasicAlbumItemSidepane {
 						);
 
 				GridData gridData = new GridData(SWT.FILL, SWT.FILL, false, false);
-				// TODO magic value!!!
-				gridData.widthHint = 200;
+				gridData.widthHint = BASIC_ALBUM_SIDEPANE_WIDTH_IN_PIXELS;
 				textText.setLayoutData(gridData);
-				// Override the normal tab behaviour of a multiline text widget.
-				// Instead of ctrl+Tab a simple text chnages focus.
+				// Override the normal tab behavior of a multiline text widget.
+				// Instead of ctrl+tab a simple text changes focus.
 				textText.addTraverseListener(new TraverseListener() {
 					public void keyTraversed(TraverseEvent e) {
 						if (e.detail == SWT.TRAVERSE_TAB_NEXT || e.detail == SWT.TRAVERSE_TAB_PREVIOUS) {
@@ -292,11 +293,7 @@ public class BasicAlbumItemSidepane {
 				// Fill the comboBox
 				ratingCombo.setData("FieldType", FieldType.StarRating);
 				ratingCombo.setData("FieldName", fieldName);
-
-				// TODO use real graphics
-				String ratings[] = {"ZeroStars", "OneStar", "TwoStars", "ThreeStars", "FourStars", "FiveStars"};
-
-				ratingCombo.setItems(ratings);
+				ratingCombo.setItems(StarRating.toArray());
 
 				if (loadDataIntoFields) {
 					ratingCombo.setText(albumItem.getField(fieldName).getValue().toString());
@@ -444,14 +441,6 @@ public class BasicAlbumItemSidepane {
 									(String) dateTime.getData("FieldName"),
 									(FieldType) dateTime.getData("FieldType"),
 									new Date(calendar.getTimeInMillis()));
-						} else if (fieldType.equals(FieldType.Time)) {
-							DateTime dateTime = (DateTime) control;
-
-							albumItem.addField(
-									(String) dateTime.getData("FieldName"),
-									(FieldType) dateTime.getData("FieldType"),
-									new Time(dateTime.getHours(), dateTime.getMinutes(), dateTime.getSeconds()));
-
 						} else if (fieldType.equals(FieldType.Picture)) {
 							ImageDropAndManagementComposite imageDropAndManagementComposite = (ImageDropAndManagementComposite) control;
 

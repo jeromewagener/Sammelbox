@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.Text;
 import collector.desktop.Collector;
 import collector.desktop.album.FieldType;
 import collector.desktop.album.MetaItemField;
+import collector.desktop.album.OptionType;
 import collector.desktop.database.DatabaseWrapper;
 import collector.desktop.database.QueryBuilder;
 import collector.desktop.database.QueryBuilder.QueryComponent;
@@ -326,25 +327,26 @@ public class AdvancedSearchSidepane {
 			} else if (DatabaseWrapper.isOptionField(Collector.getSelectedAlbum(), searchQueryTable.getItem(i).getText(0))) {
 				String value = searchQueryTable.getItem(i).getText(2);
 
-				if (value.equals(Translator.get(DictKeys.BROWSER_YES)) || 
-						value.equals(Translator.get(DictKeys.BROWSER_NO)) || 
-						value.equals(Translator.get(DictKeys.BROWSER_UNKNOWN))) {
+				String option = null;
+				if (value.equals(Translator.get(DictKeys.BROWSER_YES))) {
+					option = OptionType.getDatabaseOptionValue(DictKeys.BROWSER_YES);
+				} else if (value.equals(Translator.get(DictKeys.BROWSER_NO))) {
+					option = OptionType.getDatabaseOptionValue(DictKeys.BROWSER_NO);
+				} else if (value.equals(Translator.get(DictKeys.BROWSER_UNKNOWN))) {
+					option = OptionType.getDatabaseOptionValue(DictKeys.BROWSER_UNKNOWN);
+				}
 
-					if (value.equals(Translator.get(DictKeys.BROWSER_UNKNOWN))) {
-						value = "Option"; // TODO stupid
-					}
-
+				if (option != null) {
 					queryComponents.add(QueryBuilder.getQueryComponent(
 							searchQueryTable.getItem(i).getText(0),
 							QueryOperator.toQueryOperator(searchQueryTable.getItem(i).getText(1)),
-							value));
+							option));
 				} else {
-					MessageBox messageBox = ComponentFactory.getMessageBox(
+					ComponentFactory.getMessageBox(
 							parentComposite.getShell(),
 							Translator.get(DictKeys.DIALOG_TITLE_ENTER_OPTION),
-							Translator.get(DictKeys.DIALOG_CONTENT_ENTER_OPTION),
-							SWT.ICON_WARNING | SWT.OK);
-					messageBox.open();
+							Translator.get(DictKeys.DIALOG_CONTENT_ENTER_OPTION, searchQueryTable.getItem(i).getText(0)),
+							SWT.ICON_WARNING | SWT.OK).open();
 				}
 
 				// All other cases

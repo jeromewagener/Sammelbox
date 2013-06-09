@@ -282,7 +282,6 @@ public class CreateAlbumSidepane {
 				}
 
 				if (!FileSystemAccessWrapper.isNameFileSystemCompliant(albumName)) {
-					// Purge the [ and ] enclosing the string of reservedCharacters. // TODO: tidy this up
 					ComponentFactory.getMessageBox(
 							parentComposite,
 							Translator.get(DictKeys.DIALOG_TITLE_ALBUM_NAME_INVALID),

@@ -153,26 +153,26 @@ public class DictKeys {
 	public static final String TEXTBOX_MY_NEW_ALBUM = "collector.textbox.content.MY_NEW_ALBUM";
 	
 	/*   Browser   */
-	public static String BROWSER_UPDATE = "collector.browser.text.UPDATE";
-	public static String BROWSER_DELETE = "collector.browser.text.DELETE";
-	public static String BROWSER_NEVER = "collector.browser.text.NEVER";
-	public static String BROWSER_NO_INFORMATION_AVAILABLE = "collector.browser.text.NO_INFORMATION_AVAILABLE";
-	public static String BROWSER_CLICKS_FOR_ALBUM = "collector.browser.text.CLICKS_FOR_ALBUM";
-	public static String BROWSER_FAVORITE_ALBUMS_AND_VIEWS = "collector.browser.text.FAVORITE_ALBUMS_AND_VIEWS";
-	public static String BROWSER_ALBUM = "collector.browser.text.ALBUM";
-	public static String BROWSER_NUMBER_OF_ITEMS_AND_LAST_UPDATED = "collector.browser.text.NUMBER_OF_ITEMS_AND_LAST_UPDATED";
-	public static String BROWSER_ALBUM_INFORMATION = "collector.browser.text.ALBUM_INFORMATION";
-	public static String BROWSER_YES = "collector.browser.text.YES";
-	public static String BROWSER_NO = "collector.browser.text.NO";
-	public static String BROWSER_UNKNOWN = "collector.browser.text.UNKNOWN";
-	public static String BROWSER_NO_ITEMS_FOUND = "collector.browser.text.NO_ITEMS_FOUND";
-	public static String BROWSER_NO_ITEMS_FOUND_EXPLANATION = "collector.browser.text.NO_ITEMS_FOUND_EXPLANATION";
-	public static String BROWSER_CHECKED = "collector.browser.text.CHECKED";
-	public static String BROWSER_BACK_TO_ALBUM = "collector.browser.text.BACK_TO_ALBUM";
-	public static String BROWSER_BEFORE = "collector.browser.text.BEFORE";
-	public static String BROWSER_AFTER = "collector.browser.text.AFTER";
-	public static String BROWSER_ITEM_ADDED = "collector.browser.text.ITEM_ADDED";
-	public static String BROWSER_ITEM_UPDATED = "collector.browser.text.ITEM_UPDATED";
+	public static final String BROWSER_UPDATE = "collector.browser.text.UPDATE";
+	public static final String BROWSER_DELETE = "collector.browser.text.DELETE";
+	public static final String BROWSER_NEVER = "collector.browser.text.NEVER";
+	public static final String BROWSER_NO_INFORMATION_AVAILABLE = "collector.browser.text.NO_INFORMATION_AVAILABLE";
+	public static final String BROWSER_CLICKS_FOR_ALBUM = "collector.browser.text.CLICKS_FOR_ALBUM";
+	public static final String BROWSER_FAVORITE_ALBUMS_AND_VIEWS = "collector.browser.text.FAVORITE_ALBUMS_AND_VIEWS";
+	public static final String BROWSER_ALBUM = "collector.browser.text.ALBUM";
+	public static final String BROWSER_NUMBER_OF_ITEMS_AND_LAST_UPDATED = "collector.browser.text.NUMBER_OF_ITEMS_AND_LAST_UPDATED";
+	public static final String BROWSER_ALBUM_INFORMATION = "collector.browser.text.ALBUM_INFORMATION";
+	public static final String BROWSER_YES = "collector.browser.text.YES";
+	public static final String BROWSER_NO = "collector.browser.text.NO";
+	public static final String BROWSER_UNKNOWN = "collector.browser.text.UNKNOWN";
+	public static final String BROWSER_NO_ITEMS_FOUND = "collector.browser.text.NO_ITEMS_FOUND";
+	public static final String BROWSER_NO_ITEMS_FOUND_EXPLANATION = "collector.browser.text.NO_ITEMS_FOUND_EXPLANATION";
+	public static final String BROWSER_CHECKED = "collector.browser.text.CHECKED";
+	public static final String BROWSER_BACK_TO_ALBUM = "collector.browser.text.BACK_TO_ALBUM";
+	public static final String BROWSER_BEFORE = "collector.browser.text.BEFORE";
+	public static final String BROWSER_AFTER = "collector.browser.text.AFTER";
+	public static final String BROWSER_ITEM_ADDED = "collector.browser.text.ITEM_ADDED";
+	public static final String BROWSER_ITEM_UPDATED = "collector.browser.text.ITEM_UPDATED";
 	
 	/*   Status Bar   */
 	public static final String STATUSBAR_PROGRAM_STARTED = "collector.statusbar.PROGRAM_STARTED";
