@@ -44,8 +44,8 @@ public class DetailedViewCreator {
 				"<!DOCTYPE HTML>" +
 				"  <html>" +
 				"    <head>" +
-				"      <meta" + BrowserConstants.IE_META_PARAMS + ">" + 
-				"      <link rel=stylesheet href=\"" + BrowserConstants.STYLE_CSS + "\"></link>" +
+				"      <meta " + BrowserConstants.META_PARAMS + ">" + 
+				"      <link rel=stylesheet href=\"" + BrowserConstants.STYLE_CSS + "\" />" +
 				"      <script src=\"" + BrowserConstants.EFFECTS_JS + "\"></script>" +
 				"    </head>" +
 				"    <body bgcolor=white>" +
@@ -54,7 +54,7 @@ public class DetailedViewCreator {
 				"	   </font>" +
 				"    </body>" +
 				"  </html>";
-
+		
 		browser.setText(finalPageAsHtml);
 		Utilities.setLastPageAsHtml(finalPageAsHtml);		
 	}

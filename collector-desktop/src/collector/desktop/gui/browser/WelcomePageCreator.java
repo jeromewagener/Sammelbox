@@ -12,18 +12,25 @@ public class WelcomePageCreator {
 
 	static void loadWelcomePage() {
 		Collector.getAlbumItemSWTBrowser().setText(
-				"<html width=100% height=80%>" +
-				"  <body width=100% height=80%>" +
+				"<!DOCTYPE HTML>" +
+				"<html>" +
+				"  <head>" +
+				"    <title>" + Translator.get(DictKeys.TITLE_MAIN_WINDOW) + "</title>" +
+				"    <meta " + BrowserConstants.META_PARAMS + ">" + 
+				"    <link rel=stylesheet href=\"" + BrowserConstants.STYLE_CSS + "\" />" +
+				"    <script src=\"" + BrowserConstants.EFFECTS_JS + "\"></script>" +
+				"  </head>" +
+				"  <body>" +
 				"    <font face=\"" + Utilities.getDefaultSystemFont() + "\">" +
 				"	 <br>" +
-				"	 <table width=100% height=80%>" +
-				"      <tr width=100% height=80%>" +
-				"	     <td width=50% align=\"center\">" +
+				"	 <table>" +
+				"      <tr>" +
+				"	     <td align=\"center\">" +
 				"          <h1>Sammelbox</h1>" +
 				"          <img height=\"350px\" src=\" " + FileSystemAccessWrapper.LOGO + " \">" +
 				"          <h2>Collection Manager</h2>" +
 				"        </td>" +
-				"        <td width=50%>" +
+				"        <td width=\"430px\">" +
 		        "          <div style=\"padding:10px; background-color:#" + Utilities.getBackgroundColorOfWidgetInHex() + "\">" +
 						     generateAlbumInformation() +
 						     generateFavorites() +

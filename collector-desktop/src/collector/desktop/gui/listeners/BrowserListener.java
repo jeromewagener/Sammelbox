@@ -66,6 +66,10 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 		final String addAdditionalAlbumItems = "show:///addAdditionalAlbumItems";
 		final String showDetailsViewOfAlbum =  "show:///showDetailsViewOfAlbum";
 
+		System.out.println("-----");
+		System.out.println(Collector.getAlbumItemSWTBrowser().getText());
+		System.out.println("-----");
+		
 		if (event.location.startsWith(showUpdateComposite)) {
 			String id = event.location.substring(showUpdateComposite.length());
 			removeQuestionMarkAtTheEndIfPresent(id);//FIXME: the return value is never used. Happening this intentionally it does (Yoda)

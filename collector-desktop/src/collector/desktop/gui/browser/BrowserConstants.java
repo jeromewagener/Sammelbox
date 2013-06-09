@@ -12,8 +12,8 @@ public class BrowserConstants {
 			"file://"+ FileSystemAccessWrapper.COLLECTOR_HOME_APPDATA + File.separatorChar + "style.css";
 	public static final String EFFECTS_JS = 
 			"file://" + FileSystemAccessWrapper.COLLECTOR_HOME_APPDATA + File.separatorChar + "effects.js";
-	public static final String IE_META_PARAMS = 
-			"http-equiv=\"X-UA-Compatible\" content=\"IE=9\"";
+	public static final String META_PARAMS = 
+			"http-equiv=\"X-UA-Compatible\" content=\"IE=9\" charset=\"utf-8\"";
 	public static final String NO_ITEMS_FOUND = 
 			"<div>" +
 			"  <h3>" + Translator.get(DictKeys.BROWSER_NO_ITEMS_FOUND, Collector.getSelectedAlbum()) + "</h3>" + 
