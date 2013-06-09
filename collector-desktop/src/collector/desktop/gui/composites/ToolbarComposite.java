@@ -228,6 +228,8 @@ public class ToolbarComposite implements UIObserver {
 		addEntryBtn.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseUp(MouseEvent arg0) {
+				BrowserFacade.rerunLastQuery();
+				
 				if (!Collector.hasSelectedAlbum()) {
 					ComponentFactory.showErrorDialog(
 							Collector.getShell(), 
@@ -298,6 +300,8 @@ public class ToolbarComposite implements UIObserver {
 		searchBtn.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseUp(MouseEvent arg0) {
+				BrowserFacade.rerunLastQuery();
+				
 				if (!Collector.hasSelectedAlbum()) {
 					ComponentFactory.showErrorDialog(
 							Collector.getShell(), 
@@ -343,6 +347,8 @@ public class ToolbarComposite implements UIObserver {
 		syncBtn.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseUp(MouseEvent arg0) {
+				BrowserFacade.rerunLastQuery();				
+				
 				if (Collector.getCurrentRightPanelType() != PanelType.Synchronization) {
 					Collector.changeRightCompositeTo(PanelType.Synchronization,
 							SynchronizeSidepane.build(Collector
