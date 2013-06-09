@@ -17,6 +17,10 @@ public class Utilities {
 	/** The anchor to which a jump is performed as soon as the page is fully loaded. 
 	 * This field is used via the set and get methods by the browser progress listener */
 	private static String futureJumpAnchor = null;
+	/** The background color of the application widgets in html hex */
+	private static String backgroundColorOfWidgetInHex = null;
+	/** The default system font */
+	private static String defaultSystemFont = null;
 	
 	static String getAnchorForAlbumItemId(long albumItemId) {
 		return "albumId" + albumItemId;
@@ -86,16 +90,23 @@ public class Utilities {
 				Collector.getInstance().getClass().getClassLoader().getResourceAsStream("helpfiles/index.html"));
 	}
 	
-	// TODO initialize one time only
 	static String getBackgroundColorOfWidgetInHex() {
-		return  Integer.toHexString((Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND).getRed()))
-				+ Integer.toHexString((Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND).getGreen()))
-				+ Integer.toHexString((Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND).getBlue()));
+		if (backgroundColorOfWidgetInHex == null) { 
+			backgroundColorOfWidgetInHex = 
+				Integer.toHexString((Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND).getRed()))
+			  + Integer.toHexString((Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND).getGreen()))
+			  + Integer.toHexString((Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND).getBlue()));
+		}
+		
+		return backgroundColorOfWidgetInHex;
 	}
 
-	// TODO initialize one time only
 	static String getDefaultSystemFont() {
-		return Display.getCurrent().getSystemFont().getFontData()[0].getName();
+		if (defaultSystemFont == null) {
+			defaultSystemFont = Display.getCurrent().getSystemFont().getFontData()[0].getName();
+		}
+		
+		return defaultSystemFont;
 	}
 	
 	static String escapeHtmlString(String htmlString) {
@@ -114,16 +125,18 @@ public class Utilities {
 				StringBuilder rows = new StringBuilder();
 
 				AlbumItemStore.increaseStopIndex();
-				for (AlbumItem albumItem : (AlbumItemStore.getAlbumItemsInRange(AlbumItemStore.getPreviousStopIndex() + 1, AlbumItemStore.getStopIndex()))) {
+				for (AlbumItem albumItem : (AlbumItemStore.getAlbumItemsInRange(
+						AlbumItemStore.getPreviousStopIndex() + 1, AlbumItemStore.getStopIndex())))
+				{
 					rows.append(ItemCreator.getAlbumItemTableRowHtml(albumItem));
 				}
 
 
 				String javascript = "var table = document.getElementById('albumItems'); " +
-						"var tbody = table.tBodies[0]; " +
-						"var temp = tbody.ownerDocument.createElement('div'); " +
-						"temp.innerHTML = '<table>' + tbody.innerHTML + '" + rows + "</table>'; " +
-						"tbody.parentNode.replaceChild(temp.firstChild.firstChild, tbody); ";
+									"var tbody = table.tBodies[0]; " +
+									"var temp = tbody.ownerDocument.createElement('div'); " +
+									"temp.innerHTML = '<table>' + tbody.innerHTML + '" + rows + "</table>'; " +
+									"tbody.parentNode.replaceChild(temp.firstChild.firstChild, tbody); ";
 
 				Collector.getAlbumItemSWTBrowser().execute(javascript);
 			}
@@ -132,12 +145,14 @@ public class Utilities {
 				StringBuilder divs = new StringBuilder();
 
 				AlbumItemStore.increaseStopIndex();
-				for (AlbumItem albumItem : (AlbumItemStore.getAlbumItemsInRange(AlbumItemStore.getPreviousStopIndex() + 1, AlbumItemStore.getStopIndex()))) {
+				for (AlbumItem albumItem : (AlbumItemStore.getAlbumItemsInRange(
+						AlbumItemStore.getPreviousStopIndex() + 1, AlbumItemStore.getStopIndex())))
+				{					
 					divs.append(ItemCreator.getAlbumItemDivContainerHtml(albumItem));
 				}
 
 				String javascript = "var div = document.getElementById('albumItems');" +
-						"div.innerHTML = div.innerHTML + '" + divs + "';";
+									"div.innerHTML = div.innerHTML + '" + divs + "';";
 
 				Collector.getAlbumItemSWTBrowser().execute(javascript);
 			}

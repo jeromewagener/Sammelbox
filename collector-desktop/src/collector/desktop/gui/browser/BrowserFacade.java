@@ -6,9 +6,7 @@ import collector.desktop.Collector;
 import collector.desktop.album.AlbumItem;
 import collector.desktop.database.AlbumItemResultSet;
 
-// TODO review method parameters - browser ref passed
 public class BrowserFacade {
-
 	public static void loadWelcomePage() { WelcomePageCreator.loadWelcomePage(); }
 	public static void rerunLastQuery() { Utilities.performLastQuery(Collector.getAlbumItemSWTBrowser()); }
 	public static void loadHelpPage() { Utilities.loadHelpPage(); }

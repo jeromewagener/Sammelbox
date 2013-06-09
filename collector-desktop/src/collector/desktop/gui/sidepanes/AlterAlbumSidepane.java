@@ -39,8 +39,7 @@ import collector.desktop.internationalization.DictKeys;
 import collector.desktop.internationalization.Translator;
 
 public class AlterAlbumSidepane {
-	/**The normal logger for all info, debug, error and warning in the collector class*/
-	private final static Logger LOGGER = LoggerFactory.getLogger(Collector.class);
+	private final static Logger LOGGER = LoggerFactory.getLogger(AlterAlbumSidepane.class);
 	
 	/** Returns an "alter album" composite. This composite provides the user interface to alter an existing album. Meaning that an 
 	 * album name can be renamed, fields can be removed, fields can be added etc.. This composite is created based on an an existing

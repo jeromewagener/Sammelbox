@@ -1,10 +1,11 @@
 package collector.desktop.gui.browser;
 
-import java.io.File;
 import java.net.URI;
 import java.util.List;
 
 import org.eclipse.swt.browser.Browser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import collector.desktop.album.AlbumItem;
 import collector.desktop.album.FieldType;
@@ -13,64 +14,61 @@ import collector.desktop.database.AlbumItemStore;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
 
 public class GalleryViewCreator {
+	private final static Logger LOGGER = LoggerFactory.getLogger(GalleryViewCreator.class);
+	
 	static void showOverviewAlbum(Browser browser) {
-		StringBuilder htmlBuilder = new StringBuilder();
-
-		htmlBuilder.append("<!DOCTYPE HTML>");
-
-		String javaScript = "<script src=\"file://" + FileSystemAccessWrapper.COLLECTOR_HOME_APPDATA + File.separatorChar + "effects.js" + "\"></script>";
-		String styleCSS = "<link rel=stylesheet href=\"file://"+ FileSystemAccessWrapper.COLLECTOR_HOME_APPDATA + File.separatorChar + "style.css" + "\"></link>";
-
-		htmlBuilder.append("<html><head><meta http-equiv=\"X-UA-Compatible\" content=\"IE=9\">" + styleCSS + " " + javaScript + "</head><body><font face=\"" + Utilities.getDefaultSystemFont() + "\"><div id=\"albumItems\">");
-
+		StringBuilder galleryItemHtmlBuilder = new StringBuilder();
+		
 		for (AlbumItem albumItem : AlbumItemStore.getAlbumItems(AlbumItemStore.getStopIndex())) {
 			String picturePath = "";
-
 			long id = 0;
 
 			for (ItemField fieldItem : albumItem.getFields()) {				
 				if (fieldItem.getType().equals(FieldType.UUID)) {
 					// schema or content version UUID --> ignore
-				}
-				else if (fieldItem.getType().equals(FieldType.ID)) {
+				} else if (fieldItem.getType().equals(FieldType.ID)) {
 					if (!fieldItem.getName().equals("typeinfo")) {
 						// do not show, but store id
 						id = fieldItem.getValue();
 					} else {
-						// its a trap :-) (Probably just the typeinfo foreign key..)
+						LOGGER.warn("Found a field type that wasn't expected: " + fieldItem.getName());
 					}
-				}
-				else if (fieldItem.getType().equals(FieldType.Picture)) {
+				} else if (fieldItem.getType().equals(FieldType.Picture)) {
 					List<URI> uris = fieldItem.getValue();
-
 					picturePath = FileSystemAccessWrapper.PLACEHOLDERIMAGE;
 
 					for (URI uri : uris) {
-						// find and return first thumbnail
-						if (!uri.toString().contains("original")) {
+						// find and return first thumb nail
+						if (!uri.toString().contains("original")) { // TODO use new picture table system ASAP
 							picturePath = uri.toString();
 							break;
 						}
 					}
 				}
-				else if (fieldItem.getType().equals(FieldType.Text)) {
-				}
 			}		
 
-			htmlBuilder.append("<div id=\"imageId" + id + "\" class=\"pictureContainer\" " +
-					"onMouseOver=\"parent.location.href=&quot;show:///details=" + id + "&quot;\" onClick=\"parent.location.href=&quot;show:///detailsComposite=" + id + "&quot;\">");
-
-			htmlBuilder.append("<div class=\"innerPictureContainer\">");
-			htmlBuilder.append("<img src=\"" + picturePath + "\">");
-
-			htmlBuilder.append("</div>");
-			htmlBuilder.append("</div>");
+			galleryItemHtmlBuilder.append("<div id=\"imageId" + id + "\" " +
+					                      "     class=\"pictureContainer\" " +
+					                      "     onMouseOver=\"parent.location.href=&quot;show:///details=" + id + "&quot;\" " +
+					                      "		onClick=\"parent.location.href=&quot;show:///detailsComposite=" + id + "&quot;\">");
+			galleryItemHtmlBuilder.append("  <div class=\"innerPictureContainer\">");
+			galleryItemHtmlBuilder.append("    <img src=\"" + picturePath + "\">");
+			galleryItemHtmlBuilder.append("  </div>");
+			galleryItemHtmlBuilder.append("</div>");
 		}
 
-		htmlBuilder.append("</div></font></body></html>");
-
-		String finalPageAsHtml = htmlBuilder.toString();
-		System.out.println(finalPageAsHtml);
+		String finalPageAsHtml = "<!DOCTYPE HTML>" +
+								 "  <html>" +
+								 "    <head>" +
+								 "      <meta" + BrowserConstants.IE_META_PARAMS + ">" + 
+								 "      <link rel=stylesheet href=\"" + BrowserConstants.STYLE_CSS + "\"></link>" +
+								 "      <script src=\"" + BrowserConstants.EFFECTS_JS + "\"></script>" +
+								 "    </head>" +
+								 "    <body>" +
+								 "      <font face=\"" + Utilities.getDefaultSystemFont() + "\"><div id=\"albumItems\">" +
+								          galleryItemHtmlBuilder.toString() +
+								 "      </font>" +
+								 "    </body>";
 
 		browser.setText(finalPageAsHtml);
 		Utilities.setLastPageAsHtml(finalPageAsHtml);

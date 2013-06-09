@@ -1,19 +1,17 @@
 package collector.desktop.gui.browser;
 
-import java.io.File;
-
 import org.eclipse.swt.browser.Browser;
 
 import collector.desktop.Collector;
 import collector.desktop.album.AlbumItem;
 import collector.desktop.database.AlbumItemStore;
-import collector.desktop.filesystem.FileSystemAccessWrapper;
 import collector.desktop.gui.various.ComponentFactory;
 import collector.desktop.internationalization.DictKeys;
 import collector.desktop.internationalization.Translator;
 
-public class DetailedViewCreator {
+public class DetailedViewCreator {	
 	static void showDetailedAlbum(Browser browser) {
+		// Exit if no album is selected
 		if (!Collector.hasSelectedAlbum()) {
 			ComponentFactory.showErrorDialog(
 					Collector.getShell(), 
@@ -21,14 +19,13 @@ public class DetailedViewCreator {
 					Translator.get(DictKeys.DIALOG_CONTENT_NO_ALBUM_SELECTED));
 			return;
 		}
+		
+		// Builders for efficient html creation
 		StringBuilder albumItemTableRowHtml = new StringBuilder();
-
-		String javaScript = "<script src=\"file://" + FileSystemAccessWrapper.COLLECTOR_HOME_APPDATA + File.separatorChar + "effects.js" + "\"></script>";
-		String styleCSS = "<link rel=stylesheet href=\"file://"+ FileSystemAccessWrapper.COLLECTOR_HOME_APPDATA + File.separatorChar + "style.css" + "\"></link>";
-
 		StringBuilder htmlDataColumnContent = new StringBuilder();
 		StringBuilder htmlPictureColumnContent = new StringBuilder();
 
+		// Add all available album items to a html table
 		for (AlbumItem albumItem : AlbumItemStore.getAlbumItems(AlbumItemStore.getStopIndex())) {
 			htmlDataColumnContent.delete(0, htmlDataColumnContent.length());
 			htmlPictureColumnContent.delete(0, htmlPictureColumnContent.length());
@@ -36,16 +33,29 @@ public class DetailedViewCreator {
 			ItemCreator.addAlbumItemTableRow(albumItem, htmlDataColumnContent, htmlPictureColumnContent, albumItemTableRowHtml);
 		}
 
+		// If no album items have been found
 		if (htmlDataColumnContent.length() == 0 && htmlPictureColumnContent.length() == 0) {
 			albumItemTableRowHtml.delete(0, albumItemTableRowHtml.length());
-			albumItemTableRowHtml.append("<tr><td><h3>" + Translator.get(DictKeys.BROWSER_NO_ITEMS_FOUND, Collector.getSelectedAlbum()) + "</h3>" + Translator.get(DictKeys.BROWSER_NO_ITEMS_FOUND_EXPLANATION) + "</td></tr>");
+			albumItemTableRowHtml.append("<tr><td>" + BrowserConstants.NO_ITEMS_FOUND + "</tr></td>");
 		}
 
-		String finalPageAsHtml = "<!DOCTYPE HTML>" +
-				"<html><head><meta http-equiv=\"X-UA-Compatible\" content=\"IE=9\" >" + styleCSS + " " + javaScript + "</head><body bgcolor=white><font face=\"" + Utilities.getDefaultSystemFont() + "\"><table id=\"albumItems\" border=0>" + albumItemTableRowHtml + "</table></font></body></html>";
+		// Create final page html
+		String finalPageAsHtml = 
+				"<!DOCTYPE HTML>" +
+				"  <html>" +
+				"    <head>" +
+				"      <meta" + BrowserConstants.IE_META_PARAMS + ">" + 
+				"      <link rel=stylesheet href=\"" + BrowserConstants.STYLE_CSS + "\"></link>" +
+				"      <script src=\"" + BrowserConstants.EFFECTS_JS + "\"></script>" +
+				"    </head>" +
+				"    <body bgcolor=white>" +
+				"      <font face=\"" + Utilities.getDefaultSystemFont() + "\">" + 
+				"        <table id=\"albumItems\" border=0>" + albumItemTableRowHtml + "</table>" +
+				"	   </font>" +
+				"    </body>" +
+				"  </html>";
 
 		browser.setText(finalPageAsHtml);
-
 		Utilities.setLastPageAsHtml(finalPageAsHtml);		
 	}
 }
