@@ -154,7 +154,7 @@ public class AlbumItemStore {
 					} else if (option != 1) {
 						itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), OptionType.Yes, false));
 					} else {
-						itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), OptionType.Option, false));
+						itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), OptionType.UNKNOWN, false));
 					}
 					
 				} else if (metaItemField.getType().equals(FieldType.StarRating)) {
