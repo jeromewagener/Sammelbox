@@ -1,6 +1,5 @@
 package collector.desktop.album;
 
-import java.net.URI;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
@@ -9,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import collector.desktop.database.DatabaseWrapper;
-import collector.desktop.filesystem.FileSystemAccessWrapper;
 
 public class AlbumItem {
 	protected String albumName = "";
@@ -258,19 +256,67 @@ public class AlbumItem {
 	public void setContentVersion(UUID contentVersion) {
 		this.contentVersion = contentVersion;
 	}
+	
+	//TODO: comment
+	public static class AlbumItemPicture {
+		private long pictureID;
+		/** Is always a uuid.extension e.g. 8bdb7e3f-c66b-4df6-9640-95642c4d823b_1348734436938.png */
+		private String thumbnailPictureName;
+		/** Is always a uuid.extension e.g. 3294367d-7901-4bb2-8757-ad13ff3616f7_1348734351845.jpg */
+		private String originalPictureName;		
+		private String albumName;
+		private long albumItemID;
+		
+		public long getPictureID() {
+			return pictureID;
+		}
 
-	public String getPrimaryThumbnailPicturePath() {
-		if (getField(DatabaseWrapper.PICTURE_COLUMN_NAME) != null) {
-			List<URI> pictureURIs = getField(DatabaseWrapper.PICTURE_COLUMN_NAME).getValue();
-			
-			for (URI uri : pictureURIs) {
-				if (!uri.toString().contains("original")) {
-					return uri.toString();
-				}
-			}
+		public void setPictureID(long pictureID) {
+			this.pictureID = pictureID;
+		}		
+
+		public String getThumbnailPictureName() {
+			return thumbnailPictureName;
 		}
 		
-		return FileSystemAccessWrapper.PLACEHOLDERIMAGE;
-	}
+		public void setThumbnailPictureName(String thumbnailPictureName) {
+			this.thumbnailPictureName = thumbnailPictureName;
+		}
+		
+		public String getOriginalPictureName() {
+			return originalPictureName;
+		}
+		
+		public void setOriginalPictureName(String originalPictureName) {
+			this.originalPictureName = originalPictureName;
+		}		
+		
+		public String getThumbnailPicturePath() {
+			//TODO: implement getter path to thumbnail file
+			return "";
+		}
+		
+		public String getThumbnailPictureName(String thumbnailPictureName) {
+			//TODO: implement getter path to original picture file
+			return "";
+		}
 
+		public String getAlbumName() {
+			return albumName;
+		}
+
+		public void setAlbumName(String albumName) {
+			this.albumName = albumName;
+		}
+
+		public long getAlbumItemID() {
+			return albumItemID;
+		}
+
+		public void setAlbumItemID(long albumItemID) {
+			this.albumItemID = albumItemID;
+		}
+
+
+	}
 }
