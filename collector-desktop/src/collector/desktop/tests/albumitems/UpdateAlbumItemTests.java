@@ -125,7 +125,7 @@ public class UpdateAlbumItemTests {
 		AlbumItem originalAlbumItem = DatabaseWrapper.fetchAlbumItem("Books", 1);
 
 		// Change a text field
-		originalAlbumItem.getField("Lent out").setValue(OptionType.No);
+		originalAlbumItem.getField("Lent out").setValue(OptionType.NO);
 
 		DatabaseWrapper.updateAlbumItem(originalAlbumItem);
 
@@ -239,7 +239,7 @@ public class UpdateAlbumItemTests {
 		fields.add( new ItemField("Purchased", FieldType.Date, new Date(System.currentTimeMillis())));
 		fields.add( new ItemField("Price", FieldType.Number, 4.2d));
 //		fields.add( new ItemField("Lent out", FieldType.Yes_No, true));//TODO: check 
-		fields.add( new ItemField("Lent out", FieldType.Option, OptionType.Yes));
+		fields.add( new ItemField("Lent out", FieldType.Option, OptionType.YES));
 
 		// Create picture field with 3 pictures
 		List<URI> pictureURIs = Arrays.asList(	new File(CollectorTestExecuter.PATH_TO_TEST_PIC1).toURI(), 

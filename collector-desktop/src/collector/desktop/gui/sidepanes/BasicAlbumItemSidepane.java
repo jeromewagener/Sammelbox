@@ -83,13 +83,19 @@ public class BasicAlbumItemSidepane {
 		basicAlbumItemComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		AlbumItem albumItem = null;
-		// if data should be loaded, it must be fetched from the database
-		if (loadDataIntoFields) {
-			albumItem = DatabaseWrapper.fetchAlbumItem(album, albumItemId);
-		}	
+		java.util.List<MetaItemField> metaItemFields = new ArrayList<MetaItemField>();
+		
+		try {
+			// if data should be loaded, it must be fetched from the database
+			if (loadDataIntoFields) {
+				albumItem = DatabaseWrapper.fetchAlbumItem(album, albumItemId);
+			}	
 
-		// Fetch the field names and types from the database
-		java.util.List<MetaItemField> metaItemFields = DatabaseWrapper.getAlbumItemFieldNamesAndTypes(album);
+			// Fetch the field names and types from the database
+			metaItemFields = DatabaseWrapper.getAlbumItemFieldNamesAndTypes(album);
+		} catch(FailedDatabaseWrapperOperationException failedDatabaseWrapperOperationException) {
+			// TODO log
+		}
 
 		boolean addPictureComposite = false;
 		String pictureFieldName = "";
@@ -317,7 +323,7 @@ public class BasicAlbumItemSidepane {
 				yesButton.setData("noButton", false);
 				yesButton.setData("unknownButton", false);
 				if (loadDataIntoFields) {
-					if (albumItem.getField(fieldName).getValue() == OptionType.Yes) {
+					if (albumItem.getField(fieldName).getValue() == OptionType.YES) {
 						yesButton.setSelection(true);
 					} else {
 						yesButton.setSelection(false);
@@ -330,7 +336,7 @@ public class BasicAlbumItemSidepane {
 				noButton.setData("noButton", true);
 				noButton.setData("unknownButton", false);
 				if (loadDataIntoFields) {
-					if (albumItem.getField(fieldName).getValue() == OptionType.No) {
+					if (albumItem.getField(fieldName).getValue() == OptionType.NO) {
 						noButton.setSelection(true);
 					} else {
 						noButton.setSelection(false);
@@ -343,7 +349,7 @@ public class BasicAlbumItemSidepane {
 				unknownButton.setData("noButton", false);
 				unknownButton.setData("unknownButton", true);
 				if (loadDataIntoFields) {
-					if (albumItem.getField(fieldName).getValue() == OptionType.Option) {
+					if (albumItem.getField(fieldName).getValue() == OptionType.UNKNOWN) {
 						unknownButton.setSelection(true);
 					} else {
 						unknownButton.setSelection(false);
@@ -467,7 +473,7 @@ public class BasicAlbumItemSidepane {
 										albumItem.addField(
 												(String) control.getData("FieldName"),
 												(FieldType) fieldType,
-												OptionType.Yes);
+												OptionType.YES);
 									}
 								}
 
@@ -476,7 +482,7 @@ public class BasicAlbumItemSidepane {
 										albumItem.addField(
 												(String) control.getData("FieldName"),
 												(FieldType) fieldType,
-												OptionType.No);
+												OptionType.NO);
 									}
 								}
 
@@ -485,7 +491,7 @@ public class BasicAlbumItemSidepane {
 										albumItem.addField(
 												(String) control.getData("FieldName"),
 												(FieldType) fieldType,
-												OptionType.Option);
+												OptionType.UNKNOWN);
 									}
 								}
 							}

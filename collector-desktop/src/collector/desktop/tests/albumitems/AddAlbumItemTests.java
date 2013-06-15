@@ -64,7 +64,7 @@ public class AddAlbumItemTests {
 		fields.add( new ItemField("Purchased", FieldType.Date, new Date(System.currentTimeMillis())));
 		fields.add( new ItemField("Price", FieldType.Number, 4.2d));
 		fields.add( new ItemField("Lent to", FieldType.Text, "some random name"));
-		fields.add( new ItemField("In Stock", FieldType.Option, OptionType.No));
+		fields.add( new ItemField("In Stock", FieldType.Option, OptionType.NO));
 		fields.add( new ItemField("Rating", FieldType.StarRating, StarRating.FiveStars));
 		String url = "http://www.example.com";
 		fields.add( new ItemField("Publisher Website", FieldType.URL, url));
@@ -113,7 +113,7 @@ public class AddAlbumItemTests {
 		fields.add( new ItemField("Purchased", FieldType.Date, new Date(System.currentTimeMillis())));
 		fields.add( new ItemField("Price", FieldType.Number, 4.2d));
 		fields.add( new ItemField("Lent to", FieldType.Text, "some random name"));
-		fields.add( new ItemField("In Stock", FieldType.Option, OptionType.No));
+		fields.add( new ItemField("In Stock", FieldType.Option, OptionType.NO));
 		fields.add( new ItemField("Rating", FieldType.StarRating, StarRating.FiveStars));
 		String url = "http://www.example.com";
 		fields.add( new ItemField("Publisher Website", FieldType.URL, url));
@@ -171,7 +171,7 @@ public class AddAlbumItemTests {
 		fields.add( new ItemField("Purchased", FieldType.Date, new Date(System.currentTimeMillis())));
 		fields.add( new ItemField("Price", FieldType.Number, 4.2d));
 		fields.add( new ItemField("Lent to", FieldType.Text, "some random name"));
-		fields.add( new ItemField("In Stock", FieldType.Option, OptionType.No));
+		fields.add( new ItemField("In Stock", FieldType.Option, OptionType.NO));
 		fields.add( new ItemField("Rating", FieldType.StarRating, StarRating.FiveStars));
 		String url = "http://www.example.com";
 		fields.add( new ItemField("Publisher Website", FieldType.URL, url));
@@ -229,7 +229,7 @@ public class AddAlbumItemTests {
 		fields.add( new ItemField("Purchased", FieldType.Date, new Date(System.currentTimeMillis())));
 		fields.add( new ItemField("Price", FieldType.Number, 4.2d));
 		fields.add( new ItemField("Lent to", FieldType.Text, "some random name"));
-		fields.add( new ItemField("In Stock", FieldType.Option, OptionType.No));
+		fields.add( new ItemField("In Stock", FieldType.Option, OptionType.NO));
 		fields.add( new ItemField("Rating", FieldType.StarRating, StarRating.FiveStars));
 		String url = "http://www.example.com";
 		fields.add( new ItemField("Publisher Website", FieldType.URL, url));

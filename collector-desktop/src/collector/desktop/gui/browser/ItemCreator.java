@@ -90,9 +90,9 @@ public class ItemCreator {
 						"  </tr>" + 
 						"</table>");
 			} else if (fieldItem.getType().equals(FieldType.Option)) {
-				if (fieldItem.getValue() == OptionType.Yes) {
+				if (fieldItem.getValue() == OptionType.YES) {
 					htmlDataColumnContent.append(getFieldNameAndValueLine(fieldItem.getName(), Translator.get(DictKeys.BROWSER_YES)));
-				} else if (fieldItem.getValue() == OptionType.No) {
+				} else if (fieldItem.getValue() == OptionType.NO) {
 					htmlDataColumnContent.append(getFieldNameAndValueLine(fieldItem.getName(), Translator.get(DictKeys.BROWSER_NO)));
 				} else if (fieldItem.getValue() == OptionType.UNKNOWN) {
 					htmlDataColumnContent.append(getFieldNameAndValueLine(fieldItem.getName(), Translator.get(DictKeys.BROWSER_UNKNOWN)));

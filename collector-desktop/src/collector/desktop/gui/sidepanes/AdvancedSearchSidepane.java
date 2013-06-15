@@ -307,36 +307,36 @@ public class AdvancedSearchSidepane {
 	
 	private static ArrayList<QueryComponent> getQueryComponentsForAdvancedSearch(Composite parentComposite, Table searchQueryTable) {
 		ArrayList<QueryComponent> queryComponents = new ArrayList<QueryComponent>();
+		try {
+			for ( int i=0 ; i < searchQueryTable.getItemCount() ; i++ ) {					
+				// In case of a date
+				if (DatabaseWrapper.isDateField(Collector.getSelectedAlbum(), searchQueryTable.getItem(i).getText(0))) {
+					// Convert string to milliseconds
+					DateFormat df = new SimpleDateFormat("d/M/yyyy");
+					java.util.Date result = null;
+					try {
+						result = df.parse(searchQueryTable.getItem(i).getText(2));
+						long dateInMilliseconds = result.getTime();
 
-		for ( int i=0 ; i < searchQueryTable.getItemCount() ; i++ ) {					
-			// In case of a date
-			if (DatabaseWrapper.isDateField(Collector.getSelectedAlbum(), searchQueryTable.getItem(i).getText(0))) {
-				// Convert string to milliseconds
-				DateFormat df = new SimpleDateFormat("d/M/yyyy");
-				java.util.Date result = null;
-				try {
-					result = df.parse(searchQueryTable.getItem(i).getText(2));
-					long dateInMilliseconds = result.getTime();
+						queryComponents.add(QueryBuilder.getQueryComponent(
+								searchQueryTable.getItem(i).getText(0),
+								QueryOperator.toQueryOperator(searchQueryTable.getItem(i).getText(1)),
+								String.valueOf(dateInMilliseconds)));
+					} catch (ParseException e1) {
+						MessageBox messageBox = ComponentFactory.getMessageBox(
+								parentComposite.getShell(),
+								Translator.get(DictKeys.DIALOG_TITLE_DATE_FORMAT),
+								Translator.get(DictKeys.DIALOG_CONTENT_DATE_FORMAT),
+								SWT.ICON_WARNING | SWT.OK);
+						messageBox.open();
+					}
 
-					queryComponents.add(QueryBuilder.getQueryComponent(
-							searchQueryTable.getItem(i).getText(0),
-							QueryOperator.toQueryOperator(searchQueryTable.getItem(i).getText(1)),
-							String.valueOf(dateInMilliseconds)));
-				} catch (ParseException e1) {
-					MessageBox messageBox = ComponentFactory.getMessageBox(
-							parentComposite.getShell(),
-							Translator.get(DictKeys.DIALOG_TITLE_DATE_FORMAT),
-							Translator.get(DictKeys.DIALOG_CONTENT_DATE_FORMAT),
-							SWT.ICON_WARNING | SWT.OK);
-					messageBox.open();
-				}
+					// In case of an option
+				} else if (DatabaseWrapper.isOptionField(Collector.getSelectedAlbum(), searchQueryTable.getItem(i).getText(0))) {
+					String value = searchQueryTable.getItem(i).getText(2);
 
-				// In case of an option
-			} else if (DatabaseWrapper.isOptionField(Collector.getSelectedAlbum(), searchQueryTable.getItem(i).getText(0))) {
-				String value = searchQueryTable.getItem(i).getText(2);
+					String option = null;
 
-				String option = null;
-				try {
 					if (value.equals(Translator.get(DictKeys.BROWSER_YES))) {
 						option = OptionType.getDatabaseOptionValue(DictKeys.BROWSER_YES);
 					} else if (value.equals(Translator.get(DictKeys.BROWSER_NO))) {
@@ -344,32 +344,32 @@ public class AdvancedSearchSidepane {
 					} else if (value.equals(Translator.get(DictKeys.BROWSER_UNKNOWN))) {
 						option = OptionType.getDatabaseOptionValue(DictKeys.BROWSER_UNKNOWN);
 					}
-				} catch (FailedDatabaseWrapperOperationException failedDatabaseWrapperOperationException) {
-					// TODO log & do
-				}
 
-				if (option != null) {
+					if (option != null) {
+						queryComponents.add(QueryBuilder.getQueryComponent(
+								searchQueryTable.getItem(i).getText(0),
+								QueryOperator.toQueryOperator(searchQueryTable.getItem(i).getText(1)),
+								option));
+					} else {
+						ComponentFactory.getMessageBox(
+								parentComposite.getShell(),
+								Translator.get(DictKeys.DIALOG_TITLE_ENTER_OPTION),
+								Translator.get(DictKeys.DIALOG_CONTENT_ENTER_OPTION, searchQueryTable.getItem(i).getText(0)),
+								SWT.ICON_WARNING | SWT.OK).open();
+					}
+
+					// All other cases
+				} else {
 					queryComponents.add(QueryBuilder.getQueryComponent(
 							searchQueryTable.getItem(i).getText(0),
 							QueryOperator.toQueryOperator(searchQueryTable.getItem(i).getText(1)),
-							option));
-				} else {
-					ComponentFactory.getMessageBox(
-							parentComposite.getShell(),
-							Translator.get(DictKeys.DIALOG_TITLE_ENTER_OPTION),
-							Translator.get(DictKeys.DIALOG_CONTENT_ENTER_OPTION, searchQueryTable.getItem(i).getText(0)),
-							SWT.ICON_WARNING | SWT.OK).open();
+							searchQueryTable.getItem(i).getText(2)));
 				}
-
-				// All other cases
-			} else {
-				queryComponents.add(QueryBuilder.getQueryComponent(
-						searchQueryTable.getItem(i).getText(0),
-						QueryOperator.toQueryOperator(searchQueryTable.getItem(i).getText(1)),
-						searchQueryTable.getItem(i).getText(2)));
-			}
+			}			
+		} catch (Exception ex) {
+			// TODO log
 		}
-
-		return queryComponents;
+		
+		return queryComponents;	
 	}
 }

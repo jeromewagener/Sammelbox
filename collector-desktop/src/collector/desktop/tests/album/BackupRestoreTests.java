@@ -411,7 +411,7 @@ public class BackupRestoreTests {
 			fields.add( new ItemField("Author", FieldType.Text, "added author"));
 			fields.add( new ItemField("Purchased", FieldType.Date, new Date(System.currentTimeMillis())));
 			fields.add( new ItemField("Lent to", FieldType.Text, "added person"));
-			fields.add( new ItemField("Second Hand", FieldType.Option, OptionType.Yes));
+			fields.add( new ItemField("Second Hand", FieldType.Option, OptionType.YES));
 
 			item.setFields(fields);
 

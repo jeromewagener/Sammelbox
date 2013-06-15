@@ -150,9 +150,9 @@ public class AlbumItemStore {
 					int option = (int)(Math.random() * ((2) + 1));
 					
 					if (option == 0) {
-						itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), OptionType.No, false));
+						itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), OptionType.NO, false));
 					} else if (option != 1) {
-						itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), OptionType.Yes, false));
+						itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), OptionType.YES, false));
 					} else {
 						itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), OptionType.UNKNOWN, false));
 					}

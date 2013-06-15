@@ -42,9 +42,9 @@ public class HTMLExporter {
 							headerBuilder.append("<th style=\"border:1px solid black;\">" + albumItem.getField(i).getName() + "</th>");
 						}
 
-						if (albumItem.getField(i).getValue() == OptionType.Yes) {
+						if (albumItem.getField(i).getValue() == OptionType.YES) {
 							dataBuilder.append("<td style=\"border:1px solid black;\">" + Translator.get(DictKeys.BROWSER_YES) + "</td>");
-						} else if (albumItem.getField(i).getValue() == OptionType.No) {
+						} else if (albumItem.getField(i).getValue() == OptionType.NO) {
 							dataBuilder.append("<td style=\"border:1px solid black;\">" + Translator.get(DictKeys.BROWSER_NO) + "</td>");
 						} else {
 							dataBuilder.append("<td style=\"border:1px solid black;\">" + Translator.get(DictKeys.BROWSER_UNKNOWN) + "</td>");

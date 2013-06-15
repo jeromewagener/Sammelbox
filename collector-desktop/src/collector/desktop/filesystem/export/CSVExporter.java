@@ -41,9 +41,9 @@ public class CSVExporter {
 							}
 						}
 
-						if (albumItem.getField(i).getValue() == OptionType.Yes) {
+						if (albumItem.getField(i).getValue() == OptionType.YES) {
 							dataBuilder.append(Translator.get(DictKeys.BROWSER_YES));
-						} else if (albumItem.getField(i).getValue() == OptionType.No) {
+						} else if (albumItem.getField(i).getValue() == OptionType.NO) {
 							dataBuilder.append(Translator.get(DictKeys.BROWSER_NO));
 						} else {
 							dataBuilder.append(Translator.get(DictKeys.BROWSER_UNKNOWN));
