@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import collector.desktop.database.DatabaseWrapper;
+import collector.desktop.database.exceptions.FailedDatabaseWrapperOperationException;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
 import collector.desktop.interfaces.UIObservable;
 import collector.desktop.interfaces.UIObserver;
@@ -21,14 +22,19 @@ public class AlbumManager  implements UIObservable {
 	public void mergeDatabaseAndXmlAlbums() {
 		albums = FileSystemAccessWrapper.loadAlbums();
 		
-		for (String album : DatabaseWrapper.listAllAlbums()) {
-			if (!albums.contains(album)) {
-				albums.add(album);
+		try {
+			for (String album : DatabaseWrapper.listAllAlbums()) {
+				if (!albums.contains(album)) {
+					albums.add(album);
+				}
 			}
+
+			albums.retainAll(DatabaseWrapper.listAllAlbums());
+
+		} catch (FailedDatabaseWrapperOperationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		
-		albums.retainAll(DatabaseWrapper.listAllAlbums());
-		
 	}
 	
 	public void initialize() {

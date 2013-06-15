@@ -18,6 +18,7 @@ import collector.desktop.album.FieldType;
 import collector.desktop.album.ItemField;
 import collector.desktop.database.DatabaseWrapper;
 import collector.desktop.database.QueryBuilder;
+import collector.desktop.database.exceptions.FailedDatabaseWrapperOperationException;
 import collector.desktop.gui.browser.BrowserFacade;
 import collector.desktop.gui.composites.StatusBarComposite;
 import collector.desktop.gui.sidepanes.EmptySidepane;
@@ -92,7 +93,15 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 					messageBoxStyle);
 
 			if (messageBox.open() == SWT.YES) {
-				DatabaseWrapper.deleteAlbumItem(Collector.getSelectedAlbum(), Long.parseLong(id));
+				try {
+					DatabaseWrapper.deleteAlbumItem(Collector.getSelectedAlbum(), Long.parseLong(id));
+				} catch (NumberFormatException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (FailedDatabaseWrapperOperationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				BrowserFacade.performBrowserQueryAndShow(QueryBuilder.createSelectStarQuery(Collector.getSelectedAlbum()));
 			}
 
@@ -119,21 +128,30 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 			String id = event.location.substring(showDetails.length());
 			removeQuestionMarkAtTheEndIfPresent(id);//FIXME: the return value is never used. Happening this intentionally it does (Yoda)
 
-			AlbumItem albumItem = DatabaseWrapper.fetchAlbumItem(Collector.getSelectedAlbum(), Long.parseLong(id));
+			AlbumItem albumItem;
+			try {
+				albumItem = DatabaseWrapper.fetchAlbumItem(Collector.getSelectedAlbum(), Long.parseLong(id));
 
-			List<ItemField> itemFields = albumItem.getFields();
-
-			StringBuilder sb = new StringBuilder();
-			for (ItemField itemField : itemFields) {
-				if (albumItem.getField(itemField.getName()).getType() != FieldType.ID
-						&& albumItem.getField(itemField.getName()).getType() != FieldType.UUID
-						&& albumItem.getField(itemField.getName()).getType() != FieldType.Picture ) {
-					sb.append(albumItem.getField(itemField.getName()).getName() + ": " + albumItem.getField(itemField.getName()).getValue() + ", ");
+				List<ItemField> itemFields = albumItem.getFields();
+	
+				StringBuilder sb = new StringBuilder();
+				for (ItemField itemField : itemFields) {
+					if (albumItem.getField(itemField.getName()).getType() != FieldType.ID
+							&& albumItem.getField(itemField.getName()).getType() != FieldType.UUID
+							&& albumItem.getField(itemField.getName()).getType() != FieldType.Picture ) {
+						sb.append(albumItem.getField(itemField.getName()).getName() + ": " + albumItem.getField(itemField.getName()).getValue() + ", ");
+					}
 				}
+				sb.append("...");
+				
+				StatusBarComposite.getInstance(Collector.getShell()).writeStatus(sb.toString());
+			} catch (NumberFormatException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (FailedDatabaseWrapperOperationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-			sb.append("...");
-
-			StatusBarComposite.getInstance(Collector.getShell()).writeStatus(sb.toString());
 
 			// Do not change the page
 			event.doit = false;

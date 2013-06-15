@@ -15,6 +15,7 @@ import org.eclipse.swt.widgets.Label;
 
 import collector.desktop.Collector;
 import collector.desktop.database.DatabaseWrapper;
+import collector.desktop.database.exceptions.FailedDatabaseWrapperOperationException;
 import collector.desktop.gui.browser.BrowserFacade;
 import collector.desktop.gui.sidepanes.AddAlbumItemSidepane;
 import collector.desktop.gui.sidepanes.AdvancedSearchSidepane;
@@ -454,13 +455,18 @@ public class ToolbarComposite implements UIObserver {
 		homeBtn.setImage(home);
 		addEntryBtn.setEnabled(true);
 
-		if (DatabaseWrapper.albumHasPictureField(albumName)) {
-			viewBtn.setImage(pictureView);
-			viewBtn.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_TOGGLE_TO_GALLERY));
-			viewBtn.setEnabled(true);
-		} else {
-			viewBtn.setImage(detailedView);
-			viewBtn.setEnabled(false);
+		try {
+			if (DatabaseWrapper.albumHasPictureField(albumName)) {
+				viewBtn.setImage(pictureView);
+				viewBtn.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_TOGGLE_TO_GALLERY));
+				viewBtn.setEnabled(true);
+			} else {
+				viewBtn.setImage(detailedView);
+				viewBtn.setEnabled(false);
+			}
+		} catch (FailedDatabaseWrapperOperationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 		Collector.setViewIsDetailed(true);

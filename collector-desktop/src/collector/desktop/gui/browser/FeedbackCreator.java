@@ -7,6 +7,7 @@ import org.eclipse.swt.browser.Browser;
 import collector.desktop.Collector;
 import collector.desktop.album.AlbumItem;
 import collector.desktop.database.DatabaseWrapper;
+import collector.desktop.database.exceptions.FailedDatabaseWrapperOperationException;
 import collector.desktop.internationalization.DictKeys;
 import collector.desktop.internationalization.Translator;
 
@@ -15,24 +16,37 @@ public class FeedbackCreator {
 	private static LinkedList<String> alterations = new LinkedList<String>();
 	
 	static void generatAlbumItemUpdatedPage(long albumItemId) {
-		AlbumItem updatedAlbumItem = DatabaseWrapper.fetchAlbumItem(Collector.getSelectedAlbum(), albumItemId);
+		AlbumItem updatedAlbumItem;
+		try {
+			updatedAlbumItem = DatabaseWrapper.fetchAlbumItem(Collector.getSelectedAlbum(), albumItemId);
 
-		if (updatedAlbumItem != null) {
-			Collector.getAlbumItemSWTBrowser().setText(
-					generateItemAddedOrUpdatedFeedbackConstruct(
-							Translator.get(DictKeys.BROWSER_ITEM_UPDATED),
-							ItemCreator.getAlbumItemTableRowHtml(updatedAlbumItem)));
+
+			if (updatedAlbumItem != null) {
+				Collector.getAlbumItemSWTBrowser().setText(
+						generateItemAddedOrUpdatedFeedbackConstruct(
+								Translator.get(DictKeys.BROWSER_ITEM_UPDATED),
+								ItemCreator.getAlbumItemTableRowHtml(updatedAlbumItem)));
+			}
+		} catch (FailedDatabaseWrapperOperationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
 	static void generateAlbumItemAddedPage(long albumItemId) {
-		AlbumItem addedAlbumItem = DatabaseWrapper.fetchAlbumItem(Collector.getSelectedAlbum(), albumItemId);
+		AlbumItem addedAlbumItem;
+		try {
+			addedAlbumItem = DatabaseWrapper.fetchAlbumItem(Collector.getSelectedAlbum(), albumItemId);
 
-		if (addedAlbumItem != null) {
-			Collector.getAlbumItemSWTBrowser().setText(
-					generateItemAddedOrUpdatedFeedbackConstruct(
-							Translator.get(DictKeys.BROWSER_ITEM_ADDED),
-							ItemCreator.getAlbumItemTableRowHtml(addedAlbumItem)));
+			if (addedAlbumItem != null) {
+				Collector.getAlbumItemSWTBrowser().setText(
+						generateItemAddedOrUpdatedFeedbackConstruct(
+								Translator.get(DictKeys.BROWSER_ITEM_ADDED),
+								ItemCreator.getAlbumItemTableRowHtml(addedAlbumItem)));
+			}
+		} catch (FailedDatabaseWrapperOperationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	

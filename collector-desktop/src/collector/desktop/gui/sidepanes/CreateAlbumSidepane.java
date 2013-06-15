@@ -28,6 +28,7 @@ import collector.desktop.album.MetaItemField;
 import collector.desktop.database.AlbumItemStore;
 import collector.desktop.database.DatabaseWrapper;
 import collector.desktop.database.QueryBuilder;
+import collector.desktop.database.exceptions.FailedDatabaseWrapperOperationException;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
 import collector.desktop.gui.browser.BrowserFacade;
 import collector.desktop.gui.various.ComponentFactory;
@@ -272,13 +273,18 @@ public class CreateAlbumSidepane {
 			public void widgetSelected(SelectionEvent e) {
 				String albumName = albumNameText.getText();
 
-				if (! DatabaseWrapper.albumNameIsAvailable(albumName)) {
-					ComponentFactory.getMessageBox(
-							parentComposite, 
-							Translator.get(DictKeys.DIALOG_TITLE_ALBUM_NAME_ALREADY_USED), 
-							Translator.get(DictKeys.DIALOG_CONTENT_ALBUM_NAME_ALREADY_USED), 
-							SWT.ICON_INFORMATION).open();
-					return;
+				try {
+					if (!DatabaseWrapper.albumNameIsAvailable(albumName)) {
+						ComponentFactory.getMessageBox(
+								parentComposite, 
+								Translator.get(DictKeys.DIALOG_TITLE_ALBUM_NAME_ALREADY_USED), 
+								Translator.get(DictKeys.DIALOG_CONTENT_ALBUM_NAME_ALREADY_USED), 
+								SWT.ICON_INFORMATION).open();
+						return;
+					}
+				} catch (FailedDatabaseWrapperOperationException failedDatabaseWrapperOperationException) {
+					//TODO do smth
+					failedDatabaseWrapperOperationException.printStackTrace();
 				}
 
 				if (!FileSystemAccessWrapper.isNameFileSystemCompliant(albumName)) {
@@ -306,8 +312,9 @@ public class CreateAlbumSidepane {
 					willContainImages = true;
 				}
 
-				boolean albumCreationSuccessful = DatabaseWrapper.createNewAlbum(albumName, metaItemFields, willContainImages);
-				if (!albumCreationSuccessful) {
+				try {
+					DatabaseWrapper.createNewAlbum(albumName, metaItemFields, willContainImages);
+				} catch (FailedDatabaseWrapperOperationException failedDatabaseWrapperOperationException) {
 					ComponentFactory.getMessageBox(
 							parentComposite, 
 							Translator.get(DictKeys.DIALOG_TITLE_ALBUM_CREATE_ERROR), 

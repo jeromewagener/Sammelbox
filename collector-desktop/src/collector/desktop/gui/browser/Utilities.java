@@ -11,6 +11,7 @@ import collector.desktop.album.AlbumItem;
 import collector.desktop.database.AlbumItemResultSet;
 import collector.desktop.database.AlbumItemStore;
 import collector.desktop.database.DatabaseWrapper;
+import collector.desktop.database.exceptions.FailedDatabaseWrapperOperationException;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
 
 public class Utilities {
@@ -31,7 +32,12 @@ public class Utilities {
 	static String lastPageAsHtml;
 
 	static void performBrowserQueryAndShow(Browser browser, String sqlQuery) {				
-		AlbumItemStore.reinitializeStore(DatabaseWrapper.executeSQLQuery(sqlQuery));
+		try {
+			AlbumItemStore.reinitializeStore(DatabaseWrapper.executeSQLQuery(sqlQuery));
+		} catch (FailedDatabaseWrapperOperationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		showAlbum(browser);
 	}
 
@@ -40,7 +46,12 @@ public class Utilities {
 	}
 
 	static void showResultSet(Browser browser, AlbumItemResultSet albumItemResultSet) {
-		AlbumItemStore.reinitializeStore(albumItemResultSet);
+		try {
+			AlbumItemStore.reinitializeStore(albumItemResultSet);
+		} catch (FailedDatabaseWrapperOperationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		showAlbum(browser);
 	}
 

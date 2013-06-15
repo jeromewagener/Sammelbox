@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import collector.desktop.database.DatabaseWrapper;
+import collector.desktop.database.exceptions.FailedDatabaseWrapperOperationException;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
 import collector.desktop.internationalization.DictKeys;
 import collector.desktop.internationalization.Translator;
@@ -75,7 +76,14 @@ public class WelcomePageManager {
 	}
 
 	public Long getNumberOfItemsInAlbum(String albumName) {
-		return DatabaseWrapper.getNumberOfItemsInAlbum(albumName);
+		try {
+			return DatabaseWrapper.getNumberOfItemsInAlbum(albumName);
+		} catch (FailedDatabaseWrapperOperationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			
+			return 0L;
+		}
 	}
 
 	public static <K, V extends Comparable<? super V>> Map<K, V> sortByValue( Map<K, V> map ) {

@@ -32,6 +32,7 @@ import collector.desktop.database.DatabaseWrapper;
 import collector.desktop.database.QueryBuilder;
 import collector.desktop.database.QueryBuilder.QueryComponent;
 import collector.desktop.database.QueryBuilder.QueryOperator;
+import collector.desktop.database.exceptions.FailedDatabaseWrapperOperationException;
 import collector.desktop.gui.managers.AlbumViewManager;
 import collector.desktop.gui.tobemoved.MetaItemFieldFilter;
 import collector.desktop.gui.various.ComponentFactory;
@@ -63,12 +64,15 @@ public class AdvancedSearchSidepane {
 		final Combo fieldToSearchCombo = new Combo(innerComposite, SWT.DROP_DOWN);
 		fieldToSearchCombo.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		// Fill the comboBox
-		fieldToSearchCombo.setData(
-				"validMetaItemFields", MetaItemFieldFilter.getValidMetaItemFields(DatabaseWrapper.getAlbumItemFieldNamesAndTypes(album)));
-		fieldToSearchCombo.setItems(
-				MetaItemFieldFilter.getValidFieldNamesAsStringArray(DatabaseWrapper.getAlbumItemFieldNamesAndTypes(album)));	
-
+		try {
+			// Fill the comboBox
+			fieldToSearchCombo.setData(
+					"validMetaItemFields", MetaItemFieldFilter.getValidMetaItemFields(DatabaseWrapper.getAlbumItemFieldNamesAndTypes(album)));
+			fieldToSearchCombo.setItems(
+					MetaItemFieldFilter.getValidFieldNamesAsStringArray(DatabaseWrapper.getAlbumItemFieldNamesAndTypes(album)));	
+		} catch (FailedDatabaseWrapperOperationException failedDatabaseWrapperOperationException) {
+			// TODO log & do
+		}
 		Label searchOperatorLabel = new Label(innerComposite, SWT.NONE);
 		searchOperatorLabel.setText(Translator.get(DictKeys.LABEL_SEARCH_OPERATOR));
 		final Combo searchOperatorCombo = new Combo(innerComposite, SWT.DROP_DOWN);	
@@ -213,10 +217,14 @@ public class AdvancedSearchSidepane {
 		final Combo fieldToSortCombo = new Combo(composite, SWT.DROP_DOWN);
 		fieldToSortCombo.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		// Fill the comboBox
-		fieldToSortCombo.setData("validMetaItemFields", MetaItemFieldFilter.getValidMetaItemFields(DatabaseWrapper.getAlbumItemFieldNamesAndTypes(album)));
-		fieldToSortCombo.setItems(MetaItemFieldFilter.getValidFieldNamesAsStringArray(DatabaseWrapper.getAlbumItemFieldNamesAndTypes(album)));
-
+		try {
+			// Fill the comboBox
+			fieldToSortCombo.setData("validMetaItemFields", MetaItemFieldFilter.getValidMetaItemFields(DatabaseWrapper.getAlbumItemFieldNamesAndTypes(album)));
+			fieldToSortCombo.setItems(MetaItemFieldFilter.getValidFieldNamesAsStringArray(DatabaseWrapper.getAlbumItemFieldNamesAndTypes(album)));
+		} catch (FailedDatabaseWrapperOperationException failedDatabaseWrapperOperationException) {
+			// TODO log & do
+		}
+		
 		final Button sortAscendingButton = new Button(composite, SWT.RADIO);
 		sortAscendingButton.setText(Translator.get(DictKeys.BUTTON_SORT_ASCENDING));
 		sortAscendingButton.setSelection(true);
@@ -328,12 +336,16 @@ public class AdvancedSearchSidepane {
 				String value = searchQueryTable.getItem(i).getText(2);
 
 				String option = null;
-				if (value.equals(Translator.get(DictKeys.BROWSER_YES))) {
-					option = OptionType.getDatabaseOptionValue(DictKeys.BROWSER_YES);
-				} else if (value.equals(Translator.get(DictKeys.BROWSER_NO))) {
-					option = OptionType.getDatabaseOptionValue(DictKeys.BROWSER_NO);
-				} else if (value.equals(Translator.get(DictKeys.BROWSER_UNKNOWN))) {
-					option = OptionType.getDatabaseOptionValue(DictKeys.BROWSER_UNKNOWN);
+				try {
+					if (value.equals(Translator.get(DictKeys.BROWSER_YES))) {
+						option = OptionType.getDatabaseOptionValue(DictKeys.BROWSER_YES);
+					} else if (value.equals(Translator.get(DictKeys.BROWSER_NO))) {
+						option = OptionType.getDatabaseOptionValue(DictKeys.BROWSER_NO);
+					} else if (value.equals(Translator.get(DictKeys.BROWSER_UNKNOWN))) {
+						option = OptionType.getDatabaseOptionValue(DictKeys.BROWSER_UNKNOWN);
+					}
+				} catch (FailedDatabaseWrapperOperationException failedDatabaseWrapperOperationException) {
+					// TODO log & do
 				}
 
 				if (option != null) {

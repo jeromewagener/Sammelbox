@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets.Text;
 
 import collector.desktop.Collector;
 import collector.desktop.database.DatabaseWrapper;
+import collector.desktop.database.exceptions.FailedDatabaseWrapperOperationException;
 import collector.desktop.gui.browser.BrowserFacade;
 import collector.desktop.gui.listeners.QuickSearchModifyListener;
 import collector.desktop.gui.managers.AlbumManager;
@@ -168,7 +169,12 @@ public class QuickControlSidepane {
 				messageBox.setMessage(Translator.get(DictKeys.DIALOG_CONTENT_DELETE_ALBUM, Collector.getSelectedAlbum()));
 				if (messageBox.open() == SWT.YES) {
 					AlbumViewManager.removeAlbumViews(Collector.getSelectedAlbum());
-					DatabaseWrapper.removeAlbum(Collector.getSelectedAlbum());
+					try {
+						DatabaseWrapper.removeAlbum(Collector.getSelectedAlbum());
+					} catch (FailedDatabaseWrapperOperationException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 					Collector.refreshSWTAlbumList();
 					BrowserFacade.loadHtmlFromInputStream(Collector.getShell().getClass().getClassLoader().getResourceAsStream("htmlfiles/album_deleted.html"));
 				}

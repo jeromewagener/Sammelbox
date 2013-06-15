@@ -31,6 +31,7 @@ import collector.desktop.album.MetaItemField;
 import collector.desktop.album.OptionType;
 import collector.desktop.album.StarRating;
 import collector.desktop.database.DatabaseWrapper;
+import collector.desktop.database.exceptions.FailedDatabaseWrapperOperationException;
 import collector.desktop.gui.browser.BrowserFacade;
 import collector.desktop.gui.image.ImageDropAndManagementComposite;
 import collector.desktop.gui.managers.WelcomePageManager;
@@ -492,6 +493,7 @@ public class BasicAlbumItemSidepane {
 					}
 				}
 
+				try {
 				// Update Database and Browser
 				if (isUpdateAlbumItemComposite) {
 					albumItem.addField("id", FieldType.ID, albumItemId);
@@ -504,6 +506,10 @@ public class BasicAlbumItemSidepane {
 
 				Collector.changeRightCompositeTo(PanelType.Empty, EmptySidepane.build(Collector.getThreePanelComposite()));
 				WelcomePageManager.getInstance().updateLastModifiedWithCurrentDate(Collector.getSelectedAlbum());
+				} catch (FailedDatabaseWrapperOperationException failedDatabaseWrapperOperationException) {
+					// TODO do smth
+					failedDatabaseWrapperOperationException.printStackTrace();
+				}
 			}
 		};
 	}

@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 import collector.desktop.database.DatabaseWrapper;
+import collector.desktop.database.exceptions.FailedDatabaseWrapperOperationException;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
 import collector.desktop.interfaces.UIObservable;
 import collector.desktop.interfaces.UIObserver;
@@ -76,8 +77,13 @@ public class AlbumViewManager implements UIObservable {
 		Collection<AlbumView> validAlbumViews = new LinkedList<AlbumView>();
 		
 		for (AlbumView albumView : FileSystemAccessWrapper.loadViews()) {
-			if (DatabaseWrapper.listAllAlbums().contains(albumView.getAlbum())) {
-				validAlbumViews.add(albumView);
+			try {
+				if (DatabaseWrapper.listAllAlbums().contains(albumView.getAlbum())) {
+					validAlbumViews.add(albumView);
+				}
+			} catch (FailedDatabaseWrapperOperationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 		
