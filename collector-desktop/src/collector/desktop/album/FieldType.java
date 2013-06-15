@@ -102,7 +102,7 @@ public enum FieldType {
 		case URL:
 			return "";
 		case Option:
-			return OptionType.Option;
+			return OptionType.UNKNOWN;
 		case StarRating :
 			return collector.desktop.album.StarRating.ZeroStars.toString();
 		// Default value is never reached, it would result in a null pointer exception.

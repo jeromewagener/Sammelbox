@@ -94,7 +94,7 @@ public class ItemCreator {
 					htmlDataColumnContent.append(getFieldNameAndValueLine(fieldItem.getName(), Translator.get(DictKeys.BROWSER_YES)));
 				} else if (fieldItem.getValue() == OptionType.No) {
 					htmlDataColumnContent.append(getFieldNameAndValueLine(fieldItem.getName(), Translator.get(DictKeys.BROWSER_NO)));
-				} else if (fieldItem.getValue() == OptionType.Option) {
+				} else if (fieldItem.getValue() == OptionType.UNKNOWN) {
 					htmlDataColumnContent.append(getFieldNameAndValueLine(fieldItem.getName(), Translator.get(DictKeys.BROWSER_UNKNOWN)));
 				}
 			} else if (fieldItem.getType().equals(FieldType.Date)) {

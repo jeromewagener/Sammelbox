@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 
 import collector.desktop.database.DatabaseWrapper;
 import collector.desktop.database.QueryBuilder;
+import collector.desktop.database.exceptions.FailedDatabaseWrapperOperationException;
 import collector.desktop.filesystem.BuildInformation;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
 import collector.desktop.filesystem.export.CSVExporter;
@@ -111,11 +112,14 @@ public class Collector implements UIObservable, UIObserver {
 	private Collector() throws Exception {		
 		Class.forName("org.sqlite.JDBC");
 		
-		if (!DatabaseWrapper.openConnection()) {	
-			normalStartup =  false;
-			if (DatabaseWrapper.openCleanConnection() == false) {
+		try {
+			DatabaseWrapper.openConnection();	
+		} catch (FailedDatabaseWrapperOperationException e){
+			try {
+				DatabaseWrapper.openCleanConnection();				
+			}catch (FailedDatabaseWrapperOperationException e2) {
 				logger.error("The database is corrupt since opening a connection failed. A dump of the db can be found in the program App folder.");
-			}
+			}			
 		}		
 		instance = this;
 	}
@@ -486,8 +490,13 @@ public class Collector implements UIObservable, UIObserver {
 		}
 	
 		Collector.getQuickSearchTextField().setText("");
-		Collector.getQuickSearchTextField().setEnabled(
-				DatabaseWrapper.isAlbumQuicksearchable(albumName));
+		try {
+			Collector.getQuickSearchTextField().setEnabled(
+					DatabaseWrapper.isAlbumQuicksearchable(albumName));
+		} catch (FailedDatabaseWrapperOperationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		BrowserFacade.performBrowserQueryAndShow(QueryBuilder.createSelectStarQuery(albumName));
 		
@@ -561,7 +570,12 @@ public class Collector implements UIObservable, UIObserver {
 
 				String path = openFileDialog.open();
 				if (path != null) {
-					DatabaseWrapper.restoreFromFile(path);
+					try {
+						DatabaseWrapper.restoreFromFile(path);
+					} catch (FailedDatabaseWrapperOperationException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					// No default album is selected on restore
 					Collector.refreshSWTAlbumList();
 					BrowserFacade.loadHtmlFromInputStream(getShell().getClass().getClassLoader().getResourceAsStream("htmlfiles/albums_restored.html"));
@@ -591,7 +605,12 @@ public class Collector implements UIObservable, UIObserver {
 
 				String path = saveFileDialog.open();
 				if (path != null) {
-					DatabaseWrapper.backupToFile(path);
+					try {
+						DatabaseWrapper.backupToFile(path);
+					} catch (FailedDatabaseWrapperOperationException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}		        
 			} else {
 				// --------------------------------------------------------------
@@ -611,9 +630,14 @@ public class Collector implements UIObservable, UIObserver {
 					messageBox.setText(Translator.get(DictKeys.DIALOG_TITLE_DELETE_ALBUM));
 					messageBox.setMessage(Translator.get(DictKeys.DIALOG_CONTENT_DELETE_ALBUM, Collector.getSelectedAlbum()));
 					if (messageBox.open() == SWT.YES) {
-						DatabaseWrapper.removeAlbum(getSelectedAlbum());
-						Collector.refreshSWTAlbumList();
-						BrowserFacade.loadHtmlFromInputStream(getShell().getClass().getClassLoader().getResourceAsStream("htmlfiles/album_deleted.html"));
+						try {
+							DatabaseWrapper.removeAlbum(getSelectedAlbum());
+							Collector.refreshSWTAlbumList();
+							BrowserFacade.loadHtmlFromInputStream(getShell().getClass().getClassLoader().getResourceAsStream("htmlfiles/album_deleted.html"));
+						} catch (FailedDatabaseWrapperOperationException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					}
 				} else if (((MenuItem) event.widget).getText().equals(Translator.get(DictKeys.MENU_ALTER_SELECTED_ALBUM))) {
 					changeRightCompositeTo(PanelType.AlterAlbum, AlterAlbumSidepane.build(threePanelComposite, getSelectedAlbum()));
@@ -796,8 +820,11 @@ public class Collector implements UIObservable, UIObserver {
 
 	private static void createAutoSaveOfDatabase(LoadingOverlayShell shell) {
 		// Backup the database in a Thread running in parallel to the SWT UI Thread. 
-		if(!DatabaseWrapper.backupAutoSave() ){
-			System.err.println("Error while autosaving!!");
+		try {
+			DatabaseWrapper.backupAutoSave();
+		} catch (FailedDatabaseWrapperOperationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		shell.stop();
 	}	
