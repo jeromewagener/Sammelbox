@@ -22,14 +22,14 @@ import collector.desktop.album.MetaItemField;
 import collector.desktop.album.OptionType;
 import collector.desktop.database.AlbumItemResultSet;
 import collector.desktop.database.DatabaseWrapper;
+import collector.desktop.database.exceptions.FailedDatabaseWrapperOperationException;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
 import collector.desktop.tests.CollectorTestExecuter;
 
 public class BackupRestoreTests {
 	public static final String TEMP_DIR = System.getProperty("java.io.tmpdir");
-	
-	private static void resetEverything() {
-		System.out.println("Reset everything");
+
+	public static void resetEverything() {
 		try {			
 			DatabaseWrapper.closeConnection();
 
@@ -48,7 +48,7 @@ public class BackupRestoreTests {
 			fail("Could not open database!");
 		}
 	}
-	
+
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 	}
@@ -84,7 +84,9 @@ public class BackupRestoreTests {
 		columns.add(priceField);
 		columns.add(lenttoField);
 
-		if (DatabaseWrapper.createNewAlbum(albumName, columns, true) == false) {
+		try {
+			DatabaseWrapper.createNewAlbum(albumName, columns, true);			
+		} catch (FailedDatabaseWrapperOperationException e) {
 			fail("Creation of album "+ albumName + " failed");
 		}
 	}
@@ -100,7 +102,9 @@ public class BackupRestoreTests {
 		columns.add(DVDTitleField);
 		columns.add(actorField);
 
-		if (DatabaseWrapper.createNewAlbum(albumName, columns, false) == false) {
+		try {
+			DatabaseWrapper.createNewAlbum(albumName, columns, false);			
+		} catch (FailedDatabaseWrapperOperationException e) {
 			fail("Creation of album "+ albumName + " failed");
 		}
 	}
@@ -116,7 +120,9 @@ public class BackupRestoreTests {
 		columns.add(titleField);
 		columns.add(artistField);
 
-		if (DatabaseWrapper.createNewAlbum(albumName, columns, true) == false) {
+		try {
+			DatabaseWrapper.createNewAlbum(albumName, columns, true);			
+		} catch (FailedDatabaseWrapperOperationException e) {
 			fail("Creation of album "+ albumName + " failed");
 		}
 	}
@@ -135,7 +141,9 @@ public class BackupRestoreTests {
 
 		item.setFields(fields);
 
-		if (DatabaseWrapper.addNewAlbumItem(item, false, true) == -1) {
+		try {
+			DatabaseWrapper.addNewAlbumItem(item, false, true);			
+		} catch (FailedDatabaseWrapperOperationException e) {
 			fail("Album Item could not be inserted into album");
 		}
 
@@ -150,7 +158,9 @@ public class BackupRestoreTests {
 
 		item.setFields(fields);
 
-		if (DatabaseWrapper.addNewAlbumItem(item, false, true) == -1) {
+		try {
+			DatabaseWrapper.addNewAlbumItem(item, false, true);			
+		} catch (FailedDatabaseWrapperOperationException e) {
 			fail("Album Item could not be inserted into album");
 		}
 
@@ -165,7 +175,9 @@ public class BackupRestoreTests {
 
 		item.setFields(fields);
 
-		if (DatabaseWrapper.addNewAlbumItem(item, false, true) == -1) {
+		try {
+			DatabaseWrapper.addNewAlbumItem(item, false, true);			
+		} catch (FailedDatabaseWrapperOperationException e) {
 			fail("Album Item could not be inserted into album");
 		}
 	}
@@ -181,7 +193,9 @@ public class BackupRestoreTests {
 
 		item.setFields(fields);
 
-		if (DatabaseWrapper.addNewAlbumItem(item, false, true) == -1) {
+		try {
+			DatabaseWrapper.addNewAlbumItem(item, false, true);			
+		} catch (FailedDatabaseWrapperOperationException e) {
 			fail("Album Item could not be inserted into album");
 		}
 
@@ -193,7 +207,9 @@ public class BackupRestoreTests {
 
 		item.setFields(fields);
 
-		if (DatabaseWrapper.addNewAlbumItem(item, false, true) == -1) {
+		try {
+			DatabaseWrapper.addNewAlbumItem(item, false, true);			
+		} catch (FailedDatabaseWrapperOperationException e) {
 			fail("Album Item could not be inserted into album");
 		}
 	}
@@ -202,21 +218,25 @@ public class BackupRestoreTests {
 	public void testBackupOfSingleAlbum() {
 		createBookAlbum();
 		fillBookAlbum();
+		try {
 
-		// Check number of items in book album
-		AlbumItemResultSet allAlbumItems = DatabaseWrapper.executeSQLQuery("SELECT * FROM Books");
+			// Check number of items in book album
+			AlbumItemResultSet allAlbumItems = DatabaseWrapper.executeSQLQuery("SELECT * FROM Books");
 
-		assertTrue("Resultset should not be null", allAlbumItems != null);
+			assertTrue("Resultset should not be null", allAlbumItems != null);
 
-		int counter = 0;
-		while (allAlbumItems.moveToNext()) {
-			counter++;
-		}
+			int counter = 0;
+			while (allAlbumItems.moveToNext()) {
+				counter++;
+			}
 
-		assertTrue("Resultset should contain 3 items", counter == 3);
+			assertTrue("Resultset should contain 3 items", counter == 3);
 
-		// Backup album
-		DatabaseWrapper.backupToFile(TEMP_DIR + File.separatorChar + "testBackupRestoreOfSingleAlbum.cbk");
+			// Backup album
+			DatabaseWrapper.backupToFile(TEMP_DIR + File.separatorChar + "testBackupRestoreOfSingleAlbum.cbk");
+		} catch (FailedDatabaseWrapperOperationException e) {
+			fail("testBackupOfSingleAlbum raised an exception");
+		} 
 	}
 
 	@Test
@@ -226,182 +246,222 @@ public class BackupRestoreTests {
 		createMusicAlbum();
 		fillBookAlbum();
 		fillDVDAlbum();
+		try {
+			// Check number of items in book album
+			AlbumItemResultSet allAlbumItems = DatabaseWrapper.executeSQLQuery("SELECT * FROM Books");
 
-		// Check number of items in book album
-		AlbumItemResultSet allAlbumItems = DatabaseWrapper.executeSQLQuery("SELECT * FROM Books");
+			assertTrue("Resultset should not be null", allAlbumItems != null);
 
-		assertTrue("Resultset should not be null", allAlbumItems != null);
+			int counter = 0;
+			while (allAlbumItems.moveToNext()) {
+				counter++;
+			}
 
-		int counter = 0;
-		while (allAlbumItems.moveToNext()) {
-			counter++;
+			assertTrue("Resultset should contain 3 items", counter == 3);
+
+			// Check number of items in dvd album
+			allAlbumItems = DatabaseWrapper.executeSQLQuery("SELECT * FROM 'DVD Album'");
+
+			assertTrue("Resultset should not be null", allAlbumItems != null);
+
+			counter = 0;
+			while (allAlbumItems.moveToNext()) {
+				counter++;
+			}
+
+			assertTrue("Resultset should contain 2 items", counter == 2);		
+
+			// Check number of items in music album
+			allAlbumItems = DatabaseWrapper.executeSQLQuery("SELECT * FROM 'Music Album'");
+
+			assertTrue("Resultset should not be null", allAlbumItems != null);
+
+			counter = 0;
+			while (allAlbumItems.moveToNext()) {
+				counter++;
+			}
+
+			assertTrue("Resultset should contain 0 items", counter == 0);	
+
+			// Backup Albums
+			DatabaseWrapper.backupToFile(TEMP_DIR + File.separatorChar + "testBackupRestoreOfMultipleAlbums.cbk");
+		} catch (FailedDatabaseWrapperOperationException e) {
+			fail("Failed on internal db error");			
 		}
-
-		assertTrue("Resultset should contain 3 items", counter == 3);
-
-		// Check number of items in dvd album
-		allAlbumItems = DatabaseWrapper.executeSQLQuery("SELECT * FROM 'DVD Album'");
-
-		assertTrue("Resultset should not be null", allAlbumItems != null);
-
-		counter = 0;
-		while (allAlbumItems.moveToNext()) {
-			counter++;
-		}
-
-		assertTrue("Resultset should contain 2 items", counter == 2);		
-
-		// Check number of items in music album
-		allAlbumItems = DatabaseWrapper.executeSQLQuery("SELECT * FROM 'Music Album'");
-
-		assertTrue("Resultset should not be null", allAlbumItems != null);
-
-		counter = 0;
-		while (allAlbumItems.moveToNext()) {
-			counter++;
-		}
-
-		assertTrue("Resultset should contain 0 items", counter == 0);	
-
-		// Backup Albums
-		DatabaseWrapper.backupToFile(TEMP_DIR + File.separatorChar + "testBackupRestoreOfMultipleAlbums.cbk");
 	}
 
 	@Test
 	public void testRestoreOfSingleAlbum() {
 		testBackupOfSingleAlbum();
+		try {
 
-		// Restore album
-		DatabaseWrapper.restoreFromFile(TEMP_DIR + File.separatorChar + "testBackupRestoreOfSingleAlbum.cbk");
+			// Restore album
+			DatabaseWrapper.restoreFromFile(TEMP_DIR + File.separatorChar + "testBackupRestoreOfSingleAlbum.cbk");
 
-		// Check number of items in book album
-		AlbumItemResultSet allAlbumItems = DatabaseWrapper.executeSQLQuery("SELECT * FROM Books");
+			// Check number of items in book album
+			AlbumItemResultSet allAlbumItems = DatabaseWrapper.executeSQLQuery("SELECT * FROM Books");
 
-		assertTrue("Resultset should not be null", allAlbumItems != null);
+			assertTrue("Resultset should not be null", allAlbumItems != null);
 
-		int counter = 0;
-		while (allAlbumItems.moveToNext()) {
-			counter++;
+			int counter = 0;
+			while (allAlbumItems.moveToNext()) {
+				counter++;
+			}
+
+			assertTrue("Resultset should contain 3 items", counter == 3);
+		} catch (FailedDatabaseWrapperOperationException e) {
+			fail("Failed on internal db error");
 		}
-
-		assertTrue("Resultset should contain 3 items", counter == 3);
 	}
 
 	@Test
 	public void testRestoreOfMultipleAlbums() {
 		testBackupOfMultipleAlbums();
+		try {
+			// Restore albums
+			DatabaseWrapper.restoreFromFile(TEMP_DIR + File.separatorChar + "testBackupRestoreOfMultipleAlbums.cbk");
 
-		// Restore albums
-		DatabaseWrapper.restoreFromFile(TEMP_DIR + File.separatorChar + "testBackupRestoreOfMultipleAlbums.cbk");
+			// Check number of items in book album
+			AlbumItemResultSet allAlbumItems = DatabaseWrapper.executeSQLQuery("SELECT * FROM Books");
 
-		// Check number of items in book album
-		AlbumItemResultSet allAlbumItems = DatabaseWrapper.executeSQLQuery("SELECT * FROM Books");
+			assertTrue("Resultset should not be null", allAlbumItems != null);
 
-		assertTrue("Resultset should not be null", allAlbumItems != null);
+			int counter = 0;
+			while (allAlbumItems.moveToNext()) {
+				counter++;
+			}
 
-		int counter = 0;
-		while (allAlbumItems.moveToNext()) {
-			counter++;
+			assertTrue("Resultset should contain 3 items", counter == 3);
+
+			// Check number of items in dvd album
+			allAlbumItems = DatabaseWrapper.executeSQLQuery("SELECT * FROM 'DVD Album'");
+
+			assertTrue("Resultset should not be null", allAlbumItems != null);
+
+			counter = 0;
+			while (allAlbumItems.moveToNext()) {
+				counter++;
+			}
+
+			assertTrue("Resultset should contain 2 items", counter == 2);		
+
+			// Check number of items in music album
+			allAlbumItems = DatabaseWrapper.executeSQLQuery("SELECT * FROM 'Music Album'");
+
+			assertTrue("Resultset should not be null", allAlbumItems != null);
+
+			counter = 0;
+			while (allAlbumItems.moveToNext()) {
+				counter++;
+			}
+
+			assertTrue("Resultset should contain 0 items", counter == 0);
+		} catch (FailedDatabaseWrapperOperationException e) {
+			fail("Failed on internal db error");
 		}
-
-		assertTrue("Resultset should contain 3 items", counter == 3);
-
-		// Check number of items in dvd album
-		allAlbumItems = DatabaseWrapper.executeSQLQuery("SELECT * FROM 'DVD Album'");
-
-		assertTrue("Resultset should not be null", allAlbumItems != null);
-
-		counter = 0;
-		while (allAlbumItems.moveToNext()) {
-			counter++;
-		}
-
-		assertTrue("Resultset should contain 2 items", counter == 2);		
-
-		// Check number of items in music album
-		allAlbumItems = DatabaseWrapper.executeSQLQuery("SELECT * FROM 'Music Album'");
-
-		assertTrue("Resultset should not be null", allAlbumItems != null);
-
-		counter = 0;
-		while (allAlbumItems.moveToNext()) {
-			counter++;
-		}
-
-		assertTrue("Resultset should contain 0 items", counter == 0);
 	}
 
 	@Test
 	public void testRestoreOfTestDataAlbums() {
-		assertTrue(new File(CollectorTestExecuter.PATH_TO_TEST_CBK).exists());
+		try {
+			assertTrue(new File(CollectorTestExecuter.PATH_TO_TEST_CBK).exists());
 
-		// Restore albums
-		DatabaseWrapper.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
+			// Restore albums
+			DatabaseWrapper.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
 
-		// Check number of items in Books album
-		AlbumItemResultSet allAlbumItems = DatabaseWrapper.executeSQLQuery("SELECT * FROM Books");
+			// Check number of items in Books album
+			AlbumItemResultSet allAlbumItems = DatabaseWrapper.executeSQLQuery("SELECT * FROM Books");
 
-		assertTrue("Resultset should not be null", allAlbumItems != null);
+			assertTrue("Resultset should not be null", allAlbumItems != null);
 
-		int counter = 0;
-		while (allAlbumItems.moveToNext()) {
-			counter++;
+			int counter = 0;
+			while (allAlbumItems.moveToNext()) {
+				counter++;
+			}
+
+			assertTrue("Resultset should contain 10 items", counter == 10);
+
+			// Check number of items in DVDs album
+			allAlbumItems = DatabaseWrapper.executeSQLQuery("SELECT * FROM 'DVDs'");
+
+			assertTrue("Resultset should not be null", allAlbumItems != null);
+
+			counter = 0;
+			while (allAlbumItems.moveToNext()) {
+				counter++;
+			}
+
+			assertTrue("Resultset should contain 11 items", counter == 11);
+		} catch (FailedDatabaseWrapperOperationException e) {
+			fail("Failed on internal db error");
 		}
-
-		assertTrue("Resultset should contain 10 items", counter == 10);
-
-		// Check number of items in DVDs album
-		allAlbumItems = DatabaseWrapper.executeSQLQuery("SELECT * FROM 'DVDs'");
-
-		assertTrue("Resultset should not be null", allAlbumItems != null);
-
-		counter = 0;
-		while (allAlbumItems.moveToNext()) {
-			counter++;
-		}
-		
-		assertTrue("Resultset should contain 11 items", counter == 11);
 	}
-	
+
 	@Test
 	public void testRestoreAndModificiationOfTestDataAlbums() {
-		testRestoreOfTestDataAlbums();
-		
-		final String albumName = "Books";
+		try {
+			testRestoreOfTestDataAlbums();
 
-		AlbumItem item = new AlbumItem(albumName);
+			final String albumName = "Books";
 
-		List<ItemField> fields = new ArrayList<ItemField>();
-		fields.add( new ItemField("Book Title", FieldType.Text, "added title"));
-		fields.add( new ItemField("Author", FieldType.Text, "added author"));
-		fields.add( new ItemField("Purchased", FieldType.Date, new Date(System.currentTimeMillis())));
-		fields.add( new ItemField("Lent to", FieldType.Text, "added person"));
-		fields.add( new ItemField("Second Hand", FieldType.Option, OptionType.Yes));
-		
-		item.setFields(fields);
+			AlbumItem item = new AlbumItem(albumName);
 
-		if (DatabaseWrapper.addNewAlbumItem(item, false, true) == -1) {
-			fail("Album Item could not be inserted into album");
+			List<ItemField> fields = new ArrayList<ItemField>();
+			fields.add( new ItemField("Book Title", FieldType.Text, "added title"));
+			fields.add( new ItemField("Author", FieldType.Text, "added author"));
+			fields.add( new ItemField("Purchased", FieldType.Date, new Date(System.currentTimeMillis())));
+			fields.add( new ItemField("Lent to", FieldType.Text, "added person"));
+			fields.add( new ItemField("Second Hand", FieldType.Option, OptionType.Yes));
+
+			item.setFields(fields);
+
+			if (DatabaseWrapper.addNewAlbumItem(item, false, true) == -1) {
+				fail("Album Item could not be inserted into album");
+			}
+
+			DatabaseWrapper.backupToFile(TEMP_DIR + File.separatorChar + "testRestoreAndModificiationOfTestDataAlbums.cbk");
+		} catch (FailedDatabaseWrapperOperationException e) {
+			fail("Failed on internal db error");
 		}
-		
-		DatabaseWrapper.backupToFile(TEMP_DIR + File.separatorChar + "testRestoreAndModificiationOfTestDataAlbums.cbk");
 	}
-	
+
 	@Test
 	public void testRestoreOfModificiationOfTestDataAlbums() {
-		// Restore modified albums
-		DatabaseWrapper.restoreFromFile(TEMP_DIR + File.separatorChar + "testRestoreAndModificiationOfTestDataAlbums.cbk");
-		
-		// Check number of items in Books album (must contain one more item than the original)
-		AlbumItemResultSet allAlbumItems = DatabaseWrapper.executeSQLQuery("SELECT * FROM Books");
+		try {
+			// Restore modified albums
+			DatabaseWrapper.restoreFromFile(TEMP_DIR + File.separatorChar + "testRestoreAndModificiationOfTestDataAlbums.cbk");
 
-		assertTrue("Resultset should not be null", allAlbumItems != null);
+			// Check number of items in Books album (must contain one more item than the original)
+			AlbumItemResultSet allAlbumItems = DatabaseWrapper.executeSQLQuery("SELECT * FROM Books");
 
-		int counter = 0;
-		while (allAlbumItems.moveToNext()) {
-			counter++;
+			assertTrue("Resultset should not be null", allAlbumItems != null);
+
+			int counter = 0;
+			while (allAlbumItems.moveToNext()) {
+				counter++;
+			}
+
+			assertTrue("Resultset should contain 11 items", counter == 11);
+		} catch (FailedDatabaseWrapperOperationException e) {
+			fail("Failed on internal db error");
 		}
-		
-		assertTrue("Resultset should contain 11 items", counter == 11);
+	}
+	
+	/**
+	 * Counts the number of items in an album. Expensive function to use. Not recommended to overuse.
+	 * @param albumName The name of the album to be queried.
+	 * @return The number of item in the specified album.
+	 */
+	public static int numberOfAlbumItems(String albumName) {
+		try {
+			AlbumItemResultSet resultSet = DatabaseWrapper.executeSQLQuery("SELECT * FROM " + albumName);
+			int counter =0;
+			while(resultSet.moveToNext()) {
+				counter++;
+			}
+			return counter;
+		} catch (FailedDatabaseWrapperOperationException e ) {
+			return -1;
+		}
 	}
 }

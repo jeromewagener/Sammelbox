@@ -12,10 +12,8 @@ import collector.desktop.tests.album.RemoveAlbumTests;
 import collector.desktop.tests.albumitems.AddAlbumItemTests;
 import collector.desktop.tests.albumitems.RemoveAlbumItemTests;
 import collector.desktop.tests.albumitems.UpdateAlbumItemTests;
-import collector.desktop.tests.savepoints.CreateAndReleaseSavepoints;
 import collector.desktop.tests.searching.AdvancedSearchTests;
 import collector.desktop.tests.searching.QuickSearchTests;
-
 
 
 @RunWith(Suite.class)
@@ -32,9 +30,7 @@ import collector.desktop.tests.searching.QuickSearchTests;
 	UpdateAlbumItemTests.class,
 
 	AdvancedSearchTests.class,
-	QuickSearchTests.class,
-
-	CreateAndReleaseSavepoints.class
+	QuickSearchTests.class
 	})
 
 public class CollectorTestExecuter {

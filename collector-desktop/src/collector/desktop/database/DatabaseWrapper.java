@@ -36,6 +36,7 @@ import collector.desktop.album.OptionType;
 import collector.desktop.album.StarRating;
 import collector.desktop.database.QueryBuilder.QueryComponent;
 import collector.desktop.database.QueryBuilder.QueryOperator;
+import collector.desktop.database.exceptions.FailedDatabaseWrapperOperationException;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
 
 public class DatabaseWrapper  {
@@ -68,80 +69,96 @@ public class DatabaseWrapper  {
 	private static String sqliteConnectionString = "jdbc:sqlite:";
 	private static Connection connection = null;
 	/** The extension used on file names for autosaves.*/
-	private static final String autoSaveExtension = "autosave";
+	private static final String AUTO_SAVE_EXTENSION = "autosave";
 	/** Regular expression describing the file name format including the extension of auto saves.*/
-	public static final String autoSaveFileRegex = "(\\w)+(\\u005F([0-9]+)+\\."+autoSaveExtension+")$";
+	public static final String AUTO_SAVE_FILE_REGEX = "(\\w)+(\\u005F([0-9]+)+\\."+AUTO_SAVE_EXTENSION+")$";
 	private static final String corruptDatabaseSnapshotPrefix = ".corruptDatabaseSnapshot_";
 	/** The maximum amount of autosaves that can be stored until the oldes it overwritten */
 	private static int autoSaveLimit = 8;
 	/**The normal logger for all info, debug, error and warning in this class*/
-	private final static Logger logger = LoggerFactory.getLogger(DatabaseWrapper.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseWrapper.class);
 	/**
 	 * Opens the default connection for the FileSystemAccessWrapper.DATABASE database. Only opens a new connection if none is currently open.
-	 * @return True when a connection to the program database file is established, false if the connection is corrupt or not established.
+	 * @throws FailedDatabaseWrapperOperationException 
 	 */
-	public static boolean openConnection() {
-		boolean result = false;
+	public static void openConnection() throws FailedDatabaseWrapperOperationException {
+		// Catch the internal sql exception to give a definite state on the db connection using the collector exceptions
+		// This hides all internal sql exceptions
 		try {
 			if (connection == null || connection.isClosed()) {
 				connection = DriverManager.getConnection(sqliteConnectionString + FileSystemAccessWrapper.DATABASE);
 				connection =  ConnectionLoggingProxy.wrap(connection);
 
-				if (enableForeignKeySupportForCurrentSession() == false) {
-					return false;
-				}
-				logger.info("Autocommit is on {}", connection.getAutoCommit());
-				result  = true;
+				enableForeignKeySupportForCurrentSession();
+				/* 
+				 * Autocommit state makes little difference here since all relevant public methods roll back on
+				 * failures anyway and we have only a single connection so concurrency is not relevan either.
+				 */				
+				connection.setAutoCommit(true);
+								
+				LOGGER.info("Autocommit is on {}", connection.getAutoCommit());				
 			}
 			// Create the album master table if it is not present 
 			createAlbumMasterTableIfNotExits();
 
-			// Run a query to check if db is ok
-			result = isConnectionReady();
-		} catch (SQLException e) {
-			System.err.println(e.getMessage());			
-			return false;
-		} 
-		return result;
+			// Run a fetch  to check if db is ok
+			if ( isConnectionReady() == false ) {
+				throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState);
+			}
+		} catch (SQLException e) {			
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState);
+		}
 	}
-
-	public static boolean closeConnection() {
-		boolean result = true;
+	/**
+	 * Tries to close the database connection. If the connection is closed or null calling this method has no effect.
+	 * @throws FailedDatabaseWrapperOperationException
+	 */
+	public static void closeConnection() throws FailedDatabaseWrapperOperationException {
 		try {
 			if (connection != null) {
+				if (connection.isClosed()) {
+					return;
+				}
 				connection.close();
 			}
 		} catch (SQLException e) {
-			System.err.println(e.getMessage());
-			result = false;
+			LOGGER.error("Unable to close the database connection");
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState, e);
 		}
-		return result;
 	}
 
 	/**
 	 * Test if the connection is open and ready to be used. 
-	 * @return True if the connection can be safely used to query and manipulate the database.
 	 */
 	public static boolean isConnectionReady() {
 		//TODO do some logging when this method fails.
+
+		if (connection == null) {			
+			return false;
+		}		
 		try {
-			if (connection == null || connection.isClosed()) {
+			if ( connection.isClosed()) {
 				return false;
 			}
-		} catch (SQLException e1) {
-			return false;
+		} catch (SQLException e) {
+			return false;			
 		}
 
 		/*
 		 *  Querying all albums should be successful on all working dbs,
-		 *  independently of stored albums.
+		 *  independently of how many albums are stored.
 		 */
-
-		List<String> albums = listAllAlbums();
-		if (albums == null) {
-			return  false;
+		List<String> albums = null;
+		try {
+		albums = listAllAlbums();
+		} catch (FailedDatabaseWrapperOperationException e) {
+			LOGGER.error("Unable to fetch the list of albums when testing for a valid connection");
+			return false;
 		}
-
+		
+		if (albums == null) {			
+			return false;
+		}
 		return true;
 	}
 
@@ -149,16 +166,15 @@ public class DatabaseWrapper  {
 	 * This method can be used when the database connection cannot be opened (e.g. corrupt db file).
 	 * I saves the collector home for manual inspection, then clears the whole  collector home including the db
 	 * and opens a connection to a blank db.
-	 * @return True if a connection is available, false if an error occurred in the process.
+	 * If the connection is unexcpectantly in a usable state it, this is a no-operation.
+	 * @throws FailedDatabaseWrapperOperationException 
 	 */
-	public static boolean openCleanConnection() {
-		if (isConnectionReady()) {
-			return true;
+	public static void openCleanConnection() throws FailedDatabaseWrapperOperationException {
+		if (isConnectionReady() == true) {
+			return;
 		}
 
-		if (!closeConnection()) {
-			return false;
-		}				
+		closeConnection();			
 
 		String corruptSnapshotFileName = corruptDatabaseSnapshotPrefix + System.currentTimeMillis();
 		File corruptTemporarySnapshotFile = new File(FileSystemAccessWrapper.USER_HOME + File.separator + corruptSnapshotFileName);
@@ -167,10 +183,11 @@ public class DatabaseWrapper  {
 		try {
 			FileSystemAccessWrapper.copyFile(new File(FileSystemAccessWrapper.DATABASE), corruptTemporarySnapshotFile);
 		} catch (IOException e1) {
-			//TODO log failure
-			return false;
+			LOGGER.error("Copying the corrupt database file to a temporary location failed" , e1);
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState);
 		}
 
+		//TODO: implement checks on the success of this operation
 		FileSystemAccessWrapper.removeCollectorHome();
 		// Copy the corrupt snapshot from the temporary location into the app data folder 
 		String corruptSnapshotFilePath = FileSystemAccessWrapper.COLLECTOR_HOME_APPDATA + File.separator + corruptSnapshotFileName;
@@ -178,15 +195,17 @@ public class DatabaseWrapper  {
 		try {
 			FileSystemAccessWrapper.copyFile(corruptTemporarySnapshotFile, corruptSnapshotFile);
 		} catch (IOException e) {
-			e.printStackTrace();
-			return false;
+			LOGGER.error("Copying the corrupt database file from the temporary location back to the clean Collector HOME failed. Manual cleanup may be required", e);
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState);
 		}
 
-		if (!openConnection()) {
-			return false;
+		// Try to open a regular connection to the newly setup collector HOME
+		openConnection();
+		
+		if (FileSystemAccessWrapper.updateCollectorFileStructure() == false) {
+			LOGGER.error("Updating the structure of the Collector HOME failed. Manual cleanup may be required");
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState);
 		}
-
-		return FileSystemAccessWrapper.updateCollectorFileStructure();
 	}
 
 	/**
@@ -197,25 +216,13 @@ public class DatabaseWrapper  {
 		return connection;
 	}
 
-	private static boolean enableForeignKeySupportForCurrentSession() {
-		boolean success = true;
-		PreparedStatement preparedStatement = null;
-		try {
-			preparedStatement = connection.prepareStatement("PRAGMA foreign_keys = ON");
+	private static void enableForeignKeySupportForCurrentSession() throws FailedDatabaseWrapperOperationException {
+		
+		try ( PreparedStatement preparedStatement = connection.prepareStatement("PRAGMA foreign_keys = ON");){			
 			preparedStatement.executeUpdate();
-
 		} catch (SQLException e) {
-			success = false;
-		} finally {
-			try {
-				if (preparedStatement != null) {
-					preparedStatement.close();
-				}
-			} catch (SQLException e) {
-				success = false;
-			}	
-		}
-		return success;
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState);
+		} 
 	}
 
 	/**
@@ -224,14 +231,13 @@ public class DatabaseWrapper  {
 	 * @param fields The metadata fields describing the fields of the new album. Pass an empty list as argument
 	 * when creating an album with no fields.  
 	 * @param hasAlbumPictureField When set to true creates a single picture field in the album.
-	 * @return True if the creation album succeeded. False otherwise.
+	 * @throws FailedDatabaseWrapperOperationException 
 	 */
-	public static boolean createNewAlbum(String albumName, List<MetaItemField> fields, boolean hasAlbumPictureField) {
+	public static void createNewAlbum(String albumName, List<MetaItemField> fields, boolean hasAlbumPictureField) throws FailedDatabaseWrapperOperationException {
 		if (fields == null || !albumNameIsAvailable(albumName)) {
-			return false;
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState);
 		}
-
-		Boolean result = true;
+		String savepointName = createSavepoint();
 		try {
 			createNewAlbumTable(fields, albumName, hasAlbumPictureField);
 			// Indicate which fields are quicksearchable
@@ -241,61 +247,54 @@ public class DatabaseWrapper  {
 					quickSearchableColumnNames.add(encloseNameWithQuotes(metaItemField.getName()));
 				}
 			}
+			
 			createIndex(albumName, quickSearchableColumnNames);			
+			
 			if ( !FileSystemAccessWrapper.updateAlbumFileStructure(connection) ) {
-				try {
-					connection.rollback();
-				} catch (SQLException e1) {
-					e1.printStackTrace();
-					System.err.println("Could not rollback to a save point before creating the album");
-				}
-				return false;
+				//TODO: rollback file system
 			}
-			updateLastDatabaseChangeTimeStamp();
-		} catch (SQLException e) {
-			e.printStackTrace();
-			try {
-				connection.rollback();
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-				System.err.println("Could not rollback to a save point before creating the album");
+			
+			updateLastDatabaseChangeTimeStamp();			
+		} catch (FailedDatabaseWrapperOperationException e) {
+			if (e.ErrorState.equals(DBErrorState.ErrorWithDirtyState)) {
+				LOGGER.error("Could not rollback to a save point before creating the album");
+				rollbackToSavepoint(savepointName);
 			}
-			result = false;
-		}
-		return result;
+		} finally {
+			releaseSavepoint(savepointName);
+		}		
 	}
 
 	/**
 	 * Permanently renames an album in the specified databse.
 	 * @param oldAlbumName The old name of the album to be renamed
 	 * @param newAlbumName The new name of the album.
-	 * @return True if the renaming of the album succeeded. False otherwise.
+	 * @throws FailedDatabaseWrapperOperationException 
 	 */
-	public static boolean renameAlbum(String oldAlbumName, String newAlbumName) {
-		boolean result = true;		
-
-		// Rename the album table
-		if ( renameTable(oldAlbumName, newAlbumName) == false ) {
-			return false;
+	public static void renameAlbum(String oldAlbumName, String newAlbumName) throws FailedDatabaseWrapperOperationException {		
+		String savepointName =  createSavepoint();
+		try {
+			// Rename the album table
+			renameTable(oldAlbumName, newAlbumName);
+			
+			// Rename the type info table		
+			String oldTypeInfoTableName = makeTypeInfoTableName(oldAlbumName);
+			String newTypeInfoTableName = makeTypeInfoTableName(newAlbumName);
+	
+			renameTable(oldTypeInfoTableName, newTypeInfoTableName);
+	
+			// Change the entry in the album master table.
+			modifyAlbumInAlbumMasterTable(oldAlbumName, newAlbumName, newTypeInfoTableName);
+			
+	
+			updateLastDatabaseChangeTimeStamp();
+		} catch (FailedDatabaseWrapperOperationException e) {
+			if (e.ErrorState.equals(DBErrorState.ErrorWithDirtyState)) {
+				rollbackToSavepoint(savepointName);
+			}
+		} finally {
+			releaseSavepoint(savepointName);
 		}
-
-		// Rename the type info table		
-		String oldTypeInfoTableName = makeTypeInfoTableName(oldAlbumName);
-		String newTypeInfoTableName = makeTypeInfoTableName(newAlbumName);
-
-		if ( renameTable(oldTypeInfoTableName, newTypeInfoTableName) == false ) {
-			//TODO rollback
-			return false;
-		}
-
-		// Change the entry in the album master table.
-		if ( modifyAlbumInAlbumMasterTable(oldAlbumName, newAlbumName, newTypeInfoTableName) == false) {
-			//TODO rollback
-			return false;
-		}
-
-		updateLastDatabaseChangeTimeStamp();
-		return result;
 	}
 
 	/**
@@ -319,7 +318,6 @@ public class DatabaseWrapper  {
 			preparedStatement = connection.prepareStatement(renameTableSQLString);
 			preparedStatement.executeUpdate();
 		} catch (SQLException e) {
-			//TODO log
 			success = false;
 		}finally {
 			try {
@@ -328,11 +326,9 @@ public class DatabaseWrapper  {
 				}
 			} catch (SQLException e) {
 				success = false;
-				// TODO log
 			}
 		}
 		return success;
-
 	}
 
 	/**
@@ -341,55 +337,51 @@ public class DatabaseWrapper  {
 	 * @param metaItemField A description, name, type and quicksearch flag of the original metaItemField. 
 	 * The object does not need to be a reference to the original metaItemfield of the album but in order to delete the item field
 	 * ALL values of the meta item field have to be set correctly including the quicksearch flag.
-	 * @return True if the field was successfully removed. 
-	 * False if the metaItemField was not present in the album or could not be removed.
+	 * @throws FailedDatabaseWrapperOperationException 
 	 */
-	public static boolean removeAlbumItemField(String albumName, MetaItemField metaItemField) {
-		boolean result = true;
-
+	public static void removeAlbumItemField(String albumName, MetaItemField metaItemField) throws FailedDatabaseWrapperOperationException {
+				
 		// Check if the specified columns exists.
-
 		List<MetaItemField> metaInfos =  getAllAlbumItemMetaItemFields(albumName);
 		if (!metaInfos.contains(metaItemField)) {
 			if (metaInfos.contains(new MetaItemField(metaItemField.getName(), metaItemField.getType(), !metaItemField.isQuickSearchable()))){
-				System.err.println("The specified meta item field's quicksearch flag is not set appropriately!");
+				LOGGER.error("The specified meta item field's quicksearch flag is not set appropriately!");
 			}else {
-				System.err.println("The specified meta item field is not part of the album");
-
+				LOGGER.error("The specified meta item field is not part of the album");
 			}
-			return false;
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState);
+		}
+		
+		// Backup the old data in java objects
+		List<AlbumItem> albumItems = fetchAlbumItemsFromDatabase(QueryBuilder.createSelectStarQuery(albumName));
+		Map<Long, String> rawPicFieldMap = new HashMap<Long, String>();
+		// Create the new table pointing to new typeinfo
+		boolean keepPictureField = albumHasPictureField(albumName) && !metaItemField.getType().equals(FieldType.Picture);
+		List<MetaItemField> newFields =  getAlbumItemFieldNamesAndTypes(albumName);
+		newFields = removeFieldFromMetaItemList(metaItemField, newFields);// [delete column]
+
+		for (AlbumItem albumItem : albumItems) {				
+			// store the old uri List of all albumItems to restore later
+			long albumItemID = (Long) albumItem.getField("id").getValue();
+			String rawPicString = null;
+			if ( keepPictureField ) {
+				rawPicString = fetchRAWDBPictureString(albumItem.getAlbumName(), albumItemID);
+			}
+			rawPicFieldMap.put(albumItemID, rawPicString);
 		}
 
+		String savepointName = createSavepoint();
+		// Drop the old table + typeTable
 		try {
-			// Backup the old data in java objects
-			List<AlbumItem> albumItems = fetchAlbumItemsFromDatabase(QueryBuilder.createSelectStarQuery(albumName));
-			Map<Long, String> rawPicFieldMap = new HashMap<Long, String>();
-			// Create the new table pointing to new typeinfo
-			boolean keepPictureField = albumHasPictureField(albumName) && !metaItemField.getType().equals(FieldType.Picture);
-			List<MetaItemField> newFields =  getAlbumItemFieldNamesAndTypes(albumName);
-			newFields = removeFieldFromMetaItemList(metaItemField, newFields);// [delete column]
-
-			for (AlbumItem albumItem : albumItems) {				
-				// store the old uri List of all albumItems to restore later
-				long albumItemID = (Long) albumItem.getField("id").getValue();
-				String rawPicString = null;
-				if ( keepPictureField ) {
-					rawPicString = fetchRAWDBPictureString(albumItem.getAlbumName(), albumItemID);
-				}
-				rawPicFieldMap.put(albumItemID, rawPicString);
-			}
-
-			// Drop the old table + typeTable
 			removeAlbum(albumName);
-
-
+		
 			// The following three columns are automatically created by createNewAlbumTable
 			newFields = removeFieldFromMetaItemList(new MetaItemField("id", FieldType.ID), newFields);
 			newFields = removeFieldFromMetaItemList(new MetaItemField(TYPE_INFO_COLUMN_NAME, FieldType.ID), newFields);
 			newFields = removeFieldFromMetaItemList(new MetaItemField(PICTURE_COLUMN_NAME, FieldType.Picture), newFields);
-
-			createNewAlbumTable( newFields, albumName, keepPictureField);	
-
+			
+			createNewAlbumTable( newFields, albumName, keepPictureField);
+			
 			// Restore the old data from the java objects in the new tables [delete column]
 			List<AlbumItem> newAlbumItems = removeFieldFromAlbumItemList(metaItemField, albumItems);
 			for (AlbumItem albumItem : newAlbumItems) {
@@ -398,18 +390,20 @@ public class DatabaseWrapper  {
 					long albumItemID = (Long) albumItem.getField("id").getValue();
 					albumItem.setFieldValue(PICTURE_COLUMN_NAME,rawPicFieldMap.get(albumItemID));
 				}
-				if (addNewAlbumItem(albumItem, true, false) == -1) {					
-					result = false;
-					break;
-				}
-			}	
-
+				addNewAlbumItem(albumItem, true, false);
+			}
+	
 			rebuildIndexForTable(albumName, newFields);
 			updateLastDatabaseChangeTimeStamp();
-		} catch (SQLException e) {
-			e.printStackTrace();
+		} catch (FailedDatabaseWrapperOperationException e) {
+			if (e.ErrorState.equals(DBErrorState.ErrorWithCleanState)) {
+				rollbackToSavepoint(savepointName);					
+				LOGGER.error("Unable to roll back before to state before the removal of the album item field");
+				throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
+			}
+		} finally {
+			releaseSavepoint(savepointName);
 		}
-		return result;
 	}
 
 	/**
@@ -419,22 +413,22 @@ public class DatabaseWrapper  {
 	 * A description, name, type and quicksearch flag of the original metaItemField. In order to rename the item field
 	 * ALL values of the meta item field have to be set correctly including the quicksearch flag.
 	 * @param newMetaItemField A description of the new metaItemField, no need for direct reference.
-	 * @return True if the renaming of the field succeeded. False otherwise.
+	 * @throws FailedDatabaseWrapperOperationException 
 	 */
-	public static boolean renameAlbumItemField(String albumName, MetaItemField oldMetaItemField, MetaItemField newMetaItemField) {
-		boolean result = true;
+	public static void renameAlbumItemField(String albumName, MetaItemField oldMetaItemField, MetaItemField newMetaItemField) throws FailedDatabaseWrapperOperationException {
 
 		// Check if the specified columns exists.
 		List<MetaItemField> metaInfos =  getAllAlbumItemMetaItemFields(albumName);
 		if (!metaInfos.contains(oldMetaItemField) || oldMetaItemField.getType().equals(FieldType.ID)) {
 			if (metaInfos.contains(new MetaItemField(oldMetaItemField.getName(), oldMetaItemField.getType(), !oldMetaItemField.isQuickSearchable()))){
-				System.err.println("The specified meta item field's quicksearch flag is not set appropriately!");
+				LOGGER.error("The specified meta item field's quicksearch flag is not set appropriately!");
 			}else {
-				System.err.println("The specified meta item field is not part of the album");
+				LOGGER.error("The specified meta item field is not part of the album");
 			}
-			return false;
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState);
 		}
-
+		
+		String savepointName = createSavepoint();		
 		try {
 			// Backup the old data in java objects
 			List<AlbumItem> albumItems = fetchAlbumItemsFromDatabase(QueryBuilder.createSelectStarQuery(albumName));
@@ -474,20 +468,19 @@ public class DatabaseWrapper  {
 					long albumItemID = (Long) albumItem.getField("id").getValue();
 					albumItem.setFieldValue(PICTURE_COLUMN_NAME,rawPicFieldMap.get(albumItemID));
 				}
-				if (addNewAlbumItem(albumItem, true, false) == -1) {
-					result = false;
-					break;
-				}
+				addNewAlbumItem(albumItem, true, false);				
 			}	
 
 			rebuildIndexForTable(albumName, newFields);
 			updateLastDatabaseChangeTimeStamp();
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return false;
-		}
-		
-		return result;
+		} catch (FailedDatabaseWrapperOperationException e) {
+			if (e.ErrorState.equals(DBErrorState.ErrorWithDirtyState)) {
+				rollbackToSavepoint(savepointName);
+				throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
+			}
+		}finally {
+			releaseSavepoint(savepointName);
+		}		
 	}
 
 	/**
@@ -495,17 +488,17 @@ public class DatabaseWrapper  {
 	 * @param albumName The name of the album to which the item belongs.
 	 * @param metaItemField The metadata to identify the field (column) to be moved.
 	 * @param preceedingField The field (column) which is preceeding the field after the reordering. 
-	 * @return True if the operation succeeded. False is any problems were encountered.
+	 * @throws FailedDatabaseWrapperOperationException 
 	 */
-	public static boolean reorderAlbumItemField(String albumName, MetaItemField metaItemField, MetaItemField preceedingField) {
-		boolean result = true;
+	public static void reorderAlbumItemField(String albumName, MetaItemField metaItemField, MetaItemField preceedingField) throws FailedDatabaseWrapperOperationException {
+
 		// Check if the specified columns exists.
+//		List<MetaItemField> metaInfos =  getAllAlbumItemMetaItemFields(albumName);
+//		if (!metaInfos.contains(metaItemField)) {
+//			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState);
+//		}
 
-		List<MetaItemField> metaInfos =  getAllAlbumItemMetaItemFields(albumName);
-		if (!metaInfos.contains(metaItemField)) {
-			return false;
-		}
-
+		String savepointName = createSavepoint();
 		try {
 			// Backup the old data in java objects
 			List<AlbumItem> albumItems = fetchAlbumItemsFromDatabase(QueryBuilder.createSelectStarQuery(albumName));
@@ -546,52 +539,52 @@ public class DatabaseWrapper  {
 					long albumItemID = (Long) albumItem.getField("id").getValue();
 					albumItem.setFieldValue(PICTURE_COLUMN_NAME,rawPicFieldMap.get(albumItemID));
 				}
-				if (addNewAlbumItem(albumItem, true, false) == -1) {
-					result = false;
-					break;
-				}
+				addNewAlbumItem(albumItem, true, false);				
 			}
 
 			rebuildIndexForTable(albumName, newFields);
 			updateLastDatabaseChangeTimeStamp();
-		} catch (SQLException e) {
-			e.printStackTrace();
+		} catch (FailedDatabaseWrapperOperationException e) {
+			if (e.ErrorState.equals(DBErrorState.ErrorWithDirtyState)) {
+				rollbackToSavepoint(savepointName);
+				throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
+			}
+		}finally {
+			releaseSavepoint(savepointName);
 		}
-
-		return result;
 	}
 
 	/**
 	 * Sets the ability of albumField to the value found in the metaItemField describing that field.
 	 * @param albumName The name of the album to which the item belongs.
 	 * @param metaItemField The field (column) to be set quicksearchable.
-	 * @return True if the operation succeeded. False is any problems were encountered.
+	 * @throws FailedDatabaseWrapperOperationException 
 	 */
-	public static boolean setQuickSearchable(String albumName, MetaItemField metaItemField) {
-		boolean result = true;
-
-		List<String> quickSearchableColumnNames = getIndexedColumnNames(albumName);
-		// Enable for quicksearch feature
-		if (metaItemField.isQuickSearchable() && !quickSearchableColumnNames.contains(metaItemField.getName())) {
-			quickSearchableColumnNames.add(metaItemField.getName());
-			result = dropIndex(albumName);
-			boolean createIndexRes = createIndex(albumName, quickSearchableColumnNames);
-			result = (result && createIndexRes);
-		}else if (!metaItemField.isQuickSearchable()){	
-			// Disable for quicksearch feature
-			quickSearchableColumnNames.remove(metaItemField.getName());
-			result = dropIndex(albumName);
-			boolean createIndexRes = createIndex(albumName, quickSearchableColumnNames);
-			result = (result && createIndexRes);
-		}
+	public static void setQuickSearchable(String albumName, MetaItemField metaItemField) throws FailedDatabaseWrapperOperationException {
+		String savepointName = createSavepoint();
 		try {
+			List<String> quickSearchableColumnNames = getIndexedColumnNames(albumName);			
+			// Enable for quicksearch feature
+			if (metaItemField.isQuickSearchable() && !quickSearchableColumnNames.contains(metaItemField.getName())) {
+				quickSearchableColumnNames.add(metaItemField.getName());
+	
+				dropIndex(albumName);
+				createIndex(albumName, quickSearchableColumnNames);			
+			}else if (!metaItemField.isQuickSearchable()){	
+				// Disable for quicksearch feature
+				quickSearchableColumnNames.remove(metaItemField.getName());
+				createIndex(albumName, quickSearchableColumnNames);
+			}				
 			updateSchemaVersion(albumName);
 			updateLastDatabaseChangeTimeStamp();
-		} catch (SQLException e) {
-			e.printStackTrace();
-			result = false;
-		}
-		return result;
+		} catch (FailedDatabaseWrapperOperationException e) {
+			if (e.ErrorState.equals(DBErrorState.ErrorWithDirtyState)) {
+				rollbackToSavepoint(savepointName);
+				throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState);
+			}
+		}finally {
+			releaseSavepoint(savepointName);
+		}		
 	}
 
 	/**
@@ -612,17 +605,14 @@ public class DatabaseWrapper  {
 				rawDBString = rs.getString(1);
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
+			rawDBString = null;
+		} finally {			
 			try {
-				rs.close();
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
-			try {
-				preparedStatement.close();
+				if (preparedStatement != null) {
+					preparedStatement.close();
+				}
 			} catch (SQLException e) {
-				e.printStackTrace();
+				rawDBString = null;
 			}
 		}
 		return rawDBString;
@@ -737,40 +727,40 @@ public class DatabaseWrapper  {
 	/**
 	 * Permanently removes an album along with its typeInfo metadata.
 	 * @param albumName The name of the album which is to be removed.
-	 * @return True if successful, false otherwise.
+	 * @throws FailedDatabaseWrapperOperationException 
 	 */
-	public static boolean removeAlbum(String albumName) {
-		boolean result = true;
-		try {
-			// Drop the main table
+	public static void removeAlbum(String albumName) throws FailedDatabaseWrapperOperationException {
+		String savepointName = createSavepoint();
+		try {	
 			String typeInfoTableName = getTypeInfoTableName(albumName);
 			dropTable(albumName);
-
-			// drop the typeInfo table
+	
 			dropTable(typeInfoTableName);
-
-			if ( !removeAlbumFromAlbumMasterTable(albumName) ) {
-				result = false;
-			}
-
+	
+			removeAlbumFromAlbumMasterTable(albumName); 
+	
 			updateLastDatabaseChangeTimeStamp();
-		} catch (SQLException e) {
-			e.printStackTrace();
-			result = false;
+		} catch (FailedDatabaseWrapperOperationException e) {
+			if (e.ErrorState.equals(DBErrorState.ErrorWithDirtyState)) {
+				rollbackToSavepoint(savepointName);
+				throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
+			}
+		}finally {
+			releaseSavepoint(savepointName);
 		}
-		return result;
 	}
 
 	/**
 	 * Drops a table if it exists. No error or side effects if it does not exist.
 	 * @param tableName The name of the table which is to be dropped.
-	 * @throws SQLException Exception thrown if any part of the operation fails.
+	 * @throws FailedDatabaseWrapperOperationException 
 	 */
-	private static void dropTable(String tableName) throws SQLException {
-		Statement statement = connection.createStatement();
-		statement.setQueryTimeout(5);
-		statement.execute("DROP TABLE IF EXISTS "+encloseNameWithQuotes(tableName));
-		statement.close();
+	private static void dropTable(String tableName) throws FailedDatabaseWrapperOperationException  {
+		try (Statement statement = connection.createStatement()){		
+			statement.execute("DROP TABLE IF EXISTS "+encloseNameWithQuotes(tableName));
+		} catch (Exception e) {
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState, e);
+		}
 	}
 
 	/**
@@ -779,15 +769,13 @@ public class DatabaseWrapper  {
 	 * @param fields The fields making up the new album content. Null if a temporary copy of the specified existing table should be made.
 	 * @param tableName The name of the table to be created.
 	 * @param hasAlbumPicture True indicates that the table will contain a picture column.
-	 * @throws SQLException Exception thrown if any part of the operation fails.
-	 * @return The name of  type info table linked to the newly created album table
+	 * @throws FailedDatabaseWrapperOperationException 
 	 */
-	private static String createNewAlbumTable(List<MetaItemField> fields, String tableName, boolean hasAlbumPicture) throws SQLException {
+	private static void createNewAlbumTable(List<MetaItemField> fields, String tableName, boolean hasAlbumPicture) throws FailedDatabaseWrapperOperationException {
 		String typeInfoTableName = "";
 		String createTempTableSQL = "";
 		List<MetaItemField> columns =  new ArrayList<MetaItemField>(fields);
 		boolean temporary = (columns == null);
-
 
 		if (temporary) {
 			// Retrieve the typeInfo of the old Album before creating a new temp table
@@ -815,7 +803,7 @@ public class DatabaseWrapper  {
 
 		// Insert temporary table qualifier when necessary
 		sb.append(createTempTableSQL);
-
+		
 		sb.append(" TABLE ");
 		tableName = encloseNameWithQuotes(tableName);
 		sb.append(tableName);
@@ -843,30 +831,34 @@ public class DatabaseWrapper  {
 
 		// Save the type informations in a separate table
 		createTypeInfoTable(typeInfoTableName, columns, temporary);
-
-		// Create the Album table
-		Statement statement = connection.createStatement();
-		statement.executeUpdate(createMainTableString);
-		statement.close();
-
+		
 		// Add the album back to the album master table
 		addNewAlbumToAlbumMasterTable(tableName, typeInfoTableName);
-		return typeInfoTableName;
+		
+		try (Statement statement = connection.createStatement()) {
+			// Create the Album table			
+			statement.executeUpdate(createMainTableString);
+		}catch (SQLException sqlException) {
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState, sqlException);
+		}
+		
+		
 	}
-
 
 	/**
 	 * Appends new field to the end of the album. Fields with the type FieldType.ID or FieldType.Picture fail the whole operation, no fields will be added then.
 	 * @param albumName The name of the album to be modified.
 	 * @param metaItemField The metaItemField to be appended to the album. Must not be null for successful insertion
-	 * @return True if the operation succeeded and the fields were addded, false if the operation failed either due to an internal error or invalid fields.
+	 * @throws FailedDatabaseWrapperOperationException 
 	 */
-	public static boolean appendNewAlbumField(String albumName, MetaItemField metaItemField) {
+	public static void appendNewAlbumField(String albumName, MetaItemField metaItemField) throws FailedDatabaseWrapperOperationException {
 		if (metaItemField.getType().equals(FieldType.ID) || metaItemField.getType().equals(FieldType.Picture) || metaItemField == null || !itemFieldNameIsAvailable(albumName, metaItemField.getName())) {
-			return false;
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState);
 		}
 
-		if ( appendNewTableColumn(albumName, metaItemField) ) {
+		String savepointName = createSavepoint();
+		try {
+			appendNewTableColumn(albumName, metaItemField);
 			//TODO: implement this directly in a single operation such that the picture field
 			// is always the last column
 			List<MetaItemField> metaItemFields = getAlbumItemFieldNamesAndTypes(albumName);
@@ -874,103 +866,100 @@ public class DatabaseWrapper  {
 				reorderAlbumItemField(albumName, metaItemField, metaItemFields.get(metaItemFields.size()-1));
 			}
 			updateLastDatabaseChangeTimeStamp();
-			return true;
+		} catch (FailedDatabaseWrapperOperationException e) {
+			if (e.ErrorState.equals(DBErrorState.ErrorWithDirtyState)) {
+				rollbackToSavepoint(savepointName);
+				throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState);
+			}
+		}finally {
+			releaseSavepoint(savepointName);			
 		}
-
-		return false;
 	}
+	
 	/**
 	 * Appends a new column to the album table. This internal method does allows to add any type of column, even id and picture column.
 	 * An exception is that you cannot add an additional picture column to an table.
 	 * To prevent accidental corruption of the tables, perform checks in the enclosing methods.
 	 * @param albumName The name of the album to be modified.
 	 * @param metaItemField he metaItemFields to be appended to the album.
-	 * @return True if the operation succeeded and the fields were addded, false if the operation failed either due to an internal error or invalid fields.
+	 * @throws FailedDatabaseWrapperOperationException 
 	 */
-	private static boolean appendNewTableColumn(String albumName, MetaItemField metaItemField) {
-		Boolean result = true;
-		PreparedStatement preparedStatement = null;
-		try {
-
-			// Maximum 1 picture column per table.
-			if (metaItemField.getType().equals(FieldType.Picture) && albumHasPictureField(albumName)) {
-				return false;
-			}
-
-			// Prepare the append column string for the main table.
-			StringBuilder sb = new StringBuilder("ALTER TABLE ");
-			sb.append(encloseNameWithQuotes(albumName));
-			sb.append(" ADD COLUMN ");
-			sb.append(encloseNameWithQuotes(metaItemField.getName()));
-			sb.append(" ");
-			sb.append(FieldType.Text.toDatabaseTypeString());
-
-			preparedStatement = connection.prepareStatement(sb.toString());
-			preparedStatement.executeUpdate();
-
-			updateTableColumnWithDefaultValue(albumName, metaItemField);
-
-			// Append and update column for type table.
-			appendNewTypeInfoTableColumn(albumName, metaItemField);
-
-			updateSchemaVersion(albumName);
-
-			connection.commit();
-		} catch (SQLException e) {
-			e.printStackTrace();
-			result = false;
-		}finally {
-			try {
-				if (preparedStatement != null) {
-					preparedStatement.close(); 
-				}
-			} catch (SQLException e) {
-				result = false;
-			}
+	private static void appendNewTableColumn(String albumName, MetaItemField metaItemField) throws FailedDatabaseWrapperOperationException {
+		// The can be maximum 1 picture column per table.
+		if (metaItemField.getType().equals(FieldType.Picture) && albumHasPictureField(albumName)) {
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState);
 		}
-		return result;
-	}
 
+		// Prepare the append column string for the main table.
+		StringBuilder sb = new StringBuilder("ALTER TABLE ");
+		sb.append(encloseNameWithQuotes(albumName));
+		sb.append(" ADD COLUMN ");
+		sb.append(encloseNameWithQuotes(metaItemField.getName()));
+		sb.append(" ");
+		sb.append(FieldType.Text.toDatabaseTypeString());
+
+		try (PreparedStatement preparedStatement = connection.prepareStatement(sb.toString())) {
+			preparedStatement.executeUpdate();
+		} catch (SQLException e) {
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState, e);
+		}
+
+		updateTableColumnWithDefaultValue(albumName, metaItemField);
+
+		// Append and update column for type table.
+		appendNewTypeInfoTableColumn(albumName, metaItemField);
+
+		updateSchemaVersion(albumName);
+	}
 
 	/**
 	 * Adds a picture field to an album. Currently only one picture field is allowed.
 	 * @param albumName The name of the album to which the item belongs.
-	 * @return True if the album has a picture field, either through addition or because one already existed.
+	 * @throws FailedDatabaseWrapperOperationException 
 	 */
-	public static boolean appendPictureField(String albumName) {
-		boolean result = true;
+	public static void appendPictureField(String albumName) throws FailedDatabaseWrapperOperationException {
+		String savepointName = createSavepoint();
+		
 		if (albumHasPictureField(albumName)) {
-			return true;
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState);
 		}
 
-		// Appends and updates the schema version
-		result = appendNewTableColumn(albumName, new MetaItemField(PICTURE_COLUMN_NAME, FieldType.Picture));
-		if (result) {
+		try {
+			appendNewTableColumn(albumName, new MetaItemField(PICTURE_COLUMN_NAME, FieldType.Picture));
 			FileSystemAccessWrapper.updateAlbumFileStructure(connection);
 			updateLastDatabaseChangeTimeStamp();
+		} catch ( FailedDatabaseWrapperOperationException e) {
+			if (e.ErrorState.equals(DBErrorState.ErrorWithDirtyState)) {
+				rollbackToSavepoint(savepointName);
+			}
+		} finally {
+			releaseSavepoint(savepointName);
 		}
-		return result;
 	}
-
 
 	/**
 	 * Removes a picture field from the album. Does not have any side effects when not picture field is present.
 	 * @param albumName The name of the album to which the item belongs.
 	 * @return True if the album has no picture field, either through deletion or because none were present. False if the operation 
 	 * encounters any problems.
+	 * @throws FailedDatabaseWrapperOperationException 
 	 */
-	public static boolean removePictureField(String albumName) {
-		boolean result = removeAlbumItemField(albumName, new MetaItemField(PICTURE_COLUMN_NAME, FieldType.Picture));
+	public static void removePictureField(String albumName) throws FailedDatabaseWrapperOperationException {
+		// If create savepoint throws an exception it is forwarded and nothing else is executed
+		String savepointName = createSavepoint();
+		
 		try {
+			removeAlbumItemField(albumName, new MetaItemField(PICTURE_COLUMN_NAME, FieldType.Picture));
 			updateSchemaVersion(albumName);
 			updateLastDatabaseChangeTimeStamp();
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return false;
+		} catch( FailedDatabaseWrapperOperationException e) {
+			if (e.ErrorState.equals(DBErrorState.ErrorWithDirtyState)) {
+				rollbackToSavepoint(savepointName);
+			}
+		}finally {
+			releaseSavepoint(savepointName);
 		}
-		return result;
 	}
-
 
 	/**
 	 * Ensures that only a single picture fields exists when specified so. Otherwise all existing picture fields will be removed from results.
@@ -997,8 +986,9 @@ public class DatabaseWrapper  {
 	 * Indicates whether the album contains a picture field.
 	 * @param albumName The name of the album to be queried.
 	 * @return True if the album contains a picture field, false otherwise.
+	 * @throws FailedDatabaseWrapperOperationException 
 	 */
-	public static boolean albumHasPictureField(String albumName) {
+	public static boolean albumHasPictureField(String albumName) throws FailedDatabaseWrapperOperationException {
 		List<MetaItemField> metaFields = getAllAlbumItemMetaItemFields(albumName);
 		for (MetaItemField metaItemField : metaFields) {
 			if (metaItemField.getType() == FieldType.Picture) {
@@ -1070,17 +1060,16 @@ public class DatabaseWrapper  {
 		return sb.toString();
 	}
 
-
 	/**
 	 * Creates the table that contains the type information for the specified album.
 	 * @param typeInfoTableName The name of the typeInfoTable to be created.
 	 * @param metafields A list of meta data describing the main table and making up the content of the typeInfoTable.
 	 * @param temporary True if the table is for temporary storage only.
+	 * @throws FailedDatabaseWrapperOperationException 
 	 */
-	private static void createTypeInfoTable(String typeInfoTableName, List<MetaItemField> metafields, boolean temporary) throws SQLException {
+	private static void createTypeInfoTable(String typeInfoTableName, List<MetaItemField> metafields, boolean temporary) throws FailedDatabaseWrapperOperationException {
 		// Prepare createTypeInfoTable string.
-		String createTypeInfoTableString = "";
-
+		String createTypeInfoTableString = "";	
 		StringBuilder sb = new StringBuilder("CREATE ");
 		if (temporary) {
 			sb.append("TEMPORARY ");
@@ -1090,33 +1079,34 @@ public class DatabaseWrapper  {
 		sb.append(encloseNameWithQuotes(typeInfoTableName));
 		sb.append(" ( id INTEGER PRIMARY KEY");
 		// Add the main table columns sans id field or typeInfo column
-		Iterator<MetaItemField> iter = metafields.iterator();
-		while(iter.hasNext()) {
+		for (MetaItemField metaItemField : metafields) {
 			sb.append(" , ");// " , "
-			sb.append(encloseNameWithQuotes(iter.next().getName()));// " , 'fieldName'"
+			sb.append(encloseNameWithQuotes(metaItemField.getName()));// " , 'fieldName'"
 			sb.append(" TEXT");// " , 'fieldName' TEXT" //stored as text to ease transformation back to java enum.
 		}
+		
 		// Add the schema version uuid column
 		sb.append(" , ");
 		sb.append(SCHEMA_VERSION_COLUMN_NAME);
 		sb.append(" TEXT )");
 		createTypeInfoTableString = sb.toString();
-
+		
 		// Drop old type info table.
-		PreparedStatement preparedStatement = connection.prepareStatement("DROP TABLE IF EXISTS "+ encloseNameWithQuotes(typeInfoTableName));
-		preparedStatement.executeUpdate();
-
-		// Create the createTypeInfo table
-		logger.debug(createTypeInfoTableString);
-		preparedStatement = connection.prepareStatement(createTypeInfoTableString);
-		preparedStatement.executeUpdate();
-		preparedStatement.close();
-
+		dropTable(typeInfoTableName);			
+			
+		// Create the createTypeInfo table		
+		try (PreparedStatement preparedStatement = connection.prepareStatement(createTypeInfoTableString);){			
+			//TODO: use the private create table function here
+			preparedStatement.executeUpdate();
+		}catch(SQLException e) {
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState, e);
+		}
 
 		// Append the schema version uuid to the list of metaFields
 		metafields.add(new MetaItemField(SCHEMA_VERSION_COLUMN_NAME, FieldType.UUID));
-		// Add the entry about the type info in the newly create TypeInfo table 
-		addTypeInfo(typeInfoTableName, metafields);
+		// Add the entry about the type info in the newly created TypeInfo table 
+
+		addTypeInfo(typeInfoTableName, metafields);			
 	}
 
 	private static String makeTypeInfoTableName(String albumTableName) {
@@ -1132,52 +1122,56 @@ public class DatabaseWrapper  {
 	 * @param tableName The name of the table to which the column belongs.
 	 * @param metaItemField The metadata of the new column.
 	 * @throws SQLException Exception thrown if any part of the operation fails.
+	 * @throws FailedDatabaseWrapperOperationException 
 	 */
-	private static void appendNewTypeInfoTableColumn(String tableName, MetaItemField metaItemField) throws SQLException {
-		String typeInfoTableName = encloseNameWithQuotes(getTypeInfoTableName(tableName));
+	private static void appendNewTypeInfoTableColumn(String tableName, MetaItemField metaItemField) throws FailedDatabaseWrapperOperationException {
+		String quotedTypeInfoTableName = encloseNameWithQuotes(getTypeInfoTableName(tableName));
 		String columnName = encloseNameWithQuotes(metaItemField.getName());
 		// Prepare the append column string for the type table.
 		StringBuilder sb = new StringBuilder("ALTER TABLE ");
-		sb.append(encloseNameWithQuotes(typeInfoTableName));
+		sb.append(encloseNameWithQuotes(quotedTypeInfoTableName));
 		sb.append(" ADD COLUMN ");
 		sb.append(columnName);
 		sb.append(" TEXT");
 
-		PreparedStatement preparedStatement = connection.prepareStatement(sb.toString());
-		preparedStatement.executeUpdate();
-
+		try (PreparedStatement preparedStatement = connection.prepareStatement(sb.toString())) {
+			preparedStatement.executeUpdate();					
+		}catch (SQLException e) {
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState);
+		}
+		
 		sb.delete(0,sb.length());
 		sb.append("UPDATE ");
-		sb.append(typeInfoTableName);
+		sb.append(quotedTypeInfoTableName);
 		sb.append(" SET ");
 		sb.append(columnName);
 		sb.append(" = ?");
-
-		preparedStatement = connection.prepareStatement(sb.toString());
-		preparedStatement.setString(1, metaItemField.getType().toString());
-		preparedStatement.executeUpdate();
+		
+		try (PreparedStatement preparedStatement = connection.prepareStatement(sb.toString())){
+			preparedStatement.setString(1, metaItemField.getType().toString());
+			preparedStatement.executeUpdate();
+		}catch (SQLException e) {
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState);
+		}		
 
 		updateSchemaVersion(tableName);
-
 	}
-
 
 	/**
 	 * Helper method which adds an entry to the typeInfo table to indicate the types used in the main table and updates the 
 	 * schema version UUID if properly included in the metafields.
 	 * @param item the item describing the newly created main table. Making up the content of the typeInfoTable.
 	 * @return True if the operation was successful. False otherwise.
+	 * @throws FailedDatabaseWrapperOperationException 
 	 */
-	private static boolean addTypeInfo(String typeInfoTableName, List<MetaItemField> metafields) {
-		boolean result = true;
-
-		// Build the string with placeholders '?'
-		String insertIntoTableString = "";
+	private static void addTypeInfo(String typeInfoTableName, List<MetaItemField> metafields) throws FailedDatabaseWrapperOperationException {
 		StringBuilder sb = new StringBuilder("INSERT INTO ");
 		sb.append(encloseNameWithQuotes(typeInfoTableName));
 		sb.append(" ( ");
 
-		Iterator<MetaItemField> it = metafields.iterator();
+		// The 'while iterator loop' is used here because it is cheaper and more reliable than a foreach
+		// to add commas ',' in between elements
+		Iterator<MetaItemField> it = metafields.iterator();		
 		while(it.hasNext()) {
 			String fieldName = encloseNameWithQuotes(it.next().getName()); 
 			sb.append(fieldName);
@@ -1188,30 +1182,22 @@ public class DatabaseWrapper  {
 		}
 		sb.append(" ) VALUES ( ");
 
-		int fieldCount = metafields.size();
-		for (int i=1; i<=fieldCount;i++) {
+		it = metafields.iterator();		
+		while(it.hasNext()) {
+			it.next();
 			sb.append("?");
-			if (i < fieldCount)
+			if (it.hasNext())
 			{
 				sb.append(", ");
 			}
 		}
 
 		sb.append(") ");
-
-		insertIntoTableString = sb.toString();
-		logger.debug(insertIntoTableString);
-		PreparedStatement preparedStatement;
-		try {
-			preparedStatement = connection.prepareStatement(insertIntoTableString);
-
-			preparedStatement.setQueryTimeout(30); // set timeout to 30 sec.
-
+		
+		try (PreparedStatement preparedStatement = connection.prepareStatement(sb.toString())) {			
 			// Replace the wildcard character '?' by the real type values
-			it = metafields.iterator();
 			int parameterIndex = 1;
-			while(it.hasNext()) {
-				MetaItemField metaItemField = it.next();
+			for (MetaItemField metaItemField : metafields){
 				String columnValue = metaItemField.getType().toString();
 
 				// Generate a new schema version UUID a table is created or modified.
@@ -1224,20 +1210,18 @@ public class DatabaseWrapper  {
 			}
 
 			preparedStatement.executeUpdate();
-			preparedStatement.close();
 		} catch (SQLException e) {
-			e.printStackTrace();
-			result = false;
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState, e);			
 		}
-		return result;
 	}
 
 	/**
 	 * Rebuilds the index for a table after an alter table operation. 
 	 * @param albumName The album to which these fields belong.
 	 * @param items The items containing the information of whether they are quicksearchable.
+	 * @throws FailedDatabaseWrapperOperationException 
 	 */
-	private static void rebuildIndexForTable(String albumName, List<MetaItemField> fields) {
+	private static void rebuildIndexForTable(String albumName, List<MetaItemField> fields) throws FailedDatabaseWrapperOperationException {
 		List<String> quicksearchColumnNames = new ArrayList<String>();
 		for (MetaItemField metaItemField : fields) {
 			if (metaItemField.isQuickSearchable()) {
@@ -1245,7 +1229,16 @@ public class DatabaseWrapper  {
 			}
 		}
 		if (!quicksearchColumnNames.isEmpty()){
-			createIndex(albumName, quicksearchColumnNames);
+			String savepointName = createSavepoint();
+			try {
+				createIndex(albumName, quicksearchColumnNames);
+			} catch (FailedDatabaseWrapperOperationException e) {
+				if (e.ErrorState.equals(DBErrorState.ErrorWithDirtyState)) {
+					rollbackToSavepoint(savepointName);
+				}
+			}finally {
+				releaseSavepoint(savepointName);
+			}
 		}
 	}
 
@@ -1255,75 +1248,61 @@ public class DatabaseWrapper  {
 	 * fields (columns)  marked for the quicksearch feature.
 	 * @param albumName The name of the album to which the index belongs. This name should NOT be escaped.
 	 * @param columnNames The list of names of columns to be included in the index. Performs an automatic test to see if the column names 
-	 * are quoted. 
-	 * @return True if the operation was successful. False otherwise.
+	 * are quoted.  
+	 * @throws FailedDatabaseWrapperOperationException 
 	 */
-	private static boolean createIndex(String albumName, List<String> columnNames) {
+	private static void createIndex(String albumName, List<String> columnNames) throws FailedDatabaseWrapperOperationException{
 		if (columnNames.isEmpty()) {
-			return false;
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState);
 		}
-
-		PreparedStatement preparedStatement = null;
-		StringBuilder sqlStringbuiler = new StringBuilder(	"CREATE INDEX " + encloseNameWithQuotes(albumName+ INDEX_NAME_SUFFIX) + " ON " + 
-				encloseNameWithQuotes(albumName) + " (");
+		
+		StringBuilder sqlStringbuiler = new StringBuilder("CREATE INDEX ");
+		sqlStringbuiler.append(encloseNameWithQuotes(albumName + INDEX_NAME_SUFFIX));
+		sqlStringbuiler.append(" ON ");
+		sqlStringbuiler.append(encloseNameWithQuotes(albumName));
+		sqlStringbuiler.append(" (");
 		sqlStringbuiler.append(encloseNameWithQuotes(columnNames.get(0)));		
 		if (columnNames.size()>=2) {
 			for (int i=1;i<columnNames.size(); i++) {
 				sqlStringbuiler.append(", ");
 				sqlStringbuiler.append(encloseNameWithQuotes(columnNames.get(i))); 
 			}
-		}
+		}		
 		sqlStringbuiler.append(")");
-		try {
-			preparedStatement = connection.prepareStatement(sqlStringbuiler.toString());
+		
+		try (PreparedStatement preparedStatement = connection.prepareStatement(sqlStringbuiler.toString())) {
 			preparedStatement.execute();
 		} catch (SQLException e) {
-			e.printStackTrace();
-			return false;
-		} finally {
-			try {
-				preparedStatement.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-				return false;
-			}
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState, e);
 		}
-		return true;
 	}
-
 
 	/**
 	 * Drops the first index associated to the given table name. 
 	 * @param tableName The name of the table to which the index belongs.
 	 * @return True if the table has no associated index to it. False if the operation failed.
+	 * @throws FailedDatabaseWrapperOperationException 
 	 */
-	private static boolean dropIndex(String tableName) {
-		String indexName = getTableIndexName(tableName);
+	private static void dropIndex(String tableName) throws FailedDatabaseWrapperOperationException {
+		String indexName = getTableIndexName(tableName);		
 		if (indexName == null) {			
-			return true;
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState);
 		}
-
-		indexName = DatabaseWrapper.encloseNameWithQuotes(indexName);
-		String sqlStatement = "DROP INDEX IF EXISTS "+ indexName;
-		Statement statement= null;
-
-		try {
-			statement = connection.createStatement();
-			statement.execute(sqlStatement);
+				
+		String quotedIndexName = DatabaseWrapper.encloseNameWithQuotes(indexName);
+		String sqlStatementString = "DROP INDEX IF EXISTS "+ quotedIndexName;
+		
+		String savepointName = createSavepoint();
+		
+		try (Statement statement = connection.createStatement()){			
+			statement.execute(sqlStatementString);
 		} catch (SQLException e) {
-			e.printStackTrace();
-			return false;
+			rollbackToSavepoint(savepointName);
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
 		}finally {
-			try {
-				statement.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-				return false;
-			}
+			releaseSavepoint(savepointName);
 		}
-		return true;
 	}
-
 
 	/**
 	 * Adds the specified item to an existing album. Automatically sets a new contentVersion for the item if updateContentVersion flaag is set.
@@ -1332,40 +1311,36 @@ public class DatabaseWrapper  {
 	 * @param updateContentVersion True if the content version should be updated, this is the regular case for any content change. 
 	 * False in case the the last contentversion should be copied over, restore or alter table options make use of this. If the old content version
 	 * should be copied over make sure the albumItem contains a content version!
-	 * @return The ID of the newly added item. Probably -1 if it fails.
+	 * @return The ID of the newly added item.
+	 * @throws FailedDatabaseWrapperOperationException 
 	 */
-	public static long addNewAlbumItem(AlbumItem item, boolean insertRAWPicString, boolean updateContentVersion) {
+	public static long addNewAlbumItem(AlbumItem item, boolean insertRAWPicString, boolean updateContentVersion) throws FailedDatabaseWrapperOperationException {
 		// Check if the item contains a albumName
 		if (item.getAlbumName().isEmpty()) {
-			System.err.println("DatabaseWrapper::addNewAlbumItem(), item has no albumName");
-			return -1;
+			LOGGER.error("Item {} has no albumName", item);
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState);
 		}
 
-		//		// Check if specified album Item is valid
-		//		if (!item.isValid()) {
-		//			System.err.println("DatabaseWrapper::addNewAlbumItem(), item is invalid");
-		//			return -1;
-		//		}
+		// Check if specified album Item is valid TODO:check if this works
+		if (!item.isValid()) {
+			LOGGER.error("Item {} is invalid", item);
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState);
+		}
 
 		// Check if content version should be carried over if yes ensure a content version is present
 		if (updateContentVersion == false && item.getContentVersion() == null) {
-			System.err.println("The option for carrying over the old content version is checked but no content version is found in the item!");
-			return -1;
+			LOGGER.error("The option for carrying over the old content version is checked but no content version is found in the item!");
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState);
 		}
 
-		long result = -1;
-		// Build the string with placeholders '?'
-		String insertIntoTableString = "";
+		// Build the sql string with placeholders '?'
 		StringBuilder sb = new StringBuilder("INSERT INTO ");
 		sb.append(encloseNameWithQuotes(item.getAlbumName()));
 		sb.append(" ( ");
 
-
-		Iterator<ItemField> it = item.getFields().iterator();
-		while(it.hasNext()) {
+		for (ItemField itemField : item.getFields()) {
+			String name = itemField.getName();
 			// Ensure that no field with the name of typeInfoColumnName
-
-			String name = it.next().getName();
 			if (!name.equalsIgnoreCase(TYPE_INFO_COLUMN_NAME)) {
 				sb.append(encloseNameWithQuotes(name));
 				sb.append(", ");
@@ -1376,34 +1351,27 @@ public class DatabaseWrapper  {
 		sb.append(TYPE_INFO_COLUMN_NAME);
 		sb.append(" ) VALUES ( ");
 
-		it = item.getFields().iterator();
-		while(it.hasNext()) {
-			String name = it.next().getName();
+		for (ItemField itemField : item.getFields()) {
+			String name = itemField.getName();
 			if (!name.equalsIgnoreCase(TYPE_INFO_COLUMN_NAME)) {
 				sb.append("?, ");
 			}
 		}
-
-		// Add the typeInfoColumn Value
+		// Add wildcard for the typeInfoColumn Value
 		sb.append("? )");
-
-		insertIntoTableString = sb.toString();
-		logger.debug(insertIntoTableString);
-		PreparedStatement preparedStatement = null;
-		ResultSet generatedKeys = null;
-		try {
-			preparedStatement = connection.prepareStatement(insertIntoTableString);
-
-			preparedStatement.setQueryTimeout(30); // set timeout to 30 sec.
+		
+		String savepointName = createSavepoint();
+	
+		try (PreparedStatement preparedStatement = connection.prepareStatement(sb.toString())){
+			ResultSet generatedKeys = null;
+			long idOfAddedItem = -1;
 
 			// Replace the wildcard character '?' by the real type values
-			it = item.getFields().iterator();
 			int parameterIndex = 1;
-			while(it.hasNext()) {				
-				ItemField itemfield = it.next();
-				String name = itemfield.getName();
+			for (ItemField itemField : item.getFields()) {	
+				String name = itemField.getName();
 				if (!name.equalsIgnoreCase(TYPE_INFO_COLUMN_NAME)) {					
-					setValueToPreparedStatement(preparedStatement, parameterIndex, itemfield, item.getAlbumName(), insertRAWPicString);
+					setValueToPreparedStatement(preparedStatement, parameterIndex, itemField, item.getAlbumName(), insertRAWPicString);
 					parameterIndex++;
 				}
 			}
@@ -1413,7 +1381,7 @@ public class DatabaseWrapper  {
 			preparedStatement.executeUpdate();
 			generatedKeys = preparedStatement.getGeneratedKeys();
 			if (generatedKeys.next()) {
-				result = generatedKeys.getLong(1);
+				idOfAddedItem = generatedKeys.getLong(1);
 			}
 			// Either copies the old content version over or generates a new one
 			UUID newUUID = generateNewUUID();
@@ -1422,27 +1390,16 @@ public class DatabaseWrapper  {
 				newUUID = item.getContentVersion();
 
 			}
-			updateContentVersion(item.getAlbumName(), result, newUUID);//FIXME:
+			updateContentVersion(item.getAlbumName(), idOfAddedItem, newUUID);//FIXME:
 			updateLastDatabaseChangeTimeStamp();
+			return idOfAddedItem;
 		} catch (SQLException e) {
-			e.printStackTrace();
-			result = -1;
+			rollbackToSavepoint(savepointName);
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
 		}finally {
-			try {
-				generatedKeys.close();
-
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-			try {
-				preparedStatement.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+			releaseSavepoint(savepointName);
 		}
-		return result;
 	}
-
 
 	/**
 	 * This helper method sets a value based on type to a preparedStatement at the specified position
@@ -1452,93 +1409,92 @@ public class DatabaseWrapper  {
 	 * @param albumName The name of the album to which the item of the field belongs.
 	 * @param insertRAWPicString When true treats the Picture field as raw string to insert. False for copy and new fileName insert into DB.
 	 * @return True if the operation was successful. False otherwise.
-	 * @throws SQLException Exception thrown if any part of the operation fails.
+	 * @throws FailedDatabaseWrapperOperationException Exception thrown if any part of the operation fails. 
 	 */
-	private static boolean setValueToPreparedStatement(PreparedStatement preparedStatement, int parameterIndex,  ItemField field, String albumName, boolean insertRAWPicString) throws SQLException {
-
-		switch (field.getType()) {
-		case Text: 
-			String text = field.getValue();
-			preparedStatement.setString(parameterIndex, text);		
-			break;
-		case Number: 
-			Double real = field.getValue();
-			preparedStatement.setDouble(parameterIndex, real);		
-			break;
-		case Date: 
-			Date date = field.getValue();
-			preparedStatement.setDate(parameterIndex, date);		
-			break;
-		case Time: 
-			Time time = field.getValue();
-			preparedStatement.setTime(parameterIndex, time);		
-			break;
-		case Option: 
-			OptionType option = field.getValue();
-			// Textual representation of the enum is stored in the DB. 
-			preparedStatement.setString(parameterIndex, option.toString());		
-			break;
-		case URL: 
-			String	url = field.getValue();
-			preparedStatement.setString(parameterIndex, url);		
-			break;
-		case StarRating: 
-			StarRating	starRating = field.getValue();
-			preparedStatement.setString(parameterIndex, starRating.toString());		
-			break;
-		case Integer: 
-			Integer	integer = field.getValue();
-			preparedStatement.setString(parameterIndex, integer.toString());		
-			break;
-		case Picture:
-			if (insertRAWPicString) {
-				String rawDBString = field.getValue();
-				preparedStatement.setString(parameterIndex, rawDBString);
-			} else {
-				List<URI> uriList = field.getValue();
-				List<String> newFileNamesWithFileExtensionList = new ArrayList<String>();
-
-				for (URI uri : uriList) {
-					// TODO write some checks :)
-					newFileNamesWithFileExtensionList.add(new File(uri).getName());
+	private static void setValueToPreparedStatement(PreparedStatement preparedStatement, int parameterIndex,  ItemField field, String albumName, boolean insertRAWPicString) throws FailedDatabaseWrapperOperationException {
+		try {
+			switch (field.getType()) {
+			case Text: 
+				String text = field.getValue();
+				preparedStatement.setString(parameterIndex, text);		
+				break;
+			case Number: 
+				Double real = field.getValue();
+				preparedStatement.setDouble(parameterIndex, real);		
+				break;
+			case Date: 
+				Date date = field.getValue();
+				preparedStatement.setDate(parameterIndex, date);		
+				break;
+			case Time: 
+				Time time = field.getValue();
+				preparedStatement.setTime(parameterIndex, time);		
+				break;
+			case Option: 
+				OptionType option = field.getValue();
+				// Textual representation of the enum is stored in the DB. 
+				preparedStatement.setString(parameterIndex, option.toString());		
+				break;
+			case URL: 
+				String	url = field.getValue();
+				preparedStatement.setString(parameterIndex, url);		
+				break;
+			case StarRating: 
+				StarRating	starRating = field.getValue();
+				preparedStatement.setString(parameterIndex, starRating.toString());		
+				break;
+			case Integer: 
+				Integer	integer = field.getValue();
+				preparedStatement.setString(parameterIndex, integer.toString());		
+				break;
+			case Picture:
+				if (insertRAWPicString) {
+					String rawDBString = field.getValue();
+					preparedStatement.setString(parameterIndex, rawDBString);
+				} else {
+					List<URI> uriList = field.getValue();
+					List<String> newFileNamesWithFileExtensionList = new ArrayList<String>();
+	
+					for (URI uri : uriList) {
+						// TODO write some checks :)
+						newFileNamesWithFileExtensionList.add(new File(uri).getName());
+					}
+	
+					preparedStatement.setString(parameterIndex, embedPictureNamesWithFileExtensionInString(newFileNamesWithFileExtensionList));
 				}
-
-				preparedStatement.setString(parameterIndex, embedPictureNamesWithFileExtensionInString(newFileNamesWithFileExtensionList));
-			}
-			break;
-		default:
-			break;
+				break;
+			default:
+				break;
+			}			
+		} catch (SQLException e) {
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState, e);
 		}
-
 		//TODO return void?
-		return true;
+		
 	}
 
 
 	/**
 	 * Updates all the fields of the specified item in the database using the values provided through item.
 	 * @param item The item to be updated.
-	 * @return True if the operation was successful. False otherwise.
+	 * @throws FailedDatabaseWrapperOperationException 
 	 */
-	public static boolean updateAlbumItem(AlbumItem item) {
+	public static void updateAlbumItem(AlbumItem item) throws FailedDatabaseWrapperOperationException {
 		// Check if the item contains a albumName
 		if (item.getAlbumName().isEmpty()) {
-			System.err.println("DatabaseWrapper::addNewAlbumItem(), item has no albumName");
-			return false;
+			LOGGER.error("DatabaseWrapper::addNewAlbumItem(), item has no albumName");
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState);
 		}
 
 		// Get the id and make sure the field exist;
 		ItemField idField = item.getField("id");
 
 		if (idField == null) {
-			System.err.println("DatabaseWrapper::updateAlbumItem(), the item to be updated has no id field");
-			return false;
+			LOGGER.error("DatabaseWrapper::updateAlbumItem(), the item to be updated has no id field");
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState);
 		}
 
-		boolean result = true;
 		// Build the string with placeholders '?'
-		String updateAlbumItemString = "";
-
 		StringBuilder sb = new StringBuilder("UPDATE ");
 		sb.append(encloseNameWithQuotes(item.getAlbumName()));
 		sb.append(" SET ");
@@ -1560,15 +1516,12 @@ public class DatabaseWrapper  {
 			}
 
 		}
-
-		updateAlbumItemString = sb.toString();
-		updateAlbumItemString += "WHERE id=?";
-
-		try {
-			logger.debug(updateAlbumItemString);
-			PreparedStatement preparedStatement = connection.prepareStatement(updateAlbumItemString);
-			preparedStatement.setQueryTimeout(30);
-
+		sb.append("WHERE id=?");
+		
+		String savepointName =  createSavepoint();		
+		//TODO: use one global update function!
+		try (PreparedStatement preparedStatement = connection.prepareStatement(sb.toString())){
+			
 			// Replace the wildcards
 			it = item.getFields().iterator();
 			int parameterIndex = 1;
@@ -1582,51 +1535,44 @@ public class DatabaseWrapper  {
 				}
 			}
 
-			System.out.println(updateAlbumItemString);
-			System.out.println("parameter index: " + parameterIndex);
 			// Replace wildcard char '?' in WHERE id=? clause
 			Long id = idField.getValue();
 			preparedStatement.setString(parameterIndex, id.toString());
-
-
-			int resrows = preparedStatement.executeUpdate();
-			System.out.println("updateAlbumItem(), resrows: "+resrows);
-			preparedStatement.close();
+			preparedStatement.executeUpdate();
 
 			updateContentVersion(item.getAlbumName(), id, generateNewUUID());
 			updateLastDatabaseChangeTimeStamp();
+		} catch (FailedDatabaseWrapperOperationException e) {
+			if (e.ErrorState.equals(DBErrorState.ErrorWithDirtyState)) {
+				rollbackToSavepoint(savepointName);
+			}
 		} catch (SQLException e) {
-			e.printStackTrace();
-		} 
-
-		return result;
+			rollbackToSavepoint(savepointName);			
+		}finally {
+			releaseSavepoint(savepointName);
+		}		
 	}
-
 
 	/**
 	 * Permanently deletes the albumItem with the specified id from the database.
 	 * @param albumName The name of the album to which the item belongs.
 	 * @param albumItemId The id of the item to be deleted.
 	 * @return  True if the operation was successful. False otherwise.
+	 * @throws FailedDatabaseWrapperOperationException 
 	 */
-	public static boolean deleteAlbumItem(String albumName, long albumItemId) {
-		boolean result = true;
-
+	public static void deleteAlbumItem(String albumName, long albumItemId) throws FailedDatabaseWrapperOperationException {
+		String savepointName = createSavepoint();
+		
 		String deleteAlbumItemString = "DELETE FROM " + encloseNameWithQuotes(albumName) + " WHERE id=" + albumItemId;
-		System.out.println(deleteAlbumItemString);
-
-		PreparedStatement preparedStatement;
-		try {
-			preparedStatement = connection.prepareStatement(deleteAlbumItemString);
-
+		try (PreparedStatement preparedStatement = connection.prepareStatement(deleteAlbumItemString)) {
 			preparedStatement.executeUpdate();
 			updateLastDatabaseChangeTimeStamp();
 		} catch (SQLException e) {
-			e.printStackTrace();
-			result = false;
+			rollbackToSavepoint(savepointName);
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
+		}finally {
+			releaseSavepoint(savepointName);
 		}
-
-		return result;
 	}
 
 
@@ -1634,76 +1580,74 @@ public class DatabaseWrapper  {
 	 * Simply executes the provided sql query via the connection against a database and returns the results.
 	 * @param sqlStatement An sql query, typically a SELECT statement like SELECT * FROM albumName.
 	 * @return A resultSet containing the desired entries. Null if the query failed. 
+	 * @throws FailedDatabaseWrapperOperationException 
 	 */
-	public static AlbumItemResultSet executeSQLQuery(String sqlStatement){
+	public static AlbumItemResultSet executeSQLQuery(String sqlStatement) throws FailedDatabaseWrapperOperationException{
 		AlbumItemResultSet albumItemRS = null;
 		try {
-
 			albumItemRS = new AlbumItemResultSet(connection, sqlStatement);
-
-		} catch (SQLException e) {
-			//e.printStackTrace();
-			System.err.println("The query: \"" + sqlStatement + "\" could not be executed and terminated with message: " + e.getMessage());
-			return null;
-		}
-		return albumItemRS;
+			return albumItemRS;
+		} catch (FailedDatabaseWrapperOperationException e) {
+			LOGGER.error("The query: \"{}\" could not be executed and terminated with message: {}", sqlStatement ,  e.getMessage());
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
+		}		
 	}
 
-	public static long getNumberOfItemsInAlbum(String albumName) {
-		Statement statement = null;
-		ResultSet resultSet = null;
-		try {
-			statement = connection.createStatement();
-			resultSet = statement.executeQuery(QueryBuilder.createCountAsAliasStarWhere(albumName, "numberOfItems"));
+	public static long getNumberOfItemsInAlbum(String albumName) throws FailedDatabaseWrapperOperationException {
+				
+		try (Statement statement = connection.createStatement()){			
+			ResultSet resultSet = statement.executeQuery(QueryBuilder.createCountAsAliasStarWhere(albumName, "numberOfItems"));
 			if (resultSet.next()) {
 				return resultSet.getLong("numberOfItems");
 			}
-
+			LOGGER.error("The number of items could not be fetch for album {}", albumName);
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, "The number of items could not be fetch for album " + albumName);
 		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				resultSet.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-			try {
-				statement.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
 		}
-
-		return 0;
 	}
 
-	private static void updateContentVersion(String albumName, long itemID, UUID newUuid) throws SQLException {	
+	private static void updateContentVersion(String albumName, long itemID, UUID newUuid) throws FailedDatabaseWrapperOperationException {	
+		String savepointName = createSavepoint();
+		
 		StringBuilder sb = new StringBuilder("UPDATE ");
 		sb.append(encloseNameWithQuotes(albumName));
 		sb.append(" SET ");
 		sb.append(CONTENT_VERSION_COLUMN_NAME);
 		sb.append(" = ? ");
 		sb.append("WHERE id = ?");
-
-		System.out.println("updateContentVersion(), "+sb.toString());
-		PreparedStatement preparedStatement = connection.prepareStatement(sb.toString());
-		preparedStatement.setString(1, newUuid.toString());
-		preparedStatement.setLong(2, itemID);
-		preparedStatement.executeUpdate();
+		
+		try (PreparedStatement preparedStatement = connection.prepareStatement(sb.toString())){			
+			preparedStatement.setString(1, newUuid.toString());
+			preparedStatement.setLong(2, itemID);
+			preparedStatement.executeUpdate();
+		}catch (SQLException e) {
+			rollbackToSavepoint(savepointName);
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState);
+		}finally {
+			releaseSavepoint(savepointName);
+		}
 	}
 
-	private static void updateSchemaVersion(String albumName) throws SQLException {
+	private static void updateSchemaVersion(String albumName) throws FailedDatabaseWrapperOperationException  {
+		String savepointName = createSavepoint();
+		
 		String typeInfoTableName = getTypeInfoTableName(albumName);
 		StringBuilder sb = new StringBuilder("UPDATE ");
 		sb.append(encloseNameWithQuotes(typeInfoTableName));
 		sb.append(" SET ");
 		sb.append(SCHEMA_VERSION_COLUMN_NAME);
 		sb.append(" = ?");
-
-		System.out.println(sb.toString());
-		PreparedStatement preparedStatement = connection.prepareStatement(sb.toString());
-		preparedStatement.setString(1, generateNewUUID().toString());
-		preparedStatement.executeUpdate();
+		
+		try (PreparedStatement preparedStatement = connection.prepareStatement(sb.toString())) {		
+			preparedStatement.setString(1, generateNewUUID().toString());
+			preparedStatement.executeUpdate();
+		} catch (SQLException e) {
+			rollbackToSavepoint(savepointName);
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState);
+		}finally {
+			releaseSavepoint(savepointName);
+		}
 	}
 
 	/**
@@ -1711,17 +1655,14 @@ public class DatabaseWrapper  {
 	 * @param sqlStatement The SQL statement to be executed. Must be proper SQL compliant to the database.
 	 * @param albumName The name of the album to which the query refers to.
 	 * @return The albumItemResultSet which represent the results of the query. Null if the query fails at any point.
+	 * @throws FailedDatabaseWrapperOperationException 
 	 */
-	public static AlbumItemResultSet executeSQLQuery(String sqlStatement, String albumName){
+	public static AlbumItemResultSet executeSQLQuery(String sqlStatement, String albumName) throws FailedDatabaseWrapperOperationException{
 		AlbumItemResultSet albumItemRS = null;
-		try {
-			Map<Integer, MetaItemField> metaInfoMap = DatabaseWrapper.getAlbumItemMetaMap(albumName);
-
-			albumItemRS = new AlbumItemResultSet(connection, sqlStatement, metaInfoMap);
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+	
+		Map<Integer, MetaItemField> metaInfoMap = DatabaseWrapper.getAlbumItemMetaMap(albumName);
+		
+		albumItemRS = new AlbumItemResultSet(connection, sqlStatement, metaInfoMap);
 		return albumItemRS;
 	}
 
@@ -1732,8 +1673,9 @@ public class DatabaseWrapper  {
 	 * @param albumName The name of the album to which the query refers to.
 	 * @param quickSearchTerms A list of terms to be matched against the marked fields. If null, a select * is performed.
 	 * @return A valid albumItemResultSet for the provided quicksearch terms or a select * 
+	 * @throws FailedDatabaseWrapperOperationException 
 	 */
-	public static AlbumItemResultSet executeQuickSearch(String albumName, List<String> quickSearchTerms) {
+	public static AlbumItemResultSet executeQuickSearch(String albumName, List<String> quickSearchTerms) throws FailedDatabaseWrapperOperationException {
 		List<MetaItemField> albumFields = getAllAlbumItemMetaItemFields(albumName);
 		String query = "";
 		ArrayList<QueryComponent> queryFields = null;
@@ -1773,7 +1715,6 @@ public class DatabaseWrapper  {
 
 		}// end of for - terms
 
-		System.out.println(query);
 		return executeSQLQuery(query, albumName);
 	}
 
@@ -1781,157 +1722,130 @@ public class DatabaseWrapper  {
 	/**
 	 * Lists all albums currently stored in the database.
 	 * @return A list of album names. May be empty if no albums were created yet. Null in case of an error.
+	 * @throws FailedDatabaseWrapperOperationException 
 	 */
-	public static List<String> listAllAlbums() {
+	public static List<String> listAllAlbums() throws FailedDatabaseWrapperOperationException {
 		List<String> albumList = new ArrayList<String>();
 		String queryAllAlbumsSQL = QueryBuilder.createSelectColumnQuery(albumMasterTableName, ALBUM_TABLENAME_IN_ALBUM_MASTER_TABLE);
-		Statement statement = null;
-		ResultSet rs = null;
-		try {			
-			// Select query
-			statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
-			rs = statement.executeQuery(queryAllAlbumsSQL);
 
-			while(rs.next())
-			{
+		try (	Statement statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
+				ResultSet rs = statement.executeQuery(queryAllAlbumsSQL);) {			
+			
+
+			while(rs.next()) {
 				albumList.add(rs.getString(1));
 			}
-		} catch (SQLException e1) {
-			albumList = null;
-		} finally {
-			try {
-				if (statement != null) {
-					statement.close();
-				}
-			}catch (SQLException e) {
-				albumList =  null;
-			}
+			return albumList;
+			
+		} catch (SQLException e) {
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
 		}		
-		return albumList;
 	}
 
 	/** 
 	 * Retrieves the name of the table containing the type information about it.
 	 * @param mainTableName The name of the table of which the type information belongs to.
-	 * @return The name of the related typeInfo table or Empty String if no typeInfo table is available. TypeInfo table itself for example.
-	 * @throws SQLException Exception thrown if any part of the operation fails.
+	 * @return The name of the related typeInfo table.
+	 * @throws FailedDatabaseWrapperOperationException 
 	 */
-	private static String getTypeInfoTableName(String mainTableName)  {
+	private static String getTypeInfoTableName(String mainTableName) throws FailedDatabaseWrapperOperationException  {
 		DatabaseMetaData dbmetadata = null;
-		ResultSet dbmetars = null;
 		try {
 			dbmetadata = connection.getMetaData();
-			dbmetars = dbmetadata.getImportedKeys(null, null, mainTableName);
-
+		} catch (SQLException e) {
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
+		}
+		
+		try (ResultSet dbmetars = dbmetadata.getImportedKeys(null, null, mainTableName)){			
 			if (dbmetars.next()) {
-				String typeInfoTable = dbmetars.getString("PKTABLE_NAME");//dbmetars.getString(3);
-				dbmetars.close();
+				String typeInfoTable = dbmetars.getString("PKTABLE_NAME");
+
 				return typeInfoTable;
 			}
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, "No type info table found for "+mainTableName);
 		} catch (SQLException e) {
-			e.printStackTrace();
-		}finally {
-			try {
-				dbmetars.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-		return "";
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
+		}		
 	}
-
 
 	/**
 	 * Lists all the columns of a table which are indexed. Indexed columns are also taken into account for the quicksearch feature.
 	 * @param tableName The name of the table to which the columns belong. Table name must NOT be escaped! 
 	 * @return A list of indexed, meaning also quickSearchable, columns. List may be empty if none were indexed. Null if an error occured. 
+	 * @throws FailedDatabaseWrapperOperationException 
 	 */
-	public static List<String> getIndexedColumnNames(String tableName) {
+	public static List<String> getIndexedColumnNames(String tableName) throws FailedDatabaseWrapperOperationException {
 		List<String> indexedColumns = new ArrayList<String>();
-		ResultSet indexRS = null;
-
+		DatabaseMetaData dbmetadata = null;
 		try {
-			DatabaseMetaData dbmetadata =  connection.getMetaData();
-			indexRS = dbmetadata.getIndexInfo(null, null, tableName, false, true);
+			dbmetadata = connection.getMetaData();			
+		} catch (SQLException e) {
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
+		}
+				
+		try (ResultSet indexRS = dbmetadata.getIndexInfo(null, null, tableName, false, true)) {	
 			while (indexRS.next()) {
 				if(indexRS.getString("COLUMN_NAME") != null)
 					indexedColumns.add(indexRS.getString("COLUMN_NAME"));
-			} 
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return null;
-		}finally {
-			try {
-				if (indexRS != null)
-					indexRS.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
 			}
-		}
-		return indexedColumns;
+			return indexedColumns;
+		} catch (SQLException e) {
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
+		}		
 	}
-
 
 	/**
 	 * Retrieves the name of the index. In case there are multiple indices only the first one is looked up. Multiple indices may indicate 
 	 * database insistency.
 	 * @param tableName The name of the table to which the index belongs.
 	 * @return The name of the index table if it exists, null otherwise.
+	 * @throws FailedDatabaseWrapperOperationException 
 	 */
-	public static String getTableIndexName(String tableName) {
-		ResultSet indexRS = null;
+	public static String getTableIndexName(String tableName) throws FailedDatabaseWrapperOperationException {		
 		String indexName = null;
+		DatabaseMetaData dbmetadata = null;
 		try {
-			DatabaseMetaData dbmetadata =  connection.getMetaData();
-			indexRS = dbmetadata.getIndexInfo(null, null, tableName, false, true);
+			dbmetadata =  connection.getMetaData();
+		} catch (SQLException e) {
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
+		}
+		
+		try (ResultSet indexRS = dbmetadata.getIndexInfo(null, null, tableName, false, true);) {			
 			if(indexRS.next()) {
 				indexName = indexRS.getString("INDEX_NAME");
 			}
+			return indexName;
 		} catch (SQLException e) {
-			e.printStackTrace();
-			return null;
-		}finally {
-			try {
-				indexRS.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-		return indexName;
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
+		}		
 	}
 
 	/**
 	 * Retrieves a list of MetaItemFields, excluding those that are for internal use only. Meta item fields describe the items of the album
 	 * @param albumName The name of the album of which to retrieve the information.
-	 * @return The list of MetaItemFields. Return an empty  list if a structural error exists in the database. Null when an internal SQL error occurred.
+	 * @return The list of MetaItemFields. 
 	 */
-	public static List<MetaItemField> getAlbumItemFieldNamesAndTypes(String albumName) {
+	public static List<MetaItemField> getAlbumItemFieldNamesAndTypes(String albumName) throws FailedDatabaseWrapperOperationException {
 		List<MetaItemField> itemMetadata = new ArrayList<MetaItemField>();
-		Statement statement = null;
 
+		// Is available means that it does not exist in the db, hence its fields cannot be retrieved
 		if (albumNameIsAvailable(albumName)) {
-			return itemMetadata;
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState);
 		}
 
 		List<String> quickSearchableColumnNames = getIndexedColumnNames(albumName);
 		List<String> internalColumnNames = Arrays.asList("id", TYPE_INFO_COLUMN_NAME, CONTENT_VERSION_COLUMN_NAME);
-
-		/* 
-		if (quickSearchableColumns == null) {
-			return null;
-		}*/
-		try {
-			statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
-			String dbAlbumName = encloseNameWithQuotes(albumName);
-
-			// Select query
-			ResultSet rs = statement.executeQuery(QueryBuilder.createSelectStarQuery(dbAlbumName));
+		String dbAlbumName = encloseNameWithQuotes(albumName);
+		
+		try (
+				Statement statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
+				ResultSet rs = statement.executeQuery(QueryBuilder.createSelectStarQuery(dbAlbumName));) {		
 
 			// Retrieve table metadata
 			ResultSetMetaData metaData = rs.getMetaData();
 
 			int columnCount = metaData.getColumnCount();
-			// Each ItemField
+			// Each ItemField. Classic for loop since meta data only provides access via indices.
 			for (int columnIndex = 1; columnIndex <= columnCount; columnIndex++) {
 
 				//Excludes all columns that are for internal use only.
@@ -1942,36 +1856,26 @@ public class DatabaseWrapper  {
 					itemMetadata.add(metaItem);
 				}
 			}
-			statement.close();
-			rs.close();
-
+			
+			return itemMetadata;
 		} catch (SQLException e) {
-			e.printStackTrace();
-			return null;
-		}
-
-		return itemMetadata;
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
+		}		
 	}
 
 	/**
 	 *  Retrieves a list of all MetaItemFields, including those that are for internal use only. Meta item fields describe the items of the album.
 	 * @param albumName The name of the album of which to retrieve the information.
 	 * @return The list of MetaItemFields. Return an empty  list if a structural error exists in the database. Null when an internal SQL error occurred.
+	 * @throws FailedDatabaseWrapperOperationException 
 	 */
-	private static List<MetaItemField> getAllAlbumItemMetaItemFields(String albumName){
+	private static List<MetaItemField> getAllAlbumItemMetaItemFields(String albumName) throws FailedDatabaseWrapperOperationException{
 		List<MetaItemField> itemMetadata = new ArrayList<MetaItemField>();
-		Statement statement = null;
-
 		List<String> quickSearchableColumnNames = getIndexedColumnNames(albumName);
-
-		/* 
-		if (quickSearchableColumns == null) {
-			return null;
-		}*/
-		try {
-			statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
-			// Select query
-			ResultSet rs = statement.executeQuery(QueryBuilder.createSelectStarQuery(albumName));
+		
+		try (
+				Statement statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
+				ResultSet rs = statement.executeQuery(QueryBuilder.createSelectStarQuery(albumName));){					
 
 			// Retrieve table metadata
 			ResultSetMetaData metaData = rs.getMetaData();
@@ -1985,113 +1889,84 @@ public class DatabaseWrapper  {
 				MetaItemField metaItem = new MetaItemField(columnName, type, quickSearchableColumnNames.contains(columnName));
 				itemMetadata.add(metaItem);
 			}
-			statement.close();
-			rs.close();
-
+			return itemMetadata;
 		} catch (SQLException e) {
-			e.printStackTrace();
-			return null;
-		}
-
-		return itemMetadata;
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
+		}		
 	}
-
 
 	/**
 	 * Fetches a map of metaItemFields keyed by their field (column) index. 
 	 * @param albumName The name of the album to which this map belongs.
 	 * @return True if the query was successful. False otherwise.
+	 * @throws FailedDatabaseWrapperOperationException 
 	 */
-	public static Map<Integer, MetaItemField> getAlbumItemMetaMap(String albumName) {
-		Map<Integer, MetaItemField> itemMetadata = new HashMap<Integer, MetaItemField>();
-		ResultSetMetaData metaData = null;
-		Statement statement = null;
-		ResultSet set = null;
-
+	public static Map<Integer, MetaItemField> getAlbumItemMetaMap(String albumName) throws FailedDatabaseWrapperOperationException {
 		List<String> quickSearchableColumns = getIndexedColumnNames(albumName);
 
-		// If
-		if (quickSearchableColumns == null) {
-			return null;
-		}
-
-		try {
-			statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
-
-			// Select query
+		Map<Integer, MetaItemField> itemMetadata = new HashMap<Integer, MetaItemField>();
+		
+		try (Statement statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY)) {			
 			// Retrieve table metadata
-			set =	statement.executeQuery(QueryBuilder.createSelectStarQuery(albumName));
-			metaData = set.getMetaData();
-
+						
+			ResultSet set = statement.executeQuery(QueryBuilder.createSelectStarQuery(albumName)); 	
+			ResultSetMetaData metaData = set.getMetaData();
+			
 			int columnCount = metaData.getColumnCount();
 			// Each ItemField
 			for (int columnIndex = 1; columnIndex <= columnCount; columnIndex++) {
 				String name = metaData.getColumnName(columnIndex);
+				
 				FieldType type = detectDataType(albumName, name);	
+				
 				MetaItemField metaItemField = new MetaItemField(name, type,quickSearchableColumns.contains(name));
 				itemMetadata.put(columnIndex, metaItemField);
 			}
-
+			return itemMetadata;
 		} catch (SQLException e) {
-			e.printStackTrace();
-			return null;
-		}finally {
-			try {
-				set.close();
-				statement.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
 		}
-
-		return itemMetadata;
 	}
-
 
 	/**
 	 * A helper method to detect the collector FieldType using the type information in the separate typeInfo table.
 	 * @param tableName The name of the table to which the column belongs to.
 	 * @param columnName The name of the column whose type should be determined.
 	 * @return A FieldType expressing the type of the specified column in the resultSet.
-	 * @throws SQLException Exception thrown if any part of the operation fails.
+	 * @throws FailedDatabaseWrapperOperationException 
 	 */
-	private static FieldType detectDataType(String tableName, String columnName) throws SQLException {
-		FieldType type = null;
+	private static FieldType detectDataType(String tableName, String columnName) throws FailedDatabaseWrapperOperationException {
 		DatabaseMetaData dbmetadata = null;
-		ResultSet dbmetars = null;
-		ResultSet typeRs = null;
-		Statement statement = null;
 		try {
 			dbmetadata = connection.getMetaData();
-			dbmetars = dbmetadata.getImportedKeys(null, null, tableName);
-
+		} catch (SQLException e1) {
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState);
+		}
+		try (ResultSet dbmetars = dbmetadata.getImportedKeys(null, null, tableName)) {
 			// Get the primary and foreign keys
 			String primaryKey = dbmetars.getString(4);
 			String foreignKey = dbmetars.getString(8);
-
-
+			
 			if (columnName.equalsIgnoreCase(primaryKey) || columnName.equalsIgnoreCase(foreignKey)) {
-				return FieldType.ID;
+				return FieldType.ID; 
 			}
+			
+		} catch (SQLException sqlException) {
+			return FieldType.Text;//TODO: either do failsafe type = text or fail with exception and let caller decide
+		}	
 
-			String dbtypeInfoTableName = encloseNameWithQuotes(getTypeInfoTableName(tableName));
-
-			statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
-			statement.setQueryTimeout(30); // set timeout to 30 sec.
-
-			typeRs = statement.executeQuery(QueryBuilder.createSelectColumnQuery(dbtypeInfoTableName, columnName));
-
-			type =  FieldType.valueOf(typeRs.getString(1));
-		} catch (Exception e) {
-			type = FieldType.Text;
-		}finally {
-			dbmetars.close();
-			if (typeRs != null)
-				typeRs.close();
-			if (statement != null)
-				statement.close();
-		}
-		return type;
+		String dbtypeInfoTableName = encloseNameWithQuotes(getTypeInfoTableName(tableName));
+		try (
+				Statement statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
+				ResultSet typeResultSet = statement.executeQuery(QueryBuilder.createSelectColumnQuery(dbtypeInfoTableName, columnName));) {			
+			return FieldType.valueOf(typeResultSet.getString(1));
+			
+		} catch (SQLException e) {
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
+		} catch (IllegalArgumentException e) {
+			return FieldType.Text;//TODO: in vestigate if this fallback is appropriate
+		}	
+		
 	}
 
 
@@ -2101,73 +1976,76 @@ public class DatabaseWrapper  {
 	 * @param columnIndex The index of the field (column) whithin the item (entry).
 	 * @param type The type of the field.
 	 * @param albumName The name of the album this value of the item belongs to.
-	 * @return True if the query was successful. False otherwise.
-	 * @throws SQLException Exception thrown if any part of the operation fails.
+	 * @throws FailedDatabaseWrapperOperationException 
 	 */
-	public static Object fetchFieldItemValue(ResultSet results, int columnIndex, FieldType type, String albumName) throws SQLException {
+	public static Object fetchFieldItemValue(ResultSet results, int columnIndex, FieldType type, String albumName) throws FailedDatabaseWrapperOperationException {
 		Object value = null;
-		switch (type) {
-		case ID:
-			value = results.getLong(columnIndex);
-			break;
-		case Text:
-			value = results.getString(columnIndex);
-			break;
-		case Number:
-			value = results.getDouble(columnIndex);
-			break;
-		case Integer:
-			value = results.getInt(columnIndex);
-			break;
-		case Date:
-			value = results.getDate(columnIndex);
-			break;
-		case Time:
-			value = results.getTime(columnIndex);
-			break;
-		case Option:
-			String optionValue = results.getString(columnIndex);
-			if (optionValue != null && !optionValue.isEmpty()) {
-				value =  OptionType.valueOf(optionValue);
-			}else {
-				System.err.println("fetchFieldItemValue() - url string is unexpectantly null or empty");
+		try {
+			switch (type) {
+			case ID:
+				value = results.getLong(columnIndex);
+				break;
+			case Text:
+				value = results.getString(columnIndex);
+				break;
+			case Number:
+				value = results.getDouble(columnIndex);
+				break;
+			case Integer:
+				value = results.getInt(columnIndex);
+				break;
+			case Date:
+				value = results.getDate(columnIndex);
+				break;
+			case Time:
+				value = results.getTime(columnIndex);
+				break;
+			case Option:
+				String optionValue = results.getString(columnIndex);
+				if (optionValue != null && !optionValue.isEmpty()) {
+					value =  OptionType.valueOf(optionValue);
+				}else {
+					LOGGER.error("Fetching option type for item field failed. Url string is unexpectantly null or empty");
+				}
+				break;
+			case URL:
+				String urlString = results.getString(columnIndex);
+				value =  urlString;
+				break;
+			case StarRating:
+				String rating = results.getString(columnIndex);
+				if (rating != null && !rating.isEmpty()) {
+					value =  StarRating.valueOf(rating);
+				}else {
+					LOGGER.error("Fetching star ratingfor item field failed.- star rating string is unexpectantly null or empty");
+				}
+				break;
+			case Picture:
+				value = extractFullPicturePathsFromString(results.getString(columnIndex), albumName);
+				break;
+				// TODO : -URL/Picture add new table for new types
+			case UUID:
+				value  = UUID.fromString(results.getString(columnIndex));
+				break;
+			default:
+				// FieldType by is default of type text
+				value = null;
+				break;
 			}
-			break;
-		case URL:
-			String urlString = results.getString(columnIndex);
-			value =  urlString;
-			break;
-		case StarRating:
-			String rating = results.getString(columnIndex);
-			if (rating != null && !rating.isEmpty()) {
-				value =  StarRating.valueOf(rating);
-			}else {
-				System.err.println("fetchFieldItemValue() - star rating string is unexpectantly null or empty");
-			}
-			break;
-		case Picture:
-			value = extractFullPicturePathsFromString(results.getString(columnIndex), albumName);
-			break;
-			// TODO : -URL/Picture add new table for new types
-		case UUID:
-			value  = UUID.fromString(results.getString(columnIndex));
-			break;
-		default:
-			// FieldType by is default of type text
-			value = null;
-			break;
+			return value;
+		} catch (SQLException e) {
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
 		}
-		return value;
 	}
-
 
 	/**
 	 * Queries whether the field is available for the quicksearch feature.
 	 * @param albumName The name of the album to which the field belongs to.
 	 * @param fieldName The name of the field to be queried.
 	 * @return True if the the specified field is available for the quicksearch feature. False otherwise.
+	 * @throws FailedDatabaseWrapperOperationException 
 	 */
-	public static boolean isAlbumFieldQuicksearchable(String albumName, String fieldName) {
+	public static boolean isAlbumFieldQuicksearchable(String albumName, String fieldName) throws FailedDatabaseWrapperOperationException {
 		List<String> quicksearchableFieldNames = getIndexedColumnNames(albumName);
 
 		if (quicksearchableFieldNames != null) {
@@ -2180,8 +2058,9 @@ public class DatabaseWrapper  {
 	 * Queries whether the specified album contains at least one quicksearchable field.
 	 * @param albumName The name of the album to be queried.
 	 * @return True if the the specified album contains at least a single field enabled for the quicksearch feature. False otherwise.
+	 * @throws FailedDatabaseWrapperOperationException 
 	 */
-	public static boolean isAlbumQuicksearchable(String albumName) {
+	public static boolean isAlbumQuicksearchable(String albumName) throws FailedDatabaseWrapperOperationException {
 		List<String> quicksearchableFieldNames = getIndexedColumnNames(albumName);
 
 		if (quicksearchableFieldNames.size()>=1){
@@ -2192,11 +2071,12 @@ public class DatabaseWrapper  {
 	}
 
 	/**
-	 * Tests if the proposed album name is not already in use by another album.
+	 * Tests if the album name is not already in use by another album.
 	 * @param requestedAlbumName The proposed album name to be tested of availability.
 	 * @return True if the name can be inserted into the database. False otherwise.
+	 * @throws FailedDatabaseWrapperOperationException 
 	 */
-	public static boolean albumNameIsAvailable(String requestedAlbumName) {
+	public static boolean albumNameIsAvailable(String requestedAlbumName) throws FailedDatabaseWrapperOperationException {
 		for (String albumName : DatabaseWrapper.listAllAlbums()) {
 			if (albumName.equalsIgnoreCase(requestedAlbumName)) {
 				return false;
@@ -2209,8 +2089,9 @@ public class DatabaseWrapper  {
 	 * Tests if the proposed item field name is not already in use by another field of the same album.
 	 * @param albumName The album name that contains the fields that the name is checked against.
 	 * @return True if the name can be inserted into the database. False otherwise.
+	 * @throws FailedDatabaseWrapperOperationException 
 	 */
-	public static boolean itemFieldNameIsAvailable(String albumName, String requestedFieldName) {
+	public static boolean itemFieldNameIsAvailable(String albumName, String requestedFieldName) throws FailedDatabaseWrapperOperationException {
 		for (MetaItemField metaItemField : DatabaseWrapper.getAlbumItemFieldNamesAndTypes(albumName)) {
 			if (requestedFieldName.equalsIgnoreCase(metaItemField.getName())) {
 				return false;
@@ -2227,7 +2108,6 @@ public class DatabaseWrapper  {
 	public static List<URI> extractFullPicturePathsFromString(String value, String albumName) {
 		List<URI> picturePathURIList = new ArrayList<URI>();
 
-		//FIXME
 		if (value != null) {
 			String pictureNamesWithFileExtensionArray[] = value.split(PICTURE_STRING_SEPERATOR);
 
@@ -2237,7 +2117,6 @@ public class DatabaseWrapper  {
 				}
 			}
 		}
-
 		return picturePathURIList;
 	}
 
@@ -2248,7 +2127,6 @@ public class DatabaseWrapper  {
 	 */
 	public static String embedPictureNamesWithFileExtensionInString(List<String> values) {
 		StringBuilder allPicturesWithSeperator = new StringBuilder("");
-		System.out.println(values);
 		for (String fileName : values) {
 			allPicturesWithSeperator.append(fileName + PICTURE_STRING_SEPERATOR);
 		}
@@ -2262,35 +2140,35 @@ public class DatabaseWrapper  {
 	 * @param albumName The name of the album to which this item belongs to.
 	 * @param albumItemId The unique id of the item within the album.
 	 * @return The requested albumItem. Null if no item with the specified id was found.
+	 * @throws FailedDatabaseWrapperOperationException 
 	 */
-	public static AlbumItem fetchAlbumItem(String albumName, long albumItemId) {
+	public static AlbumItem fetchAlbumItem(String albumName, long albumItemId) throws FailedDatabaseWrapperOperationException {
 		String queryString =  QueryBuilder.createSelectStarQuery(albumName)+ " WHERE id=" + albumItemId;
 		List<AlbumItem> items = fetchAlbumItemsFromDatabase(queryString);
-		if (items.isEmpty()) {
-			return null;
-		}else {
-			return items.get(0);
-		}
-	}
 
+		AlbumItem requestedItem = null;
+		try {
+			requestedItem = items.get(0);
+			return requestedItem;
+		} catch (IndexOutOfBoundsException e) {
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
+		}		
+	}
 
 	/**
 	 * Retrieves a list of albumItems from the database.
 	 * @param queryString The proper SQL query string compliant with the database. 
 	 * @return The list albumItems making up the results of the query. An empty list if no matching album item were found.
+	 * @throws FailedDatabaseWrapperOperationException 
 	 */
-	public static List<AlbumItem> fetchAlbumItemsFromDatabase(String queryString) {
+	public static List<AlbumItem> fetchAlbumItemsFromDatabase(String queryString) throws FailedDatabaseWrapperOperationException {
 
-		LinkedList<AlbumItem> list = new LinkedList<AlbumItem>();
-		// Select query
-		Statement statement = null;
-		ResultSet rs = null;
-		try {
-			statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
-
-			statement.setQueryTimeout(5); // set timeout to 30 sec.
-			rs = statement.executeQuery(queryString);
-
+		LinkedList<AlbumItem> list = new LinkedList<AlbumItem>();		
+		
+		try (
+				Statement statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
+				ResultSet rs = statement.executeQuery(queryString); ){
+	
 			// Retrieve table metadata
 			ResultSetMetaData metaData = rs.getMetaData();
 
@@ -2322,14 +2200,7 @@ public class DatabaseWrapper  {
 			}
 
 		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				rs.close();
-				statement.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState,e);
 		}
 
 		return list;
@@ -2339,16 +2210,13 @@ public class DatabaseWrapper  {
 	 * Updates a table entry with a default value for the specific type of that column.
 	 * @param tableName The name of the table which will be updated.
 	 * @param columnMetaInfo The metadata specifying the name and type of the column entry to be updated.
-	 * @return True if the operation was successful. False otherwise.
+	 * @throws FailedDatabaseWrapperOperationException 
 	 */
-	private static boolean updateTableColumnWithDefaultValue(String tableName, MetaItemField columnMetaInfo) {
-		PreparedStatement preparedStatement = null;
-
-		boolean result = true;
-		try {
-			String sqlString = "UPDATE "+ encloseNameWithQuotes(tableName)+ " SET " +encloseNameWithQuotes(columnMetaInfo.getName()) + "=?";
-			System.out.println(sqlString);
-			preparedStatement = connection.prepareStatement(sqlString);
+	private static void updateTableColumnWithDefaultValue(String tableName, MetaItemField columnMetaInfo) throws FailedDatabaseWrapperOperationException {		
+		String sqlString = "UPDATE "+ encloseNameWithQuotes(tableName)+ " SET " +encloseNameWithQuotes(columnMetaInfo.getName()) + "=?";
+		
+		try (PreparedStatement preparedStatement = connection.prepareStatement(sqlString)){						
+			
 			switch (columnMetaInfo.getType()) {
 			case Text: 
 				preparedStatement.setString(1, (String) columnMetaInfo.getType().getDefaultValue());
@@ -2385,30 +2253,17 @@ public class DatabaseWrapper  {
 			}
 			preparedStatement.execute();
 		} catch (SQLException e) {
-			e.printStackTrace();
-			result = false;
-		}finally {
-			if (preparedStatement != null) {
-				try {
-					preparedStatement.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState,e);
 		}
-
-		return result;
-
 	}
-
 
 	/**
 	 * Backs the database entries along the properties and pictures up to the specified file.
 	 * @param filePath The path ending with the file name under which the backup will be stored.
-	 * @return True if the operation was successful, false otherwise.
+	 * @throws FailedDatabaseWrapperOperationException 
 	 */
-	public static boolean backupToFile(String filePath) {
-		Statement statement = null;
+	public static void backupToFile(String filePath) throws FailedDatabaseWrapperOperationException {
+		//TODO: check for 'file rollback' or simple delete of any remnants		
 		String tempDirName=  java.util.UUID.randomUUID().toString();
 		File tempDir = new File(System.getProperty("user.home")+File.separator,tempDirName);
 		if( !tempDir.exists() ) {
@@ -2420,8 +2275,8 @@ public class DatabaseWrapper  {
 		File sourceAlbumPictureDir = new File(FileSystemAccessWrapper.COLLECTOR_HOME_ALBUM_PICTURES);
 		try {
 			FileSystemAccessWrapper.copyDirectory(sourceAlbumPictureDir, tempAlbumPictureDir);
-		} catch (IOException e1) {
-			e1.printStackTrace();
+		} catch (IOException e) {
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState,e);
 		}
 
 		// backup application data
@@ -2430,77 +2285,61 @@ public class DatabaseWrapper  {
 		try {
 			String lockFileRegex = "^\\.lock$"; 
 			FileSystemAccessWrapper.copyDirectory(sourceAppDataDir, tempAppDataDir, lockFileRegex);
-		} catch (IOException e1) {
-			e1.printStackTrace();
+		} catch (IOException e) {
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState,e);
 		}
 
-		boolean successState = true;
-		try {
-			statement = connection.createStatement();			
+		//boolean successState = true;
+		try (Statement statement = connection.createStatement()){				
 			statement.executeUpdate("backup to '" + tempDir.getPath() + File.separatorChar + FileSystemAccessWrapper.DATABASE_TO_RESTORE_NAME+"'");
 		} catch (SQLException e) {
-			successState = false;
-			e.printStackTrace();
-		}	finally {
-			try {
-				statement.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-				successState = false;
-			}
-		}	
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState,e);
+		}
 
 		// Zip the whole temp folder
 		FileSystemAccessWrapper.zipFolderToFile(tempDir.getPath(), filePath);
 
 		// delete temp folder
 		FileSystemAccessWrapper.recursiveDeleteFSObject(tempDir);
-
-		return successState;		
+		
 	}
 
 
 	/**
 	 * Restores the database entries along the properties and pictures from the specified backup file
 	 * @param filePath The path of the file ending with the file name from which the backup will be restored.
-	 * @return True if the operation was successful, false otherwise.
+	 * @throws FailedDatabaseWrapperOperationException 
 	 */
-	public static boolean restoreFromFile(String filePath) {		
+	public static void restoreFromFile(String filePath) throws FailedDatabaseWrapperOperationException {	
+		//TODO: implement 'file rollback' or restore in tempfile first then move and delete on error 
 		FileSystemAccessWrapper.clearCollectorHome();
 		FileSystemAccessWrapper.unzipFileToFolder(filePath, FileSystemAccessWrapper.COLLECTOR_HOME);
 
-		Statement statement = null;
-		boolean successState = true;
-		try {
-			statement = connection.createStatement();
+
+		try (Statement statement = connection.createStatement()) {			
 			statement.executeUpdate("restore from '" + FileSystemAccessWrapper.DATABASE_TO_RESTORE+"'");
-			lastChangeTimeStamp =  extractTimeStamp(new File(filePath));
-			if (lastChangeTimeStamp==-1){
+			try {
+				lastChangeTimeStamp =  extractTimeStamp(new File(filePath));
+			} catch (FailedDatabaseWrapperOperationException e) {
 				lastChangeTimeStamp = System.currentTimeMillis();
 			}
 		} catch (SQLException e) {
-			successState = false;
-			e.printStackTrace();
-		} finally {
-			try {
-				statement.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-				successState = false;
-			}
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState,e);
 		}
 
-		FileSystemAccessWrapper.deleteDatabaseRestoreFile();
-		//TODO: Check if executing this only when success creates undesired side effects.
-		if (successState == true){
-			FileSystemAccessWrapper.updateCollectorFileStructure();
-			FileSystemAccessWrapper.updateAlbumFileStructure(connection);
-			// Update timestamp
-			updateLastDatabaseChangeTimeStamp();
+		if ( !FileSystemAccessWrapper.deleteDatabaseRestoreFile() ) {
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState);
 		}
 
+		if ( !FileSystemAccessWrapper.updateCollectorFileStructure() ) {
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState);
+		}
 
-		return successState;		
+		if ( !FileSystemAccessWrapper.updateAlbumFileStructure(connection) ) {
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState);
+		}
+		// Update timestamp
+		updateLastDatabaseChangeTimeStamp();
 	}
 
 	/**
@@ -2515,23 +2354,21 @@ public class DatabaseWrapper  {
 		lastChangeTimeStamp = System.currentTimeMillis();
 	}
 
-	public static boolean isDateField(String albumName, String fieldName) {
+	public static boolean isDateField(String albumName, String fieldName) throws FailedDatabaseWrapperOperationException {
 		for (MetaItemField metaItemField : getAllAlbumItemMetaItemFields(albumName)) {
 			if (metaItemField.getName().equals(fieldName) && metaItemField.getType().equals(FieldType.Date)) {
 				return true;
 			}
 		}
-
 		return false;
 	}
 
-	public static boolean isOptionField(String albumName, String fieldName) {
+	public static boolean isOptionField(String albumName, String fieldName) throws FailedDatabaseWrapperOperationException {
 		for (MetaItemField metaItemField : getAllAlbumItemMetaItemFields(albumName)) {
 			if (metaItemField.getName().equals(fieldName) && metaItemField.getType().equals(FieldType.Option)) {
 				return true;
 			}
 		}
-
 		return false;
 	}
 
@@ -2539,14 +2376,16 @@ public class DatabaseWrapper  {
 	 * Gets the list of existing autosaves sorted by filename timestamp, newest to oldest.
 	 * @return List of files of previous autosaves. Empty list if none exist
 	 */
-	public static List<File> getAllAutoSaves() {
-		List<File> autoSaves = FileSystemAccessWrapper.getAllMatchingFilesInCollectorHome(autoSaveFileRegex);
+	public static List<File> getAllAutoSaves() throws FailedDatabaseWrapperOperationException{
+		List<File> autoSaves = FileSystemAccessWrapper.getAllMatchingFilesInCollectorHome(AUTO_SAVE_FILE_REGEX);
 		Collections.sort(autoSaves, new Comparator<File>() {
-
 			@Override
 			public int compare(File file1, File file2) {
-
-				return Long.compare(extractTimeStamp(file2),  extractTimeStamp(file1));
+				try {
+					return Long.compare(extractTimeStamp(file2),  extractTimeStamp(file1));
+				} catch (FailedDatabaseWrapperOperationException e) {
+					return -1;//TODO: find a better solution when extractTimeStamp fails					
+				}
 			}
 		});
 		return autoSaves;
@@ -2556,23 +2395,26 @@ public class DatabaseWrapper  {
 	 * Extracts the database last change timestamp from the autosave file. Requires the correct format of the name.
 	 * @param autoSaveFile
 	 * @return A long integer representing the last change of the database.
+	 * @throws FailedDatabaseWrapperOperationException 
 	 */
-	private static long extractTimeStamp(File autoSaveFile) {
+	private static long extractTimeStamp(File autoSaveFile) throws FailedDatabaseWrapperOperationException {
+
+		String fileName;
 		try {
-			String fileName = autoSaveFile.getCanonicalFile().getName();
-			if ( !fileName.matches(autoSaveFileRegex) ) {
-				return -1;
-			}
-			try {
-				long databaseChangeTimeStamp =Long.parseLong(fileName.substring(fileName.indexOf("_")+1, fileName.indexOf(".")));
-				return databaseChangeTimeStamp;
-			} catch (NumberFormatException e) {
-				e.printStackTrace();
-				return -1;
-			}
+			fileName = autoSaveFile.getCanonicalFile().getName();
 		} catch (IOException e) {
-			e.printStackTrace();
-			return -1;
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
+		}
+		
+		if ( !fileName.matches(AUTO_SAVE_FILE_REGEX) ) {
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState);
+		}
+		
+		try {
+			long databaseChangeTimeStamp =Long.parseLong(fileName.substring(fileName.indexOf("_")+1, fileName.indexOf(".")));
+			return databaseChangeTimeStamp;
+		} catch (NumberFormatException e) {
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState,e);
 		}
 	}
 
@@ -2580,12 +2422,11 @@ public class DatabaseWrapper  {
 	 * Creates an automatic backup when the current state of the database is newer than the most recent autosave.  
 	 * To reduce the memory footprint of the backup (i.e. in case of a large amount of pictures) only the db file is
 	 * backed up. 
-	 * @return True when the last state of the database is saved i.e. either the backup was 
-	 * saved successfully or it was older or on par to the last autosave which does nothing. False when the operation
-	 * encountered an error.
+	 * @throws FailedDatabaseWrapperOperationException 
 	 */
-	public static boolean backupAutoSave() {		
+	public static void backupAutoSave() throws FailedDatabaseWrapperOperationException {		
 		// TODO: implement programm version.
+		// TODO: check if 'file rollbacks' are necessary and adjust errors!
 		String programVersion = ""; 		
 		// TODO: convert timestamp to UTC to compensate for backup/restores across timezones
 		String timeStamp = Long.toString(getLastDatabaseChangeTimeStamp());		
@@ -2599,7 +2440,7 @@ public class DatabaseWrapper  {
 		List<File> previousAutoSaveList = getAllAutoSaves();
 
 		if(autoSaveLimit<1) {			
-			return true;
+			return;
 		};
 
 		if (previousAutoSaveList.isEmpty()) {
@@ -2607,18 +2448,18 @@ public class DatabaseWrapper  {
 			if (getLastDatabaseChangeTimeStamp() == -1) {
 				timeStamp = Long.toString(System.currentTimeMillis());
 			}
-			autoSaveFilePath = autoSaveFilePath +timeStamp+"."+ autoSaveExtension;
+			autoSaveFilePath = autoSaveFilePath +timeStamp+"."+ AUTO_SAVE_EXTENSION;
 			try {
 				FileSystemAccessWrapper.copyFile(new File(FileSystemAccessWrapper.DATABASE), new File(autoSaveFilePath));
 			} catch (IOException e) {
-				System.err.println("Autosave - backup failed");
-				return false;
+				LOGGER.error("Autosave - backup failed");
+				throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState, e);
 			}
 		}else {// Autosaves detected
 
 			// No need to overwrite the last autosave when no changes were made.
 			if (getLastDatabaseChangeTimeStamp() == -1 ) {
-				return true;
+				return;
 			}
 
 			// Auto save limit reached, delete the oldest
@@ -2626,50 +2467,35 @@ public class DatabaseWrapper  {
 				File oldestAutoSave = previousAutoSaveList.get(previousAutoSaveList.size()-1);
 				if (oldestAutoSave.exists()) {
 					if (!oldestAutoSave.delete()){
-						System.err.println("Autosave - cannot delete old autosave");
-						return false;
+						LOGGER.error("Autosave - cannot delete old autosave");
+						throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState);
 					}
 				}
 			}
-			autoSaveFilePath = autoSaveFilePath +timeStamp+"."+ autoSaveExtension;
+			autoSaveFilePath = autoSaveFilePath +timeStamp+"."+ AUTO_SAVE_EXTENSION;
 
 			try {
 				FileSystemAccessWrapper.copyFile(new File(FileSystemAccessWrapper.DATABASE), new File(autoSaveFilePath));
 			} catch (IOException e) {
-				System.err.println("Autosave - backup failed");
-				return false;
+				LOGGER.error("Autosave - backup failed");
+				throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState, e);
 			}
 		}
-
-		return true;
 	}
 
-	private static void createAlbumMasterTableIfNotExits() throws SQLException  {
-		StringBuilder sb = new StringBuilder("CREATE TABLE IF NOT EXISTS ");
-		sb.append(albumMasterTableName);
-		sb.append(" ( ");
-		sb.append(ID_COLUMN_NAME);
-		sb.append(" INTEGER PRIMARY KEY");
-
+	private static void createAlbumMasterTableIfNotExits() throws FailedDatabaseWrapperOperationException  {
+		List<MetaItemField> fields = new ArrayList<MetaItemField>();
+		
 		// Add the table name column
-		sb.append(" , ");
-		sb.append(ALBUM_TABLENAME_IN_ALBUM_MASTER_TABLE);
-		sb.append(" TEXT ");
-
+		fields.add(new MetaItemField(ALBUM_TABLENAME_IN_ALBUM_MASTER_TABLE, FieldType.Text));
 		// Add the table's type info table name column
-		sb.append(" , ");
-		sb.append(TYPE_TABLENAME_ALBUM_MASTER_TABLE);
-		sb.append(" TEXT )");
-
-		String createAlbumMasterableString = sb.toString();
-
+		fields.add(new MetaItemField(TYPE_TABLENAME_ALBUM_MASTER_TABLE, FieldType.Text));
+		
 		// Create the album master table.
-		PreparedStatement preparedStatement = connection.prepareStatement(createAlbumMasterableString);
-		preparedStatement.executeUpdate();
-		preparedStatement.close();
+		createTableWithIdAsPrimaryKey(albumMasterTableName, fields , false, true);
 	}
 
-	private static boolean addNewAlbumToAlbumMasterTable(String albumTableName, String albumTypeInfoTableName) {		
+	private static void addNewAlbumToAlbumMasterTable(String albumTableName, String albumTypeInfoTableName) throws FailedDatabaseWrapperOperationException {		
 		StringBuilder sb = new StringBuilder("INSERT INTO ");	
 		sb.append(encloseNameWithQuotes(albumMasterTableName));
 		sb.append(" (");
@@ -2679,66 +2505,37 @@ public class DatabaseWrapper  {
 		sb.append(") VALUES( ?, ?)");
 
 		String registerNewAlbumToAlbumMasterableString = sb.toString();
-		PreparedStatement preparedStatement = null;
-		boolean success = true;
 
-		try {
-			preparedStatement = connection.prepareStatement(registerNewAlbumToAlbumMasterableString);
+		try (PreparedStatement preparedStatement = connection.prepareStatement(registerNewAlbumToAlbumMasterableString)){			
 			// New album name
 			preparedStatement.setString(1, removeEnclosingNameWithQuotes(albumTableName));
 			// New type info name
 			preparedStatement.setString(2, removeEnclosingNameWithQuotes(albumTypeInfoTableName));
 			preparedStatement.executeUpdate();
 		} catch (SQLException e) {
-			// TODO log
-			success = false;
-		} finally {
-			try {
-				if (preparedStatement != null) {
-					preparedStatement.close();
-				}
-			} catch (SQLException e) {
-				// TODO log
-				success = false;
-			}			
-		}
-		return success;
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState, e);
+		} 
 	}
 
-	private static boolean removeAlbumFromAlbumMasterTable(String albumTableName)  {
+	private static void removeAlbumFromAlbumMasterTable(String albumTableName) throws FailedDatabaseWrapperOperationException  {
 		StringBuilder sb = new StringBuilder("DELETE FROM ");	
 		sb.append(encloseNameWithQuotes(albumMasterTableName));
 		sb.append(" WHERE ");
 		sb.append(ALBUM_TABLENAME_IN_ALBUM_MASTER_TABLE);
 		sb.append(" = ?");
 
-		String unRegisterNewAlbumFromAlbumMasterableString = sb.toString();
-		PreparedStatement preparedStatement = null;
-		boolean success = true;
+		String unRegisterNewAlbumFromAlbumMasterableString = sb.toString();		
 
-		try {
-			preparedStatement = connection.prepareStatement(unRegisterNewAlbumFromAlbumMasterableString);
+		try (PreparedStatement preparedStatement = connection.prepareStatement(unRegisterNewAlbumFromAlbumMasterableString)){  			
 			// WHERE album name
 			preparedStatement.setString(1, albumTableName);
 			preparedStatement.executeUpdate();
-
 		} catch (SQLException e) {
-			// TODO: log
-			success = false;
-		}finally {
-			try {
-				if (preparedStatement != null) {
-					preparedStatement.close();
-				}
-			} catch (SQLException e) {
-				// TODO log
-				success = false;
-			}
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState, e);
 		}
-		return success;		
 	}
 
-	private static boolean modifyAlbumInAlbumMasterTable(String oldAlbumTableName, String newAlbumTableName, String newAlbumTypeInfoTableName)  {
+	private static void modifyAlbumInAlbumMasterTable(String oldAlbumTableName, String newAlbumTableName, String newAlbumTypeInfoTableName) throws FailedDatabaseWrapperOperationException  {
 
 		StringBuilder sb = new StringBuilder("UPDATE ");		
 		sb.append(albumMasterTableName);
@@ -2751,11 +2548,8 @@ public class DatabaseWrapper  {
 		sb.append(" = ?");
 
 		String unRegisterNewAlbumFromAlbumMasterableString = sb.toString();
-		PreparedStatement preparedStatement = null;
-		boolean success = true;
 
-		try {
-			preparedStatement = connection.prepareStatement(unRegisterNewAlbumFromAlbumMasterableString);
+		try (PreparedStatement preparedStatement = connection.prepareStatement(unRegisterNewAlbumFromAlbumMasterableString);){			
 			// New album name
 			preparedStatement.setString(1, newAlbumTableName);
 			// New type info name
@@ -2764,24 +2558,13 @@ public class DatabaseWrapper  {
 			preparedStatement.setString(3, oldAlbumTableName);
 			preparedStatement.executeUpdate();
 		} catch (SQLException e) {
-			// TODO: log
-			success = false;
-		}finally {
-			try {
-				if (preparedStatement != null) {
-					preparedStatement.close();
-				}
-			} catch (SQLException e) {
-				// TODO log
-				success = false;
-			}
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState, e);
 		}
-		return success;		
 	}
 
-	private static void createTableWithIdAsPrimaryKey(String tableName, List<MetaItemField> fields, boolean temparyTable, boolean ifNotExistsClause) throws SQLException  {
+	private static void createTableWithIdAsPrimaryKey(String tableName, List<MetaItemField> fields, boolean temporaryTable, boolean ifNotExistsClause) throws FailedDatabaseWrapperOperationException {
 		StringBuilder sb = new StringBuilder("CREATE ");
-		if (temparyTable) {
+		if (temporaryTable) {
 			sb.append("TEMPORARY ");
 		}
 
@@ -2806,109 +2589,73 @@ public class DatabaseWrapper  {
 
 		String createTableString = sb.toString();
 
-		// Create the table.
-		PreparedStatement preparedStatement = connection.prepareStatement(createTableString);
-		preparedStatement.executeUpdate();
-		preparedStatement.close();
+		// Create the table.		
+		try (PreparedStatement preparedStatement = connection.prepareStatement(createTableString);){			
+			preparedStatement.executeUpdate();
+		} catch (Exception e) {			
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState, e);
+		}
 	}
 
 	/**
 	 * Creates a savepoint to which the database state can be rolled back to. A new transaction is started.
-	 * @return The name of the created savepoint or null in case of failure. 
+	 * @return The name of the created savepoint or null in case of failure. The create savepoint should only be used in public methods to avoid ovehead
+	 * with nested savepoints. 
+	 * @throws FailedDatabaseWrapperOperationException 
 	 */
-	public static String createSavepoint() {
+	public static String createSavepoint() throws FailedDatabaseWrapperOperationException  {
 		String savepointName = UUID.randomUUID().toString();
-		PreparedStatement createSavepointStatement = null;
 
-		try {
-			createSavepointStatement = connection.prepareStatement("SAVEPOINT " + encloseNameWithQuotes(savepointName));
+		try (PreparedStatement createSavepointStatement = connection.prepareStatement("SAVEPOINT " + encloseNameWithQuotes(savepointName));){			
 			createSavepointStatement.execute();
+			return savepointName;
 		} catch (SQLException e) {
-			logger.error("Creating the savepoint {} failed", savepointName);
-			savepointName = null;
-		}finally {
-
-			try {
-				if ( createSavepointStatement != null) {
-					createSavepointStatement.close();
-				}
-			} catch (SQLException e) {
-				logger.error("Cleaning up the create savepoint statement for savepoint {} failed", savepointName);
-				savepointName = null;
-			}
-		}
-
-		return savepointName;
+			LOGGER.error("Creating the savepoint {} failed", savepointName);
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
+		}		
 	}
-
+	
 	/**
 	 * Removes the savepoint from the internal stack such that it cannot be used for any future rollbacks.
 	 * If the transaction stack is empty all changes done since the creation of the saveopoint will be committed.
 	 * If the stack of transaction is not empty (i.e. inner transaction) then no changes are comitted but the savepoint
-	 * is removed nonetheless from the stack.
-	 * @param The name of the savepoint to be released. Must not be null or empty!
-	 * @return True if the operation was successful, false if it failed.
+	 * is removed nonetheless from the stack. The release should only be used in public methods to avoid ovehead
+	 * with nested savepoints. 
+	 * @param The name of the savepoint to be released. Must not be null or empty! 
+	 * @throws FailedDatabaseWrapperOperationException If the errorstate within is ErrorWithDirtyState that means the release was not possible 
 	 */
-	public static boolean releaseSavepoint(String savepointName) {
+	public static void releaseSavepoint(String savepointName) throws FailedDatabaseWrapperOperationException {
 
 		if (savepointName == null || savepointName.isEmpty()){
-			return false;
+			LOGGER.error("The savepoint could not be released since the name string is null or empty");
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState);
 		}
-		boolean success = true;
-		PreparedStatement createSavepointStatement = null;
-
-
-		try {
-			createSavepointStatement = connection.prepareStatement("RELEASE SAVEPOINT " + encloseNameWithQuotes(savepointName));
-			createSavepointStatement.execute();
+		
+		try (PreparedStatement releaseSavepointStatement = connection.prepareStatement("RELEASE SAVEPOINT " + encloseNameWithQuotes(savepointName));){			
+			releaseSavepointStatement.execute();
 		} catch (SQLException e) {
-			logger.error("Releasing the savepoint {} failed", savepointName);
-			success = false;
-		}finally {
-			if ( createSavepointStatement != null) {
-				try {
-					createSavepointStatement.close();
-				} catch (SQLException e) {
-					logger.error("Cleaning up the release savepoint statement for savepoint {} failed", savepointName);
-					success = false;
-				}
-			}
+			LOGGER.error("Releasing the savepoint {} failed", savepointName);
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState, e);
 		}
-
-		return success;
 	}
 
 	/**
-	 * 
+	 * The rollback should only be used in public methods to avoid ovehead with nested savepoints. 
 	 * @param savepointName
-	 * @return
+	 * * @throws FailedDatabaseWrapperOperationException If the errorstate within is ErrorWithDirtyState that means the release was not possible
 	 */
-	public static boolean rollbackToSavepoint(String savepointName) {
+	public static void rollbackToSavepoint(String savepointName) throws FailedDatabaseWrapperOperationException{
 
 		if (savepointName == null || savepointName.isEmpty()){
-			return false;
-		}
-		boolean success = true;
-		PreparedStatement createSavepointStatement = null;
+			LOGGER.error("The savepoint could not be rolledback to since the name string is null or empty");
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState);
+		}	
 
-
-		try {
-			createSavepointStatement = connection.prepareStatement("ROLLBACK TO SAVEPOINT " + encloseNameWithQuotes(savepointName));
-			createSavepointStatement.execute();
+		try (PreparedStatement rollbackToSavepointStatement = connection.prepareStatement("ROLLBACK TO SAVEPOINT " + encloseNameWithQuotes(savepointName))){
+			rollbackToSavepointStatement.execute();
 		} catch (SQLException e) {
-			logger.error("Rolling back the savepoint {} failed", savepointName);
-			success = false;
-		}finally {
-			if ( createSavepointStatement != null) {
-				try {
-					createSavepointStatement.close();
-				} catch (SQLException e) {
-					logger.error("Cleaning up the rollback to savepoint statement for savepoint {} failed", savepointName);
-					success = false;
-				}
-			}
+			LOGGER.error("Rolling back the savepoint {} failed", savepointName);
+			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState,e);
 		}
-
-		return success;
 	}
 }

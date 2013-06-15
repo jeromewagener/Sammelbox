@@ -98,7 +98,7 @@ public class ItemField extends MetaItemField {
 	public boolean isValid() {
 		switch (type) {
 		case ID:
-			return (value instanceof Integer);
+			return (value instanceof Long);
 		case Text:
 			return (value instanceof String);
 
@@ -134,7 +134,7 @@ public class ItemField extends MetaItemField {
 					}
 				}
 				return true;
-			}else {
+			} else {
 				return false;	
 			}
 

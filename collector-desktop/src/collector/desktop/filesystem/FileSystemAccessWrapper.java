@@ -27,6 +27,8 @@ import java.util.zip.ZipOutputStream;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -34,6 +36,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 import collector.desktop.database.DatabaseWrapper;
+import collector.desktop.database.exceptions.FailedDatabaseWrapperOperationException;
 import collector.desktop.gui.managers.AlbumViewManager.AlbumView;
 import collector.desktop.internationalization.Language;
 import collector.desktop.settings.ApplicationSettingsManager.ApplicationSettings;
@@ -58,6 +61,7 @@ public class FileSystemAccessWrapper {
 	public static final String LOCK_FILE						= COLLECTOR_HOME_APPDATA + File.separatorChar + ".lock";
 	
 	private static final boolean OVERWRITE_EXISITING_FILES = true;
+	private static final Logger LOGGER = LoggerFactory.getLogger(FileSystemAccessWrapper.class);
 	/**
 	 *  A simple regex to prevent album names whose folders of the same name cause problems on the filesystem
 	 * Minimum length is 3 alphanumeric characters possibly white spaces, underscores (u005F) hyphen_minuses (u002D). 
@@ -173,18 +177,22 @@ public class FileSystemAccessWrapper {
 	 *  It should be also called during initialization of the program after the collector file structure has been updated. */
 	public static boolean updateAlbumFileStructure(Connection databaseConnection) {
 		// Create inside the album home directory all album directories
-		for (String albumName : DatabaseWrapper.listAllAlbums()) {
-			File albumDirectory = new File(getFilePathForAlbum(albumName));
+		try {
+			for (String albumName : DatabaseWrapper.listAllAlbums()) {
+				File albumDirectory = new File(getFilePathForAlbum(albumName));
 
-			if ( DatabaseWrapper.albumHasPictureField(albumName) && !albumDirectory.exists()) {
-				if (!albumDirectory.mkdir()) {
-					System.err.println("Cannot create collector album directory although it seems that it does not exist");
-					return false;
+				if ( DatabaseWrapper.albumHasPictureField(albumName) && !albumDirectory.exists()) {
+					if (!albumDirectory.mkdir()) {
+						LOGGER.error("Cannot create collector album directory although it seems that it does not exist");
+						return false;
+					}
 				}
 			}
-		}
-
-		return true;
+			return true;
+		} catch (FailedDatabaseWrapperOperationException e) {
+			LOGGER.error("Updating the album file structure failed.", e);
+			return false;
+		}		
 	}
 
 	/**
@@ -258,7 +266,6 @@ public class FileSystemAccessWrapper {
 	 * @return The URI to the physical location of the picture.
 	 */
 	public static URI getURIToImageFile(String fileNameWithExtension, String albumName) {
-		//System.out.println(new File(COLLECTOR_HOME + File.separatorChar + albumName + File.separatorChar + fileNameWithExtension).toURI().getPath());
 		return new File(COLLECTOR_HOME_ALBUM_PICTURES + File.separatorChar + albumName + File.separatorChar + fileNameWithExtension).toURI();
 	}
 
@@ -321,7 +328,7 @@ public class FileSystemAccessWrapper {
 				fileInputStream.close();
 			}
 			catch(IOException ioe){
-				System.err.println("FileSystemAccessWrapper.addDirectory: " + ioe.getMessage());
+				LOGGER.error("Adding folder {} to zip file failed.", ioe);				
 			}
 		}
 	}
@@ -342,7 +349,7 @@ public class FileSystemAccessWrapper {
 			zipOutputStream.close();
 		}
 		catch(IOException ioe) {
-			System.err.println("FileSystemAccessWrapper.zipFolderToFile: " + ioe.getMessage());
+			LOGGER.error("Zipping a folder into a zip file failed " , ioe);
 		}
 	}
 
@@ -442,10 +449,11 @@ public class FileSystemAccessWrapper {
 
 	/**
 	 * Convenience method to delete the temporary database file {@link #DATABASE_TO_RESTORE}
+	 * @return true if and only if the file or directory is successfully deleted; false otherwise 
 	 */
-	public static void deleteDatabaseRestoreFile() {
+	public static boolean deleteDatabaseRestoreFile() {
 		File file = new File(DATABASE_TO_RESTORE);
-		file.delete();
+		return file.delete();
 	}
 	
 	/**

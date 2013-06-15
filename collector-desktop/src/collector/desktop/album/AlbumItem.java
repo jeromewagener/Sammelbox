@@ -5,6 +5,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import collector.desktop.database.DatabaseWrapper;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
 
@@ -12,6 +15,7 @@ public class AlbumItem {
 	protected String albumName = "";
 	protected List<ItemField> fields;
 	protected UUID contentVersion;
+	private final static Logger logger = LoggerFactory.getLogger(AlbumItem.class);
 	
 	/**
 	 * Constructor
@@ -223,7 +227,7 @@ public class AlbumItem {
 	public boolean isValid() {
 		for (ItemField field : fields) {
 			if (!field.isValid()) {
-				System.err.println(field+"  is not valid!");
+				logger.error("{}  is not valid!", field);
 				return false;
 			}
 		}

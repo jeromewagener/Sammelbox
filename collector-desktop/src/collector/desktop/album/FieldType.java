@@ -31,7 +31,7 @@ public enum FieldType {
 				FieldType.Date.toString(),
 				//FieldType.Time.toString(),
 				FieldType.URL.toString()
-				//FieldType.Time.toString(),// TODO remove? In the current iteration the time is not needed as explicit field type. 
+				//FieldType.Time.toString(),// In the current iteration the time is not needed as explicit field type. 
 		};
 	}
 

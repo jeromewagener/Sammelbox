@@ -19,6 +19,7 @@ import collector.desktop.album.ItemField;
 import collector.desktop.album.MetaItemField;
 import collector.desktop.database.AlbumItemResultSet;
 import collector.desktop.database.DatabaseWrapper;
+import collector.desktop.database.exceptions.FailedDatabaseWrapperOperationException;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
 
 public class RemoveAlbumItemTests {
@@ -28,7 +29,7 @@ public class RemoveAlbumItemTests {
 	private final String dvdItemFieldValue = "dvd title 1";
 	/** Name of the album where an item will be deleted */
 	private final String dvdAlbumName = "DVD Album";
-	
+
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 	}
@@ -52,19 +53,25 @@ public class RemoveAlbumItemTests {
 	@Test
 	public void removeItemFromDVDAlbum() {
 		String query = "SELECT id FROM '" + dvdAlbumName + "' WHERE ([" + dvdItemTitleColumnName + "] = '" +dvdItemFieldValue + "')";
-		System.out.println(query);
-		AlbumItemResultSet resultSet = DatabaseWrapper.executeSQLQuery(query);
-		if (resultSet.moveToNext() == false || !resultSet.getFieldName(1).equals("id")) {
-			fail("The id of the item to be deleted could not be retrieved");
-		} 
-		
-		long albumItemId  = resultSet.getFieldValue(1);
-		if (DatabaseWrapper.deleteAlbumItem(dvdAlbumName, albumItemId) == false) {
+		long albumItemId =-1;
+		try {
+			AlbumItemResultSet resultSet = DatabaseWrapper.executeSQLQuery(query);
+			if (resultSet.moveToNext() == false || !resultSet.getFieldName(1).equals("id")) {
+				fail("The id of the item to be deleted could not be retrieved");
+			} 
+			albumItemId  = resultSet.getFieldValue(1);
+
+			DatabaseWrapper.deleteAlbumItem(dvdAlbumName, albumItemId);						
+		}catch (FailedDatabaseWrapperOperationException e) {
 			fail("Deletion of item with id: " + albumItemId + " failed!");
 		}
 		
-		AlbumItem item = DatabaseWrapper.fetchAlbumItem(dvdAlbumName, albumItemId);
-		Assert.assertNull("Item should be null since it has been deleted!",item);
+		try { 
+			AlbumItem item = DatabaseWrapper.fetchAlbumItem(dvdAlbumName, albumItemId);
+			Assert.assertNull("Item should be null since it has been deleted!",item);
+		} catch (FailedDatabaseWrapperOperationException e) {
+			assertTrue(true);
+		}
 	}
 
 	private void resetFolderStructure() {
@@ -98,8 +105,10 @@ public class RemoveAlbumItemTests {
 		List<MetaItemField> columns = new ArrayList<MetaItemField>();
 		columns.add(DVDTitleField);
 		columns.add(actorField);
+		try {
+			DatabaseWrapper.createNewAlbum(albumName, columns, false);
 
-		if (DatabaseWrapper.createNewAlbum(albumName, columns, false) == false) {
+		}catch (FailedDatabaseWrapperOperationException e) {
 			fail("Creation of album "+ albumName + " failed");
 		}
 	}
@@ -114,8 +123,9 @@ public class RemoveAlbumItemTests {
 		fields.add( new ItemField("Actors", FieldType.Text, "actor 1"));
 
 		item.setFields(fields);
-
-		if (DatabaseWrapper.addNewAlbumItem(item, false, true) == -1) {
+		try {
+			DatabaseWrapper.addNewAlbumItem(item, false, true);
+		}catch (FailedDatabaseWrapperOperationException e) {
 			fail("Album Item could not be inserted into album");
 		}
 
@@ -126,8 +136,9 @@ public class RemoveAlbumItemTests {
 		fields.add( new ItemField("Actors", FieldType.Text, "actor 2"));
 
 		item.setFields(fields);
-
-		if (DatabaseWrapper.addNewAlbumItem(item, false, true) == -1) {
+		try {
+			DatabaseWrapper.addNewAlbumItem(item, false, true);			
+		} catch (FailedDatabaseWrapperOperationException e) {
 			fail("Album Item could not be inserted into album");
 		}
 	}

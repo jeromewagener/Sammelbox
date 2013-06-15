@@ -1,6 +1,6 @@
 package collector.desktop.tests.album;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,12 +14,12 @@ import org.junit.Test;
 
 import collector.desktop.album.FieldType;
 import collector.desktop.album.MetaItemField;
-import collector.desktop.database.AlbumItemResultSet;
 import collector.desktop.database.DatabaseWrapper;
+import collector.desktop.database.exceptions.FailedDatabaseWrapperOperationException;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
 
 public class RemoveAlbumTests {
-
+	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 	}
@@ -64,10 +64,11 @@ public class RemoveAlbumTests {
 		columns.add(priceField);
 		columns.add(lenttoField);
 
-
-		if (DatabaseWrapper.createNewAlbum(albumName, columns, true) == false) {
+		try {
+			DatabaseWrapper.createNewAlbum(albumName, columns, true);
+		}catch (FailedDatabaseWrapperOperationException e) {
 			fail("Creation of album"+ albumName + "failed");
-		}
+		}	
 	}
 
 	@After
@@ -95,13 +96,17 @@ public class RemoveAlbumTests {
 	@Test
 	public void removeAlbumTest_ValidAlbumName() {
 		final String albumName = "Books";
-		if (DatabaseWrapper.removeAlbum(albumName) == false) {
+		try {
+			DatabaseWrapper.removeAlbum(albumName);		
+		} catch (FailedDatabaseWrapperOperationException e) {
 			fail ("Could not remove album" + albumName);
 		}
-
-		AlbumItemResultSet resultSet =  DatabaseWrapper.executeSQLQuery("SELECT * FROM " + albumName);
-
-		Assert.assertNull(resultSet);
+		try {
+			List<String> albums = DatabaseWrapper.listAllAlbums();
+			Assert.assertFalse(albums.contains(albumName));
+			
+		} catch (FailedDatabaseWrapperOperationException e) {
+			fail("Could not  fetch albums");
+		}
 	}
-
 }

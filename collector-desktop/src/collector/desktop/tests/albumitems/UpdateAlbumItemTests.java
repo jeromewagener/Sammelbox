@@ -25,6 +25,7 @@ import collector.desktop.album.ItemField;
 import collector.desktop.album.MetaItemField;
 import collector.desktop.album.OptionType;
 import collector.desktop.database.DatabaseWrapper;
+import collector.desktop.database.exceptions.FailedDatabaseWrapperOperationException;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
 import collector.desktop.tests.CollectorTestExecuter;
 
@@ -54,6 +55,7 @@ public class UpdateAlbumItemTests {
 
 	@Test
 	public void updateTextfieldOfAlbumItem() {
+		try {
 		AlbumItem originalAlbumItem = DatabaseWrapper.fetchAlbumItem("Books", 1);
 
 		// Change a text field
@@ -68,10 +70,14 @@ public class UpdateAlbumItemTests {
 
 		Assert.assertTrue(originalAlbumItem.getAlbumName().equals(updatedAlbumItem.getAlbumName()));
 		Assert.assertTrue(originalAlbumItem.getFields().containsAll(updatedAlbumItem.getFields()));		
+		} catch (FailedDatabaseWrapperOperationException e) {
+			fail("updateTextfieldOfAlbumItem failed");
+		}
 	}
 
 	@Test
 	public void updateNumberfieldOfAlbumItem() {
+		try {
 		AlbumItem originalAlbumItem = DatabaseWrapper.fetchAlbumItem("Books", 1);
 
 		// Change a text field
@@ -86,10 +92,14 @@ public class UpdateAlbumItemTests {
 
 		Assert.assertTrue(originalAlbumItem.getAlbumName().equals(updatedAlbumItem.getAlbumName()));
 		Assert.assertTrue(originalAlbumItem.getFields().containsAll(updatedAlbumItem.getFields()));	
+		} catch (FailedDatabaseWrapperOperationException e) {
+			fail("updateNumberfieldOfAlbumItem failed");
+		}
 	}
 
 	@Test
 	public void updateDatefieldOfAlbumItem() {
+		try {
 		AlbumItem originalAlbumItem = DatabaseWrapper.fetchAlbumItem("Books", 1);
 
 		// Change a text field
@@ -104,10 +114,14 @@ public class UpdateAlbumItemTests {
 
 		Assert.assertTrue(originalAlbumItem.getAlbumName().equals(updatedAlbumItem.getAlbumName()));
 		Assert.assertTrue(originalAlbumItem.getFields().containsAll(updatedAlbumItem.getFields()));	
+		} catch (FailedDatabaseWrapperOperationException e) {
+			fail("updateDatefieldOfAlbumItem failed");
+		}
 	}
 
 	@Test
 	public void updateYesNofieldOfAlbumItem() {
+		try {
 		AlbumItem originalAlbumItem = DatabaseWrapper.fetchAlbumItem("Books", 1);
 
 		// Change a text field
@@ -122,10 +136,14 @@ public class UpdateAlbumItemTests {
 
 		Assert.assertTrue(originalAlbumItem.getAlbumName().equals(updatedAlbumItem.getAlbumName()));
 		Assert.assertTrue(originalAlbumItem.getFields().containsAll(updatedAlbumItem.getFields()));		
+		} catch (FailedDatabaseWrapperOperationException e) {
+			fail("update of yes no field failed");
+		}
 	}
 
 	@Test
 	public void updatePicturefieldOfAlbumItem() {
+		try {
 		AlbumItem originalAlbumItem = DatabaseWrapper.fetchAlbumItem("Books", 1);
 
 		// Change a text field
@@ -151,9 +169,10 @@ public class UpdateAlbumItemTests {
 		originalAlbumItem.getFields().add(referencePictureField);
 
 		Assert.assertTrue(originalAlbumItem.getAlbumName().equals(updatedAlbumItem.getAlbumName()));
-		System.out.println("albumFields: "+originalAlbumItem.getFields());
-		System.out.println("updated Fields: "+updatedAlbumItem.getFields());
 		Assert.assertTrue(originalAlbumItem.getFields().containsAll(updatedAlbumItem.getFields()));
+		} catch (FailedDatabaseWrapperOperationException e) {
+			fail("update of picture field failed");
+		}
 	}
 
 	private void resetFolderStructure() {
@@ -192,8 +211,10 @@ public class UpdateAlbumItemTests {
 		columns.add(priceField);
 		columns.add(lenttoField);
 
-
-		if (DatabaseWrapper.createNewAlbum(albumName, columns, true) == false) {
+		try {
+			DatabaseWrapper.createNewAlbum(albumName, columns, true);
+			
+		} catch (FailedDatabaseWrapperOperationException e) {
 			fail("Creation of album"+ albumName + "failed");
 		}
 	}
@@ -202,8 +223,11 @@ public class UpdateAlbumItemTests {
 		final String albumName = "Books";
 
 		AlbumItem referenceAlbumItem = createReferenceAlbumItem(albumName);
-		
-		DatabaseWrapper.addNewAlbumItem(referenceAlbumItem, false, false);
+		try {
+			DatabaseWrapper.addNewAlbumItem(referenceAlbumItem, false, false);
+		} catch (FailedDatabaseWrapperOperationException e) {
+			fail("fillBooksAlbum failed");
+		}
 	}
 
 	private AlbumItem createReferenceAlbumItem(String albumName) {

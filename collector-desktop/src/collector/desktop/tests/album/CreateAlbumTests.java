@@ -16,6 +16,7 @@ import collector.desktop.album.FieldType;
 import collector.desktop.album.MetaItemField;
 import collector.desktop.database.AlbumItemResultSet;
 import collector.desktop.database.DatabaseWrapper;
+import collector.desktop.database.exceptions.FailedDatabaseWrapperOperationException;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
 
 public class CreateAlbumTests {
@@ -88,15 +89,19 @@ public class CreateAlbumTests {
 		columns.add(priceField);
 		columns.add(lenttoField);
 		
-		
-		if (DatabaseWrapper.createNewAlbum(albumName, columns, true) == false) {
+		try {
+			DatabaseWrapper.createNewAlbum(albumName, columns, true);
+		} catch (FailedDatabaseWrapperOperationException e) {
 			fail("Creation of album"+ albumName + "failed");
 		}
 		
+		try {
 		List<MetaItemField> albumMetaFields = DatabaseWrapper.getAlbumItemFieldNamesAndTypes(albumName);
 		
 		Assert.assertTrue(albumMetaFields.containsAll(columns));
-		
+		} catch (FailedDatabaseWrapperOperationException e) {
+			fail("Creation of album"+ albumName + "failed");
+		}				
 	}
 	
 	@Test
@@ -114,14 +119,19 @@ public class CreateAlbumTests {
 		columns.add(purchaseField);
 		columns.add(priceField);
 		columns.add(lenttoField);
-		
-		if (DatabaseWrapper.createNewAlbum(albumName, columns, true) == false) {
+
+		try {
+			DatabaseWrapper.createNewAlbum(albumName, columns, true);
+		} catch (FailedDatabaseWrapperOperationException e) {
 			fail("Creation of album"+ albumName + "failed");
-		}
-		
+		}		
+		try {
 		List<MetaItemField> albumMetaFields = DatabaseWrapper.getAlbumItemFieldNamesAndTypes(albumName);
 		
 		Assert.assertTrue(albumMetaFields.containsAll(columns));
+		}catch (FailedDatabaseWrapperOperationException e) {
+			fail(e.getMessage());
+		}	
 	}
 	
 	@Test
@@ -129,12 +139,18 @@ public class CreateAlbumTests {
 		final String albumName = "Books";
 		List<MetaItemField> columns = new ArrayList<MetaItemField>();
 
-		if (DatabaseWrapper.createNewAlbum(albumName, columns, true) == false) {
+		try {
+			DatabaseWrapper.createNewAlbum(albumName, columns, true);
+		} catch (FailedDatabaseWrapperOperationException e) {
 			fail("Creation of album"+ albumName + "failed");
 		}
 
+		try {
 		AlbumItemResultSet resultSet =  DatabaseWrapper.executeSQLQuery("SELECT * FROM "+albumName);
 				
 		Assert.assertTrue(resultSet != null && resultSet.getAlbumName().equals(albumName));
+		}catch (FailedDatabaseWrapperOperationException e) {
+			fail("Creation of album"+ albumName + "failed");
+		}	
 	}
 }

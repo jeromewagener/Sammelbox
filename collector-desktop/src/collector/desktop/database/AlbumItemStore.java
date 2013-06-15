@@ -12,7 +12,7 @@ import collector.desktop.album.FieldType;
 import collector.desktop.album.ItemField;
 import collector.desktop.album.MetaItemField;
 import collector.desktop.album.OptionType;
-import collector.desktop.album.StarRating;
+import collector.desktop.database.exceptions.FailedDatabaseWrapperOperationException;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
 import collector.desktop.internationalization.Translator;
 
@@ -24,7 +24,7 @@ public class AlbumItemStore {
 	private static int stopIndex = DEFAULT_STOP_INDEX;
 	private static int previousStopIndex = DEFAULT_STOP_INDEX;
 	
-	public static void reinitializeStore(AlbumItemResultSet albumItemResultSet) {
+	public static void reinitializeStore(AlbumItemResultSet albumItemResultSet) throws FailedDatabaseWrapperOperationException {
 		albumItems.clear();
 		stopIndex = DEFAULT_STOP_INDEX;
 		previousStopIndex = DEFAULT_STOP_INDEX;
@@ -158,7 +158,7 @@ public class AlbumItemStore {
 					}
 					
 				} else if (metaItemField.getType().equals(FieldType.StarRating)) {
-					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), StarRating.toArray()[0 + (int)(Math.random() * ((5) + 1))], false));
+					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), 0 + (int)(Math.random() * ((5) + 1)), false));
 				} else if (metaItemField.getType().equals(FieldType.Time)) {
 					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), System.currentTimeMillis(), false));
 				} else if (metaItemField.getType().equals(FieldType.URL)) {
