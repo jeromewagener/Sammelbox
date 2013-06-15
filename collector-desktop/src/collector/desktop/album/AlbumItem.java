@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import collector.desktop.database.DatabaseWrapper;
+import collector.desktop.database.exceptions.FailedDatabaseWrapperOperationException;
 
 public class AlbumItem {
 	protected String albumName = "";
@@ -63,6 +64,21 @@ public class AlbumItem {
 	public ItemField getField(String fieldName) {
 		for (ItemField itemField : fields) {
 			if (itemField.getName().equals(fieldName)) {
+				return itemField;
+			}
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * Retrieves the first field of the specified type which is contained within this item
+	 * @param fieldType the type of the field to be retrieved.
+	 * @return The itemField with the specified type or null if not found
+	 */
+	public ItemField getField(FieldType fieldType) {
+		for (ItemField itemField : fields) {
+			if (itemField.getType().equals(fieldType)) {
 				return itemField;
 			}
 		}
@@ -257,6 +273,38 @@ public class AlbumItem {
 		this.contentVersion = contentVersion;
 	}
 	
+	/** Returns the list of pictures, associated with the album item
+	 * @return the list of pictures associated with the album item, or null if pictures are not supported by the album
+	 * */
+	@SuppressWarnings("unchecked")
+	public List<AlbumItemPicture> getPictures() {
+		try {
+			if (DatabaseWrapper.albumHasPictureField(this.getAlbumName())) {
+				return ((List<AlbumItemPicture>) this.getField(FieldType.Picture));
+			}
+		} catch(FailedDatabaseWrapperOperationException failedDatabaseWrapperOperationException) {
+			// TODO log me
+		}
+
+		return null;
+	}
+	
+	/** Returns the first picture associated with the album item 
+	 * @return the first picture associated with the album item, or null if pictures are not supported by the album
+	 * */
+	@SuppressWarnings("unchecked")
+	public AlbumItemPicture getFirstPicture() {
+		try {
+			if (DatabaseWrapper.albumHasPictureField(this.getAlbumName())) {
+				return ((List<AlbumItemPicture>) this.getField(FieldType.Picture)).get(0);
+			}
+		} catch(FailedDatabaseWrapperOperationException failedDatabaseWrapperOperationException) {
+			// TODO log me
+		}
+
+		return null;
+	}
+	
 	//TODO: comment
 	public static class AlbumItemPicture {
 		private long pictureID;
@@ -266,6 +314,23 @@ public class AlbumItem {
 		private String originalPictureName;		
 		private String albumName;
 		private long albumItemID;
+				
+		public AlbumItemPicture(long pictureID, String thumbnailPictureName, String originalPictureName, String albumName, long albumItemID) {
+			this.pictureID = pictureID;
+			this.thumbnailPictureName = thumbnailPictureName;
+			this.originalPictureName = originalPictureName;
+			this.albumName = albumName;
+			this.albumItemID = albumItemID;
+		}
+		
+		/** Creates a placeholder AlbumItemPicture, initialized with placeholder values! */
+		public AlbumItemPicture(String thumbnailPictureName, String originalPictureName) {
+			this.pictureID = -1;
+			this.thumbnailPictureName = thumbnailPictureName;
+			this.originalPictureName = originalPictureName;
+			this.albumName = null;
+			this.albumItemID = -1;
+		}
 		
 		public long getPictureID() {
 			return pictureID;
@@ -274,10 +339,6 @@ public class AlbumItem {
 		public void setPictureID(long pictureID) {
 			this.pictureID = pictureID;
 		}		
-
-		public String getThumbnailPictureName() {
-			return thumbnailPictureName;
-		}
 		
 		public void setThumbnailPictureName(String thumbnailPictureName) {
 			this.thumbnailPictureName = thumbnailPictureName;
@@ -291,14 +352,8 @@ public class AlbumItem {
 			this.originalPictureName = originalPictureName;
 		}		
 		
-		public String getThumbnailPicturePath() {
-			//TODO: implement getter path to thumbnail file
-			return "";
-		}
-		
-		public String getThumbnailPictureName(String thumbnailPictureName) {
-			//TODO: implement getter path to original picture file
-			return "";
+		public String getThumbnailPictureName() {
+			return thumbnailPictureName;
 		}
 
 		public String getAlbumName() {
@@ -316,7 +371,15 @@ public class AlbumItem {
 		public void setAlbumItemID(long albumItemID) {
 			this.albumItemID = albumItemID;
 		}
-
-
+		
+		public String getThumbnailPicturePath() {
+			//TODO: implement getter path to thumbnail file
+			return "";
+		}
+		
+		public String getOriginalPicturePath() {
+			//TODO: implement getter path to thumbnail file
+			return "";
+		}
 	}
 }

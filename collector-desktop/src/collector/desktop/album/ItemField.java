@@ -1,10 +1,11 @@
 package collector.desktop.album;
 
-import java.net.URI;
 import java.sql.Date;
 import java.sql.Time;
 import java.util.List;
 import java.util.UUID;
+
+import collector.desktop.album.AlbumItem.AlbumItemPicture;
 
 public class ItemField extends MetaItemField {
 	protected Object value; 
@@ -99,6 +100,7 @@ public class ItemField extends MetaItemField {
 		switch (type) {
 		case ID:
 			return (value instanceof Long);
+			
 		case Text:
 			return (value instanceof String);
 
@@ -107,6 +109,7 @@ public class ItemField extends MetaItemField {
 
 		case Date:
 			return (value instanceof Date);
+			
 		case Time:
 			return (value instanceof Time);
 			
@@ -124,16 +127,15 @@ public class ItemField extends MetaItemField {
 
 		case Picture:
 			if (value instanceof List<?>) {
+				// TODO verify this
 				// Type information about the generic type of the list is apparently lost here,
 				// therefore not specified and related warnings suppressed.
 				@SuppressWarnings("rawtypes")
-				List pictureURIs = (List) value;
-				for (Object	object : pictureURIs) {
-					if (!(object instanceof URI)){
-						return false;
-					}
+				List pictures = (List) value;
+				if (!pictures.isEmpty()) {
+					return pictures.get(0) instanceof AlbumItemPicture;
 				}
-				return true;
+				return true; // TODO we cant be sure, cant we?
 			} else {
 				return false;	
 			}
