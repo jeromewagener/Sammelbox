@@ -2,8 +2,6 @@ package collector.desktop.gui.image;
 
 import java.io.File;
 import java.io.InputStream;
-import java.net.URI;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -30,13 +28,14 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Widget;
 
 import collector.desktop.Collector;
+import collector.desktop.album.AlbumItem.AlbumItemPicture;
 import collector.desktop.gui.various.ComponentFactory;
 import collector.desktop.internationalization.DictKeys;
 import collector.desktop.internationalization.Translator;
 
 public class ImageDropAndManagementComposite extends Composite implements DropTargetListener{
-	/** A list of image URIs pointing to already renamed and resized pictures in the corresponding album */
-	private LinkedList<URI> imageURIs = new LinkedList<URI>();
+	/** A list of images pointing to copies of the original files, located within the corresponding album folder */
+	private LinkedList<AlbumItemPicture> pictures = new LinkedList<AlbumItemPicture>();
 	/** An inner composite presenting the pictures */
 	private Composite imageComposite;
 	/** An inner scrollable composite wrapping the imageComposite */ 
@@ -52,14 +51,13 @@ public class ImageDropAndManagementComposite extends Composite implements DropTa
 	/** Creates a new ImageDropAndManagementComposite as a child of the provided parent composite. 
 	 * Images can be provided for inclusion upon creation.
 	 * @param parentComposite the parent composite of the ImageDropAndManagementComposite 
-	 * @param imageURIs a list of URIs pointing to images that should be included within the imageComposite */
-	public ImageDropAndManagementComposite(Composite parentComposite, ArrayList<URI> imageURIs) {	
+	 * @param pictures a list of pictures pointing to images that should be included within the imageComposite */
+	public ImageDropAndManagementComposite(Composite parentComposite, List<AlbumItemPicture> pictures) {	
 		super(parentComposite, SWT.NONE);
 		this.initialize();
 
-		for (URI uri : imageURIs) {
-			File file = new File(uri);
-			this.imageURIs.addLast(file.toURI());
+		for (AlbumItemPicture picture : pictures) {
+			this.pictures.addLast(picture);
 		}
 
 		this.refreshImageComposite();
@@ -108,19 +106,14 @@ public class ImageDropAndManagementComposite extends Composite implements DropTa
 
 	/** This method refreshes the ImageDropAndManagementComposite in a sense that the image composite is completely rebuild. This method
 	 * should be called after the creation of a ImageDropAndManagementComposite when pictures are provided, or in case a new picture 
-	 * has been added to the imageURIs list */
+	 * has been added to the picture list */
 	public void refreshImageComposite() {
 		for (Control control : imageComposite.getChildren()) {
 			control.dispose();
 		}
 
-		for (final URI fileURI : imageURIs) {
-			// skip originals
-			if (fileURI.getPath().contains("original")) {
-				continue;
-			}
-			
-			Image originalImage = new Image(Display.getCurrent(), fileURI.getPath());	
+		for (final AlbumItemPicture picture : pictures) {			
+			Image originalImage = new Image(Display.getCurrent(), picture.getOriginalPicturePath());	
 			Image scaledImage = new Image(Display.getCurrent(), originalImage.getImageData().scaledTo(100, 100));
 
 			Label pictureLabel = new Label(imageComposite, SWT.NONE);
@@ -130,7 +123,7 @@ public class ImageDropAndManagementComposite extends Composite implements DropTa
 			deleteButton.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					imageURIs.remove(fileURI);
+					pictures.remove(picture);
 
 					refreshImageComposite();
 				}
@@ -144,13 +137,13 @@ public class ImageDropAndManagementComposite extends Composite implements DropTa
 			upButton.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					int index = imageURIs.indexOf(fileURI);
+					int index = pictures.indexOf(picture);
 
 					if (index > 0) {					
-						URI tmpURI = fileURI;
+						AlbumItemPicture tmpPicture = picture;
 
-						imageURIs.remove(fileURI);
-						imageURIs.add(index - 1, tmpURI);
+						pictures.remove(picture);
+						pictures.add(index - 1, tmpPicture);
 
 						refreshImageComposite();
 					}
@@ -165,13 +158,13 @@ public class ImageDropAndManagementComposite extends Composite implements DropTa
 			downButton.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					int index = imageURIs.indexOf(fileURI);
+					int index = pictures.indexOf(picture);
 
-					if (index < imageURIs.size() - 1) {
-						URI tmpURI = fileURI;
+					if (index < pictures.size() - 1) {
+						AlbumItemPicture tmpPicture = picture;
 
-						imageURIs.remove(fileURI);
-						imageURIs.add(index + 1, tmpURI);
+						pictures.remove(picture);
+						pictures.add(index + 1, tmpPicture);
 
 						refreshImageComposite();
 					}
@@ -183,10 +176,10 @@ public class ImageDropAndManagementComposite extends Composite implements DropTa
 		imageComposite.layout();
 	}
 
-	/** Return all image URIs 
-	 * @return the imageURIs list */
-	public List<URI> getAllImageURIs() {		
-		return imageURIs;
+	/** Return all images 
+	 * @return the images */
+	public List<AlbumItemPicture> getAllPictures() {		
+		return pictures;
 	}
 
 	@Override
@@ -221,12 +214,11 @@ public class ImageDropAndManagementComposite extends Composite implements DropTa
 			String[] filenames = (String[]) event.data;
 			if (filenames.length > 0){
 				for (String filename : filenames) {
-					List<URI> pictureLocationInAlbum = ImageManipulator.adaptAndStoreImageForCollector(
-							new File(filename).toURI(), Collector.getSelectedAlbum());
-					if (pictureLocationInAlbum == null) {
+					AlbumItemPicture picture = ImageManipulator.adaptAndStoreImageForCollector(new File(filename), Collector.getSelectedAlbum());
+					if (picture == null) {
 						  showDroppedUnsupportedFileMessageBox(filename);
-					}else {
-						imageURIs.addAll(pictureLocationInAlbum);
+					} else {
+						pictures.add(picture);
 					}
 				}
 				refreshImageComposite();

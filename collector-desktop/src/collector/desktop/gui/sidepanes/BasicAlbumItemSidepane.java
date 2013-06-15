@@ -1,10 +1,10 @@
 package collector.desktop.gui.sidepanes;
 
-import java.net.URI;
 import java.sql.Date;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -26,6 +26,7 @@ import org.eclipse.swt.widgets.Text;
 
 import collector.desktop.Collector;
 import collector.desktop.album.AlbumItem;
+import collector.desktop.album.AlbumItem.AlbumItemPicture;
 import collector.desktop.album.FieldType;
 import collector.desktop.album.MetaItemField;
 import collector.desktop.album.OptionType;
@@ -364,8 +365,8 @@ public class BasicAlbumItemSidepane {
 
 		if (addPictureComposite) {
 			if (loadDataIntoFields) {
-				ArrayList<URI> uris = albumItem.getField(pictureFieldName).getValue();				
-				ImageDropAndManagementComposite imageDropAndManagementComposite = new ImageDropAndManagementComposite(basicAlbumItemComposite, uris);
+				List<AlbumItemPicture> pictures = albumItem.getPictures();				
+				ImageDropAndManagementComposite imageDropAndManagementComposite = new ImageDropAndManagementComposite(basicAlbumItemComposite, pictures);
 				imageDropAndManagementComposite.setData("FieldType", FieldType.Picture);
 				imageDropAndManagementComposite.setData("FieldName", pictureFieldName);
 			} else {
@@ -454,7 +455,7 @@ public class BasicAlbumItemSidepane {
 							albumItem.addField(
 									(String) imageDropAndManagementComposite.getData("FieldName"),
 									(FieldType) imageDropAndManagementComposite.getData("FieldType"),
-									imageDropAndManagementComposite.getAllImageURIs());
+									imageDropAndManagementComposite.getAllPictures());
 						} else if (fieldType.equals(FieldType.StarRating)) {							
 							Combo combo = (Combo) control;
 

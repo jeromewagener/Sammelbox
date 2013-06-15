@@ -2,12 +2,9 @@ package collector.desktop.tests.albumitems;
 
 import static org.junit.Assert.fail;
 
-import java.io.File;
-import java.net.URI;
 import java.sql.Date;
 import java.sql.Time;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,8 +16,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-
 import collector.desktop.album.AlbumItem;
+import collector.desktop.album.AlbumItem.AlbumItemPicture;
 import collector.desktop.album.FieldType;
 import collector.desktop.album.ItemField;
 import collector.desktop.album.MetaItemField;
@@ -236,11 +233,14 @@ public class AddAlbumItemTests {
 		fields.add( new ItemField("Time Stamp", FieldType.Time, new Time(System.currentTimeMillis())));
 
 		// Create picture field with 3 pictures
-		List<URI> pictureURIs = Arrays.asList(	new File(CollectorTestExecuter.PATH_TO_TEST_PIC1).toURI(), 
-				new File(CollectorTestExecuter.PATH_TO_TEST_PIC2).toURI(), 
-				new File(CollectorTestExecuter.PATH_TO_TEST_PIC3).toURI());
+		List<AlbumItemPicture> pictures = new ArrayList<AlbumItemPicture>();
+		
+		pictures.add(new AlbumItemPicture(CollectorTestExecuter.PATH_TO_TEST_PIC1, CollectorTestExecuter.PATH_TO_TEST_PIC1, albumName));
+		pictures.add(new AlbumItemPicture(CollectorTestExecuter.PATH_TO_TEST_PIC1, CollectorTestExecuter.PATH_TO_TEST_PIC1, albumName));
+		pictures.add(new AlbumItemPicture(CollectorTestExecuter.PATH_TO_TEST_PIC1, CollectorTestExecuter.PATH_TO_TEST_PIC1, albumName));
+		
 		item.setFields(fields);
-		item.addField("collectorPicture", FieldType.Picture, pictureURIs);
+		item.addField("collectorPicture", FieldType.Picture, pictures);
 		try {
 			long newAlbumID = DatabaseWrapper.addNewAlbumItem(item, false, true);
 			if (newAlbumID == -1) {
@@ -266,22 +266,25 @@ public class AddAlbumItemTests {
 			System.out.println(actualAlbumItem.getFields());
 			// Test that picture field contains the right pictures and that they are physically present
 			// create reference picture Field
-			final String albumPicturePath = FileSystemAccessWrapper.COLLECTOR_HOME_ALBUM_PICTURES + File.separator + albumName;
-			File picFile1 = new File (albumPicturePath + File.separator + "test Pic1.png");
+			//final String albumPicturePath = FileSystemAccessWrapper.COLLECTOR_HOME_ALBUM_PICTURES + File.separator + albumName;
+			//File picFile1 = new File (albumPicturePath + File.separator + "test Pic1.png");
 			//		Assert.assertTrue("test Pic1 at location " + picFile1 + " does not exist",picFile1.exists());
-			File picFile2 = new File (albumPicturePath + File.separator + "test Pic2.png");
+			//File picFile2 = new File (albumPicturePath + File.separator + "test Pic2.png");
 			//		Assert.assertTrue("test Pic2 at location " + picFile2 + " does not exist", picFile2.exists());
-			File picFile3 = new File (albumPicturePath + File.separator + "test Pic3.png");
+			//File picFile3 = new File (albumPicturePath + File.separator + "test Pic3.png");
 			//		Assert.assertTrue("test Pic3 at location " + picFile3 + " does not exist", picFile3.exists());
-			ItemField referencePictureField = new ItemField("collectorPicture", FieldType.Picture, Arrays.asList(picFile1.toURI(), picFile2.toURI(), picFile3.toURI()));
-
+			
+			//FIXME this doesnt work anymore
+			//ItemField referencePictureField = new ItemField("collectorPicture", FieldType.Picture, Arrays.asList(picFile1.toURI(), picFile2.toURI(), picFile3.toURI()));
+			fail();
+			
 			// remove the picture field and replace it with the correct reference field
-			fields.remove(fields.size()-1);
-			fields.add(referencePictureField);
-			Assert.assertTrue("Actual fields do not contain all inserted fields",actualAlbumItem.getFields().containsAll(fields));
+			//fields.remove(fields.size()-1);
+			//fields.add(referencePictureField);
+			//Assert.assertTrue("Actual fields do not contain all inserted fields",actualAlbumItem.getFields().containsAll(fields));
 
-			Assert.assertTrue("Actual fields should contain the reference Picture field",actualAlbumItem.getFields().contains(referencePictureField));
-			Assert.assertNotNull(actualAlbumItem.getContentVersion());
+			//Assert.assertTrue("Actual fields should contain the reference Picture field",actualAlbumItem.getFields().contains(referencePictureField));
+			//Assert.assertNotNull(actualAlbumItem.getContentVersion());
 		} catch( FailedDatabaseWrapperOperationException e) {
 			fail("Album Item could not be inserted into album");
 		}

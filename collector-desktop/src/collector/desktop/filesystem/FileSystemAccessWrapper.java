@@ -11,7 +11,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringReader;
-import java.net.URI;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -45,8 +44,8 @@ public class FileSystemAccessWrapper {
 	public static final String USER_HOME 						= System.getProperty("user.home");
 	public static final String COLLECTOR_HOME 					= System.getProperty("user.home") + File.separatorChar + ".collector";
 	public static final String COLLECTOR_HOME_APPDATA 			= COLLECTOR_HOME + File.separatorChar + "app-data";
-	public static final String ALBUM_PICTURES					= "album-pictures";
-	public static final String COLLECTOR_HOME_ALBUM_PICTURES 	= COLLECTOR_HOME + File.separatorChar + ALBUM_PICTURES;
+	public static final String THUMBNAILS_FOLDER 				= COLLECTOR_HOME + File.separator + "thumbnails"; 
+	public static final String COLLECTOR_HOME_ALBUM_PICTURES 	= COLLECTOR_HOME + File.separatorChar + "album-pictures";
 	public static final String PLACEHOLDERIMAGE 				= COLLECTOR_HOME_APPDATA + File.separatorChar + "placeholder.png";
 	public static final String PLACEHOLDERIMAGE2 				= COLLECTOR_HOME_APPDATA + File.separatorChar + "placeholder2.png";
 	public static final String LOGO 							= COLLECTOR_HOME_APPDATA + File.separatorChar + "logo.png";
@@ -66,7 +65,8 @@ public class FileSystemAccessWrapper {
 	 *  A simple regex to prevent album names whose folders of the same name cause problems on the filesystem
 	 * Minimum length is 3 alphanumeric characters possibly white spaces, underscores (u005F) hyphen_minuses (u002D). 
 	 * */
-	private static final String albumNameRegex = "^(\\w|\\u005F|\\s|\\u002D){3,}$"; 
+	private static final String albumNameRegex = "^(\\w|\\u005F|\\s|\\u002D){3,}$";
+	
 	/**
 	 * Instance to itself used in the process to located stored resources. 
 	 */
@@ -260,13 +260,13 @@ public class FileSystemAccessWrapper {
 	}
 	
 	/**
-	 * Provides a valid URI to the location on the file system. Invalid paths may result in raised exceptions
+	 * Provides a file which points to the picture location within the application folder.
 	 * @param fileNameWithExtension The name including file type extension of the picture.
 	 * @param albumName The name of the album to which the picture
-	 * @return The URI to the physical location of the picture.
+	 * @return The file which points to the physical location of the picture.
 	 */
-	public static URI getURIToImageFile(String fileNameWithExtension, String albumName) {
-		return new File(COLLECTOR_HOME_ALBUM_PICTURES + File.separatorChar + albumName + File.separatorChar + fileNameWithExtension).toURI();
+	public static File getFileInAppHome(String fileNameWithExtension, String albumName) {
+		return new File(COLLECTOR_HOME_ALBUM_PICTURES + File.separatorChar + albumName + File.separatorChar + fileNameWithExtension);
 	}
 
 	/**

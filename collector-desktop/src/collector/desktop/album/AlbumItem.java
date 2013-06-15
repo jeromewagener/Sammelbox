@@ -314,17 +314,9 @@ public class AlbumItem {
 		private String originalPictureName;		
 		private String albumName;
 		private long albumItemID;
-				
-		public AlbumItemPicture(long pictureID, String thumbnailPictureName, String originalPictureName, String albumName, long albumItemID) {
-			this.pictureID = pictureID;
-			this.thumbnailPictureName = thumbnailPictureName;
-			this.originalPictureName = originalPictureName;
-			this.albumName = albumName;
-			this.albumItemID = albumItemID;
-		}
-		
-		/** Creates a placeholder AlbumItemPicture, initialized with placeholder values! */
-		public AlbumItemPicture(String thumbnailPictureName, String originalPictureName) {
+					
+		/** Creates an initially unassigned picture object for an album ! */
+		public AlbumItemPicture(String thumbnailPictureName, String originalPictureName, String albumName) {
 			this.pictureID = -1;
 			this.thumbnailPictureName = thumbnailPictureName;
 			this.originalPictureName = originalPictureName;

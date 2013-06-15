@@ -1,11 +1,10 @@
 package collector.desktop.gui.browser;
 
-import java.io.File;
-import java.net.URI;
 import java.util.List;
 
 import collector.desktop.Collector;
 import collector.desktop.album.AlbumItem;
+import collector.desktop.album.AlbumItem.AlbumItemPicture;
 import collector.desktop.album.FieldType;
 import collector.desktop.album.ItemField;
 import collector.desktop.database.DatabaseWrapper;
@@ -23,40 +22,34 @@ public class PictureViewCreator {
 		try {
 			albumItem = DatabaseWrapper.fetchAlbumItem(Collector.getSelectedAlbum(), albumItemId);
 				
-			List<URI> uris = null;
+			List<AlbumItemPicture> pictures = null;
 			for (ItemField itemField : albumItem.getFields()) {
 				if (itemField.getType().equals(FieldType.Picture)) {
-					uris = itemField.getValue();			
+					pictures = itemField.getValue();			
 					break;
 				}
 			}
 	
 			String originalPathToPicture = "";
-			String thumbnailImageName = new File(pathToPicture).getName();
-			String imageId = thumbnailImageName.substring(0, thumbnailImageName.lastIndexOf('.'));
 	
 			StringBuilder smallPictures = new StringBuilder();
-			if (uris.size() >= 2) {
+			if (pictures.size() >= 2) {
 				int counter = 1;
 	
-				for (URI uri : uris) {
-					if (uri.toString().contains("original")) { // TODO use new picture table ASAP
-						if (uri.toString().contains(imageId)) {
-							originalPathToPicture = uri.toString();
-						}
-	
-						smallPictures.append(
-								"<a onMouseover='change(\"bigimg\", \"" + uri.toString() + "\")'>" + 
-						        "  <img border=\"1\" " +
-						        "       onMouseOver='this.style.cursor=\"pointer\"' " +
-						        "       id=\"smallimage" + counter + "\" " +
-						        "		style=\"width:120px; margin-top:10px;\"" +
-						        "       src=\"" + uri.toString() + "\">" +
-						        "</a>" +
-						        "</br>");
-	
-						counter++;
-					}
+				for (AlbumItemPicture picture : pictures) {
+					originalPathToPicture = picture.getOriginalPicturePath();
+
+					smallPictures.append(
+							"<a onMouseover='change(\"bigimg\", \"" + picture.getThumbnailPicturePath() + "\")'>" + 
+									"  <img border=\"1\" " +
+									"       onMouseOver='this.style.cursor=\"pointer\"' " +
+									"       id=\"smallimage" + counter + "\" " +
+									"		style=\"width:120px; margin-top:10px;\"" +
+									"       src=\"" + picture.getThumbnailPicturePath() + "\">" +
+									"</a>" +
+							"</br>");
+
+					counter++;
 				}
 	
 				smallPictures.append("<br>" +

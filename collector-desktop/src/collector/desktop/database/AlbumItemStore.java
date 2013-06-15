@@ -1,13 +1,12 @@
 package collector.desktop.database;
 
-import java.io.File;
 import java.math.BigDecimal;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 import collector.desktop.album.AlbumItem;
+import collector.desktop.album.AlbumItem.AlbumItemPicture;
 import collector.desktop.album.FieldType;
 import collector.desktop.album.ItemField;
 import collector.desktop.album.MetaItemField;
@@ -107,13 +106,13 @@ public class AlbumItemStore {
 	}
 	
 	public static AlbumItem getSamplePictureAlbumItemWithoutFields() {
-		List<URI> pictureUris = new ArrayList<URI>();
+		List<AlbumItemPicture> pictures = new ArrayList<AlbumItemPicture>();
 		
-		pictureUris.add(new File(FileSystemAccessWrapper.PLACEHOLDERIMAGE).toURI());
-		pictureUris.add(new File(FileSystemAccessWrapper.PLACEHOLDERIMAGE2).toURI());
+		pictures.add(new AlbumItemPicture(FileSystemAccessWrapper.PLACEHOLDERIMAGE, FileSystemAccessWrapper.PLACEHOLDERIMAGE, "TODO")); //TODO
+		pictures.add(new AlbumItemPicture(FileSystemAccessWrapper.PLACEHOLDERIMAGE2, FileSystemAccessWrapper.PLACEHOLDERIMAGE2, "TODO")); //TODO
 		
 		List<ItemField> itemFields = new ArrayList<ItemField>();
-		itemFields.add(new ItemField(DatabaseWrapper.PICTURE_COLUMN_NAME, FieldType.Picture, pictureUris));
+		itemFields.add(new ItemField(DatabaseWrapper.PICTURE_COLUMN_NAME, FieldType.Picture, pictures));
 		itemFields.add(new ItemField(Translator.toBeTranslated("You have not added any fields yet!"), FieldType.Text, Translator.toBeTranslated("Please add fields using the \"Create new album sidepane\"")));		
 		
 		return new AlbumItem("DummyItem", itemFields);
@@ -123,12 +122,12 @@ public class AlbumItemStore {
 		List<ItemField> itemFields = new ArrayList<ItemField>();
 		
 		if (containsPictures) {
-			List<URI> pictureUris = new ArrayList<URI>();
+			List<AlbumItemPicture> pictures = new ArrayList<AlbumItemPicture>();
 			
-			pictureUris.add(new File(FileSystemAccessWrapper.PLACEHOLDERIMAGE).toURI());
-			pictureUris.add(new File(FileSystemAccessWrapper.PLACEHOLDERIMAGE2).toURI());
+			pictures.add(new AlbumItemPicture(FileSystemAccessWrapper.PLACEHOLDERIMAGE, FileSystemAccessWrapper.PLACEHOLDERIMAGE, "TODO")); //TODO
+			pictures.add(new AlbumItemPicture(FileSystemAccessWrapper.PLACEHOLDERIMAGE2, FileSystemAccessWrapper.PLACEHOLDERIMAGE2, "TODO")); //TODO
 			
-			itemFields.add(new ItemField(DatabaseWrapper.PICTURE_COLUMN_NAME, FieldType.Picture, pictureUris));
+			itemFields.add(new ItemField(DatabaseWrapper.PICTURE_COLUMN_NAME, FieldType.Picture, pictures));
 		}
 		
 		if (metaItemFields.isEmpty()) {

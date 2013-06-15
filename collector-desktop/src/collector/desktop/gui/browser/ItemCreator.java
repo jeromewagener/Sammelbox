@@ -1,6 +1,5 @@
 package collector.desktop.gui.browser;
 
-import java.net.URI;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -12,6 +11,7 @@ import collector.desktop.album.AlbumItem;
 import collector.desktop.album.FieldType;
 import collector.desktop.album.ItemField;
 import collector.desktop.album.OptionType;
+import collector.desktop.album.AlbumItem.AlbumItemPicture;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
 import collector.desktop.internationalization.DictKeys;
 import collector.desktop.internationalization.Translator;
@@ -51,7 +51,7 @@ public class ItemCreator {
 				"    onMouseOver=\"parent.location.href=&quot;show:///details=" + albumItem.getItemID() + "&quot;\" " +
 				"    onClick=\"parent.location.href=&quot;show:///detailsComposite=" + albumItem.getItemID() + "&quot;\">" +
                 "  <div class=\"innerPictureContainer\">" +
-		        "    <img src=\"" + albumItem.getPrimaryThumbnailPicturePath() + "\">" +
+		        "    <img src=\"" + albumItem.getFirstPicture().getThumbnailPicturePath() + "\">" +
                 "  </div>" +
                 "</div>");
 	}
@@ -73,18 +73,18 @@ public class ItemCreator {
 					LOGGER.warn("Found a field type that wasn't expected: " + fieldItem.getName());
 				}
 			} else if (fieldItem.getType().equals(FieldType.Picture)) {
-				List<URI> uris = fieldItem.getValue();
+				List<AlbumItemPicture> pictures = fieldItem.getValue();
 				htmlPictureColumnContent.append(
 						"<table border=0>" +
 						"  <tr>" +
 						"    <td align=center width=200 height=200>" +
-				               getMainPictureHtml(id, uris) +
+				               getMainPictureHtml(id, pictures) +
 						"    </td>" +
 						"  </tr>" +
 						"  <tr>" +
 						"    <td>" +
 				        "      <div style=\"max-width:200px;\">" +
-						         getAlternativePicturesHtml(id, uris) +
+						         getAlternativePicturesHtml(id, pictures) +
 						"      </div>" + 
 						"    </td>" +
 						"  </tr>" + 
@@ -139,27 +139,25 @@ public class ItemCreator {
 		return "<span class=\"boldy\"> " + Utilities.escapeHtmlString(fieldName) + "</span> : " + value + "<br>"; 
 	}
 	
-	private static String getAlternativePicturesHtml(long id, List<URI> uris) {
+	private static String getAlternativePicturesHtml(long id, List<AlbumItemPicture> pictures) {
 		StringBuilder htmlBuilder = new StringBuilder();
 		
-		if (uris.size() > 1) {	
-			for(URI uri : uris) {
-				if (!uri.toString().contains("original")) {						
-					htmlBuilder.append(
-						"<div align=center style=\"display:inline; min-width:40px; width:auto; width:40px\">" +
-						"  <a onClick=showBigPicture(\"imageId" + id + "\") " +
-						"     onMouseOver=\"change(&quot;imageId" + id + "&quot;, &quot;" + uri.toString() + "&quot;)\">" +
-					    "    <img onMouseOver=this.style.cursor=\"pointer\" style=\"max-width:40px; max-height:40px;\" src=\"" + uri.toString() + "\">" +
-					    "  </a>" +
-					    "</div>");
-				}
+		if (pictures.size() > 1) {	
+			for(AlbumItemPicture picture : pictures) {				
+				htmlBuilder.append(
+					"<div align=center style=\"display:inline; min-width:40px; width:auto; width:40px\">" +
+					"  <a onClick=showBigPicture(\"imageId" + id + "\") " +
+					"     onMouseOver=\"change(&quot;imageId" + id + "&quot;, &quot;" + picture.getThumbnailPicturePath() + "&quot;)\">" +
+				    "    <img onMouseOver=this.style.cursor=\"pointer\" style=\"max-width:40px; max-height:40px;\" src=\"" + picture.getThumbnailPicturePath() + "\">" +
+				    "  </a>" +
+				    "</div>");
 			}
 		}
 		
 		return htmlBuilder.toString();
 	}
 
-	private static String getMainPictureHtml(long id, List<URI> uris) {
+	private static String getMainPictureHtml(long id, List<AlbumItemPicture> albumItemPictures) {
 		// Initialize with placeholder
 		String mainPictureHtml = "<img id=\"imageId" + id + "\" " +
 				 "     width=195 " +
@@ -167,11 +165,11 @@ public class ItemCreator {
 				 "     src=\"" + FileSystemAccessWrapper.PLACEHOLDERIMAGE + "\">";
 		
 		// Use primary image if available
-		if (!uris.isEmpty()) {
+		if (!albumItemPictures.isEmpty()) {
 			mainPictureHtml = "<img id=\"imageId" + id + "\" " +
 							  "     style=\"max-width:195px; " +
 							  "     max-height:195px;\" " +
-							  "     src=\"" + uris.get(0).toString() + "\" " +
+							  "     src=\"" + albumItemPictures.get(0).getThumbnailPicturePath() + "\" " +
 							  "     onMouseOver=changeCursorToHand(\"imageId" + id + "\") " +
 							  "     onClick=showBigPicture(\"imageId" + id + "\")>";
 		}
