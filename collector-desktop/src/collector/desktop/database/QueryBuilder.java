@@ -304,7 +304,7 @@ public class QueryBuilder {
 	public static String createSelectColumnQueryWhere(String albumName, String columnName, String whereColumn) {
 
 		return  createSelectColumnQuery(albumName, columnName)+
-				" WHERE "+ DatabaseWrapper.transformColumnNameToSelectQueryName(whereColumn)+ "=?";
+				" WHERE "+ DatabaseWrapper.encloseNameWithQuotes(whereColumn)+ "=?";
 	}
 	
 	/**

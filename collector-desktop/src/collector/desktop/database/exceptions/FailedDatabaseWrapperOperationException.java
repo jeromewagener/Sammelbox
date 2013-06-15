@@ -19,8 +19,8 @@ public class FailedDatabaseWrapperOperationException extends Exception {
 		this.ErrorState = errorState;
 	}
 	
-	public FailedDatabaseWrapperOperationException(DBErrorState errorState, Throwable suppressedException) {
-		super(suppressedException);
+	public FailedDatabaseWrapperOperationException(DBErrorState errorState, Throwable cause) {
+		super(cause);
 		this.ErrorState = errorState;
 	}
 }
