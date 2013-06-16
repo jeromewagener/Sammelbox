@@ -13,6 +13,8 @@ import org.junit.Test;
 
 
 import collector.desktop.database.AlbumItemResultSet;
+import collector.desktop.database.ConnectionManager;
+import collector.desktop.database.DatabaseIntegrityManager;
 import collector.desktop.database.DatabaseWrapper;
 import collector.desktop.database.QueryBuilder;
 import collector.desktop.database.QueryBuilder.QueryComponent;
@@ -24,7 +26,7 @@ import collector.desktop.tests.CollectorTestExecuter;
 public class AdvancedSearchTests {
 	private static void resetEverything() {
 		try {			
-			DatabaseWrapper.closeConnection();
+			ConnectionManager.closeConnection();
 
 			FileSystemAccessWrapper.removeCollectorHome();
 
@@ -32,9 +34,9 @@ public class AdvancedSearchTests {
 
 			FileSystemAccessWrapper.updateCollectorFileStructure();			
 
-			DatabaseWrapper.openConnection();
+			ConnectionManager.openConnection();
 
-			FileSystemAccessWrapper.updateAlbumFileStructure(DatabaseWrapper.getConnection());
+			FileSystemAccessWrapper.updateAlbumFileStructure(ConnectionManager.getConnection());
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -59,7 +61,7 @@ public class AdvancedSearchTests {
 
 	@After
 	public void tearDown() throws Exception {
-		DatabaseWrapper.closeConnection();
+		ConnectionManager.closeConnection();
 		resetEverything();
 	}
 
@@ -67,7 +69,7 @@ public class AdvancedSearchTests {
 	public void testSearchForTitleInDVDsUsingSQL() {
 		try {
 			// Use default test sample
-			DatabaseWrapper.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
+			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
 
 			AlbumItemResultSet searchResults = DatabaseWrapper.executeSQLQuery("SELECT * FROM DVDs WHERE Title = 'The Simpsons Movie'");
 
@@ -95,7 +97,7 @@ public class AdvancedSearchTests {
 	public void testSearchForTitleAndActorsInDVDsUsingSQL() {
 		try {
 			// Use default test sample
-			DatabaseWrapper.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
+			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
 
 			AlbumItemResultSet searchResults = DatabaseWrapper.executeSQLQuery(
 					"SELECT * FROM DVDs WHERE Title = 'The Simpsons Movie' and Actors = 'The Simpsons'");
@@ -124,7 +126,7 @@ public class AdvancedSearchTests {
 	public void testSearchForTitleInDVDsUsingQueryBuilder() {
 		try {
 			// Use default test sample
-			DatabaseWrapper.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
+			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
 
 			ArrayList<QueryComponent> queryComponents = new ArrayList<QueryComponent>();
 			queryComponents.add(QueryBuilder.getQueryComponent("Title", QueryOperator.equals, "Short Circuit 2"));
@@ -156,7 +158,7 @@ public class AdvancedSearchTests {
 	public void testSearchForTitleAndAuthorInDVDsUsingQueryBuilder() {
 		try {
 			// Use default test sample
-			DatabaseWrapper.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
+			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
 
 			ArrayList<QueryComponent> queryComponents = new ArrayList<QueryComponent>();
 			queryComponents.add(QueryBuilder.getQueryComponent("Title", QueryOperator.equals, "Short Circuit 2"));
@@ -189,7 +191,7 @@ public class AdvancedSearchTests {
 	public void testSearchForTitlesInDVDsUsingQueryBuilder() {
 		try {
 			// Use default test sample
-			DatabaseWrapper.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
+			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
 
 			ArrayList<QueryComponent> queryComponents = new ArrayList<QueryComponent>();
 			queryComponents.add(QueryBuilder.getQueryComponent("Title", QueryOperator.equals, "Short Circuit 2"));
@@ -224,7 +226,7 @@ public class AdvancedSearchTests {
 	public void testSearchByLikeForAuthorInBooksUsingQueryBuilder() {
 		try {
 			// Use default test sample
-			DatabaseWrapper.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
+			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
 
 			ArrayList<QueryComponent> queryComponents = new ArrayList<QueryComponent>();
 			queryComponents.add(QueryBuilder.getQueryComponent("Author", QueryOperator.like, "Helm"));
@@ -257,7 +259,7 @@ public class AdvancedSearchTests {
 	public void testSearchByLikeForTitlesInBooksUsingQueryBuilder() {
 		try {
 			// Use default test sample
-			DatabaseWrapper.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
+			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
 
 			ArrayList<QueryComponent> queryComponents = new ArrayList<QueryComponent>();
 			queryComponents.add(QueryBuilder.getQueryComponent("Book Title", QueryOperator.like, "Code"));
@@ -294,7 +296,7 @@ public class AdvancedSearchTests {
 	public void testSearchForHighPriceBooksUsingBiggerThan() {
 		try {
 			// Use default test sample
-			DatabaseWrapper.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
+			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
 
 			ArrayList<QueryComponent> queryComponents = new ArrayList<QueryComponent>();
 			queryComponents.add(QueryBuilder.getQueryComponent("Price", QueryOperator.biggerThan, "30.0"));
@@ -319,7 +321,7 @@ public class AdvancedSearchTests {
 	public void testSearchForHighPriceBooksUsingBiggerThanOrEqual() {
 		try {
 			// Use default test sample
-			DatabaseWrapper.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
+			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
 
 			ArrayList<QueryComponent> queryComponents = new ArrayList<QueryComponent>();
 			queryComponents.add(QueryBuilder.getQueryComponent("Price", QueryOperator.biggerOrEqualThan, "30.0"));
@@ -344,7 +346,7 @@ public class AdvancedSearchTests {
 	public void testSearchArtistInEmptyMusicAlbumUsingQueryBuilder() {
 		try {
 			// Use default test sample
-			DatabaseWrapper.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
+			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
 
 			ArrayList<QueryComponent> queryComponents = new ArrayList<QueryComponent>();
 			queryComponents.add(QueryBuilder.getQueryComponent("Artist", QueryOperator.equals, "Rick Astley"));

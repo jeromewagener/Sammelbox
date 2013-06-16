@@ -21,6 +21,8 @@ import collector.desktop.album.ItemField;
 import collector.desktop.album.MetaItemField;
 import collector.desktop.album.OptionType;
 import collector.desktop.database.AlbumItemResultSet;
+import collector.desktop.database.ConnectionManager;
+import collector.desktop.database.DatabaseIntegrityManager;
 import collector.desktop.database.DatabaseWrapper;
 import collector.desktop.database.exceptions.FailedDatabaseWrapperOperationException;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
@@ -31,7 +33,7 @@ public class BackupRestoreTests {
 
 	public static void resetEverything() {
 		try {			
-			DatabaseWrapper.closeConnection();
+			ConnectionManager.closeConnection();
 
 			FileSystemAccessWrapper.removeCollectorHome();
 
@@ -39,9 +41,9 @@ public class BackupRestoreTests {
 
 			FileSystemAccessWrapper.updateCollectorFileStructure();			
 
-			DatabaseWrapper.openConnection();
+			ConnectionManager.openConnection();
 
-			FileSystemAccessWrapper.updateAlbumFileStructure(DatabaseWrapper.getConnection());
+			FileSystemAccessWrapper.updateAlbumFileStructure(ConnectionManager.getConnection());
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -65,7 +67,7 @@ public class BackupRestoreTests {
 
 	@After
 	public void tearDown() throws Exception {
-		DatabaseWrapper.closeConnection();
+		ConnectionManager.closeConnection();
 	}
 
 	private void createBookAlbum() {		
@@ -233,7 +235,7 @@ public class BackupRestoreTests {
 			assertTrue("Resultset should contain 3 items", counter == 3);
 
 			// Backup album
-			DatabaseWrapper.backupToFile(TEMP_DIR + File.separatorChar + "testBackupRestoreOfSingleAlbum.cbk");
+			DatabaseIntegrityManager.backupToFile(TEMP_DIR + File.separatorChar + "testBackupRestoreOfSingleAlbum.cbk");
 		} catch (FailedDatabaseWrapperOperationException e) {
 			fail("testBackupOfSingleAlbum raised an exception");
 		} 
@@ -284,7 +286,7 @@ public class BackupRestoreTests {
 			assertTrue("Resultset should contain 0 items", counter == 0);	
 
 			// Backup Albums
-			DatabaseWrapper.backupToFile(TEMP_DIR + File.separatorChar + "testBackupRestoreOfMultipleAlbums.cbk");
+			DatabaseIntegrityManager.backupToFile(TEMP_DIR + File.separatorChar + "testBackupRestoreOfMultipleAlbums.cbk");
 		} catch (FailedDatabaseWrapperOperationException e) {
 			fail("Failed on internal db error");			
 		}
@@ -296,7 +298,7 @@ public class BackupRestoreTests {
 		try {
 
 			// Restore album
-			DatabaseWrapper.restoreFromFile(TEMP_DIR + File.separatorChar + "testBackupRestoreOfSingleAlbum.cbk");
+			DatabaseIntegrityManager.restoreFromFile(TEMP_DIR + File.separatorChar + "testBackupRestoreOfSingleAlbum.cbk");
 
 			// Check number of items in book album
 			AlbumItemResultSet allAlbumItems = DatabaseWrapper.executeSQLQuery("SELECT * FROM Books");
@@ -319,7 +321,7 @@ public class BackupRestoreTests {
 		testBackupOfMultipleAlbums();
 		try {
 			// Restore albums
-			DatabaseWrapper.restoreFromFile(TEMP_DIR + File.separatorChar + "testBackupRestoreOfMultipleAlbums.cbk");
+			DatabaseIntegrityManager.restoreFromFile(TEMP_DIR + File.separatorChar + "testBackupRestoreOfMultipleAlbums.cbk");
 
 			// Check number of items in book album
 			AlbumItemResultSet allAlbumItems = DatabaseWrapper.executeSQLQuery("SELECT * FROM Books");
@@ -367,7 +369,7 @@ public class BackupRestoreTests {
 			assertTrue(new File(CollectorTestExecuter.PATH_TO_TEST_CBK).exists());
 
 			// Restore albums
-			DatabaseWrapper.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
+			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
 
 			// Check number of items in Books album
 			AlbumItemResultSet allAlbumItems = DatabaseWrapper.executeSQLQuery("SELECT * FROM Books");
@@ -419,7 +421,7 @@ public class BackupRestoreTests {
 				fail("Album Item could not be inserted into album");
 			}
 
-			DatabaseWrapper.backupToFile(TEMP_DIR + File.separatorChar + "testRestoreAndModificiationOfTestDataAlbums.cbk");
+			DatabaseIntegrityManager.backupToFile(TEMP_DIR + File.separatorChar + "testRestoreAndModificiationOfTestDataAlbums.cbk");
 		} catch (FailedDatabaseWrapperOperationException e) {
 			fail("Failed on internal db error");
 		}
@@ -429,7 +431,7 @@ public class BackupRestoreTests {
 	public void testRestoreOfModificiationOfTestDataAlbums() {
 		try {
 			// Restore modified albums
-			DatabaseWrapper.restoreFromFile(TEMP_DIR + File.separatorChar + "testRestoreAndModificiationOfTestDataAlbums.cbk");
+			DatabaseIntegrityManager.restoreFromFile(TEMP_DIR + File.separatorChar + "testRestoreAndModificiationOfTestDataAlbums.cbk");
 
 			// Check number of items in Books album (must contain one more item than the original)
 			AlbumItemResultSet allAlbumItems = DatabaseWrapper.executeSQLQuery("SELECT * FROM Books");

@@ -7,6 +7,7 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import collector.desktop.database.DatabaseStringUtilities;
 import collector.desktop.database.DatabaseWrapper;
 import collector.desktop.database.exceptions.FailedDatabaseWrapperOperationException;
 
@@ -253,7 +254,7 @@ public class AlbumItem {
 	 * @return The string representing the properly formatted album name.
 	 */
 	public String getDBAlbumName() {
-		return DatabaseWrapper.encloseNameWithQuotes(albumName);
+		return DatabaseStringUtilities.encloseNameWithQuotes(albumName);
 	}
 	
 	/**
@@ -262,7 +263,7 @@ public class AlbumItem {
 	 * @return The string representing the properly formatted field name.
 	 */
 	public static String getDBFieldName(String FieldName) {
-		return DatabaseWrapper.encloseNameWithQuotes(FieldName);
+		return DatabaseStringUtilities.encloseNameWithQuotes(FieldName);
 	}
 
 	public UUID getContentVersion() {

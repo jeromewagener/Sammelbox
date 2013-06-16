@@ -14,6 +14,8 @@ import org.junit.Test;
 import collector.desktop.album.FieldType;
 import collector.desktop.album.MetaItemField;
 import collector.desktop.database.AlbumItemResultSet;
+import collector.desktop.database.ConnectionManager;
+import collector.desktop.database.DatabaseIntegrityManager;
 import collector.desktop.database.DatabaseWrapper;
 import collector.desktop.database.exceptions.FailedDatabaseWrapperOperationException;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
@@ -22,7 +24,7 @@ import collector.desktop.tests.CollectorTestExecuter;
 public class AlterAlbumTests {
 	public static void resetEverything() {
 		try {			
-			DatabaseWrapper.closeConnection();
+			ConnectionManager.closeConnection();
 
 			FileSystemAccessWrapper.removeCollectorHome();
 
@@ -30,9 +32,9 @@ public class AlterAlbumTests {
 
 			FileSystemAccessWrapper.updateCollectorFileStructure();			
 
-			DatabaseWrapper.openConnection();
+			ConnectionManager.openConnection();
 
-			FileSystemAccessWrapper.updateAlbumFileStructure(DatabaseWrapper.getConnection());
+			FileSystemAccessWrapper.updateAlbumFileStructure(ConnectionManager.getConnection());
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -56,14 +58,14 @@ public class AlterAlbumTests {
 
 	@After
 	public void tearDown() throws Exception {
-		DatabaseWrapper.closeConnection();
+		ConnectionManager.closeConnection();
 	}
 
 	@Test
 	public void testAddPublisherFieldToBookAlbum() {
 		try {
 			// Use default test sample
-			DatabaseWrapper.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
+			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
 
 			MetaItemField metaItemField = new MetaItemField("Publisher", FieldType.Text, false);
 			int originalAlbumItemCount = numberOfAlbumItems("Books");
@@ -85,7 +87,7 @@ public class AlterAlbumTests {
 	public void testAddQuickSearchablePublisherFieldToBookAlbum() {
 		try {
 			// Use default test sample
-			DatabaseWrapper.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
+			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
 
 			MetaItemField metaItemField = new MetaItemField("Publisher", FieldType.Text, true);
 			int originalAlbumItemCount = numberOfAlbumItems("Books");
@@ -140,7 +142,7 @@ public class AlterAlbumTests {
 		 */
 		try {
 			// Use default test sample
-			DatabaseWrapper.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
+			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
 			int originalAlbumItemCount = numberOfAlbumItems("Books");
 
 			MetaItemField metaItemField = new MetaItemField("Publisher", FieldType.Text, false);
@@ -183,7 +185,7 @@ public class AlterAlbumTests {
 		// FIXME: This test fails the same as the other move album item field test
 		try {
 			// Use default test sample
-			DatabaseWrapper.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
+			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
 			DatabaseWrapper.removeAlbum("DVDs");
 
 			List<MetaItemField> metaDataItems = DatabaseWrapper.getAlbumItemFieldNamesAndTypes("DVDs");
@@ -225,7 +227,7 @@ public class AlterAlbumTests {
 	public void testRenameColumnName_NonQuicksearchableField() {
 		try {
 			// Use default test sample
-			DatabaseWrapper.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
+			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
 
 			List<MetaItemField> metaDataItems = DatabaseWrapper.getAlbumItemFieldNamesAndTypes("Books");
 			int originalAlbumItemCount = numberOfAlbumItems("Books");
@@ -251,7 +253,7 @@ public class AlterAlbumTests {
 		try {
 			//FIXME: this test fails due to supposedly invalid picture column
 			// Use default test sample
-			DatabaseWrapper.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
+			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
 
 			List<MetaItemField> metaDataItems = DatabaseWrapper.getAlbumItemFieldNamesAndTypes("DVDs");
 			int originalAlbumItemCount = numberOfAlbumItems("DVDs");
@@ -279,7 +281,7 @@ public class AlterAlbumTests {
 	public void testRenameTableName() {
 		try {
 			// Use default test sample
-			DatabaseWrapper.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
+			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
 
 			List<String> albumList = DatabaseWrapper.listAllAlbums();
 
@@ -335,7 +337,7 @@ public class AlterAlbumTests {
 	public void testDeleteAuthorField() {
 		try {
 			// Use default test sample
-			DatabaseWrapper.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
+			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
 
 			List<MetaItemField> metaDataItems = DatabaseWrapper.getAlbumItemFieldNamesAndTypes("Books");
 			int originalAlbumItemCount = numberOfAlbumItems("Books");

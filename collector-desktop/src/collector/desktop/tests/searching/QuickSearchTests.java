@@ -13,6 +13,8 @@ import org.junit.Test;
 
 
 import collector.desktop.database.AlbumItemResultSet;
+import collector.desktop.database.ConnectionManager;
+import collector.desktop.database.DatabaseIntegrityManager;
 import collector.desktop.database.DatabaseWrapper;
 import collector.desktop.database.exceptions.FailedDatabaseWrapperOperationException;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
@@ -21,7 +23,7 @@ import collector.desktop.tests.CollectorTestExecuter;
 public class QuickSearchTests {
 	public static void resetEverything() {
 		try {			
-			DatabaseWrapper.closeConnection();
+			ConnectionManager.closeConnection();
 
 			FileSystemAccessWrapper.removeCollectorHome();
 
@@ -29,9 +31,9 @@ public class QuickSearchTests {
 
 			FileSystemAccessWrapper.updateCollectorFileStructure();			
 
-			DatabaseWrapper.openConnection();
+			ConnectionManager.openConnection();
 
-			FileSystemAccessWrapper.updateAlbumFileStructure(DatabaseWrapper.getConnection());
+			FileSystemAccessWrapper.updateAlbumFileStructure(ConnectionManager.getConnection());
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -55,14 +57,14 @@ public class QuickSearchTests {
 
 	@After
 	public void tearDown() throws Exception {
-		DatabaseWrapper.closeConnection();
+		ConnectionManager.closeConnection();
 	}
 
 	@Test
 	public void testQuickSearchActorInDVDs() {
 		try {
 			// Use default test sample
-			DatabaseWrapper.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
+			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
 
 			ArrayList<String> quickSearchTerms = new ArrayList<String>();
 			quickSearchTerms.add("Smith");
@@ -94,7 +96,7 @@ public class QuickSearchTests {
 	public void testQuickSearchActorsInDVDs() {
 		try {
 			// Use default test sample
-			DatabaseWrapper.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
+			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
 
 			ArrayList<String> quickSearchTerms = new ArrayList<String>();
 			quickSearchTerms.add("Cooper");
@@ -127,7 +129,7 @@ public class QuickSearchTests {
 	public void testQuickSearchTitleInDVDs() {
 		try {
 			// Use default test sample
-			DatabaseWrapper.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
+			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
 
 			ArrayList<String> quickSearchTerms = new ArrayList<String>();
 			quickSearchTerms.add("Me");

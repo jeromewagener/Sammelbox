@@ -29,6 +29,8 @@ import org.eclipse.swt.widgets.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import collector.desktop.database.ConnectionManager;
+import collector.desktop.database.DatabaseIntegrityManager;
 import collector.desktop.database.DatabaseWrapper;
 import collector.desktop.database.QueryBuilder;
 import collector.desktop.database.exceptions.FailedDatabaseWrapperOperationException;
@@ -113,10 +115,10 @@ public class Collector implements UIObservable, UIObserver {
 		Class.forName("org.sqlite.JDBC");
 		
 		try {
-			DatabaseWrapper.openConnection();	
+			ConnectionManager.openConnection();	
 		} catch (FailedDatabaseWrapperOperationException e){
 			try {
-				DatabaseWrapper.openCleanConnection();				
+				ConnectionManager.openCleanConnection();				
 			}catch (FailedDatabaseWrapperOperationException e2) {
 				logger.error("The database is corrupt since opening a connection failed. A dump of the db can be found in the program App folder.");
 			}			
@@ -571,7 +573,7 @@ public class Collector implements UIObservable, UIObserver {
 				String path = openFileDialog.open();
 				if (path != null) {
 					try {
-						DatabaseWrapper.restoreFromFile(path);
+						DatabaseIntegrityManager.restoreFromFile(path);
 					} catch (FailedDatabaseWrapperOperationException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -606,7 +608,7 @@ public class Collector implements UIObservable, UIObserver {
 				String path = saveFileDialog.open();
 				if (path != null) {
 					try {
-						DatabaseWrapper.backupToFile(path);
+						DatabaseIntegrityManager.backupToFile(path);
 					} catch (FailedDatabaseWrapperOperationException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -692,7 +694,7 @@ public class Collector implements UIObservable, UIObserver {
 				createCollectorShell(getShell());
 		
 				// close the database connection if the the shell is closed
-				DatabaseWrapper.closeConnection();
+				ConnectionManager.closeConnection();
 				
 				// close file & channel
 				channel.close();
@@ -821,7 +823,7 @@ public class Collector implements UIObservable, UIObserver {
 	private static void createAutoSaveOfDatabase(LoadingOverlayShell shell) {
 		// Backup the database in a Thread running in parallel to the SWT UI Thread. 
 		try {
-			DatabaseWrapper.backupAutoSave();
+			DatabaseIntegrityManager.backupAutoSave();
 		} catch (FailedDatabaseWrapperOperationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

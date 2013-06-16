@@ -23,6 +23,7 @@ import collector.desktop.album.ItemField;
 import collector.desktop.album.MetaItemField;
 import collector.desktop.album.OptionType;
 import collector.desktop.album.StarRating;
+import collector.desktop.database.ConnectionManager;
 import collector.desktop.database.DatabaseWrapper;
 import collector.desktop.database.exceptions.FailedDatabaseWrapperOperationException;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
@@ -293,7 +294,7 @@ public class AddAlbumItemTests {
 	private void resetFolderStructure() {
 		// Reset folder structure of the COLLECTOR HOME
 		try {			
-			DatabaseWrapper.closeConnection();
+			ConnectionManager.closeConnection();
 
 			FileSystemAccessWrapper.removeCollectorHome();
 
@@ -301,9 +302,9 @@ public class AddAlbumItemTests {
 
 			FileSystemAccessWrapper.updateCollectorFileStructure();			
 
-			DatabaseWrapper.openConnection();
+			ConnectionManager.openConnection();
 
-			FileSystemAccessWrapper.updateAlbumFileStructure(DatabaseWrapper.getConnection());
+			FileSystemAccessWrapper.updateAlbumFileStructure(ConnectionManager.getConnection());
 		} 
 		catch (Exception e) {
 			e.printStackTrace();

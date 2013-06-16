@@ -219,12 +219,12 @@ public class QueryBuilder {
 				query.append( "(" +
 						"[" + queryComponents.get(i).fieldName + "] " + 
 						QueryOperator.toSQLOperator(queryComponents.get(i).operator) + " " + 
-						"'%" + DatabaseWrapper.sanitizeSingleQuotesInAlbumItemValues(queryComponents.get(i).value) + "%')");
+						"'%" + DatabaseStringUtilities.sanitizeSingleQuotesInAlbumItemValues(queryComponents.get(i).value) + "%')");
 			} else {
 				query.append( "(" +
 						"[" + queryComponents.get(i).fieldName + "] " + 
 						QueryOperator.toSQLOperator(queryComponents.get(i).operator) + " " + 
-						"'" + DatabaseWrapper.sanitizeSingleQuotesInAlbumItemValues(queryComponents.get(i).value) + "')");
+						"'" + DatabaseStringUtilities.sanitizeSingleQuotesInAlbumItemValues(queryComponents.get(i).value) + "')");
 			}
 
 			if (i+1 != queryComponents.size()) {
@@ -290,7 +290,7 @@ public class QueryBuilder {
 	 * @return A string containing the proper SQL string.
 	 */
 	public static String createSelectStarQuery(String albumName) {
-		return "SELECT * FROM " + DatabaseWrapper.encloseNameWithQuotes(albumName);
+		return "SELECT * FROM " + DatabaseStringUtilities.encloseNameWithQuotes(albumName);
 	}
 
 
@@ -304,7 +304,7 @@ public class QueryBuilder {
 	public static String createSelectColumnQueryWhere(String albumName, String columnName, String whereColumn) {
 
 		return  createSelectColumnQuery(albumName, columnName)+
-				" WHERE "+ DatabaseWrapper.encloseNameWithQuotes(whereColumn)+ "=?";
+				" WHERE "+ DatabaseStringUtilities.encloseNameWithQuotes(whereColumn)+ "=?";
 	}
 	
 	/**
@@ -316,8 +316,8 @@ public class QueryBuilder {
 	 */
 	public static String createSelectColumnQuery(String albumName, String columnName) {
 
-		return  "SELECT " +  DatabaseWrapper.transformColumnNameToSelectQueryName(columnName)+ 
-				" FROM "+  DatabaseWrapper.encloseNameWithQuotes(albumName); 
+		return  "SELECT " +  DatabaseStringUtilities.transformColumnNameToSelectQueryName(columnName)+ 
+				" FROM "+  DatabaseStringUtilities.encloseNameWithQuotes(albumName); 
 	}
 	
 	/**
@@ -329,7 +329,7 @@ public class QueryBuilder {
 	public static String createCountAsAliasStarWhere(String albumName, String alias) {
 
 		return 	"SELECT COUNT(*) AS " + alias + 
-				" FROM "+  DatabaseWrapper.encloseNameWithQuotes(albumName);
+				" FROM "+  DatabaseStringUtilities.encloseNameWithQuotes(albumName);
 		
 	}
 }

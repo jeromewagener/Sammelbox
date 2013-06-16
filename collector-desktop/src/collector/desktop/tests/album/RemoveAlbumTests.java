@@ -14,6 +14,7 @@ import org.junit.Test;
 
 import collector.desktop.album.FieldType;
 import collector.desktop.album.MetaItemField;
+import collector.desktop.database.ConnectionManager;
 import collector.desktop.database.DatabaseWrapper;
 import collector.desktop.database.exceptions.FailedDatabaseWrapperOperationException;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
@@ -32,7 +33,7 @@ public class RemoveAlbumTests {
 	public void setUp() throws Exception {
 		// Reset folder structure of the COLLECTOR HOME
 		try {			
-			DatabaseWrapper.closeConnection();
+			ConnectionManager.closeConnection();
 
 			FileSystemAccessWrapper.removeCollectorHome();
 
@@ -40,9 +41,9 @@ public class RemoveAlbumTests {
 
 			FileSystemAccessWrapper.updateCollectorFileStructure();			
 
-			DatabaseWrapper.openConnection();
+			ConnectionManager.openConnection();
 
-			FileSystemAccessWrapper.updateAlbumFileStructure(DatabaseWrapper.getConnection());
+			FileSystemAccessWrapper.updateAlbumFileStructure(ConnectionManager.getConnection());
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -75,7 +76,7 @@ public class RemoveAlbumTests {
 	public void tearDown() throws Exception {
 		// Reset folder structure of the COLLECTOR HOME
 		try {			
-			DatabaseWrapper.closeConnection();
+			ConnectionManager.closeConnection();
 
 			FileSystemAccessWrapper.removeCollectorHome();
 
@@ -83,9 +84,9 @@ public class RemoveAlbumTests {
 
 			FileSystemAccessWrapper.updateCollectorFileStructure();			
 
-			DatabaseWrapper.openConnection();
+			ConnectionManager.openConnection();
 
-			FileSystemAccessWrapper.updateAlbumFileStructure(DatabaseWrapper.getConnection());
+			FileSystemAccessWrapper.updateAlbumFileStructure(ConnectionManager.getConnection());
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
