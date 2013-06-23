@@ -13,7 +13,7 @@ public class BrowserFacade {
 	public static String getAnchorForAlbumItemId(long anchorId) { return Utilities.getAnchorForAlbumItemId(anchorId); }
 	public static void jumpToAnchor(String anchor) { Utilities.jumpToAnchor(anchor); }
 	public static void performBrowserQueryAndShow(String sqlQuery) { Utilities.performBrowserQueryAndShow(Collector.getAlbumItemSWTBrowser(), sqlQuery); }
-	public static void showPicture(String pathToPicture, long albumItemId) { PictureViewCreator.showPicture(pathToPicture, albumItemId); }
+	public static void showPicture(String pathToPicture, long albumItemId) { PictureViewCreator.showPicture(albumItemId); }
 	public static void setFutureJumpAnchor(String futureJumpAnchor) { Utilities.setFutureJumpAnchor(futureJumpAnchor); }
 	public static String getFutureJumpAnchor() { return Utilities.getFutureJumpAnchor(); }
 	public static void goBackToLastPage() { Utilities.goBackToLastPage(); }

@@ -2,6 +2,7 @@ package collector.desktop.gui.browser;
 
 import collector.desktop.Collector;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
+import collector.desktop.gui.GuiConstants;
 import collector.desktop.gui.managers.AlbumManager;
 import collector.desktop.gui.managers.WelcomePageManager;
 import collector.desktop.internationalization.DictKeys;
@@ -16,9 +17,9 @@ public class WelcomePageCreator {
 				"<html>" +
 				"  <head>" +
 				"    <title>" + Translator.get(DictKeys.TITLE_MAIN_WINDOW) + "</title>" +
-				"    <meta " + BrowserConstants.META_PARAMS + ">" + 
-				"    <link rel=stylesheet href=\"" + BrowserConstants.STYLE_CSS + "\" />" +
-				"    <script src=\"" + BrowserConstants.EFFECTS_JS + "\"></script>" +
+				"    <meta " + GuiConstants.META_PARAMS + ">" + 
+				"    <link rel=stylesheet href=\"" + GuiConstants.STYLE_CSS + "\" />" +
+				"    <script src=\"" + GuiConstants.EFFECTS_JS + "\"></script>" +
 				"  </head>" +
 				"  <body>" +
 				"    <font face=\"" + Utilities.getDefaultSystemFont() + "\">" +
@@ -26,9 +27,7 @@ public class WelcomePageCreator {
 				"	 <table>" +
 				"      <tr>" +
 				"	     <td align=\"center\">" +
-				"          <h1>Sammelbox</h1>" +
-				"          <img height=\"350px\" src=\" " + FileSystemAccessWrapper.LOGO + " \">" +
-				"          <h2>Collection Manager</h2>" +
+				"          <img height=\"466\" src=\" " + FileSystemAccessWrapper.LOGO + " \">" +
 				"        </td>" +
 				"        <td width=\"430px\">" +
 		        "          <div style=\"padding:10px; background-color:#" + Utilities.getBackgroundColorOfWidgetInHex() + "\">" +

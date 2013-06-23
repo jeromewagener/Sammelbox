@@ -3,15 +3,21 @@ package collector.desktop.gui.browser;
 import java.util.LinkedList;
 
 import org.eclipse.swt.browser.Browser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import collector.desktop.Collector;
 import collector.desktop.album.AlbumItem;
 import collector.desktop.database.DatabaseWrapper;
-import collector.desktop.database.exceptions.FailedDatabaseWrapperOperationException;
+import collector.desktop.database.exceptions.DatabaseWrapperOperationException;
+import collector.desktop.database.exceptions.ExceptionHelper;
+import collector.desktop.gui.GuiConstants;
 import collector.desktop.internationalization.DictKeys;
 import collector.desktop.internationalization.Translator;
 
 public class FeedbackCreator {
+	private final static Logger LOGGER = LoggerFactory.getLogger(FeedbackCreator.class);
+	
 	/** A list of alterations that have already been performed via the alter album functionality */
 	private static LinkedList<String> alterations = new LinkedList<String>();
 	
@@ -27,9 +33,9 @@ public class FeedbackCreator {
 								Translator.get(DictKeys.BROWSER_ITEM_UPDATED),
 								ItemCreator.getAlbumItemTableRowHtml(updatedAlbumItem)));
 			}
-		} catch (FailedDatabaseWrapperOperationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (DatabaseWrapperOperationException ex) {
+			LOGGER.error("An error occured while fetching the album item #" + albumItemId + " in the album: " + 
+							Collector.getSelectedAlbum() + " \n Stacktrace:" + ExceptionHelper.toString(ex));
 		}
 	}
 
@@ -44,9 +50,9 @@ public class FeedbackCreator {
 								Translator.get(DictKeys.BROWSER_ITEM_ADDED),
 								ItemCreator.getAlbumItemTableRowHtml(addedAlbumItem)));
 			}
-		} catch (FailedDatabaseWrapperOperationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (DatabaseWrapperOperationException ex) {
+			LOGGER.error("An error occured while fetching the album item #" + albumItemId + " in the album: " + 
+					Collector.getSelectedAlbum() + " \n Stacktrace:" + ExceptionHelper.toString(ex));
 		}
 	}
 	
@@ -54,9 +60,9 @@ public class FeedbackCreator {
 		return 	"<!DOCTYPE HTML>" +
 				"  <html>" +
 				"    <head>" +
-				"      <meta " + BrowserConstants.META_PARAMS + ">" +
-				"      <link rel=stylesheet href=\"" + BrowserConstants.STYLE_CSS + "\" />" +
-				"      <script src=\"" + BrowserConstants.EFFECTS_JS + "\"></script>" +
+				"      <meta " + GuiConstants.META_PARAMS + ">" +
+				"      <link rel=stylesheet href=\"" + GuiConstants.STYLE_CSS + "\" />" +
+				"      <script src=\"" + GuiConstants.EFFECTS_JS + "\"></script>" +
 				"    </head>" +
 				"    <body bgcolor=white>" +
 				"      <font face=\"" + Utilities.getDefaultSystemFont() + "\">" +
@@ -76,24 +82,24 @@ public class FeedbackCreator {
 	static void showCreateNewAlbumPage(Browser browser, AlbumItem albumItem) {
 		browser.setText(generateAlbumAddedOrUpdatedFeedbackConstruct(
 				albumItem,
-				Translator.toBeTranslated("Creating a new Album"),
-				Translator.toBeTranslated("Your Album will be able to store items in the following format:")));
+				Translator.get(DictKeys.BROWSER_CREATING_NEW_ALBUM),
+				Translator.get(DictKeys.BROWSER_ALBUM_WILL_HANDLE_FOLLOWING_FORMAT)));
 	}
 	
 	static void showCreateAlterAlbumPage(Browser browser, AlbumItem albumItem) {		
 		browser.setText(generateAlbumAddedOrUpdatedFeedbackConstruct(
 				albumItem,
-				Translator.toBeTranslated("Modifying ") + Collector.getSelectedAlbum(),
-				Translator.toBeTranslated("<u>Attention:</u> All changes will have <font color=red>imediate</font> effects!<br>Your Album is currently able to store items in the following format:")));
+				Translator.get(DictKeys.BROWSER_MODIFYING_ALBUM, Collector.getSelectedAlbum()),
+				Translator.get(DictKeys.BROWSER_MODIFY_WARNING)));
 	}
 	
 	private static String generateAlbumAddedOrUpdatedFeedbackConstruct(AlbumItem albumItem, String title, String subTitle) {
 		return "<!DOCTYPE HTML>" +
 			   "  <html>" +
 			   "    <head>" +
-			   "      <meta " + BrowserConstants.META_PARAMS + ">" + 
-			   "      <link rel=stylesheet href=\"" + BrowserConstants.STYLE_CSS + "\" />" +
-			   "      <script src=\"" + BrowserConstants.EFFECTS_JS + "\"></script>" +
+			   "      <meta " + GuiConstants.META_PARAMS + ">" + 
+			   "      <link rel=stylesheet href=\"" + GuiConstants.STYLE_CSS + "\" />" +
+			   "      <script src=\"" + GuiConstants.EFFECTS_JS + "\"></script>" +
 			   "    </head>" +
 			   "    <body>" +
 		       "      <h1>" + title + "</h1>" +

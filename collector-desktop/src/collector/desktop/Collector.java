@@ -10,6 +10,7 @@ import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -33,7 +34,8 @@ import collector.desktop.database.ConnectionManager;
 import collector.desktop.database.DatabaseIntegrityManager;
 import collector.desktop.database.DatabaseWrapper;
 import collector.desktop.database.QueryBuilder;
-import collector.desktop.database.exceptions.FailedDatabaseWrapperOperationException;
+import collector.desktop.database.exceptions.DatabaseWrapperOperationException;
+import collector.desktop.database.exceptions.ExceptionHelper;
 import collector.desktop.filesystem.BuildInformation;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
 import collector.desktop.filesystem.export.CSVExporter;
@@ -69,7 +71,7 @@ public class Collector implements UIObservable, UIObserver {
 	private static final int RIGHT_PANEL_NO_WIDTH = 0;
 
 	/** The minimum width of the shell in pixels. The shell can never have a smaller width than this. */
-	private static final int MIN_SHELL_WIDTH = 1150;
+	private static final int MIN_SHELL_WIDTH = 1110;
 	/** The minimum height of the shell in pixels. The shell can never have a smaller height than this. */
 	private static final int MIN_SHELL_HEIGHT = 700;
 	/** A reference to the main display */
@@ -80,7 +82,7 @@ public class Collector implements UIObservable, UIObserver {
 	private static Composite threePanelComposite = null, upperLeftSubComposite = null, lowerLeftSubComposite = null, 
 			leftComposite = null, rightComposite = null, centerComposite = null, statusComposite = null, toolbarComposite = null;
 	/** The currently selected album. The selected album changes via selections within the album list */
-	private static String selectedAlbum;
+	private static String selectedAlbum = "";
 	/** A reference to the SWT list containing all available albums */
 	private static List albumSWTList;
 	/** A reference to the SWT Text representing the quickSearch field*/
@@ -101,26 +103,26 @@ public class Collector implements UIObservable, UIObserver {
 	private static Collector instance = null;
 	/** This flag indicates if an error (e.g. corrupt db) was encountered during startup*/
 	private static boolean normalStartup = true;
-	/**The normal logger for all info, debug, error and warning in the collector class*/
-	private final static Logger logger = LoggerFactory.getLogger(Collector.class);
-	/**This logger must NOT be used since it always logs the start and end of the program.*/
-	private final static Logger gateLogger = LoggerFactory.getLogger("collector.desktop.GateLogger");
+	/** The normal logger for all info, debug, error and warning in the collector class */
+	private final static Logger LOGGER = LoggerFactory.getLogger(Collector.class);
+	/** This logger must NOT be used since it always logs the start and end of the program */
+	private final static Logger GATE_LOGGER = LoggerFactory.getLogger("collector.desktop.GateLogger");
 	/**
 	 * The default constructor initializes the file structure and opens the database connections.
 	 * Furthermore the constructor creates the program instance which is used to register observers
-	 * @throws Exception Either a class not found excpetion if the jdbc driver could not be initialized or
+	 * @throws Exception Either a class not found exception if the jdbc driver could not be initialized or
 	 * an exception if the database connection could not be established.
 	 */
 	private Collector() throws Exception {		
 		Class.forName("org.sqlite.JDBC");
 		
 		try {
-			ConnectionManager.openConnection();	
-		} catch (FailedDatabaseWrapperOperationException e){
+			ConnectionManager.openConnection();
+		} catch (DatabaseWrapperOperationException ex){
 			try {
 				ConnectionManager.openCleanConnection();				
-			}catch (FailedDatabaseWrapperOperationException e2) {
-				logger.error("The database is corrupt since opening a connection failed. A dump of the db can be found in the program App folder.");
+			}catch (DatabaseWrapperOperationException ex2) {
+				LOGGER.error("The database is corrupt since opening a connection failed. A dump of the db can be found in the program App folder.");
 			}			
 		}		
 		instance = this;
@@ -130,13 +132,15 @@ public class Collector implements UIObservable, UIObserver {
 	 * using the CompositeFactory 
 	 * @param shell the shell used to create the user interface */
 	public static void createCollectorShell(final Shell shell) {				
+		// set program icon
+		shell.setImage(new Image(shell.getDisplay(), FileSystemAccessWrapper.LOGO_SMALL));
+		
 		// setup the Layout for the shell
 		GridLayout shellGridLayout = new GridLayout(1, false);
 		shellGridLayout.marginHeight = 0;
-		shellGridLayout.marginWidth = 0;
-		
+		shellGridLayout.marginWidth = 0;		
 		shell.setMinimumSize(MIN_SHELL_WIDTH, MIN_SHELL_HEIGHT);
-		//shell.setSize(MIN_SHELL_WIDTH, MIN_SHELL_HEIGHT);TODO: check if needed or not
+
 		// setup the Shell
 		shell.setText(Translator.get(DictKeys.TITLE_MAIN_WINDOW));				
 		shell.setLayout(shellGridLayout);
@@ -487,25 +491,21 @@ public class Collector implements UIObservable, UIObserver {
 			 }
 		}
 		if (!albumSelectionIsInSync){
-			System.err.println("The album list does not contain the album that is supposed to be selected.");// TODO:log instead of printout
+			LOGGER.error("The album list does not contain the album that is supposed to be selected");
 			return false;
 		}
 	
 		Collector.getQuickSearchTextField().setText("");
 		try {
-			Collector.getQuickSearchTextField().setEnabled(
-					DatabaseWrapper.isAlbumQuicksearchable(albumName));
-		} catch (FailedDatabaseWrapperOperationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Collector.getQuickSearchTextField().setEnabled(DatabaseWrapper.isAlbumQuicksearchable(albumName));
+		} catch (DatabaseWrapperOperationException ex) {
+			LOGGER.error("An error occured while enabling the quick search field \n Stacktrace: " + ExceptionHelper.toString(ex));
 		}
 
 		BrowserFacade.performBrowserQueryAndShow(QueryBuilder.createSelectStarQuery(albumName));
 		
 		Collector.getViewSWTList().setEnabled(AlbumViewManager.hasAlbumViewsAttached(albumName));
 		AlbumViewManager.getInstance().notifyObservers();
-		
-		// TODO: check if null could be passed because the toolbar always exists when this method is called.		
 		ToolbarComposite.getInstance(Collector.getThreePanelComposite()).enableAlbumButtons(albumName);
 		
 		return true;
@@ -574,9 +574,8 @@ public class Collector implements UIObservable, UIObserver {
 				if (path != null) {
 					try {
 						DatabaseIntegrityManager.restoreFromFile(path);
-					} catch (FailedDatabaseWrapperOperationException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+					} catch (DatabaseWrapperOperationException ex) {
+						LOGGER.error("An error occured while trying to restore albums from a backup file \n Stacktrace: " + ExceptionHelper.toString(ex));
 					}
 					// No default album is selected on restore
 					Collector.refreshSWTAlbumList();
@@ -609,15 +608,12 @@ public class Collector implements UIObservable, UIObserver {
 				if (path != null) {
 					try {
 						DatabaseIntegrityManager.backupToFile(path);
-					} catch (FailedDatabaseWrapperOperationException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+					} catch (DatabaseWrapperOperationException ex) {
+						LOGGER.error("An error occured while trying to backup albums to a backup file \n Stacktrace: " + ExceptionHelper.toString(ex));
 					}
 				}		        
 			} else {
-				// --------------------------------------------------------------
-				// Ensure that the following context sensitive actions are applied only when an album has been selected. // TODO comment style
-				// --------------------------------------------------------------
+				// Ensure that the following context sensitive actions are applied only when an album has been selected
 				if (!Collector.hasSelectedAlbum()) {
 					ComponentFactory.showErrorDialog(
 							Collector.getShell(), 
@@ -636,9 +632,8 @@ public class Collector implements UIObservable, UIObserver {
 							DatabaseWrapper.removeAlbum(getSelectedAlbum());
 							Collector.refreshSWTAlbumList();
 							BrowserFacade.loadHtmlFromInputStream(getShell().getClass().getClassLoader().getResourceAsStream("htmlfiles/album_deleted.html"));
-						} catch (FailedDatabaseWrapperOperationException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+						} catch (DatabaseWrapperOperationException ex) {
+							LOGGER.error("A database related error occured \n Stacktrace: " + ExceptionHelper.toString(ex));
 						}
 					}
 				} else if (((MenuItem) event.widget).getText().equals(Translator.get(DictKeys.MENU_ALTER_SELECTED_ALBUM))) {
@@ -658,8 +653,6 @@ public class Collector implements UIObservable, UIObserver {
 							CSVExporter.exportVisibleItems(filepath);
 						} else if (filepath.endsWith(".html")) {
 							HTMLExporter.exportVisibleItems(filepath);
-						} else {
-							// TODO: support further export types. 
 						}
 					}
 				} else if (((MenuItem) event.widget).getText().equals(Translator.get(DictKeys.MENU_ADVANCED_SEARCH))) {
@@ -671,9 +664,9 @@ public class Collector implements UIObservable, UIObserver {
 
 	/** The main method initializes the database (using the collector constructor) and establishes the user interface */
 	public static void main(String[] args) throws ClassNotFoundException {
-		gateLogger.trace("Collector (build: " + BuildInformation.instance().getVersion() + " build on " + BuildInformation.instance().getBuildTimeStamp() +") started");
+	    GATE_LOGGER.trace("Collector (build: " + BuildInformation.instance().getVersion() + " build on " + BuildInformation.instance().getBuildTimeStamp() +") started");
 	    try {
-	    	ApplicationSettingsManager.loadFromSettingsFile();
+	    	ApplicationSettingsManager.initializeFromSettingsFile();
 	    	Translator.setLanguageFromSettingsOrSystem();
 	    	// Ensure that folder structure including lock file exists before locking
 	    	FileSystemAccessWrapper.updateCollectorFileStructure();
@@ -706,10 +699,9 @@ public class Collector implements UIObservable, UIObserver {
 		    			SWT.ICON_INFORMATION).open();
 		    }
 	    } catch (Exception ex) {
-	    	System.out.println(ex.toString()); 
-	    	gateLogger.error("Collector crashed", ex);
+	    	GATE_LOGGER.error("Collector crashed", ex);
 	    }finally {
-	    	gateLogger.trace("Collector ended");
+	    	GATE_LOGGER.trace("Collector ended");
 	    }
 	}
 	
@@ -789,8 +781,7 @@ public class Collector implements UIObservable, UIObserver {
 	}
 	
 	private static LoadingOverlayShell createAutosaveOverlay () {
-		// TODO: replace message text by international string
-		final LoadingOverlayShell loadingOverlayShell = new LoadingOverlayShell(shell, " Autosaving the database");
+		final LoadingOverlayShell loadingOverlayShell = new LoadingOverlayShell(shell, Translator.toBeTranslated("Autosaving the database"));
 		loadingOverlayShell.setCloseParentWhenDone(true);
 		shell.addListener(SWT.Close, new Listener() {			
 			@Override
@@ -824,9 +815,8 @@ public class Collector implements UIObservable, UIObserver {
 		// Backup the database in a Thread running in parallel to the SWT UI Thread. 
 		try {
 			DatabaseIntegrityManager.backupAutoSave();
-		} catch (FailedDatabaseWrapperOperationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (DatabaseWrapperOperationException ex) {
+			LOGGER.error("Couldn't backup the auto save \n Stacktrace:" + ExceptionHelper.toString(ex));
 		}
 		shell.stop();
 	}	

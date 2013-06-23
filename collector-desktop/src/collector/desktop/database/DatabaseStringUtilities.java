@@ -11,8 +11,8 @@ public class DatabaseStringUtilities {
 	public static String sanitizeSingleQuotesInAlbumItemValues(String value) {
 		int lastIndex = 0;
 		int singleQuoteIndex = value.indexOf('\'',0);
-		StringBuilder sb= new StringBuilder();
-		while(singleQuoteIndex != -1) {
+		StringBuilder sb = new StringBuilder();
+		while (singleQuoteIndex != -1) {
 			sb.append(value.substring(lastIndex, singleQuoteIndex));
 			sb.append("''");
 			lastIndex = singleQuoteIndex+1;

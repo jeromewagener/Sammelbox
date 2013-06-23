@@ -1,43 +1,48 @@
 package collector.desktop.gui.image;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.UUID;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.swt.widgets.Display;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import collector.desktop.Collector;
 import collector.desktop.album.AlbumItem.AlbumItemPicture;
+import collector.desktop.database.exceptions.ExceptionHelper;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
 
 public class ImageManipulator {
+	private final static Logger LOGGER = LoggerFactory.getLogger(Collector.class);
+	
 	/** The maximum height of a thumb nail in pixels. Only originals with a higher resolution will be resized */
 	private final static int MAX_HEIGHT_IN_PIXELS = 200;
 	/** The maximum width of a thumb nail in pixels. Only originals with a higher resolution will be resized */
 	private final static int MAX_WIDTH_IN_PIXELS = 200;
-
+	
 	/** This method is used to copy originals, and create thumbnails, within the picture folder
 	 * @param pictureFile the original image
-	 * @param albumName the album to which the image should be assigned 
+	 * @param album the album to which the image should be assigned 
 	 * @return a picture pointing to the location of the original file and thumb nail within the album */	
-	public static AlbumItemPicture adaptAndStoreImageForCollector(File pictureFile, String albumName) {
+	public static AlbumItemPicture adaptAndStoreImageForCollector(File pictureFile, String album) {
 		try {
-			Image originalImage = new Image(Display.getCurrent(), pictureFile.getCanonicalPath());
+			Image thumbnailImage = new Image(Display.getCurrent(), pictureFile.getCanonicalPath());
 			
-			double imageWidth = (double) originalImage.getImageData().width;
-			double imageHeight = (double) originalImage.getImageData().height;
+			double imageWidth = (double) thumbnailImage.getImageData().width;
+			double imageHeight = (double) thumbnailImage.getImageData().height;
 			
-			String identifier = UUID.randomUUID().toString();
+			String identifierForOriginal = UUID.randomUUID().toString();
+			String identifierForThumbnail = UUID.randomUUID().toString();
 			
-			String newFileNameForOriginal = identifier + FileSystemAccessWrapper.getFileExtension(pictureFile.getName());
-			String newFileNameForThumbnail = identifier + ".png";
+			String newFileNameForOriginal = identifierForOriginal + "." + FileSystemAccessWrapper.getFileExtension(pictureFile.getName());
+			String newFileNameForThumbnail = identifierForThumbnail + ".png";
 			
-			String newFileLocationForOriginal = FileSystemAccessWrapper.getFilePathForAlbum(albumName) + File.separatorChar + newFileNameForOriginal;
-			String newFileLocationForThumbnail = FileSystemAccessWrapper.THUMBNAILS_FOLDER + File.separatorChar + newFileNameForThumbnail;
+			String newFileLocationForOriginal = FileSystemAccessWrapper.getFilePathForAlbum(album) + File.separatorChar + newFileNameForOriginal;
+			String newFileLocationForThumbnail = FileSystemAccessWrapper.COLLECTOR_HOME_THUMBNAILS_FOLDER + File.separatorChar + newFileNameForThumbnail;
 			
 			
 			if (imageWidth > MAX_WIDTH_IN_PIXELS || imageHeight > MAX_HEIGHT_IN_PIXELS) {
@@ -54,27 +59,19 @@ public class ImageManipulator {
 					newWidth = (int) (MAX_HEIGHT_IN_PIXELS / imageRatio);
 				}
 
-				originalImage = new Image(Display.getCurrent(), originalImage.getImageData().scaledTo(newWidth, newHeight));			
+				thumbnailImage = new Image(Display.getCurrent(), thumbnailImage.getImageData().scaledTo(newWidth, newHeight));			
 			}
 
 			ImageLoader imageLoader = new ImageLoader();
-			imageLoader.data = new ImageData[] { originalImage.getImageData() };
+			imageLoader.data = new ImageData[] { thumbnailImage.getImageData() };
 			imageLoader.save(newFileLocationForThumbnail, SWT.IMAGE_PNG);
 
-			try {
-				FileSystemAccessWrapper.copyFile(new File(pictureFile.getPath()), new File(newFileLocationForOriginal));
-			} catch (IOException e) {
-				// TODO Log the exception message into the log.
-				e.printStackTrace();
-			}
+			FileSystemAccessWrapper.copyFile(new File(pictureFile.getPath()), new File(newFileLocationForOriginal));
 						
-			return new AlbumItemPicture(newFileNameForThumbnail, newFileNameForOriginal, albumName);
-		} catch (SWTException swte) {
-			// TODO do something if format not supported is.. (YODA) Log the exception message into the log.
-			System.err.println("ImageManipulator.adaptAndStoreImageForCollector() - " + swte.getMessage());
-			return null;
-		} catch (IOException ioe) {
-			// TODO
+			return new AlbumItemPicture(newFileNameForThumbnail, newFileNameForOriginal, album);
+			
+		} catch (Exception ex) {
+			LOGGER.error("An error occured while manipulating an image \n Stacktrace: " + ExceptionHelper.toString(ex));
 		}
 		
 		return null;

@@ -9,13 +9,19 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import collector.desktop.database.DatabaseWrapper;
-import collector.desktop.database.exceptions.FailedDatabaseWrapperOperationException;
+import collector.desktop.database.exceptions.DatabaseWrapperOperationException;
+import collector.desktop.database.exceptions.ExceptionHelper;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
 import collector.desktop.internationalization.DictKeys;
 import collector.desktop.internationalization.Translator;
 
 public class WelcomePageManager {
+	private final static Logger LOGGER = LoggerFactory.getLogger(WelcomePageManager.class);
+	
 	private static WelcomePageManager instance;
 	private Map<String, Integer> albumAndViewsToClicks;
 	private Map<String, Long> albumToLastModified;
@@ -78,9 +84,8 @@ public class WelcomePageManager {
 	public Long getNumberOfItemsInAlbum(String albumName) {
 		try {
 			return DatabaseWrapper.getNumberOfItemsInAlbum(albumName);
-		} catch (FailedDatabaseWrapperOperationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (DatabaseWrapperOperationException ex) {
+			LOGGER.error("Could not retrieve the number of items in the '" + albumName + "' album \n Stacktrace: " + ExceptionHelper.toString(ex));
 			
 			return 0L;
 		}

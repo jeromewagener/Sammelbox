@@ -16,7 +16,7 @@ import collector.desktop.album.FieldType;
 import collector.desktop.album.MetaItemField;
 import collector.desktop.database.ConnectionManager;
 import collector.desktop.database.DatabaseWrapper;
-import collector.desktop.database.exceptions.FailedDatabaseWrapperOperationException;
+import collector.desktop.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
 
 public class RemoveAlbumTests {
@@ -67,7 +67,7 @@ public class RemoveAlbumTests {
 
 		try {
 			DatabaseWrapper.createNewAlbum(albumName, columns, true);
-		}catch (FailedDatabaseWrapperOperationException e) {
+		}catch (DatabaseWrapperOperationException e) {
 			fail("Creation of album"+ albumName + "failed");
 		}	
 	}
@@ -99,14 +99,14 @@ public class RemoveAlbumTests {
 		final String albumName = "Books";
 		try {
 			DatabaseWrapper.removeAlbum(albumName);		
-		} catch (FailedDatabaseWrapperOperationException e) {
+		} catch (DatabaseWrapperOperationException e) {
 			fail ("Could not remove album" + albumName);
 		}
 		try {
 			List<String> albums = DatabaseWrapper.listAllAlbums();
 			Assert.assertFalse(albums.contains(albumName));
 			
-		} catch (FailedDatabaseWrapperOperationException e) {
+		} catch (DatabaseWrapperOperationException e) {
 			fail("Could not  fetch albums");
 		}
 	}

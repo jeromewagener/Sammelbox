@@ -173,6 +173,13 @@ public class DictKeys {
 	public static final String BROWSER_AFTER = "collector.browser.text.AFTER";
 	public static final String BROWSER_ITEM_ADDED = "collector.browser.text.ITEM_ADDED";
 	public static final String BROWSER_ITEM_UPDATED = "collector.browser.text.ITEM_UPDATED";
+	public static final String BROWSER_NO_FIELDS_ADDED_YET = "collector.browser.text.NO_FIELDS_ADDED_YET";
+	public static final String BROWSER_PLEASE_USE_NEW_ALBUM_SIDEPANE = "collector.browser.text.PLEASE_USE_NEW_ALBUM_SIDEPANE";
+	public static final String BROWSER_THIS_IS_A_SAMPLE_TEXT = "collector.browser.text.THIS_IS_A_SAMPLE_TEXT";
+	public static final String BROWSER_CREATING_NEW_ALBUM = "collector.browser.text.CREATING_NEW_ALBUM";
+	public static final String BROWSER_ALBUM_WILL_HANDLE_FOLLOWING_FORMAT = "collector.browser.text.ALBUM_WILL_HANDLE_FOLLOWING_FORMAT";
+	public static final String BROWSER_MODIFYING_ALBUM = "collector.browser.text.MODIFYING_ALBUM";
+	public static final String BROWSER_MODIFY_WARNING = "collector.browser.text.MODIFY_WARNING";
 	
 	/*   Status Bar   */
 	public static final String STATUSBAR_PROGRAM_STARTED = "collector.statusbar.PROGRAM_STARTED";

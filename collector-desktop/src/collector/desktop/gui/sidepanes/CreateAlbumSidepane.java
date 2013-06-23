@@ -21,6 +21,8 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import collector.desktop.Collector;
 import collector.desktop.album.FieldType;
@@ -28,7 +30,8 @@ import collector.desktop.album.MetaItemField;
 import collector.desktop.database.AlbumItemStore;
 import collector.desktop.database.DatabaseWrapper;
 import collector.desktop.database.QueryBuilder;
-import collector.desktop.database.exceptions.FailedDatabaseWrapperOperationException;
+import collector.desktop.database.exceptions.DatabaseWrapperOperationException;
+import collector.desktop.database.exceptions.ExceptionHelper;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
 import collector.desktop.gui.browser.BrowserFacade;
 import collector.desktop.gui.various.ComponentFactory;
@@ -38,7 +41,8 @@ import collector.desktop.internationalization.DictKeys;
 import collector.desktop.internationalization.Translator;
 
 public class CreateAlbumSidepane {
-
+	private final static Logger LOGGER = LoggerFactory.getLogger(CreateAlbumSidepane.class);
+	
 	/** Returns a "create new album" composite. This composite provides the user interface to create a new album. Meaning that an 
 	 * album name can be specified, as well as an undefined number of fields (columns) with user defined types etc..
 	 * @param parentComposite the parent composite
@@ -282,9 +286,9 @@ public class CreateAlbumSidepane {
 								SWT.ICON_INFORMATION).open();
 						return;
 					}
-				} catch (FailedDatabaseWrapperOperationException failedDatabaseWrapperOperationException) {
-					//TODO do smth
-					failedDatabaseWrapperOperationException.printStackTrace();
+				} catch (DatabaseWrapperOperationException ex) {
+					LOGGER.error("A database error occured while checking whether '" + albumName + "' is avialable as album name" +
+							" \n Stacktrace: " + ExceptionHelper.toString(ex));
 				}
 
 				if (!FileSystemAccessWrapper.isNameFileSystemCompliant(albumName)) {
@@ -314,7 +318,7 @@ public class CreateAlbumSidepane {
 
 				try {
 					DatabaseWrapper.createNewAlbum(albumName, metaItemFields, willContainImages);
-				} catch (FailedDatabaseWrapperOperationException failedDatabaseWrapperOperationException) {
+				} catch (DatabaseWrapperOperationException failedDatabaseWrapperOperationException) {
 					ComponentFactory.getMessageBox(
 							parentComposite, 
 							Translator.get(DictKeys.DIALOG_TITLE_ALBUM_CREATE_ERROR), 

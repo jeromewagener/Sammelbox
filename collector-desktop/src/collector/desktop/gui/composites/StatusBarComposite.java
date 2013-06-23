@@ -62,14 +62,16 @@ public class StatusBarComposite {
 	public void writeStatus(String status) {
 		statusLabel.setText(status);
 
-		if (!status.equals(Translator.get(DictKeys.STATUSBAR_PROGRAM_STARTED))) {
+		if (!status.equals(Translator.get(DictKeys.STATUSBAR_PROGRAM_STARTED, 
+				BuildInformation.instance().getVersion(), BuildInformation.instance().getBuildTimeStamp(), BuildInformation.instance().getBuildType()))) {
 			if (timer != null) {
 				Display.getCurrent().timerExec(-1, timer);
 			}
 			
 			timer = new Runnable() {
 				public void run() {
-					writeStatus(Translator.get(DictKeys.STATUSBAR_PROGRAM_STARTED));
+					writeStatus(Translator.get(DictKeys.STATUSBAR_PROGRAM_STARTED, 
+							BuildInformation.instance().getVersion(), BuildInformation.instance().getBuildTimeStamp(), BuildInformation.instance().getBuildType()));
 				}
 			};
 		}

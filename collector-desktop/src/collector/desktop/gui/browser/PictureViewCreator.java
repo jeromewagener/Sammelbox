@@ -2,45 +2,41 @@ package collector.desktop.gui.browser;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import collector.desktop.Collector;
-import collector.desktop.album.AlbumItem;
 import collector.desktop.album.AlbumItem.AlbumItemPicture;
-import collector.desktop.album.FieldType;
-import collector.desktop.album.ItemField;
 import collector.desktop.database.DatabaseWrapper;
-import collector.desktop.database.exceptions.FailedDatabaseWrapperOperationException;
+import collector.desktop.database.exceptions.DatabaseWrapperOperationException;
+import collector.desktop.database.exceptions.ExceptionHelper;
+import collector.desktop.gui.GuiConstants;
 import collector.desktop.gui.composites.StatusBarComposite;
 import collector.desktop.internationalization.DictKeys;
 import collector.desktop.internationalization.Translator;
 
 public class PictureViewCreator {
-	static void showPicture(String pathToPicture, long albumItemId) {
+	private static final Logger LOGGER = LoggerFactory.getLogger(PictureViewCreator.class);
+	
+	static void showPicture(long albumItemId) {
 		StatusBarComposite.getInstance(Collector.getShell()).writeStatus(Translator.get(DictKeys.STATUSBAR_CLICK_TO_RETURN));
 
 		StringBuilder picturePage = new StringBuilder();
-		AlbumItem albumItem;
 		try {
-			albumItem = DatabaseWrapper.fetchAlbumItem(Collector.getSelectedAlbum(), albumItemId);
-				
-			List<AlbumItemPicture> pictures = null;
-			for (ItemField itemField : albumItem.getFields()) {
-				if (itemField.getType().equals(FieldType.Picture)) {
-					pictures = itemField.getValue();			
-					break;
-				}
-			}
-	
+			List<AlbumItemPicture> pictures = DatabaseWrapper.getAlbumItemPictures(Collector.getSelectedAlbum(), albumItemId);
+			
 			String originalPathToPicture = "";
+			if (pictures.size() >= 1) {
+				originalPathToPicture = pictures.get(0).getOriginalPicturePath();
+			}
 	
 			StringBuilder smallPictures = new StringBuilder();
 			if (pictures.size() >= 2) {
 				int counter = 1;
 	
 				for (AlbumItemPicture picture : pictures) {
-					originalPathToPicture = picture.getOriginalPicturePath();
-
 					smallPictures.append(
-							"<a onMouseover='change(\"bigimg\", \"" + picture.getThumbnailPicturePath() + "\")'>" + 
+							"<a onMouseover='change(\"bigimg\", \"" + picture.getOriginalPicturePath() + "\")'>" + 
 									"  <img border=\"1\" " +
 									"       onMouseOver='this.style.cursor=\"pointer\"' " +
 									"       id=\"smallimage" + counter + "\" " +
@@ -63,9 +59,9 @@ public class PictureViewCreator {
 			picturePage.append(
 					"<html>" +
 	                "  <head>" +
-					"      <meta " + BrowserConstants.META_PARAMS + ">" + 
-					"      <link rel=stylesheet href=\"" + BrowserConstants.STYLE_CSS + "\" />" +
-					"      <script src=\"" + BrowserConstants.EFFECTS_JS + "\"></script>" +
+					"      <meta " + GuiConstants.META_PARAMS + ">" + 
+					"      <link rel=stylesheet href=\"" + GuiConstants.STYLE_CSS + "\" />" +
+					"      <script src=\"" + GuiConstants.EFFECTS_JS + "\"></script>" +
 			        "  </head>" +
 			        "  <body>" +
 			        "    <table>" +
@@ -85,9 +81,9 @@ public class PictureViewCreator {
 			        "</html>");
 	
 			Collector.getAlbumItemSWTBrowser().setText(picturePage.toString());
-		} catch (FailedDatabaseWrapperOperationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (DatabaseWrapperOperationException ex) {
+			LOGGER.error("An error occured while fetching the album item #" + albumItemId + " in the album: " + 
+					Collector.getSelectedAlbum() + " \n Stacktrace:" + ExceptionHelper.toString(ex));
 		}
 	}
 }

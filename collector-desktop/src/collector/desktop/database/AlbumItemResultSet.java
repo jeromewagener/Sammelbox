@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import collector.desktop.album.FieldType;
 import collector.desktop.album.MetaItemField;
-import collector.desktop.database.exceptions.FailedDatabaseWrapperOperationException;
+import collector.desktop.database.exceptions.DatabaseWrapperOperationException;
 
 public class AlbumItemResultSet {
 	private ResultSet items;
@@ -26,9 +26,9 @@ public class AlbumItemResultSet {
 	 * Constructor.
 	 * @param connection The jdbc connection used to access the actual database.
 	 * @param sqlStatement The SQL statement to yield the result set. Must be formatted properly.
-	 * @throws FailedDatabaseWrapperOperationException 
+	 * @throws DatabaseWrapperOperationException 
 	 */
-	public AlbumItemResultSet(Connection connection, String sqlStatement) throws FailedDatabaseWrapperOperationException {
+	public AlbumItemResultSet(Connection connection, String sqlStatement) throws DatabaseWrapperOperationException {
 		
 		try {
 			Statement statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
@@ -37,7 +37,7 @@ public class AlbumItemResultSet {
 			this.albumName = metaData.getTableName(1);			
 			this.metaInfoMap = DatabaseWrapper.getAlbumItemMetaMap(albumName);
 		} catch (SQLException sqlException) {
-			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState);
+			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState);
 		}		
 	}	
 	
@@ -48,7 +48,7 @@ public class AlbumItemResultSet {
 	 * @param metaInfoMap A map containing all the metadata of the fields.
 	 * @throws SQLException Exception which will be thrown in case anything went wrong while creating the result set.
 	 */
-	public AlbumItemResultSet(Connection connection, String sqlStatement, Map<Integer, MetaItemField> metaInfoMap) throws FailedDatabaseWrapperOperationException {
+	public AlbumItemResultSet(Connection connection, String sqlStatement, Map<Integer, MetaItemField> metaInfoMap) throws DatabaseWrapperOperationException {
 		this.metaInfoMap = metaInfoMap;
 		try {
 			Statement statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
@@ -56,7 +56,7 @@ public class AlbumItemResultSet {
 			this.metaData = items.getMetaData();
 			this.albumName = metaData.getTableName(1);
 		} catch (SQLException e) {
-			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
+			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
 		}
 	}	
 
@@ -110,18 +110,18 @@ public class AlbumItemResultSet {
 	 * Get the value of the specified field. It is attempted to be cast into the specified type T. 
 	 * @param fieldIndex The index under which the field value is stored.
 	 * @return The value of this field.
-	 * @throws FailedDatabaseWrapperOperationException 
+	 * @throws DatabaseWrapperOperationException 
 	 */
 	@SuppressWarnings("unchecked")
-	public <T> T getFieldValue(int fieldIndex) throws FailedDatabaseWrapperOperationException {
+	public <T> T getFieldValue(int fieldIndex) throws DatabaseWrapperOperationException {
 		FieldType type =  metaInfoMap.get(fieldIndex).getType();
 		Object outValue = null;
 		try {
 			outValue = DatabaseWrapper.fetchFieldItemValue(items, fieldIndex, type, albumName);
 			return (T)outValue;
-		} catch (FailedDatabaseWrapperOperationException e) {
+		} catch (DatabaseWrapperOperationException e) {
 			LOGGER.error("Fetching the field value for the index {} failed", fieldIndex);
-			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
+			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
 		}		
 	}
 

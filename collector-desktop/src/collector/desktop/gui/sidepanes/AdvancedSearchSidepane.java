@@ -5,6 +5,8 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -32,7 +34,8 @@ import collector.desktop.database.DatabaseWrapper;
 import collector.desktop.database.QueryBuilder;
 import collector.desktop.database.QueryBuilder.QueryComponent;
 import collector.desktop.database.QueryBuilder.QueryOperator;
-import collector.desktop.database.exceptions.FailedDatabaseWrapperOperationException;
+import collector.desktop.database.exceptions.DatabaseWrapperOperationException;
+import collector.desktop.database.exceptions.ExceptionHelper;
 import collector.desktop.gui.managers.AlbumViewManager;
 import collector.desktop.gui.tobemoved.MetaItemFieldFilter;
 import collector.desktop.gui.various.ComponentFactory;
@@ -41,7 +44,8 @@ import collector.desktop.internationalization.DictKeys;
 import collector.desktop.internationalization.Translator;
 
 public class AdvancedSearchSidepane {
-
+	private final static Logger LOGGER = LoggerFactory.getLogger(AdvancedSearchSidepane.class);
+	
 	/** Returns an advanced search composite providing the means for easily building and executing SQL queries. The composite is 
 	 * automatically created based on the fields of the specified album.
 	 * @param parentComposite the parent composite
@@ -66,12 +70,10 @@ public class AdvancedSearchSidepane {
 
 		try {
 			// Fill the comboBox
-			fieldToSearchCombo.setData(
-					"validMetaItemFields", MetaItemFieldFilter.getValidMetaItemFields(DatabaseWrapper.getAlbumItemFieldNamesAndTypes(album)));
-			fieldToSearchCombo.setItems(
-					MetaItemFieldFilter.getValidFieldNamesAsStringArray(DatabaseWrapper.getAlbumItemFieldNamesAndTypes(album)));	
-		} catch (FailedDatabaseWrapperOperationException failedDatabaseWrapperOperationException) {
-			// TODO log & do
+			fieldToSearchCombo.setData("validMetaItemFields", MetaItemFieldFilter.getValidMetaItemFields(DatabaseWrapper.getAlbumItemFieldNamesAndTypes(album)));
+			fieldToSearchCombo.setItems(MetaItemFieldFilter.getValidFieldNamesAsStringArray(DatabaseWrapper.getAlbumItemFieldNamesAndTypes(album)));	
+		} catch (DatabaseWrapperOperationException ex) {
+			LOGGER.error("A database related error occured \n Stacktrace: " + ExceptionHelper.toString(ex));
 		}
 		Label searchOperatorLabel = new Label(innerComposite, SWT.NONE);
 		searchOperatorLabel.setText(Translator.get(DictKeys.LABEL_SEARCH_OPERATOR));
@@ -221,8 +223,8 @@ public class AdvancedSearchSidepane {
 			// Fill the comboBox
 			fieldToSortCombo.setData("validMetaItemFields", MetaItemFieldFilter.getValidMetaItemFields(DatabaseWrapper.getAlbumItemFieldNamesAndTypes(album)));
 			fieldToSortCombo.setItems(MetaItemFieldFilter.getValidFieldNamesAsStringArray(DatabaseWrapper.getAlbumItemFieldNamesAndTypes(album)));
-		} catch (FailedDatabaseWrapperOperationException failedDatabaseWrapperOperationException) {
-			// TODO log & do
+		} catch (DatabaseWrapperOperationException ex) {
+			LOGGER.error("A database related error occured \n Stacktrace: " + ExceptionHelper.toString(ex));
 		}
 		
 		final Button sortAscendingButton = new Button(composite, SWT.RADIO);
@@ -367,7 +369,7 @@ public class AdvancedSearchSidepane {
 				}
 			}			
 		} catch (Exception ex) {
-			// TODO log
+			LOGGER.error("A database related error occured \n Stacktrace: " + ExceptionHelper.toString(ex));
 		}
 		
 		return queryComponents;	

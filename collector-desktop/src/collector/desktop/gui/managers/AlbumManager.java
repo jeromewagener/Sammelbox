@@ -4,13 +4,19 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import collector.desktop.database.DatabaseWrapper;
-import collector.desktop.database.exceptions.FailedDatabaseWrapperOperationException;
+import collector.desktop.database.exceptions.DatabaseWrapperOperationException;
+import collector.desktop.database.exceptions.ExceptionHelper;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
 import collector.desktop.interfaces.UIObservable;
 import collector.desktop.interfaces.UIObserver;
 
 public class AlbumManager  implements UIObservable {
+	private final static Logger LOGGER = LoggerFactory.getLogger(AlbumManager.class);
+	
 	private static AlbumManager instance;
 	private static List<String> albums = new LinkedList<String>();
 	private static Collection<UIObserver> uiObservers = new LinkedList<UIObserver>();
@@ -31,9 +37,8 @@ public class AlbumManager  implements UIObservable {
 
 			albums.retainAll(DatabaseWrapper.listAllAlbums());
 
-		} catch (FailedDatabaseWrapperOperationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (DatabaseWrapperOperationException ex) {
+			LOGGER.error("A problem occured while retrieving the list of albums from the database \n Stacktrace: " + ExceptionHelper.toString(ex));
 		}
 	}
 	

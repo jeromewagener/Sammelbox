@@ -35,7 +35,8 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 import collector.desktop.database.DatabaseWrapper;
-import collector.desktop.database.exceptions.FailedDatabaseWrapperOperationException;
+import collector.desktop.database.exceptions.DatabaseWrapperOperationException;
+import collector.desktop.database.exceptions.ExceptionHelper;
 import collector.desktop.gui.managers.AlbumViewManager.AlbumView;
 import collector.desktop.internationalization.Language;
 import collector.desktop.settings.ApplicationSettingsManager.ApplicationSettings;
@@ -44,11 +45,12 @@ public class FileSystemAccessWrapper {
 	public static final String USER_HOME 						= System.getProperty("user.home");
 	public static final String COLLECTOR_HOME 					= System.getProperty("user.home") + File.separatorChar + ".collector";
 	public static final String COLLECTOR_HOME_APPDATA 			= COLLECTOR_HOME + File.separatorChar + "app-data";
-	public static final String THUMBNAILS_FOLDER 				= COLLECTOR_HOME + File.separator + "thumbnails"; 
+	public static final String COLLECTOR_HOME_THUMBNAILS_FOLDER = COLLECTOR_HOME + File.separatorChar + "thumbnails"; 
 	public static final String COLLECTOR_HOME_ALBUM_PICTURES 	= COLLECTOR_HOME + File.separatorChar + "album-pictures";
 	public static final String PLACEHOLDERIMAGE 				= COLLECTOR_HOME_APPDATA + File.separatorChar + "placeholder.png";
 	public static final String PLACEHOLDERIMAGE2 				= COLLECTOR_HOME_APPDATA + File.separatorChar + "placeholder2.png";
 	public static final String LOGO 							= COLLECTOR_HOME_APPDATA + File.separatorChar + "logo.png";
+	public static final String LOGO_SMALL 						= COLLECTOR_HOME_APPDATA + File.separatorChar + "logo-small.png";
 	public static final String DATABASE_NAME					= "collector.db";
 	public static final String DATABASE_TO_RESTORE_NAME			= "collector.restore.db";
 	public static final String DATABASE 						= COLLECTOR_HOME + File.separatorChar + DATABASE_NAME;
@@ -90,11 +92,21 @@ public class FileSystemAccessWrapper {
 
 		if (!albumHomeDirectory.exists()) {
 			if (!albumHomeDirectory.mkdir()) {
-				System.err.println("Cannot create "+COLLECTOR_HOME_ALBUM_PICTURES+" although it seems that it does not exist");
+				System.err.println("Cannot create " + COLLECTOR_HOME_ALBUM_PICTURES + " although it seems that it does not exist");
 				return false;
 			}
 		}
 
+		// Create thumbnail directory containing all thumbnails		
+		File thumbnailsDirectory = new File(COLLECTOR_HOME_THUMBNAILS_FOLDER);
+
+		if (!thumbnailsDirectory.exists()) {
+			if (!thumbnailsDirectory.mkdir()) {
+				System.err.println("Cannot create " + COLLECTOR_HOME_THUMBNAILS_FOLDER + " although it seems that it does not exist");
+				return false;
+			}
+		}
+		
 		// Create the application data directory
 		File appData = new File(COLLECTOR_HOME_APPDATA);
 		if (!appData.exists()) {
@@ -128,6 +140,11 @@ public class FileSystemAccessWrapper {
 			copyResourceToFile("graphics/logo.png", logoPNG);
 		}
 		
+		File logoSmallPNG = new File(LOGO_SMALL);
+		if (!logoSmallPNG.exists() || OVERWRITE_EXISITING_FILES) {		
+			copyResourceToFile("graphics/logo-small.png", logoSmallPNG);
+		}
+		
 		File effectsJS = new File(COLLECTOR_HOME_APPDATA + File.separatorChar + "effects.js");
 		if (!effectsJS.exists() || OVERWRITE_EXISITING_FILES) {		
 			copyResourceToFile("javascript/effects.js", effectsJS);
@@ -151,7 +168,6 @@ public class FileSystemAccessWrapper {
 		return true;
 	}
 
-	// TODO comment
 	public static void copyResourceToFile(String resource, File outputFile) {
 		try {
 			InputStream istream = instance.getClass().getClassLoader().getResourceAsStream(resource);
@@ -189,7 +205,7 @@ public class FileSystemAccessWrapper {
 				}
 			}
 			return true;
-		} catch (FailedDatabaseWrapperOperationException e) {
+		} catch (DatabaseWrapperOperationException e) {
 			LOGGER.error("Updating the album file structure failed.", e);
 			return false;
 		}		
@@ -245,7 +261,6 @@ public class FileSystemAccessWrapper {
 		}
 	}
 
-	// TODO comment
 	public static void copyFile(File sourceLocation , File targetLocation) throws IOException {
 		InputStream in = new FileInputStream(sourceLocation);
 		OutputStream out = new FileOutputStream(targetLocation);
@@ -396,24 +411,43 @@ public class FileSystemAccessWrapper {
 	}
 
 	/**
-	 * Deletes all content within the specified directory.
-	 * @param path The file to the directory which is to be deleted.
-	 * @return
+	 * Deletes the specified file
+	 * @param pathToFile The path to the file which is to be deleted
+	 * @return true if the directory was successfully deleted, false otherwise
 	 */
-	public static boolean recursiveDeleteFSObject(File path) {
-		if( path.exists() ) {
-			if (path.isDirectory()) {
-				File[] files = path.listFiles();
+	public static boolean deleteFile(String pathToFile) {
+		return deleteFile(new File(pathToFile));
+	}
+	
+	/**
+	 * Deletes the specified file
+	 * @param file The file which is to be deleted
+	 * @return true if the directory was successfully deleted, false otherwise
+	 */
+	public static boolean deleteFile(File file) {
+		return file.delete();
+	}
+	
+	/**
+	 * Deletes all content within the specified directory.
+	 * @param directory The file to the directory which is to be deleted.
+	 * @return true if the directory was successfully deleted, false otherwise
+	 */
+	public static boolean deleteDirectoryRecursively(File directory) {
+		if( directory.exists() ) {
+			if (directory.isDirectory()) {
+				File[] files = directory.listFiles();
 				for(int i=0; i<files.length; i++) {
 					if(files[i].isDirectory()) {
-						recursiveDeleteFSObject(files[i]);
+						deleteDirectoryRecursively(files[i]);
 					} else {
 						files[i].delete();
 					}
 				}
 			}
 		}
-		return(path.delete());
+		
+		return(directory.delete());
 	}
 
 	/**
@@ -425,7 +459,7 @@ public class FileSystemAccessWrapper {
 
 		for (int i=0; i<files.length; i++) {
 			if (files[i].isDirectory()) {
-				recursiveDeleteFSObject(files[i]);
+				deleteDirectoryRecursively(files[i]);
 			} else if (!files[i].getName().equals(DATABASE_NAME)){
 				files[i].delete();
 			}
@@ -470,9 +504,8 @@ public class FileSystemAccessWrapper {
 				File currentFile;
 				try {
 					currentFile = files[i].getCanonicalFile();
-				} catch (IOException e) {
-					e.printStackTrace();
-					// TODO log.
+				} catch (IOException ex) {
+					LOGGER.error("An error occured while processing files \n Stacktrace: " + ExceptionHelper.toString(ex));
 					continue;
 				}
 				if (currentFile.getName().matches(fileNameRegex)){

@@ -16,7 +16,7 @@ import collector.desktop.database.AlbumItemResultSet;
 import collector.desktop.database.ConnectionManager;
 import collector.desktop.database.DatabaseIntegrityManager;
 import collector.desktop.database.DatabaseWrapper;
-import collector.desktop.database.exceptions.FailedDatabaseWrapperOperationException;
+import collector.desktop.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
 import collector.desktop.tests.CollectorTestExecuter;
 
@@ -87,7 +87,7 @@ public class QuickSearchTests {
 			}
 
 			assertTrue("Resultset should contain 2 items", counter == 2);
-		} catch (FailedDatabaseWrapperOperationException e) {
+		} catch (DatabaseWrapperOperationException e) {
 			fail("Failed due to internal database error");
 		}
 	}
@@ -120,7 +120,7 @@ public class QuickSearchTests {
 			}
 
 			assertTrue("Resultset should contain 2 items", counter == 2);
-		} catch (FailedDatabaseWrapperOperationException e) {
+		} catch (DatabaseWrapperOperationException e) {
 			fail("Failed due to internal database error");
 		}
 	}
@@ -151,7 +151,7 @@ public class QuickSearchTests {
 			}
 
 			assertTrue("Resultset should contain 1 items", counter == 1);
-		} catch (FailedDatabaseWrapperOperationException e) {
+		} catch (DatabaseWrapperOperationException e) {
 			fail("Failed due to internal database error");
 		}
 	}

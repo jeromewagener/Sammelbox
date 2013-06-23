@@ -14,10 +14,13 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Text;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import collector.desktop.Collector;
 import collector.desktop.database.DatabaseWrapper;
-import collector.desktop.database.exceptions.FailedDatabaseWrapperOperationException;
+import collector.desktop.database.exceptions.DatabaseWrapperOperationException;
+import collector.desktop.database.exceptions.ExceptionHelper;
 import collector.desktop.gui.browser.BrowserFacade;
 import collector.desktop.gui.listeners.QuickSearchModifyListener;
 import collector.desktop.gui.managers.AlbumManager;
@@ -28,7 +31,8 @@ import collector.desktop.internationalization.DictKeys;
 import collector.desktop.internationalization.Translator;
 
 public class QuickControlSidepane {
-
+	private static final Logger LOGGER = LoggerFactory.getLogger(QuickControlSidepane.class);
+	
 	/** Returns a quick control composite (select-album-list, quick-search) used by the GUI 
 	 * @param parentComposite the parent composite
 	 * @return a new quick control composite */
@@ -171,9 +175,9 @@ public class QuickControlSidepane {
 					AlbumViewManager.removeAlbumViews(Collector.getSelectedAlbum());
 					try {
 						DatabaseWrapper.removeAlbum(Collector.getSelectedAlbum());
-					} catch (FailedDatabaseWrapperOperationException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
+					} catch (DatabaseWrapperOperationException ex) {
+						LOGGER.error("A database error occured while removing the following album: '" + Collector.getSelectedAlbum() + "'" +
+								" \n Stacktrace: " + ExceptionHelper.toString(ex));
 					}
 					Collector.refreshSWTAlbumList();
 					BrowserFacade.loadHtmlFromInputStream(Collector.getShell().getClass().getClassLoader().getResourceAsStream("htmlfiles/album_deleted.html"));

@@ -7,11 +7,15 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import collector.desktop.Collector;
 import collector.desktop.album.AlbumItem;
 import collector.desktop.album.FieldType;
 import collector.desktop.album.ItemField;
 import collector.desktop.album.OptionType;
 import collector.desktop.album.AlbumItem.AlbumItemPicture;
+import collector.desktop.database.DatabaseWrapper;
+import collector.desktop.database.exceptions.DatabaseWrapperOperationException;
+import collector.desktop.database.exceptions.ExceptionHelper;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
 import collector.desktop.internationalization.DictKeys;
 import collector.desktop.internationalization.Translator;
@@ -44,6 +48,10 @@ public class ItemCreator {
 		addAlbumItemTableRow(albumItem, htmlDataColumnContent, htmlPictureColumnContent, albumItemTableRowHtml, true);
 	}
 	
+	private static String getThumbnailForFirstPicture(AlbumItem albumItem) {
+		return ((albumItem.getFirstPicture() != null) ? albumItem.getFirstPicture().getThumbnailPicturePath() : FileSystemAccessWrapper.PLACEHOLDERIMAGE);
+	}
+	
 	static void addAlbumItemDivContainer(AlbumItem albumItem, StringBuilder htmlBuilder) {
 		htmlBuilder.append(
 				"<div id=\"imageId" + albumItem.getItemID() + "\" " +
@@ -51,7 +59,7 @@ public class ItemCreator {
 				"    onMouseOver=\"parent.location.href=&quot;show:///details=" + albumItem.getItemID() + "&quot;\" " +
 				"    onClick=\"parent.location.href=&quot;show:///detailsComposite=" + albumItem.getItemID() + "&quot;\">" +
                 "  <div class=\"innerPictureContainer\">" +
-		        "    <img src=\"" + albumItem.getFirstPicture().getThumbnailPicturePath() + "\">" +
+		        "    <img src=\"" + getThumbnailForFirstPicture(albumItem) + "\">" +
                 "  </div>" +
                 "</div>");
 	}
@@ -60,7 +68,7 @@ public class ItemCreator {
 			StringBuilder albumItemTableRowHtml, boolean showUpdateAndRemoveButtons) {
 		
 		// the id of the current album item
-		long id = -1;
+		long id = -1;	
 		
 		for (ItemField fieldItem : albumItem.getFields()) {			
 			if (fieldItem.getType().equals(FieldType.UUID)) {
@@ -72,23 +80,6 @@ public class ItemCreator {
 				} else {
 					LOGGER.warn("Found a field type that wasn't expected: " + fieldItem.getName());
 				}
-			} else if (fieldItem.getType().equals(FieldType.Picture)) {
-				List<AlbumItemPicture> pictures = fieldItem.getValue();
-				htmlPictureColumnContent.append(
-						"<table border=0>" +
-						"  <tr>" +
-						"    <td align=center width=200 height=200>" +
-				               getMainPictureHtml(id, pictures) +
-						"    </td>" +
-						"  </tr>" +
-						"  <tr>" +
-						"    <td>" +
-				        "      <div style=\"max-width:200px;\">" +
-						         getAlternativePicturesHtml(id, pictures) +
-						"      </div>" + 
-						"    </td>" +
-						"  </tr>" + 
-						"</table>");
 			} else if (fieldItem.getType().equals(FieldType.Option)) {
 				if (fieldItem.getValue() == OptionType.YES) {
 					htmlDataColumnContent.append(getFieldNameAndValueLine(fieldItem.getName(), Translator.get(DictKeys.BROWSER_YES)));
@@ -106,7 +97,30 @@ public class ItemCreator {
 			} else {
 				htmlDataColumnContent.append(getFieldNameAndValueLine(fieldItem.getName(), Utilities.escapeHtmlString(fieldItem.getValue().toString())));
 			}
-		}	
+		}
+				
+		try {
+			if (!albumItem.getPictures().isEmpty() || DatabaseWrapper.albumHasPictureField(Collector.getSelectedAlbum())) {
+				List<AlbumItemPicture> pictures = DatabaseWrapper.getAlbumItemPictures(Collector.getSelectedAlbum(), id);
+				htmlPictureColumnContent.append(
+						"<table border=0>" +
+						"  <tr>" +
+						"    <td align=center width=200 height=200>" +
+								getMainPictureHtml(id, pictures) +
+						"    </td>" +
+						"  </tr>" +
+						"  <tr>" +
+						"    <td>" +
+						"      <div style=\"max-width:200px;\">" +
+								getAlternativePicturesHtml(id, pictures) +
+						"      </div>" + 
+						"    </td>" +
+						"  </tr>" + 
+						"</table>");
+			}
+		} catch (DatabaseWrapperOperationException ex) {
+			LOGGER.error("An issue regarding the album item picture occured \n Stacktrace: " + ExceptionHelper.toString(ex));
+		}
 
 		if (showUpdateAndRemoveButtons) {
 			htmlDataColumnContent.append(getUpdateRemoveButtonsHtml(id));

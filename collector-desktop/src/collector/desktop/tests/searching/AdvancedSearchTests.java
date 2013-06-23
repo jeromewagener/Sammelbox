@@ -19,7 +19,7 @@ import collector.desktop.database.DatabaseWrapper;
 import collector.desktop.database.QueryBuilder;
 import collector.desktop.database.QueryBuilder.QueryComponent;
 import collector.desktop.database.QueryBuilder.QueryOperator;
-import collector.desktop.database.exceptions.FailedDatabaseWrapperOperationException;
+import collector.desktop.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
 import collector.desktop.tests.CollectorTestExecuter;
 
@@ -88,7 +88,7 @@ public class AdvancedSearchTests {
 			}
 
 			assertTrue("Resultset should contain 1 item", counter == 1);
-		} catch (FailedDatabaseWrapperOperationException e) {
+		} catch (DatabaseWrapperOperationException e) {
 			fail("testSearchForTitleInDVDsUsingSQL failed");
 		}
 	}
@@ -117,7 +117,7 @@ public class AdvancedSearchTests {
 			}
 
 			assertTrue("Resultset should contain 1 item", counter == 1);
-		} catch (FailedDatabaseWrapperOperationException e) {
+		} catch (DatabaseWrapperOperationException e) {
 			fail("testSearchForTitleAndActorsInDVDsUsingSQL failed");
 		}
 	}	
@@ -149,7 +149,7 @@ public class AdvancedSearchTests {
 			}
 
 			assertTrue("Resultset should contain 1 item", counter == 1);
-		} catch (FailedDatabaseWrapperOperationException e) {
+		} catch (DatabaseWrapperOperationException e) {
 			fail("testSearchForTitleInDVDsUsingQueryBuilder failed");
 		}
 	}
@@ -182,7 +182,7 @@ public class AdvancedSearchTests {
 			}
 
 			assertTrue("Resultset should contain 1 item", counter == 1);
-		} catch (FailedDatabaseWrapperOperationException e) {
+		} catch (DatabaseWrapperOperationException e) {
 			fail("testSearchForTitleAndAuthorInDVDsUsingQueryBuilder failed");
 		}
 	}
@@ -217,7 +217,7 @@ public class AdvancedSearchTests {
 			}
 
 			assertTrue("Resultset should contain 3 item", counter == 3);
-		} catch (FailedDatabaseWrapperOperationException e) {
+		} catch (DatabaseWrapperOperationException e) {
 			fail("testSearchForTitlesInDVDsUsingQueryBuilder failed");
 		}
 	}
@@ -249,7 +249,7 @@ public class AdvancedSearchTests {
 			}
 
 			assertTrue("Resultset should contain 1 item", counter == 1);
-		} catch (FailedDatabaseWrapperOperationException e) {
+		} catch (DatabaseWrapperOperationException e) {
 			fail("testSearchByLikeForAuthorInBooksUsingQueryBuilder failed");
 		}
 
@@ -286,7 +286,7 @@ public class AdvancedSearchTests {
 			}
 
 			assertTrue("Resultset should contain 3 item", counter == 3);
-		} catch (FailedDatabaseWrapperOperationException e) {
+		} catch (DatabaseWrapperOperationException e) {
 			fail("testSearchByLikeForTitlesInBooksUsingQueryBuilder failed");
 		}
 
@@ -312,7 +312,7 @@ public class AdvancedSearchTests {
 			}
 
 			assertTrue("Resultset should contain 5 items", counter == 5);
-		} catch (FailedDatabaseWrapperOperationException e) {
+		} catch (DatabaseWrapperOperationException e) {
 			fail("testSearchForHighPriceBooksUsingBiggerThan failed");
 		}
 	}
@@ -337,7 +337,7 @@ public class AdvancedSearchTests {
 			}
 
 			assertTrue("Resultset should contain 7 items", counter == 7);
-		} catch (FailedDatabaseWrapperOperationException e) {
+		} catch (DatabaseWrapperOperationException e) {
 			fail("testSearchForHighPriceBooksUsingBiggerThanOrEqual failed");
 		}
 	}
@@ -362,7 +362,7 @@ public class AdvancedSearchTests {
 			}
 
 			assertTrue("Resultset should contain 0 item", counter == 0);
-		} catch (FailedDatabaseWrapperOperationException e) {
+		} catch (DatabaseWrapperOperationException e) {
 			fail("testSearchArtistInEmptyMusicAlbumUsingQueryBuilder failed");
 		}
 	}

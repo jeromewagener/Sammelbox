@@ -3,13 +3,19 @@ package collector.desktop.gui.managers;
 import java.util.Collection;
 import java.util.LinkedList;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import collector.desktop.database.DatabaseWrapper;
-import collector.desktop.database.exceptions.FailedDatabaseWrapperOperationException;
+import collector.desktop.database.exceptions.DatabaseWrapperOperationException;
+import collector.desktop.database.exceptions.ExceptionHelper;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
 import collector.desktop.interfaces.UIObservable;
 import collector.desktop.interfaces.UIObserver;
 
 public class AlbumViewManager implements UIObservable {
+	private final static Logger LOGGER = LoggerFactory.getLogger(AlbumViewManager.class);
+	
 	private static AlbumViewManager instance = new AlbumViewManager();
 	private static Collection<AlbumView> albumViews = new LinkedList<AlbumView>();
 	private static Collection<UIObserver> uiObservers = new LinkedList<UIObserver>();
@@ -81,9 +87,8 @@ public class AlbumViewManager implements UIObservable {
 				if (DatabaseWrapper.listAllAlbums().contains(albumView.getAlbum())) {
 					validAlbumViews.add(albumView);
 				}
-			} catch (FailedDatabaseWrapperOperationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			} catch (DatabaseWrapperOperationException ex) {
+				LOGGER.error("An error occured while retrieving the list of albums from the database \n Stacktrace: " + ExceptionHelper.toString(ex));
 			}
 		}
 		

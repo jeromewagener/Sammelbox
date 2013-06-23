@@ -5,16 +5,21 @@ import java.io.InputStream;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.widgets.Display;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import collector.desktop.Collector;
 import collector.desktop.album.AlbumItem;
 import collector.desktop.database.AlbumItemResultSet;
 import collector.desktop.database.AlbumItemStore;
 import collector.desktop.database.DatabaseWrapper;
-import collector.desktop.database.exceptions.FailedDatabaseWrapperOperationException;
+import collector.desktop.database.exceptions.DatabaseWrapperOperationException;
+import collector.desktop.database.exceptions.ExceptionHelper;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
 
 public class Utilities {
+	private final static Logger LOGGER = LoggerFactory.getLogger(Utilities.class);
+	
 	/** The anchor to which a jump is performed as soon as the page is fully loaded. 
 	 * This field is used via the set and get methods by the browser progress listener */
 	private static String futureJumpAnchor = null;
@@ -34,9 +39,9 @@ public class Utilities {
 	static void performBrowserQueryAndShow(Browser browser, String sqlQuery) {				
 		try {
 			AlbumItemStore.reinitializeStore(DatabaseWrapper.executeSQLQuery(sqlQuery));
-		} catch (FailedDatabaseWrapperOperationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (DatabaseWrapperOperationException ex) {
+			LOGGER.error("An error occured while reinitializing the album item store using the following SQL query (" + sqlQuery + ") " +
+					"\n Stacktrace:" + ExceptionHelper.toString(ex));
 		}
 		showAlbum(browser);
 	}
@@ -48,9 +53,8 @@ public class Utilities {
 	static void showResultSet(Browser browser, AlbumItemResultSet albumItemResultSet) {
 		try {
 			AlbumItemStore.reinitializeStore(albumItemResultSet);
-		} catch (FailedDatabaseWrapperOperationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (DatabaseWrapperOperationException ex) {
+			LOGGER.error("Could not reinitialize album item store \n Stacktrace: " + ExceptionHelper.toString(ex));
 		}
 		showAlbum(browser);
 	}

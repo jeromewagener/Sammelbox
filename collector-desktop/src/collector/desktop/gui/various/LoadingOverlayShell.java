@@ -11,6 +11,8 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Shell;
 
+import collector.desktop.internationalization.Translator;
+
 
 public class LoadingOverlayShell {
 
@@ -19,7 +21,7 @@ public class LoadingOverlayShell {
 	private Shell parent = null;
 	private Font textFont = null;
 	private Color textColor = null;
-	private String displayedText = "Loading ..."; // TODO move into dict
+	private String displayedText = Translator.toBeTranslated("Loading ...");
 	private boolean done = false;
 	private boolean closeParentWhenDone = false;
 	

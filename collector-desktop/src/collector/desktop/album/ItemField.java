@@ -2,10 +2,7 @@ package collector.desktop.album;
 
 import java.sql.Date;
 import java.sql.Time;
-import java.util.List;
 import java.util.UUID;
-
-import collector.desktop.album.AlbumItem.AlbumItemPicture;
 
 public class ItemField extends MetaItemField {
 	protected Object value; 
@@ -125,23 +122,9 @@ public class ItemField extends MetaItemField {
 		case StarRating:
 			return value instanceof StarRating;
 
-		case Picture:
-			if (value instanceof List<?>) {
-				// TODO verify this
-				// Type information about the generic type of the list is apparently lost here,
-				// therefore not specified and related warnings suppressed.
-				@SuppressWarnings("rawtypes")
-				List pictures = (List) value;
-				if (!pictures.isEmpty()) {
-					return pictures.get(0) instanceof AlbumItemPicture;
-				}
-				return true; // TODO we cant be sure, cant we?
-			} else {
-				return false;	
-			}
-
 		case UUID:
 			return (value instanceof UUID);
+			
 		default:
 			return (value instanceof String);
 		}
@@ -150,6 +133,7 @@ public class ItemField extends MetaItemField {
 	
 	@Override
 	public String toString() {
-		return getName()+":"+getValue()+":"+getType()+":"+ ((isQuickSearchable()) ? " is quicksearchable" : " is not quicksearchable");
+		return getName() + ":" + getValue() + ":" + getType() + ":" + 
+				(isQuickSearchable() ? " is quicksearchable" : " is not quicksearchable");
 	}
 }

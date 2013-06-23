@@ -23,6 +23,8 @@ import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import collector.desktop.Collector;
 import collector.desktop.album.AlbumItem;
@@ -32,7 +34,8 @@ import collector.desktop.album.MetaItemField;
 import collector.desktop.album.OptionType;
 import collector.desktop.album.StarRating;
 import collector.desktop.database.DatabaseWrapper;
-import collector.desktop.database.exceptions.FailedDatabaseWrapperOperationException;
+import collector.desktop.database.exceptions.DatabaseWrapperOperationException;
+import collector.desktop.database.exceptions.ExceptionHelper;
 import collector.desktop.gui.browser.BrowserFacade;
 import collector.desktop.gui.image.ImageDropAndManagementComposite;
 import collector.desktop.gui.managers.WelcomePageManager;
@@ -42,7 +45,7 @@ import collector.desktop.internationalization.DictKeys;
 import collector.desktop.internationalization.Translator;
 
 public class BasicAlbumItemSidepane {
-
+	private static final Logger LOGGER = LoggerFactory.getLogger(BasicAlbumItemSidepane.class);
 	private static final int BASIC_ALBUM_SIDEPANE_WIDTH_IN_PIXELS = 200;
 
 	/** Returns a "basic album item" composite. This composite provides the fields (field names and value input fields)
@@ -86,20 +89,21 @@ public class BasicAlbumItemSidepane {
 		AlbumItem albumItem = null;
 		java.util.List<MetaItemField> metaItemFields = new ArrayList<MetaItemField>();
 		
+		boolean addPictureComposite = false;
 		try {
 			// if data should be loaded, it must be fetched from the database
 			if (loadDataIntoFields) {
 				albumItem = DatabaseWrapper.fetchAlbumItem(album, albumItemId);
 			}	
 
-			// Fetch the field names and types from the database
+			// fetch the field names and types from the database
 			metaItemFields = DatabaseWrapper.getAlbumItemFieldNamesAndTypes(album);
-		} catch(FailedDatabaseWrapperOperationException failedDatabaseWrapperOperationException) {
-			// TODO log
+			
+			// if the album contains pictures, show the picture composite
+			addPictureComposite = DatabaseWrapper.albumHasPictureField(album);
+		} catch(DatabaseWrapperOperationException ex) {
+			LOGGER.error("A database related error occured \n Stacktrace: " + ExceptionHelper.toString(ex));
 		}
-
-		boolean addPictureComposite = false;
-		String pictureFieldName = "";
 
 		for (MetaItemField metaItem : metaItemFields) {
 			String fieldName = metaItem.getName();
@@ -116,12 +120,6 @@ public class BasicAlbumItemSidepane {
 				break;
 			case UUID:
 				// not shown
-				break;
-			case Picture:
-				addPictureComposite = true;
-
-				pictureFieldName = metaItem.getName();
-
 				break;
 			case Text: 
 				ComponentFactory.getSmallBoldItalicLabel(basicAlbumItemComposite, fieldName + ":");
@@ -364,15 +362,22 @@ public class BasicAlbumItemSidepane {
 		}
 
 		if (addPictureComposite) {
-			if (loadDataIntoFields) {
-				List<AlbumItemPicture> pictures = albumItem.getPictures();				
-				ImageDropAndManagementComposite imageDropAndManagementComposite = new ImageDropAndManagementComposite(basicAlbumItemComposite, pictures);
-				imageDropAndManagementComposite.setData("FieldType", FieldType.Picture);
-				imageDropAndManagementComposite.setData("FieldName", pictureFieldName);
-			} else {
-				ImageDropAndManagementComposite imageDropAndManagementComposite = new ImageDropAndManagementComposite(basicAlbumItemComposite);					
-				imageDropAndManagementComposite.setData("FieldType", FieldType.Picture);
-				imageDropAndManagementComposite.setData("FieldName", pictureFieldName);
+			try {
+				ImageDropAndManagementComposite imageDropAndManagementComposite;
+				List<AlbumItemPicture> pictures;
+				
+				if (loadDataIntoFields) {
+					pictures = DatabaseWrapper.getAlbumItemPictures(Collector.getSelectedAlbum(), albumItemId);
+					imageDropAndManagementComposite = new ImageDropAndManagementComposite(basicAlbumItemComposite, pictures);
+				} else {
+					imageDropAndManagementComposite = new ImageDropAndManagementComposite(basicAlbumItemComposite);					
+				}
+				
+				imageDropAndManagementComposite.setData(AlbumItemPicture.ALBUM_ITEM_PICTURE, AlbumItemPicture.ALBUM_ITEM_PICTURE);
+				
+			} catch (DatabaseWrapperOperationException ex) {
+				LOGGER.error("An error occured while fetching the images for the album item #'" + albumItemId + 
+						"' from the album '" + Collector.getSelectedAlbum() + "' \n Stacktrace: " + ExceptionHelper.toString(ex));
 			}
 		}
 
@@ -396,11 +401,16 @@ public class BasicAlbumItemSidepane {
 
 					return;
 				}
+				
 				AlbumItem albumItem = new AlbumItem(Collector.getSelectedAlbum());
-
-				for (Control control : composite.getChildren()) {
+				
+				for (Control control : composite.getChildren()) {					
 					FieldType fieldType = null;
-					if ((fieldType = (FieldType) control.getData("FieldType")) != null) {
+					if (control.getData(AlbumItemPicture.ALBUM_ITEM_PICTURE) != null) {
+						ImageDropAndManagementComposite imageDropAndManagementComposite = (ImageDropAndManagementComposite) control;
+
+						albumItem.setPictures(imageDropAndManagementComposite.getAllPictures());
+					} else if ((fieldType = (FieldType) control.getData("FieldType")) != null) {
 						if (fieldType.equals(FieldType.Text)) {
 							Text text = (Text) control;
 
@@ -449,13 +459,6 @@ public class BasicAlbumItemSidepane {
 									(String) dateTime.getData("FieldName"),
 									(FieldType) dateTime.getData("FieldType"),
 									new Date(calendar.getTimeInMillis()));
-						} else if (fieldType.equals(FieldType.Picture)) {
-							ImageDropAndManagementComposite imageDropAndManagementComposite = (ImageDropAndManagementComposite) control;
-
-							albumItem.addField(
-									(String) imageDropAndManagementComposite.getData("FieldName"),
-									(FieldType) imageDropAndManagementComposite.getData("FieldType"),
-									imageDropAndManagementComposite.getAllPictures());
 						} else if (fieldType.equals(FieldType.StarRating)) {							
 							Combo combo = (Combo) control;
 
@@ -496,26 +499,32 @@ public class BasicAlbumItemSidepane {
 									}
 								}
 							}
+						} else if (control instanceof ImageDropAndManagementComposite) {
+ 							ImageDropAndManagementComposite imageDropAndManagementComposite = (ImageDropAndManagementComposite) control;
+ 
+ 							albumItem.setPictures(imageDropAndManagementComposite.getAllPictures());
 						}
 					}
 				}
-
+			
 				try {
-				// Update Database and Browser
-				if (isUpdateAlbumItemComposite) {
-					albumItem.addField("id", FieldType.ID, albumItemId);
-
-					DatabaseWrapper.updateAlbumItem(albumItem);
-					BrowserFacade.generatAlbumItemUpdatedPage(albumItemId);
-				} else {			
-					BrowserFacade.generateAlbumItemAddedPage(DatabaseWrapper.addNewAlbumItem(albumItem, false, true));
-				}
-
-				Collector.changeRightCompositeTo(PanelType.Empty, EmptySidepane.build(Collector.getThreePanelComposite()));
-				WelcomePageManager.getInstance().updateLastModifiedWithCurrentDate(Collector.getSelectedAlbum());
-				} catch (FailedDatabaseWrapperOperationException failedDatabaseWrapperOperationException) {
-					// TODO do smth
-					failedDatabaseWrapperOperationException.printStackTrace();
+					if (isUpdateAlbumItemComposite) {
+						albumItem.addField("id", FieldType.ID, albumItemId);
+						
+						DatabaseWrapper.updateAlbumItem(albumItem);
+						BrowserFacade.generateAlbumItemAddedPage(albumItemId);
+					} else {						
+						// Create album item
+						BrowserFacade.generateAlbumItemAddedPage(
+								DatabaseWrapper.addNewAlbumItem(albumItem, true)
+						);
+					}
+					
+					// Update GUI
+					Collector.changeRightCompositeTo(PanelType.Empty, EmptySidepane.build(Collector.getThreePanelComposite()));
+					WelcomePageManager.getInstance().updateLastModifiedWithCurrentDate(Collector.getSelectedAlbum());
+				} catch (DatabaseWrapperOperationException ex) {
+					LOGGER.error("A database related error occured \n " + ExceptionHelper.toString(ex));
 				}
 			}
 		};

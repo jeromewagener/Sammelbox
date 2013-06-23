@@ -1,5 +1,6 @@
 package collector.desktop.album;
 
+import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
@@ -9,13 +10,17 @@ import org.slf4j.LoggerFactory;
 
 import collector.desktop.database.DatabaseStringUtilities;
 import collector.desktop.database.DatabaseWrapper;
-import collector.desktop.database.exceptions.FailedDatabaseWrapperOperationException;
+import collector.desktop.database.exceptions.DatabaseWrapperOperationException;
+import collector.desktop.filesystem.FileSystemAccessWrapper;
 
 public class AlbumItem {
+	private final static Logger LOGGER = LoggerFactory.getLogger(AlbumItem.class);
+	
+	protected long itemId = -1;
 	protected String albumName = "";
 	protected List<ItemField> fields;
+	protected List<AlbumItemPicture> albumItemPictures;
 	protected UUID contentVersion;
-	private final static Logger logger = LoggerFactory.getLogger(AlbumItem.class);
 	
 	/**
 	 * Constructor
@@ -30,10 +35,18 @@ public class AlbumItem {
 	 * Constructor
 	 * @param albumName The name of the album this item belongs to
 	 * @param itemFields The item fields with which this album item should be initialized
+	 * @throws DatabaseWrapperOperationException 
 	 */
-	public AlbumItem(String albumName, List<ItemField> itemFields) {
+	public AlbumItem(String albumName, List<ItemField> itemFields) throws DatabaseWrapperOperationException {
 		this.albumName = albumName;
 		fields = itemFields;
+		
+		for (ItemField itemField : itemFields) {
+			if (itemField.getName().equals(DatabaseWrapper.ID_COLUMN_NAME)) {
+				itemId = (Long) itemField.getValue();
+				break;
+			}
+		}
 	}
 	
 	/**
@@ -242,7 +255,7 @@ public class AlbumItem {
 	public boolean isValid() {
 		for (ItemField field : fields) {
 			if (!field.isValid()) {
-				logger.error("{}  is not valid!", field);
+				LOGGER.error("{}  is not valid!", field);
 				return false;
 			}
 		}
@@ -274,40 +287,49 @@ public class AlbumItem {
 		this.contentVersion = contentVersion;
 	}
 	
-	/** Returns the list of pictures, associated with the album item
+	/** Loads the pictures associated with this album item from the database.*/
+	public void loadPicturesFromDatabase() {
+		try {
+			setPictures(DatabaseWrapper.getAlbumItemPictures(albumName, itemId));
+		} catch (DatabaseWrapperOperationException e) {
+			LOGGER.error("Couldn't load album item pictures for album " + albumName + " with id " + itemId + "\n" + 
+							" Stacktrace: " +  e.getMessage());
+		}
+	}
+	
+	public void setPictures(List<AlbumItemPicture> pictures) {
+		this.albumItemPictures = pictures;
+	}
+	
+	/** Returns the list of pictures associated with the album item
 	 * @return the list of pictures associated with the album item, or null if pictures are not supported by the album
 	 * */
-	@SuppressWarnings("unchecked")
 	public List<AlbumItemPicture> getPictures() {
-		try {
-			if (DatabaseWrapper.albumHasPictureField(this.getAlbumName())) {
-				return ((List<AlbumItemPicture>) this.getField(FieldType.Picture));
-			}
-		} catch(FailedDatabaseWrapperOperationException failedDatabaseWrapperOperationException) {
-			// TODO log me
+		if (albumItemPictures == null) {
+			loadPicturesFromDatabase();
 		}
-
-		return null;
+		
+		return albumItemPictures;
 	}
 	
 	/** Returns the first picture associated with the album item 
 	 * @return the first picture associated with the album item, or null if pictures are not supported by the album
 	 * */
-	@SuppressWarnings("unchecked")
 	public AlbumItemPicture getFirstPicture() {
-		try {
-			if (DatabaseWrapper.albumHasPictureField(this.getAlbumName())) {
-				return ((List<AlbumItemPicture>) this.getField(FieldType.Picture)).get(0);
-			}
-		} catch(FailedDatabaseWrapperOperationException failedDatabaseWrapperOperationException) {
-			// TODO log me
+		if (albumItemPictures == null) {
+			loadPicturesFromDatabase();
 		}
-
-		return null;
+		
+		if (!albumItemPictures.isEmpty()) {
+			return albumItemPictures.get(0);
+		} else {
+			return null;
+		}
 	}
 	
-	//TODO: comment
 	public static class AlbumItemPicture {
+		public static final String ALBUM_ITEM_PICTURE = "ALBUM_ITEM_PICTURE";
+		
 		private long pictureID;
 		/** Is always a uuid.extension e.g. 8bdb7e3f-c66b-4df6-9640-95642c4d823b_1348734436938.png */
 		private String thumbnailPictureName;
@@ -316,8 +338,8 @@ public class AlbumItem {
 		private String albumName;
 		private long albumItemID;
 					
-		/** Creates an initially unassigned picture object for an album ! */
-		public AlbumItemPicture(String thumbnailPictureName, String originalPictureName, String albumName) {
+		/** Creates an initially unassigned picture object for an album */
+		public AlbumItemPicture(String thumbnailPictureName, String originalPictureName) {
 			this.pictureID = -1;
 			this.thumbnailPictureName = thumbnailPictureName;
 			this.originalPictureName = originalPictureName;
@@ -325,13 +347,34 @@ public class AlbumItem {
 			this.albumItemID = -1;
 		}
 		
+		/** Creates an initially unassigned picture object for an album */
+		public AlbumItemPicture(String thumbnailPictureName, String originalPictureName, String albumName) {
+			this.pictureID = -1;
+			this.thumbnailPictureName = thumbnailPictureName;
+			this.originalPictureName = originalPictureName;
+			this.albumName = albumName;
+			this.albumItemID = -1;
+		}
+		
+		/** Creates an initially unassigned picture object for an album */
+		public AlbumItemPicture(long pictureID, String thumbnailPictureName, String originalPictureName, String albumName, long albumItemID) {
+			this.pictureID = pictureID;
+			this.thumbnailPictureName = thumbnailPictureName;
+			this.originalPictureName = originalPictureName;
+			this.albumName = albumName;
+			this.albumItemID = albumItemID;
+		}
+		
+		/** Returns the picture ID which cannot be set manually. It stays at -1 until it is persisted. 
+		 * Only after it is reloaded from the database, the value will be different to -1 
+		 * @return the database ID, or -1 if not yet stored/reloaded from the database */
 		public long getPictureID() {
 			return pictureID;
-		}
-
+		}	
+		
 		public void setPictureID(long pictureID) {
 			this.pictureID = pictureID;
-		}		
+		}	
 		
 		public void setThumbnailPictureName(String thumbnailPictureName) {
 			this.thumbnailPictureName = thumbnailPictureName;
@@ -353,6 +396,7 @@ public class AlbumItem {
 			return albumName;
 		}
 
+		/** If not set, the album name is automatically initialized when the album item is persisted */
 		public void setAlbumName(String albumName) {
 			this.albumName = albumName;
 		}
@@ -361,18 +405,19 @@ public class AlbumItem {
 			return albumItemID;
 		}
 
+		/** If not set, the album item id is automatically initialized when the album item is persisted */
 		public void setAlbumItemID(long albumItemID) {
 			this.albumItemID = albumItemID;
 		}
 		
 		public String getThumbnailPicturePath() {
-			//TODO: implement getter path to thumbnail file
-			return "";
+			return FileSystemAccessWrapper.COLLECTOR_HOME_THUMBNAILS_FOLDER + 
+					File.separatorChar + getThumbnailPictureName();
 		}
 		
 		public String getOriginalPicturePath() {
-			//TODO: implement getter path to thumbnail file
-			return "";
+			return FileSystemAccessWrapper.COLLECTOR_HOME_ALBUM_PICTURES + 
+					File.separatorChar + albumName + File.separatorChar + getOriginalPictureName();
 		}
 	}
 }

@@ -30,7 +30,8 @@ import collector.desktop.album.FieldType;
 import collector.desktop.album.MetaItemField;
 import collector.desktop.database.AlbumItemStore;
 import collector.desktop.database.DatabaseWrapper;
-import collector.desktop.database.exceptions.FailedDatabaseWrapperOperationException;
+import collector.desktop.database.exceptions.DatabaseWrapperOperationException;
+import collector.desktop.database.exceptions.ExceptionHelper;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
 import collector.desktop.gui.browser.BrowserFacade;
 import collector.desktop.gui.tobemoved.MetaItemFieldFilter;
@@ -85,13 +86,12 @@ public class AlterAlbumSidepane {
 		final Button yesButtonForIncludingImages = new Button(composite, SWT.RADIO);
 		final Button noButtonForIncludingImages = new Button(composite, SWT.RADIO);
 		yesButtonForIncludingImages.setText(Translator.get(DictKeys.BUTTON_YES));
+		noButtonForIncludingImages.setText(Translator.get(DictKeys.BUTTON_NO));
 		try {
 			yesButtonForIncludingImages.setSelection(DatabaseWrapper.albumHasPictureField(album));
-			noButtonForIncludingImages.setText(Translator.get(DictKeys.BUTTON_NO));
 			noButtonForIncludingImages.setSelection(!DatabaseWrapper.albumHasPictureField(album));
-		} catch (FailedDatabaseWrapperOperationException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+		} catch (DatabaseWrapperOperationException ex) {
+			LOGGER.error("Couldn't determine whether the album contains pictures or not. \n Stacktrace: " + ExceptionHelper.toString(ex));
 		}
 		
 		Label innerSeperator = new Label(innerComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
@@ -152,9 +152,8 @@ public class AlterAlbumSidepane {
 							BrowserFacade.addModificationToAlterationList(Translator.toBeTranslated("Field '" + metaItemField.getName() + "' has been moved up"));
 							AlterAlbumSidepane.updateAlterAlbumPage(yesButtonForIncludingImages, albumFieldNamesAndTypesTable);
 						}
-					} catch (FailedDatabaseWrapperOperationException failedDatabaseWrapperOperationException) {
-						// TODO do smth
-						failedDatabaseWrapperOperationException.printStackTrace();
+					} catch (DatabaseWrapperOperationException ex) {
+						LOGGER.error("Couldn't reorder album items \n Stacktrace: " + ExceptionHelper.toString(ex));
 					}
 				}
 			}
@@ -176,9 +175,8 @@ public class AlterAlbumSidepane {
 								SWT.ICON_INFORMATION).open();
 						return;
 					}
-				} catch (FailedDatabaseWrapperOperationException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+				} catch (DatabaseWrapperOperationException ex) {
+					LOGGER.error("Couldn't rename the album \n Stacktrace: " + ExceptionHelper.toString(ex));
 				} 
 
 				if (!FileSystemAccessWrapper.isNameFileSystemCompliant(newAlbumName)) {
@@ -196,8 +194,8 @@ public class AlterAlbumSidepane {
 
 					BrowserFacade.addModificationToAlterationList(Translator.toBeTranslated("Album renamed from '" + oldAlbumName + "' to '" + newAlbumName + "'"));
 					AlterAlbumSidepane.updateAlterAlbumPage(yesButtonForIncludingImages, albumFieldNamesAndTypesTable);
-				} catch (FailedDatabaseWrapperOperationException failedDatabaseWrapperOperationException) {
-					// TODO log
+				} catch (DatabaseWrapperOperationException ex) {
+					LOGGER.error("Could rename the album with name '" + oldAlbumName + "' to '" + newAlbumName + "' \n Stacktrace: " + ExceptionHelper.toString(ex));
 					albumNameText.setText(albumNameText.getData().toString());
 				}
 			}
@@ -211,15 +209,15 @@ public class AlterAlbumSidepane {
 				try {
 					if (!DatabaseWrapper.albumHasPictureField(albumName)) {
 						try {
-							DatabaseWrapper.appendPictureField(albumName);
+							DatabaseWrapper.setAlbumPictureFunctionality(albumName, true);
 							BrowserFacade.addModificationToAlterationList(Translator.toBeTranslated("Pictures enabled for this album"));
 							AlterAlbumSidepane.updateAlterAlbumPage(yesButtonForIncludingImages, albumFieldNamesAndTypesTable);
-						} catch (FailedDatabaseWrapperOperationException failedDatabaseWrapperOperationException){
+						} catch (DatabaseWrapperOperationException failedDatabaseWrapperOperationException){
 							LOGGER.error("Pictures could not be enabled for the album");
 						}
 					}
-				} catch(FailedDatabaseWrapperOperationException failedDatabaseWrapperOperationException) {
-					// TODO log & do
+				} catch(DatabaseWrapperOperationException ex) {
+					LOGGER.error("A database error occured \n Stacktrace: " + ExceptionHelper.toString(ex));
 				}
 			}
 		});
@@ -234,7 +232,7 @@ public class AlterAlbumSidepane {
 								Translator.get(DictKeys.DIALOG_TITLE_DELETE_ALBUM_PICTURES), 
 								Translator.get(DictKeys.DIALOG_CONTENT_DELETE_ALBUM_PICTURES));
 						if (removalConfirmed) {
-							DatabaseWrapper.removePictureField(currentAlbumName);
+							DatabaseWrapper.setAlbumPictureFunctionality(currentAlbumName, false);
 							BrowserFacade.addModificationToAlterationList(Translator.toBeTranslated("Pictures disabled for this album"));
 							AlterAlbumSidepane.updateAlterAlbumPage(yesButtonForIncludingImages, albumFieldNamesAndTypesTable);
 						} else {
@@ -242,8 +240,8 @@ public class AlterAlbumSidepane {
 							noButtonForIncludingImages.setSelection(false);
 						}
 					}
-				} catch (FailedDatabaseWrapperOperationException failedDatabaseWrapperOperationException) {
-					// TODO log & do
+				} catch (DatabaseWrapperOperationException ex) {
+					LOGGER.error("A database error occured \n Stacktrace: " + ExceptionHelper.toString(ex));
 				}
 			}
 		});
@@ -276,8 +274,8 @@ public class AlterAlbumSidepane {
 							BrowserFacade.addModificationToAlterationList(Translator.toBeTranslated("Field '" + metaItemField.getName() + "' has been moved down"));
 							AlterAlbumSidepane.updateAlterAlbumPage(yesButtonForIncludingImages, albumFieldNamesAndTypesTable);
 						}
-					} catch (FailedDatabaseWrapperOperationException failedDatabaseWrapperOperationException) {
-						// TODO log & do
+					} catch (DatabaseWrapperOperationException ex) {
+						LOGGER.error("A database error occured \n Stacktrace: " + ExceptionHelper.toString(ex));
 					}
 				}
 			}
@@ -306,8 +304,8 @@ public class AlterAlbumSidepane {
 						BrowserFacade.addModificationToAlterationList(Translator.toBeTranslated("Field '" + oldMetaItemField.getName() + "' has been renamed to '" + newMetaItemField.getName() + "'"));
 						AlterAlbumSidepane.updateAlterAlbumPage(yesButtonForIncludingImages, albumFieldNamesAndTypesTable);
 						item.setText(1, newFieldName);
-					} catch (FailedDatabaseWrapperOperationException failedDatabaseWrapperOperationException) {
-						// TODO log & do
+					} catch (DatabaseWrapperOperationException ex) {
+						LOGGER.error("An error occured while renaming the database \n Stacktrace: " + ExceptionHelper.toString(ex));
 					}
 				}
 			}
@@ -331,8 +329,9 @@ public class AlterAlbumSidepane {
 							DatabaseWrapper.removeAlbumItemField(albumName, new MetaItemField(item.getText(1), FieldType.valueOf(item.getText(2)), item.getChecked()));
 							BrowserFacade.addModificationToAlterationList(Translator.toBeTranslated("Field '" + item.getText(1) + "' has been removed"));
 							AlterAlbumSidepane.updateAlterAlbumPage(yesButtonForIncludingImages, albumFieldNamesAndTypesTable);
-						} catch (FailedDatabaseWrapperOperationException failedDatabaseWrapperOperationException) {
-							// TODO log & do
+						} catch (DatabaseWrapperOperationException ex) {
+							LOGGER.error("An error occured while trying to delete an album item from the " + albumName + " album \n" +
+									" Stacktrace: " + ExceptionHelper.toString(ex));
 						}
 
 						item.dispose();				
@@ -358,9 +357,8 @@ public class AlterAlbumSidepane {
 		java.util.List<MetaItemField> validMetaItemFields = new ArrayList<MetaItemField>();
 		try {
 			validMetaItemFields = MetaItemFieldFilter.getValidMetaItemFields(DatabaseWrapper.getAlbumItemFieldNamesAndTypes(album));
-		} catch (FailedDatabaseWrapperOperationException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+		} catch (DatabaseWrapperOperationException ex) {
+			LOGGER.error("An error occured while trying to get the list of valid meta item fields \n Stacktrace: " + ExceptionHelper.toString(ex));
 		}
 		for (MetaItemField metaItemField : validMetaItemFields) {
 			TableItem item = new TableItem(albumFieldNamesAndTypesTable, SWT.NONE);
@@ -396,8 +394,9 @@ public class AlterAlbumSidepane {
 						DatabaseWrapper.setQuickSearchable(albumName, metaItemField);
 						BrowserFacade.addModificationToAlterationList(Translator.toBeTranslated(metaItemField.getName() + " is now quick-searchable"));
 						AlterAlbumSidepane.updateAlterAlbumPage(yesButtonForIncludingImages, albumFieldNamesAndTypesTable);
-					} catch (FailedDatabaseWrapperOperationException failedDatabaseWrapperOperationException) {
-						// TODO log & do
+					} catch (DatabaseWrapperOperationException ex) {
+						LOGGER.error("A database error occured while trying to make the '" + metaItemField + "' " +
+								"in the '" + albumName + "' album quicksearchable \n Stacktrace: " + ExceptionHelper.toString(ex));
 					}
 				}
 			}
@@ -447,8 +446,9 @@ public class AlterAlbumSidepane {
 
 					fieldNameText.setText("");
 
-				} catch (FailedDatabaseWrapperOperationException failedDatabaseWrapperOperationException) {
-					// TODO log & do
+				} catch (DatabaseWrapperOperationException ex) {
+					LOGGER.error("A database error occured while checking whether '" + metaItemField.getName() + "' is avialable as album name" +
+							" \n Stacktrace: " + ExceptionHelper.toString(ex));
 				}
 			}
 		});

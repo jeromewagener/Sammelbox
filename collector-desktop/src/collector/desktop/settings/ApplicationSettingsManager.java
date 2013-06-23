@@ -12,7 +12,7 @@ public class ApplicationSettingsManager {
 		return applicationSettings.getUserDefinedLanguage();
 	}
 	
-	public static void loadFromSettingsFile() {
+	public static void initializeFromSettingsFile() {
 		applicationSettings = FileSystemAccessWrapper.loadSettings();
 	}
 	

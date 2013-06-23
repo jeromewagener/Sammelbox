@@ -12,10 +12,13 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import collector.desktop.Collector;
 import collector.desktop.database.DatabaseWrapper;
-import collector.desktop.database.exceptions.FailedDatabaseWrapperOperationException;
+import collector.desktop.database.exceptions.DatabaseWrapperOperationException;
+import collector.desktop.database.exceptions.ExceptionHelper;
 import collector.desktop.gui.browser.BrowserFacade;
 import collector.desktop.gui.sidepanes.AddAlbumItemSidepane;
 import collector.desktop.gui.sidepanes.AdvancedSearchSidepane;
@@ -29,6 +32,8 @@ import collector.desktop.internationalization.DictKeys;
 import collector.desktop.internationalization.Translator;
 
 public class ToolbarComposite implements UIObserver {
+	private final static Logger LOGGER = LoggerFactory.getLogger(ToolbarComposite.class);
+	
 	private static ToolbarComposite instance = null;
 	private Composite toolbarComposite = null;
 	private Image home = null, addAlbum = null, addEntry = null,
@@ -464,9 +469,9 @@ public class ToolbarComposite implements UIObserver {
 				viewBtn.setImage(detailedView);
 				viewBtn.setEnabled(false);
 			}
-		} catch (FailedDatabaseWrapperOperationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (DatabaseWrapperOperationException ex) {
+			LOGGER.error("An error occured while checking whether the following album contains pictures: '" + albumName + "'" + 
+					" \n Stacktrace:" + ExceptionHelper.toString(ex));
 		}
 
 		Collector.setViewIsDetailed(true);

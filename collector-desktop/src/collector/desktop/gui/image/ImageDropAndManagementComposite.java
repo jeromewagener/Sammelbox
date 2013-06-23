@@ -184,7 +184,6 @@ public class ImageDropAndManagementComposite extends Composite implements DropTa
 
 	@Override
 	public void dragEnter(DropTargetEvent event) {
-		System.out.println("drag enter");//TODO: log instead of syso
 		// Changing the event detail to drop_copy enables the drop. 
 		event.detail = DND.DROP_COPY;
 	}
@@ -216,7 +215,7 @@ public class ImageDropAndManagementComposite extends Composite implements DropTa
 				for (String filename : filenames) {
 					AlbumItemPicture picture = ImageManipulator.adaptAndStoreImageForCollector(new File(filename), Collector.getSelectedAlbum());
 					if (picture == null) {
-						  showDroppedUnsupportedFileMessageBox(filename);
+						showDroppedUnsupportedFileMessageBox(filename);
 					} else {
 						pictures.add(picture);
 					}

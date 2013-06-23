@@ -11,6 +11,8 @@ import org.eclipse.swt.events.MenuDetectEvent;
 import org.eclipse.swt.events.MenuDetectListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.MessageBox;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import collector.desktop.Collector;
 import collector.desktop.album.AlbumItem;
@@ -18,7 +20,9 @@ import collector.desktop.album.FieldType;
 import collector.desktop.album.ItemField;
 import collector.desktop.database.DatabaseWrapper;
 import collector.desktop.database.QueryBuilder;
-import collector.desktop.database.exceptions.FailedDatabaseWrapperOperationException;
+import collector.desktop.database.exceptions.DatabaseWrapperOperationException;
+import collector.desktop.database.exceptions.ExceptionHelper;
+import collector.desktop.gui.GuiConstants;
 import collector.desktop.gui.browser.BrowserFacade;
 import collector.desktop.gui.composites.StatusBarComposite;
 import collector.desktop.gui.sidepanes.EmptySidepane;
@@ -29,6 +33,8 @@ import collector.desktop.internationalization.DictKeys;
 import collector.desktop.internationalization.Translator;
 
 public class BrowserListener implements LocationListener, ProgressListener, MenuDetectListener {
+	private final static Logger LOGGER = LoggerFactory.getLogger(BrowserListener.class);
+	
 	/** The parent composite to which this listener belongs to */
 	private Composite parentComposite;
 
@@ -40,12 +46,10 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 	/** This method is required since under some circumstances, an question-mark is added to the end of the URL (event.location). If
 	 * a question mark is present at the end, it will be deleted. Otherwise, the unmodified string is returned 
 	 * @return a string without a question mark at the end*/
-	private String removeQuestionMarkAtTheEndIfPresent(String string) {
+	private void removeQuestionMarkAtTheEndIfPresent(String string) {
 		if (string.charAt(string.length() - 1) == '?') {
 			string = string.substring(0, string.length() - 1);
 		}
-
-		return string;
 	}
 
 	@Override
@@ -57,23 +61,9 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 	 * is executed. (E.g. opening a new composite) 
 	 * @param event the location event used to identify the new location */
 	public void changing(LocationEvent event) {		
-		// TODO why not constants? now they are are constants but better put them somewhere globally accessible.
-		final String showUpdateComposite = "show:///updateComposite=";
-		final String showDeleteComposite = "show:///deleteComposite=";
-		final String showBigPicture = "show:///bigPicture=";
-		final String showLastPage = "show:///lastPage";
-		final String showDetails = "show:///details=";
-		final String showDetailsComposite = "show:///detailsComposite=";
-		final String addAdditionalAlbumItems = "show:///addAdditionalAlbumItems";
-		final String showDetailsViewOfAlbum =  "show:///showDetailsViewOfAlbum";
-
-		System.out.println("-----");
-		System.out.println(Collector.getAlbumItemSWTBrowser().getText());
-		System.out.println("-----");
-		
-		if (event.location.startsWith(showUpdateComposite)) {
-			String id = event.location.substring(showUpdateComposite.length());
-			removeQuestionMarkAtTheEndIfPresent(id);//FIXME: the return value is never used. Happening this intentionally it does (Yoda)
+		if (event.location.startsWith(GuiConstants.SHOW_UPDATE_COMPOSITE)) {
+			String id = event.location.substring(GuiConstants.SHOW_UPDATE_COMPOSITE.length());
+			removeQuestionMarkAtTheEndIfPresent(id);
 
 			Collector.changeRightCompositeTo(PanelType.UpdateEntry,
 					UpdateAlbumItemSidepane.build(parentComposite, Collector.getSelectedAlbum(), Long.parseLong(id)));
@@ -82,9 +72,9 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 			// Do not change the page
 			event.doit = false;
 
-		} else if (event.location.startsWith(showDeleteComposite)) {
-			String id = event.location.substring(showDeleteComposite.length());
-			removeQuestionMarkAtTheEndIfPresent(id);//FIXME: the return value is never used. Happening this intentionally it does (Yoda)
+		} else if (event.location.startsWith(GuiConstants.SHOW_DELETE_COMPOSITE)) {
+			String id = event.location.substring(GuiConstants.SHOW_DELETE_COMPOSITE.length());
+			removeQuestionMarkAtTheEndIfPresent(id);
 
 			int messageBoxStyle =  SWT.ICON_WARNING | SWT.YES | SWT.NO;			
 			MessageBox messageBox = ComponentFactory.getMessageBox(parentComposite.getShell(),
@@ -94,23 +84,23 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 
 			if (messageBox.open() == SWT.YES) {
 				try {
-					DatabaseWrapper.deleteAlbumItem(Collector.getSelectedAlbum(), Long.parseLong(id));
-				} catch (NumberFormatException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (FailedDatabaseWrapperOperationException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					AlbumItem albumItemToBeDeleted = DatabaseWrapper.fetchAlbumItem(Collector.getSelectedAlbum(), Long.parseLong(id));
+					DatabaseWrapper.deleteAlbumItem(albumItemToBeDeleted);
+				} catch (NumberFormatException nfe) {
+					LOGGER.error("Couldn't parse the following id: '" + id + "' \n Stacktrace: " + ExceptionHelper.toString(nfe));
+				} catch (DatabaseWrapperOperationException ex) {
+					LOGGER.error("A database error occured while deleting the album item #" + id + " from the album '" + 
+										Collector.getSelectedAlbum() + "' \n Stacktrace: " + ExceptionHelper.toString(ex));
 				}
 				BrowserFacade.performBrowserQueryAndShow(QueryBuilder.createSelectStarQuery(Collector.getSelectedAlbum()));
 			}
 
 			// Do not change the page
 			event.doit = false;
-		} else if (event.location.startsWith(showBigPicture)) {
-			String pathAndIdString = event.location.substring(showBigPicture.length());
+		} else if (event.location.startsWith(GuiConstants.SHOW_BIG_PICTURE)) {
+			String pathAndIdString = event.location.substring(GuiConstants.SHOW_BIG_PICTURE.length());
 
-			removeQuestionMarkAtTheEndIfPresent(pathAndIdString);//FIXME: the return value is never used. Happening this intentionally it does (Yoda)
+			removeQuestionMarkAtTheEndIfPresent(pathAndIdString);
 
 			String[] pathAndIdArray = pathAndIdString.split("\\?");
 
@@ -119,14 +109,14 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 
 			// Do not change the page
 			event.doit = false;
-		} else if (event.location.startsWith(showLastPage)) {
+		} else if (event.location.startsWith(GuiConstants.SHOW_LAST_PAGE)) {
 			BrowserFacade.goBackToLastPage();
 
 			// Do not change the page
 			event.doit = false;
-		} else if (event.location.startsWith(showDetails)) {
-			String id = event.location.substring(showDetails.length());
-			removeQuestionMarkAtTheEndIfPresent(id);//FIXME: the return value is never used. Happening this intentionally it does (Yoda)
+		} else if (event.location.startsWith(GuiConstants.SHOW_DETAILS)) {
+			String id = event.location.substring(GuiConstants.SHOW_DETAILS.length());
+			removeQuestionMarkAtTheEndIfPresent(id);
 
 			AlbumItem albumItem;
 			try {
@@ -136,28 +126,24 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 	
 				StringBuilder sb = new StringBuilder();
 				for (ItemField itemField : itemFields) {
-					if (albumItem.getField(itemField.getName()).getType() != FieldType.ID
-							&& albumItem.getField(itemField.getName()).getType() != FieldType.UUID
-							&& albumItem.getField(itemField.getName()).getType() != FieldType.Picture ) {
+					if (albumItem.getField(itemField.getName()).getType() != FieldType.ID && albumItem.getField(itemField.getName()).getType() != FieldType.UUID) {
 						sb.append(albumItem.getField(itemField.getName()).getName() + ": " + albumItem.getField(itemField.getName()).getValue() + ", ");
 					}
 				}
 				sb.append("...");
 				
 				StatusBarComposite.getInstance(Collector.getShell()).writeStatus(sb.toString());
-			} catch (NumberFormatException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (FailedDatabaseWrapperOperationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			} catch (NumberFormatException nfe) {
+				LOGGER.error("Couldn't parse the following id: '" + id + "' \n Stacktrace: " + ExceptionHelper.toString(nfe));
+			} catch (DatabaseWrapperOperationException ex) {
+				LOGGER.error("A database related error occured: \n Stacktrace: " + ExceptionHelper.toString(ex));
 			}
 
 			// Do not change the page
 			event.doit = false;
-		} else if (event.location.startsWith(showDetailsComposite)) {
-			String id = event.location.substring(showDetailsComposite.length());
-			removeQuestionMarkAtTheEndIfPresent(id);//FIXME: the return value is never used. Happening this intentionally it does (Yoda)
+		} else if (event.location.startsWith(GuiConstants.SHOW_DETAILS_COMPOSITE)) {
+			String id = event.location.substring(GuiConstants.SHOW_DETAILS_COMPOSITE.length());
+			removeQuestionMarkAtTheEndIfPresent(id);
 
 			Collector.changeRightCompositeTo(PanelType.UpdateEntry,
 					UpdateAlbumItemSidepane.build(parentComposite, Collector.getSelectedAlbum(), Long.parseLong(id)));
@@ -172,12 +158,12 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 			} else {
 				event.doit = false;
 			}
-		} else if (event.location.equals(addAdditionalAlbumItems)) {
+		} else if (event.location.equals(GuiConstants.ADD_ADDITIONAL_ALBUM_ITEMS)) {
 			BrowserFacade.addAdditionalAlbumItems();
 
 			// Do not change the page
 			event.doit = false;
-		}else if (event.location.equals(showDetailsViewOfAlbum)) {
+		}else if (event.location.equals(GuiConstants.SHOW_DETAILS_VIEW_OF_ALBUM)) {
 			BrowserFacade.performBrowserQueryAndShow(QueryBuilder.createSelectStarQuery(Collector.getSelectedAlbum()));
 			
 			Collector.changeRightCompositeTo(PanelType.Empty, EmptySidepane.build(Collector.getThreePanelComposite()));

@@ -6,12 +6,17 @@ import org.eclipse.swt.browser.Browser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import collector.desktop.Collector;
 import collector.desktop.album.AlbumItem;
 import collector.desktop.album.AlbumItem.AlbumItemPicture;
 import collector.desktop.album.FieldType;
 import collector.desktop.album.ItemField;
 import collector.desktop.database.AlbumItemStore;
+import collector.desktop.database.DatabaseWrapper;
+import collector.desktop.database.exceptions.DatabaseWrapperOperationException;
+import collector.desktop.database.exceptions.ExceptionHelper;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
+import collector.desktop.gui.GuiConstants;
 
 public class GalleryViewCreator {
 	private final static Logger LOGGER = LoggerFactory.getLogger(GalleryViewCreator.class);
@@ -30,20 +35,24 @@ public class GalleryViewCreator {
 					if (!fieldItem.getName().equals("typeinfo")) {
 						// do not show, but store id
 						id = fieldItem.getValue();
-					} else {
-						LOGGER.warn("Found a field type that wasn't expected: " + fieldItem.getName());
-					}
-				} else if (fieldItem.getType().equals(FieldType.Picture)) {
-					List<AlbumItemPicture> pictures = fieldItem.getValue();
-					
-					if (pictures.isEmpty()) {
-						picturePath = FileSystemAccessWrapper.PLACEHOLDERIMAGE;
-					} else {
-						picturePath = pictures.get(0).getThumbnailPicturePath();
 					}
 				}
 			}		
 
+			List<AlbumItemPicture> pictures = null;
+			try {
+				pictures = DatabaseWrapper.getAlbumItemPictures(Collector.getSelectedAlbum(), id);
+			} catch (DatabaseWrapperOperationException ex) {
+				LOGGER.error("An error occured while retrieving the pictures associated with the album item #'" + 
+					id + "' from the album '" + Collector.getSelectedAlbum() + "' \n Stacktrace: " + ExceptionHelper.toString(ex));
+			}
+			
+			if (pictures == null || pictures.isEmpty()) {
+				picturePath = FileSystemAccessWrapper.PLACEHOLDERIMAGE;
+			} else {
+				picturePath = pictures.get(0).getThumbnailPicturePath();
+			}
+			
 			galleryItemHtmlBuilder.append("<div id=\"imageId" + id + "\" " +
 					                      "     class=\"pictureContainer\" " +
 					                      "     onMouseOver=\"parent.location.href=&quot;show:///details=" + id + "&quot;\" " +
@@ -57,9 +66,9 @@ public class GalleryViewCreator {
 		String finalPageAsHtml = "<!DOCTYPE HTML>" +
 								 "  <html>" +
 								 "    <head>" +
-								 "      <meta " + BrowserConstants.META_PARAMS + ">" + 
-								 "      <link rel=stylesheet href=\"" + BrowserConstants.STYLE_CSS + "\" />" +
-								 "      <script src=\"" + BrowserConstants.EFFECTS_JS + "\"></script>" +
+								 "      <meta " + GuiConstants.META_PARAMS + ">" + 
+								 "      <link rel=stylesheet href=\"" + GuiConstants.STYLE_CSS + "\" />" +
+								 "      <script src=\"" + GuiConstants.EFFECTS_JS + "\"></script>" +
 								 "    </head>" +
 								 "    <body>" +
 								 "      <font face=\"" + Utilities.getDefaultSystemFont() + "\"><div id=\"albumItems\">" +

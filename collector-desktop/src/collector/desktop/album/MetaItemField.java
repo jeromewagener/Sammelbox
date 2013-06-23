@@ -7,7 +7,7 @@ public class MetaItemField {
 	protected String name;
 	protected FieldType type;
 	protected boolean quickSearchable;
-
+	
 	/**
 	 * Standard constructor. For internal use by inheriting classes only. 
 	 */

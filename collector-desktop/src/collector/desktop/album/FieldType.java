@@ -9,7 +9,6 @@ public enum FieldType {
 	Number, 
 	Date, 
 	Time,
-	Picture,
 	UUID,
 	StarRating,
 	URL, 
@@ -56,9 +55,6 @@ public enum FieldType {
 		case Time:
 			res = "TIME";
 			break;
-		case Picture:
-			res = "TEXT";
-			break;
 		case UUID:
 			res= "TEXT";
 			break;
@@ -97,8 +93,6 @@ public enum FieldType {
 			return new Date(System.currentTimeMillis());
 		case Time: 
 			return new Time(System.currentTimeMillis());
-		case Picture:
-			return "";
 		case URL:
 			return "";
 		case Option:

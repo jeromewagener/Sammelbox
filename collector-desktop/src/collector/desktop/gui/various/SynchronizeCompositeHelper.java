@@ -28,7 +28,5 @@ public class SynchronizeCompositeHelper implements Observer {
 	public void update(Observable observable, Object object) {
 		disableSynchronizeStep(SynchronizeStep.ESTABLISH_CONNECTION);
 		enabledSynchronizeStep(SynchronizeStep.UPLOAD_DATA);
-		
-		//System.out.println("hello ");
 	}
 }

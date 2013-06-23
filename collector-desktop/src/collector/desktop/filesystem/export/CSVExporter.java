@@ -28,9 +28,6 @@ public class CSVExporter {
 				else if (albumItem.getField(i).getType().equals(FieldType.ID)) {
 					// do not show ID either
 				}
-				else if (albumItem.getField(i).getType().equals(FieldType.Picture)) {
-					// not possible in CSV
-				}
 				else {
 					if (albumItem.getField(i).getType().equals(FieldType.Option)) {
 						if (firstLine) {

@@ -5,6 +5,7 @@ import org.eclipse.swt.browser.Browser;
 import collector.desktop.Collector;
 import collector.desktop.album.AlbumItem;
 import collector.desktop.database.AlbumItemStore;
+import collector.desktop.gui.GuiConstants;
 import collector.desktop.gui.various.ComponentFactory;
 import collector.desktop.internationalization.DictKeys;
 import collector.desktop.internationalization.Translator;
@@ -36,7 +37,7 @@ public class DetailedViewCreator {
 		// If no album items have been found
 		if (htmlDataColumnContent.length() == 0 && htmlPictureColumnContent.length() == 0) {
 			albumItemTableRowHtml.delete(0, albumItemTableRowHtml.length());
-			albumItemTableRowHtml.append("<tr><td>" + BrowserConstants.NO_ITEMS_FOUND + "</tr></td>");
+			albumItemTableRowHtml.append("<tr><td>" + GuiConstants.NO_ITEMS_FOUND + "</tr></td>");
 		}
 
 		// Create final page html
@@ -44,9 +45,9 @@ public class DetailedViewCreator {
 				"<!DOCTYPE HTML>" +
 				"  <html>" +
 				"    <head>" +
-				"      <meta " + BrowserConstants.META_PARAMS + ">" + 
-				"      <link rel=stylesheet href=\"" + BrowserConstants.STYLE_CSS + "\" />" +
-				"      <script src=\"" + BrowserConstants.EFFECTS_JS + "\"></script>" +
+				"      <meta " + GuiConstants.META_PARAMS + ">" + 
+				"      <link rel=stylesheet href=\"" + GuiConstants.STYLE_CSS + "\" />" +
+				"      <script src=\"" + GuiConstants.EFFECTS_JS + "\"></script>" +
 				"    </head>" +
 				"    <body bgcolor=white>" +
 				"      <font face=\"" + Utilities.getDefaultSystemFont() + "\">" + 

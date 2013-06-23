@@ -24,7 +24,7 @@ import collector.desktop.database.AlbumItemResultSet;
 import collector.desktop.database.ConnectionManager;
 import collector.desktop.database.DatabaseIntegrityManager;
 import collector.desktop.database.DatabaseWrapper;
-import collector.desktop.database.exceptions.FailedDatabaseWrapperOperationException;
+import collector.desktop.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
 import collector.desktop.tests.CollectorTestExecuter;
 
@@ -88,7 +88,7 @@ public class BackupRestoreTests {
 
 		try {
 			DatabaseWrapper.createNewAlbum(albumName, columns, true);			
-		} catch (FailedDatabaseWrapperOperationException e) {
+		} catch (DatabaseWrapperOperationException e) {
 			fail("Creation of album "+ albumName + " failed");
 		}
 	}
@@ -106,7 +106,7 @@ public class BackupRestoreTests {
 
 		try {
 			DatabaseWrapper.createNewAlbum(albumName, columns, false);			
-		} catch (FailedDatabaseWrapperOperationException e) {
+		} catch (DatabaseWrapperOperationException e) {
 			fail("Creation of album "+ albumName + " failed");
 		}
 	}
@@ -124,7 +124,7 @@ public class BackupRestoreTests {
 
 		try {
 			DatabaseWrapper.createNewAlbum(albumName, columns, true);			
-		} catch (FailedDatabaseWrapperOperationException e) {
+		} catch (DatabaseWrapperOperationException e) {
 			fail("Creation of album "+ albumName + " failed");
 		}
 	}
@@ -144,8 +144,8 @@ public class BackupRestoreTests {
 		item.setFields(fields);
 
 		try {
-			DatabaseWrapper.addNewAlbumItem(item, false, true);			
-		} catch (FailedDatabaseWrapperOperationException e) {
+			DatabaseWrapper.addNewAlbumItem(item, true);			
+		} catch (DatabaseWrapperOperationException e) {
 			fail("Album Item could not be inserted into album");
 		}
 
@@ -161,8 +161,8 @@ public class BackupRestoreTests {
 		item.setFields(fields);
 
 		try {
-			DatabaseWrapper.addNewAlbumItem(item, false, true);			
-		} catch (FailedDatabaseWrapperOperationException e) {
+			DatabaseWrapper.addNewAlbumItem(item, true);			
+		} catch (DatabaseWrapperOperationException e) {
 			fail("Album Item could not be inserted into album");
 		}
 
@@ -178,8 +178,8 @@ public class BackupRestoreTests {
 		item.setFields(fields);
 
 		try {
-			DatabaseWrapper.addNewAlbumItem(item, false, true);			
-		} catch (FailedDatabaseWrapperOperationException e) {
+			DatabaseWrapper.addNewAlbumItem(item, true);			
+		} catch (DatabaseWrapperOperationException e) {
 			fail("Album Item could not be inserted into album");
 		}
 	}
@@ -196,8 +196,8 @@ public class BackupRestoreTests {
 		item.setFields(fields);
 
 		try {
-			DatabaseWrapper.addNewAlbumItem(item, false, true);			
-		} catch (FailedDatabaseWrapperOperationException e) {
+			DatabaseWrapper.addNewAlbumItem(item, true);			
+		} catch (DatabaseWrapperOperationException e) {
 			fail("Album Item could not be inserted into album");
 		}
 
@@ -210,8 +210,8 @@ public class BackupRestoreTests {
 		item.setFields(fields);
 
 		try {
-			DatabaseWrapper.addNewAlbumItem(item, false, true);			
-		} catch (FailedDatabaseWrapperOperationException e) {
+			DatabaseWrapper.addNewAlbumItem(item, true);			
+		} catch (DatabaseWrapperOperationException e) {
 			fail("Album Item could not be inserted into album");
 		}
 	}
@@ -236,7 +236,7 @@ public class BackupRestoreTests {
 
 			// Backup album
 			DatabaseIntegrityManager.backupToFile(TEMP_DIR + File.separatorChar + "testBackupRestoreOfSingleAlbum.cbk");
-		} catch (FailedDatabaseWrapperOperationException e) {
+		} catch (DatabaseWrapperOperationException e) {
 			fail("testBackupOfSingleAlbum raised an exception");
 		} 
 	}
@@ -287,7 +287,7 @@ public class BackupRestoreTests {
 
 			// Backup Albums
 			DatabaseIntegrityManager.backupToFile(TEMP_DIR + File.separatorChar + "testBackupRestoreOfMultipleAlbums.cbk");
-		} catch (FailedDatabaseWrapperOperationException e) {
+		} catch (DatabaseWrapperOperationException e) {
 			fail("Failed on internal db error");			
 		}
 	}
@@ -311,7 +311,7 @@ public class BackupRestoreTests {
 			}
 
 			assertTrue("Resultset should contain 3 items", counter == 3);
-		} catch (FailedDatabaseWrapperOperationException e) {
+		} catch (DatabaseWrapperOperationException e) {
 			fail("Failed on internal db error");
 		}
 	}
@@ -358,7 +358,7 @@ public class BackupRestoreTests {
 			}
 
 			assertTrue("Resultset should contain 0 items", counter == 0);
-		} catch (FailedDatabaseWrapperOperationException e) {
+		} catch (DatabaseWrapperOperationException e) {
 			fail("Failed on internal db error");
 		}
 	}
@@ -394,7 +394,7 @@ public class BackupRestoreTests {
 			}
 
 			assertTrue("Resultset should contain 11 items", counter == 11);
-		} catch (FailedDatabaseWrapperOperationException e) {
+		} catch (DatabaseWrapperOperationException e) {
 			fail("Failed on internal db error");
 		}
 	}
@@ -417,12 +417,12 @@ public class BackupRestoreTests {
 
 			item.setFields(fields);
 
-			if (DatabaseWrapper.addNewAlbumItem(item, false, true) == -1) {
+			if (DatabaseWrapper.addNewAlbumItem(item, true) == -1) {
 				fail("Album Item could not be inserted into album");
 			}
 
 			DatabaseIntegrityManager.backupToFile(TEMP_DIR + File.separatorChar + "testRestoreAndModificiationOfTestDataAlbums.cbk");
-		} catch (FailedDatabaseWrapperOperationException e) {
+		} catch (DatabaseWrapperOperationException e) {
 			fail("Failed on internal db error");
 		}
 	}
@@ -444,7 +444,7 @@ public class BackupRestoreTests {
 			}
 
 			assertTrue("Resultset should contain 11 items", counter == 11);
-		} catch (FailedDatabaseWrapperOperationException e) {
+		} catch (DatabaseWrapperOperationException e) {
 			fail("Failed on internal db error");
 		}
 	}
@@ -462,7 +462,7 @@ public class BackupRestoreTests {
 				counter++;
 			}
 			return counter;
-		} catch (FailedDatabaseWrapperOperationException e ) {
+		} catch (DatabaseWrapperOperationException e ) {
 			return -1;
 		}
 	}

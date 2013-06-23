@@ -17,7 +17,7 @@ import collector.desktop.database.AlbumItemResultSet;
 import collector.desktop.database.ConnectionManager;
 import collector.desktop.database.DatabaseIntegrityManager;
 import collector.desktop.database.DatabaseWrapper;
-import collector.desktop.database.exceptions.FailedDatabaseWrapperOperationException;
+import collector.desktop.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
 import collector.desktop.tests.CollectorTestExecuter;
 
@@ -78,7 +78,7 @@ public class AlterAlbumTests {
 					metaDataItems.get(metaDataItems.size()-1).getName().equals("Publisher"));
 
 			assertTrue("The album item count incorrectly changed", originalAlbumItemCount == numberOfAlbumItems("Books"));
-		}catch (FailedDatabaseWrapperOperationException e ) {
+		}catch (DatabaseWrapperOperationException e ) {
 			fail(e.getMessage());
 		}
 	}
@@ -100,14 +100,14 @@ public class AlterAlbumTests {
 					metaDataItems.get(metaDataItems.size()-1).getName().equals("Publisher"));
 
 			assertTrue("The album item count incorrectly changed", originalAlbumItemCount == numberOfAlbumItems("Books"));
-		}catch (FailedDatabaseWrapperOperationException e ) {
+		}catch (DatabaseWrapperOperationException e ) {
 			fail(e.getMessage());
 		}
 	}
 
 	@Test
 	public void testAddPublisherFieldAndMoveFourUp() {
-		//FIXME: This test fails now with 
+		//FIXME: repair this testcase
 		/*
 		 * java.lang.AssertionError: java.sql.SQLException: [SQLITE_BUSY]  The database file is locked (database is locked)
 			at org.junit.Assert.fail(Assert.java:93)
@@ -174,7 +174,7 @@ public class AlterAlbumTests {
 					metaDataItems.get(2).getName().equals("Publisher"));
 
 			assertTrue("The album item count incorrectly changed", originalAlbumItemCount == numberOfAlbumItems("Books"));
-		} catch (FailedDatabaseWrapperOperationException e ) {
+		} catch (DatabaseWrapperOperationException e ) {
 			fail(e.getMessage());
 			e.printStackTrace();
 		}
@@ -182,7 +182,7 @@ public class AlterAlbumTests {
 
 	@Test
 	public void testMoveDvdTitleToEnd() {
-		// FIXME: This test fails the same as the other move album item field test
+		//FIXME: repair this testcase
 		try {
 			// Use default test sample
 			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
@@ -218,7 +218,7 @@ public class AlterAlbumTests {
 			assertTrue("Title text column should be at the end", 
 					metaDataItems.get(5).getName().equals("Title"));
 			assertTrue("The album item count incorrectly changed", originalAlbumItemCount == numberOfAlbumItems("DVDs"));
-		} catch (FailedDatabaseWrapperOperationException e ) {
+		} catch (DatabaseWrapperOperationException e ) {
 			fail(e.getMessage());
 		}
 	}
@@ -243,7 +243,7 @@ public class AlterAlbumTests {
 
 			assertTrue("The first column name should now be 'Title'", metaDataItems.get(0).getName().equals("Title"));
 			assertTrue("The album item count incorrectly changed", originalAlbumItemCount == numberOfAlbumItems("Books"));
-		} catch (FailedDatabaseWrapperOperationException e ) {
+		} catch (DatabaseWrapperOperationException e ) {
 			fail(e.getMessage());
 		}
 	}
@@ -251,7 +251,7 @@ public class AlterAlbumTests {
 	@Test
 	public void testRenameColumnName_QuicksearchableField() {
 		try {
-			//FIXME: this test fails due to supposedly invalid picture column
+			//FIXME: repair this testcase
 			// Use default test sample
 			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
 
@@ -272,7 +272,7 @@ public class AlterAlbumTests {
 
 			assertTrue("The first column name should now be 'DVD Title'", metaDataItems.get(0).getName().equals("DVD Title"));
 			assertTrue("The album item count incorrectly changed", originalAlbumItemCount == numberOfAlbumItems("DVDs"));
-		} catch (FailedDatabaseWrapperOperationException e ) {
+		} catch (DatabaseWrapperOperationException e ) {
 			fail(e.getMessage());
 		}
 	}
@@ -299,7 +299,7 @@ public class AlterAlbumTests {
 			assertTrue("There should be an album with the name 'My Books'", albumList.contains("My Books"));
 			assertTrue("There should be an album with the name 'Movie DVDs'", albumList.contains("Movie DVDs"));
 			assertTrue("There should be an album with the name 'Music CDs'", albumList.contains("Music CDs"));
-		} catch (FailedDatabaseWrapperOperationException e ) {
+		} catch (DatabaseWrapperOperationException e ) {
 			fail(e.getMessage());
 		}
 	}
@@ -330,7 +330,7 @@ public class AlterAlbumTests {
 //		} catch (FailedDatabaseWrapperOperationException e ) {
 //			fail(e.getMessage());
 //		}
-		//FIXME: this test fails due to unresolved issue with string pic column. Fix when new pic table is implemented
+		//FIXME: repair this testcase
 	}
 
 	@Test
@@ -357,7 +357,7 @@ public class AlterAlbumTests {
 			}
 
 			assertTrue("The album item count incorrectly changed", originalAlbumItemCount == numberOfAlbumItems("Books"));
-		} catch (FailedDatabaseWrapperOperationException e ) {			
+		} catch (DatabaseWrapperOperationException e ) {			
 			fail(e.getMessage());
 		}
 	}
@@ -375,7 +375,7 @@ public class AlterAlbumTests {
 				counter++;
 			}
 			return counter;
-		} catch (FailedDatabaseWrapperOperationException e ) {
+		} catch (DatabaseWrapperOperationException e ) {
 			return -1;
 		}
 	}

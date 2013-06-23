@@ -5,17 +5,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import collector.desktop.album.AlbumItem;
 import collector.desktop.album.AlbumItem.AlbumItemPicture;
 import collector.desktop.album.FieldType;
 import collector.desktop.album.ItemField;
 import collector.desktop.album.MetaItemField;
 import collector.desktop.album.OptionType;
-import collector.desktop.database.exceptions.FailedDatabaseWrapperOperationException;
+import collector.desktop.database.exceptions.DatabaseWrapperOperationException;
+import collector.desktop.database.exceptions.ExceptionHelper;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
+import collector.desktop.internationalization.DictKeys;
 import collector.desktop.internationalization.Translator;
 
 public class AlbumItemStore {
+	private static final Logger LOGGER = LoggerFactory.getLogger(AlbumItemStore.class);
+	
 	private static final int DEFAULT_STOP_INDEX_INCREASE_AMOUNT = 10;
 	private static final int DEFAULT_STOP_INDEX = 40;
 	
@@ -23,20 +30,19 @@ public class AlbumItemStore {
 	private static int stopIndex = DEFAULT_STOP_INDEX;
 	private static int previousStopIndex = DEFAULT_STOP_INDEX;
 	
-	public static void reinitializeStore(AlbumItemResultSet albumItemResultSet) throws FailedDatabaseWrapperOperationException {
+	public static void reinitializeStore(AlbumItemResultSet albumItemResultSet) throws DatabaseWrapperOperationException {
 		albumItems.clear();
 		stopIndex = DEFAULT_STOP_INDEX;
 		previousStopIndex = DEFAULT_STOP_INDEX;
 		
 		while (albumItemResultSet.moveToNext()) {
-			AlbumItem albumItem = new AlbumItem(albumItemResultSet.getAlbumName());
 			List<ItemField> itemFields = new ArrayList<ItemField>();
 			
-			for (int i=1; i<=albumItemResultSet.getFieldCount(); i++) {
-				itemFields.add(new ItemField(albumItemResultSet.getFieldName(i), 
-					albumItemResultSet.getFieldType(i), albumItemResultSet.getFieldValue(i)));
+			for (int i=1; i<=albumItemResultSet.getFieldCount(); i++) {				
+				itemFields.add(new ItemField(albumItemResultSet.getFieldName(i), albumItemResultSet.getFieldType(i), albumItemResultSet.getFieldValue(i)));
 			}
 			
+			AlbumItem albumItem = new AlbumItem(albumItemResultSet.getAlbumName(), itemFields);
 			albumItem.setFields(itemFields);
 			albumItems.add(albumItem);
 		}
@@ -108,36 +114,40 @@ public class AlbumItemStore {
 	public static AlbumItem getSamplePictureAlbumItemWithoutFields() {
 		List<AlbumItemPicture> pictures = new ArrayList<AlbumItemPicture>();
 		
-		pictures.add(new AlbumItemPicture(FileSystemAccessWrapper.PLACEHOLDERIMAGE, FileSystemAccessWrapper.PLACEHOLDERIMAGE, "TODO")); //TODO
-		pictures.add(new AlbumItemPicture(FileSystemAccessWrapper.PLACEHOLDERIMAGE2, FileSystemAccessWrapper.PLACEHOLDERIMAGE2, "TODO")); //TODO
+		pictures.add(new AlbumItemPicture(FileSystemAccessWrapper.PLACEHOLDERIMAGE, FileSystemAccessWrapper.PLACEHOLDERIMAGE));
+		pictures.add(new AlbumItemPicture(FileSystemAccessWrapper.PLACEHOLDERIMAGE2, FileSystemAccessWrapper.PLACEHOLDERIMAGE2));
 		
 		List<ItemField> itemFields = new ArrayList<ItemField>();
-		itemFields.add(new ItemField(DatabaseWrapper.PICTURE_COLUMN_NAME, FieldType.Picture, pictures));
-		itemFields.add(new ItemField(Translator.toBeTranslated("You have not added any fields yet!"), FieldType.Text, Translator.toBeTranslated("Please add fields using the \"Create new album sidepane\"")));		
 		
-		return new AlbumItem("DummyItem", itemFields);
+		itemFields.add(new ItemField(Translator.get(DictKeys.BROWSER_NO_FIELDS_ADDED_YET), FieldType.Text, Translator.get(DictKeys.BROWSER_PLEASE_USE_NEW_ALBUM_SIDEPANE)));		
+		
+		try {
+			AlbumItem albumItem = new AlbumItem("DummyItem", itemFields);
+			albumItem.setPictures(pictures);
+			
+			return albumItem;
+		} catch (DatabaseWrapperOperationException ex) {
+			LOGGER.error("An error occured while creating a sample album item \n " + ExceptionHelper.toString(ex));
+		}
+		
+		return null;
 	}
 	
 	public static AlbumItem getSampleAlbumItem(boolean containsPictures, List<MetaItemField> metaItemFields) {
 		List<ItemField> itemFields = new ArrayList<ItemField>();
+		List<AlbumItemPicture> pictures = new ArrayList<AlbumItemPicture>();		
 		
 		if (containsPictures) {
-			List<AlbumItemPicture> pictures = new ArrayList<AlbumItemPicture>();
-			
-			pictures.add(new AlbumItemPicture(FileSystemAccessWrapper.PLACEHOLDERIMAGE, FileSystemAccessWrapper.PLACEHOLDERIMAGE, "TODO")); //TODO
-			pictures.add(new AlbumItemPicture(FileSystemAccessWrapper.PLACEHOLDERIMAGE2, FileSystemAccessWrapper.PLACEHOLDERIMAGE2, "TODO")); //TODO
-			
-			itemFields.add(new ItemField(DatabaseWrapper.PICTURE_COLUMN_NAME, FieldType.Picture, pictures));
+			pictures.add(new AlbumItemPicture(FileSystemAccessWrapper.PLACEHOLDERIMAGE, FileSystemAccessWrapper.PLACEHOLDERIMAGE));
+			pictures.add(new AlbumItemPicture(FileSystemAccessWrapper.PLACEHOLDERIMAGE2, FileSystemAccessWrapper.PLACEHOLDERIMAGE2));
 		}
 		
 		if (metaItemFields.isEmpty()) {
-			itemFields.add(new ItemField(Translator.toBeTranslated("You have not added any fields yet!"), 
-					FieldType.Text, Translator.toBeTranslated("Please add fields using the \"Create new album sidepane\"")));
+			itemFields.add(new ItemField(Translator.get(DictKeys.BROWSER_NO_FIELDS_ADDED_YET), FieldType.Text, Translator.get(DictKeys.BROWSER_PLEASE_USE_NEW_ALBUM_SIDEPANE)));
 		} else {
 			for (MetaItemField metaItemField : metaItemFields) {
 				if (metaItemField.getType().equals(FieldType.Text)) {
-					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), 
-							Translator.toBeTranslated("This is a sample " + metaItemField.getName() + " text" ), false));
+					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), Translator.get(DictKeys.BROWSER_THIS_IS_A_SAMPLE_TEXT, metaItemField.getName()), false));
 				} else if (metaItemField.getType().equals(FieldType.Date)) {
 					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), new java.sql.Date(System.currentTimeMillis()), false));
 				} else if (metaItemField.getType().equals(FieldType.Integer)) {
@@ -161,11 +171,20 @@ public class AlbumItemStore {
 				} else if (metaItemField.getType().equals(FieldType.Time)) {
 					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), System.currentTimeMillis(), false));
 				} else if (metaItemField.getType().equals(FieldType.URL)) {
-					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), "www.sammelbox.it", false));
+					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), "www.sammelbox.org", false));
 				}
 			}
 		}
 		
-		return new AlbumItem("DummyItem", itemFields);
+		try {
+			AlbumItem albumItem = new AlbumItem("DummyItem", itemFields);
+			albumItem.setPictures(pictures);
+			
+			return albumItem;
+		} catch (DatabaseWrapperOperationException ex) {
+			LOGGER.error("An error occured while creating a sample album item \n " + ExceptionHelper.toString(ex));
+		}
+		
+		return null;
 	}
 }

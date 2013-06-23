@@ -3,7 +3,7 @@
 	<!-- ######################################################## -->
 	<!-- ########### Put build version and type here  ########### -->
 	<!-- ######################################################## -->
-			<property name="buildVersion" value="0.7-alpha"/>
+			<property name="buildVersion" value="0.8-alpha"/>
 			<property name="buildType"    value="DEVELOPMENT"/>
 	<!-- ######################################################## -->
 	
@@ -17,10 +17,11 @@
 	
 	<property file="${res.dir}/information/buildinfo.properties"/>
 	
-	<fail message="Build type must be either DEVELOPMENT, TESTING or RELEASE">
+	<fail message="Build type must be either SNAPSHOT, DEVELOPMENT, TESTING or RELEASE">
 	    <condition>
 	        <not>
 		    	<or>
+		    		<equals arg1="${buildType}" arg2="SNAPSHOT"/>
 		            <equals arg1="${buildType}" arg2="DEVELOPMENT"/>
 		        	<equals arg1="${buildType}" arg2="TESTING"/>
 		        	<equals arg1="${buildType}" arg2="RELEASE"/>

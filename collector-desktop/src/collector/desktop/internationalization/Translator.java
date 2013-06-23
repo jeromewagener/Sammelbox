@@ -4,9 +4,14 @@ import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import collector.desktop.settings.ApplicationSettingsManager;
 
 public class Translator {
+	private static final Logger LOGGER = LoggerFactory.getLogger(Translator.class);
+	
 	private static Language language = null;
 	private static ResourceBundle languageBundle = null;
 	private Translator() {}
@@ -40,7 +45,7 @@ public class Translator {
 			Translator.language = language;
 			languageBundle = ResourceBundle.getBundle(Language.getDictionaryBundle(language));
 		} catch (MissingResourceException mre) {
-			System.err.println("properties not found"); // TODO log me
+			LOGGER.error("The properties file for the selected language (" + language + ") could not be found");
 		}
 	}
 	
@@ -64,7 +69,7 @@ public class Translator {
 	 * @return the string entered as parameter, with a warning prefix
 	 * */
 	public static String toBeTranslated(String stringToBeTranslated) {
-		// TODO log that an untranslated string was used	
+		LOGGER.warn("The following string needs to be translated: " + stringToBeTranslated);
 		return get(DictKeys.TO_BE_TRANSLATED, stringToBeTranslated);
 	}
 	
