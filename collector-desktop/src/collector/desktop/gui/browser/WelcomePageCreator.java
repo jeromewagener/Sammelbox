@@ -27,10 +27,10 @@ public class WelcomePageCreator {
 				"	 <table>" +
 				"      <tr>" +
 				"	     <td align=\"center\">" +
-				"          <img height=\"466\" src=\" " + FileSystemAccessWrapper.LOGO + " \">" +
+				"          <img width=\"450\" src=\" " + FileSystemAccessWrapper.LOGO + " \">" +
 				"        </td>" +
 				"        <td width=\"430px\">" +
-		        "          <div style=\"padding:10px; background-color:#" + Utilities.getBackgroundColorOfWidgetInHex() + "\">" +
+		        "          <div style=\"margin-left:30px; padding:10px; background-color:#" + Utilities.getBackgroundColorOfWidgetInHex() + "\">" +
 						     generateAlbumInformation() +
 						     generateFavorites() +
 			    "          </div>" +
@@ -54,7 +54,7 @@ public class WelcomePageCreator {
 				albumInformationBuilder.append("<li>" +
 											   "  Album <b>" + album + "</b><br>" +
 											   "  <font size=-1>" +
-											   "  <i>(" + 
+											   "  <i>" + 
 													Translator.get(DictKeys.BROWSER_NUMBER_OF_ITEMS_AND_LAST_UPDATED, 
 															WelcomePageManager.getInstance().getNumberOfItemsInAlbum(album),
 															WelcomePageManager.getInstance().getLastModifiedDate(album)) +
