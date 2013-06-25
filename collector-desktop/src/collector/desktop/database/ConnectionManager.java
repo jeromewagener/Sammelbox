@@ -45,9 +45,6 @@ public class ConnectionManager {
 			// Create the album master table if it does not exist 
 			DatabaseWrapper.createAlbumMasterTableIfNotExits();
 
-			// Create the picture table if it does not exist
-			DatabaseWrapper.createPictureTable();
-
 			// Run a fetch  to check if db is ok
 			if ( ConnectionManager.isConnectionReady() == false ) {
 				throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState);

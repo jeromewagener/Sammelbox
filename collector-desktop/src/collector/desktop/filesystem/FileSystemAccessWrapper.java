@@ -155,11 +155,6 @@ public class FileSystemAccessWrapper {
 			copyResourceToFile("stylesheets/style.css", styleCSS);
 		}
 
-		File loadingGIF = new File(COLLECTOR_HOME_APPDATA + File.separatorChar + "loading.gif");
-		if (!loadingGIF.exists() || OVERWRITE_EXISITING_FILES) {		
-			copyResourceToFile("graphics/loading.gif", loadingGIF);
-		}
-
 		File loadingHTML = new File(COLLECTOR_HOME_APPDATA + File.separatorChar + "loading.html");
 		if (!loadingHTML.exists() || OVERWRITE_EXISITING_FILES) {		
 			copyResourceToFile("htmlfiles/loading.html", loadingHTML);

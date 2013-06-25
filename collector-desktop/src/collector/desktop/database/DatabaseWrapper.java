@@ -34,16 +34,14 @@ import collector.desktop.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
 
 public class DatabaseWrapper  {
-	/** The name of the table containing all picture information of every album item. */
-	private static final String PICTURE_TABLE_NAME = "picture_table";
+	/** The suffix to the table containing all picture information for a single album */
+	private static final String PICTURE_TABLE_SUFFIX = "pictures";
 	/** The name of the picture table column that stores the filename of the original picture */
 	private static final String ORIGINAL_PICTURE_FILE_NAME_IN_PICTURE_TABLE = "original_picture_filename";
 	/** The name of the picture table column that stores the filename of the thumbnail picture */
 	private static final String THUMBNAIL_PICTURE_FILE_NAME_IN_PICTURE_TABLE = "thumbnail_picture_filename";
 	/** The reference to the album item which is associated with the current picture */
 	private static final String ALBUM_ITEM_ID_REFERENCE_IN_PICTURE_TABLE = "album_item_foreign_key";
-	/** The reference to the album which contains the album item which contains the current picture */
-	private static final String ALBUM_NAME_REFERENCE_IN_PICTURE_TABLE = "album_name";
 	/** Suffix used to append to the name of the main table to obtain the index name during index creation.*/
 	private static final String INDEX_NAME_SUFFIX = "_index";
 	/** The suffix used to append to the main table name to obtain the typeInfo table name.*/
@@ -93,6 +91,9 @@ public class DatabaseWrapper  {
 			}
 		}
 		
+		// Create picture table
+		createPictureTable(albumName);
+		
 		// Create picture directory
 		FileSystemAccessWrapper.updateAlbumFileStructure(ConnectionManager.connection);
 		
@@ -101,11 +102,12 @@ public class DatabaseWrapper  {
 	}
 
 	/**
-	 * Permanently renames an album in the specified databse.
+	 * Permanently renames an album in the specified database
 	 * @param oldAlbumName The old name of the album to be renamed
 	 * @param newAlbumName The new name of the album.
 	 * @throws DatabaseWrapperOperationException 
 	 */
+	// FIXME also rename picture table
 	public static void renameAlbum(String oldAlbumName, String newAlbumName) throws DatabaseWrapperOperationException {		
 		String savepointName =  DatabaseIntegrityManager.createSavepoint();
 		try {
@@ -486,7 +488,7 @@ public class DatabaseWrapper  {
 	
 			removeAlbumFromAlbumMasterTable(albumName); 
 	
-			removeAllPicturesForAlbumFromPictureTable(albumName);
+			dropPictureTableForAlbum(albumName);
 			
 			FileSystemAccessWrapper.deleteDirectoryRecursively(
 					new File(FileSystemAccessWrapper.getFilePathForAlbum(albumName)));
@@ -2055,7 +2057,7 @@ public class DatabaseWrapper  {
 		}
 	}
 
-	public static void createPictureTable () throws DatabaseWrapperOperationException {		
+	public static void createPictureTable (String albumName) throws DatabaseWrapperOperationException {		
 		List<MetaItemField> columns = new ArrayList<MetaItemField>();
 		// The filename of the original picture 
 		columns.add(new MetaItemField(DatabaseStringUtilities.encloseNameWithQuotes(ORIGINAL_PICTURE_FILE_NAME_IN_PICTURE_TABLE), FieldType.Text));
@@ -2063,26 +2065,25 @@ public class DatabaseWrapper  {
 		columns.add(new MetaItemField(DatabaseStringUtilities.encloseNameWithQuotes(THUMBNAIL_PICTURE_FILE_NAME_IN_PICTURE_TABLE), FieldType.Text));
 		// The id of the album item the picture belongs to
 		columns.add(new MetaItemField(DatabaseStringUtilities.encloseNameWithQuotes(ALBUM_ITEM_ID_REFERENCE_IN_PICTURE_TABLE), FieldType.ID));
-		columns.add(new MetaItemField(DatabaseStringUtilities.encloseNameWithQuotes(ALBUM_NAME_REFERENCE_IN_PICTURE_TABLE), FieldType.Text));
-		createTableWithIdAsPrimaryKey(DatabaseStringUtilities.encloseNameWithQuotes(PICTURE_TABLE_NAME), columns , false, true);
+	
+		
+		createTableWithIdAsPrimaryKey(DatabaseStringUtilities.encloseNameWithQuotes(albumName + "_" + PICTURE_TABLE_SUFFIX), columns , false, true);
 	}
 	
 	private static void addToPictureTable(AlbumItemPicture albumItemPicture) throws DatabaseWrapperOperationException {
 		StringBuilder sb = new StringBuilder("INSERT INTO ");
-		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(PICTURE_TABLE_NAME));
+		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(albumItemPicture.getAlbumName() + "_" + PICTURE_TABLE_SUFFIX));
 		sb.append(" ( ");
 
 		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(ORIGINAL_PICTURE_FILE_NAME_IN_PICTURE_TABLE) + ", ");
 		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(THUMBNAIL_PICTURE_FILE_NAME_IN_PICTURE_TABLE) + ", ");
-		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(ALBUM_ITEM_ID_REFERENCE_IN_PICTURE_TABLE) + ", ");
-		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(ALBUM_NAME_REFERENCE_IN_PICTURE_TABLE));
+		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(ALBUM_ITEM_ID_REFERENCE_IN_PICTURE_TABLE));
 		
 		sb.append(") VALUES( ");
 
 		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(albumItemPicture.getOriginalPictureName()) + ", ");
 		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(albumItemPicture.getThumbnailPictureName()) + ", ");
-		sb.append(albumItemPicture.getAlbumItemID() + ", ");
-		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(albumItemPicture.getAlbumName()));	
+		sb.append(albumItemPicture.getAlbumItemID());
 
 		sb.append(" ) ");
 		
@@ -2102,17 +2103,15 @@ public class DatabaseWrapper  {
 						ID_COLUMN_NAME + ", " +
 						THUMBNAIL_PICTURE_FILE_NAME_IN_PICTURE_TABLE + ", " +
 						ORIGINAL_PICTURE_FILE_NAME_IN_PICTURE_TABLE + ", " +
-						ALBUM_NAME_REFERENCE_IN_PICTURE_TABLE + ", " +
-						ALBUM_ITEM_ID_REFERENCE_IN_PICTURE_TABLE + 
-				   " FROM " + PICTURE_TABLE_NAME +
-				   " WHERE " + ALBUM_NAME_REFERENCE_IN_PICTURE_TABLE + " = " + DatabaseStringUtilities.encloseNameWithQuotes(albumName) +
-				   " AND " + ALBUM_ITEM_ID_REFERENCE_IN_PICTURE_TABLE + " = " + String.valueOf(albumItemID) + ";";
+						ALBUM_ITEM_ID_REFERENCE_IN_PICTURE_TABLE +
+				   " FROM " + DatabaseStringUtilities.encloseNameWithQuotes(albumName + "_" + PICTURE_TABLE_SUFFIX) +
+				   " WHERE " + ALBUM_ITEM_ID_REFERENCE_IN_PICTURE_TABLE + " = " + String.valueOf(albumItemID) + ";";
 	
 			try (Statement statement = ConnectionManager.connection.createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
 				 ResultSet rs = statement.executeQuery(picturesQuery);) {			
 			
 				while (rs.next()) {
-					pictures.add(new AlbumItemPicture(rs.getLong(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getLong(5)));
+					pictures.add(new AlbumItemPicture(rs.getLong(1), rs.getString(2), rs.getString(3), albumName, rs.getLong(4)));
 				}			
 			} catch (SQLException e) {
 				throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
@@ -2127,10 +2126,8 @@ public class DatabaseWrapper  {
 	 * @param albumItem the album item for which all picture records should be deleted */
 	public static void removeAllPicturesForAlbumItemFromPictureTable(AlbumItem albumItem) throws DatabaseWrapperOperationException {		
 		StringBuilder sb = new StringBuilder("DELETE FROM ");
-		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(PICTURE_TABLE_NAME));
+		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(albumItem.getAlbumName() + "_" + PICTURE_TABLE_SUFFIX));
 		sb.append(" WHERE ");
-		sb.append(ALBUM_NAME_REFERENCE_IN_PICTURE_TABLE + " = " + DatabaseStringUtilities.encloseNameWithQuotes(albumItem.getAlbumName()));
-		sb.append(" AND ");
 		sb.append(ALBUM_ITEM_ID_REFERENCE_IN_PICTURE_TABLE + " = " + albumItem.getItemID());
 				
 		try (PreparedStatement preparedStatement = ConnectionManager.connection.prepareStatement(sb.toString())) {						
@@ -2140,14 +2137,12 @@ public class DatabaseWrapper  {
 		}
 	}
 	
-	/** Removes all picture records from the picture table for the given album
+	/** Drops the picture table of the specified album
 	 * ATTENTION: this method does no delete the physical files!
-	 * @param albumName the album name for which all picture records should be deleted */
-	public static void removeAllPicturesForAlbumFromPictureTable(String albumName) throws DatabaseWrapperOperationException {
-		StringBuilder sb = new StringBuilder("DELETE FROM ");
-		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(PICTURE_TABLE_NAME));
-		sb.append(" WHERE ");
-		sb.append(ALBUM_NAME_REFERENCE_IN_PICTURE_TABLE + " = " + DatabaseStringUtilities.encloseNameWithQuotes(albumName));
+	 * @param albumName the album name for which the picture table should be droped */
+	public static void dropPictureTableForAlbum(String albumName) throws DatabaseWrapperOperationException {
+		StringBuilder sb = new StringBuilder("DROP TABLE ");
+		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(albumName + "_" + PICTURE_TABLE_SUFFIX));
 		
 		try (PreparedStatement preparedStatement = ConnectionManager.connection.prepareStatement(sb.toString())) {						
 			preparedStatement.executeUpdate();
