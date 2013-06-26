@@ -125,6 +125,10 @@ public class Utilities {
 	}
 	
 	static String escapeHtmlString(String htmlString) {
+		if (htmlString == null) {
+			return "";
+		}		
+		
 		String escapedString = htmlString;
 		
 		escapedString = escapedString.replace("&", "&amp;");

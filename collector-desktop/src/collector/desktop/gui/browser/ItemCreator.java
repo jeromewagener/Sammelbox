@@ -94,8 +94,8 @@ public class ItemCreator {
 
 				SimpleDateFormat dateFormater = (SimpleDateFormat) DateFormat.getDateInstance(DateFormat.LONG, ApplicationSettingsManager.getUserDefinedLocale());
 				htmlDataColumnContent.append(getFieldNameAndValueLine(fieldItem.getName(), dateFormater.format(utilDate)));
-			} else {
-				htmlDataColumnContent.append(getFieldNameAndValueLine(fieldItem.getName(), Utilities.escapeHtmlString(fieldItem.getValue().toString())));
+			} else  if (fieldItem.getType().equals(FieldType.Text)) {
+				htmlDataColumnContent.append(getFieldNameAndValueLine(fieldItem.getName(), Utilities.escapeHtmlString((String) fieldItem.getValue())));
 			}
 		}
 				
@@ -174,9 +174,8 @@ public class ItemCreator {
 	private static String getMainPictureHtml(long id, List<AlbumItemPicture> albumItemPictures) {
 		// Initialize with placeholder
 		String mainPictureHtml = "<img id=\"imageId" + id + "\" " +
-				 "     width=195 " +
-				 "     height=195 " +
-				 "     src=\"" + FileSystemAccessWrapper.PLACEHOLDERIMAGE + "\">";
+				 				 "     style=\"max-width:195px; max-height:195px;\"" +
+				 				 "     src=\"" + FileSystemAccessWrapper.PLACEHOLDERIMAGE + "\">";
 		
 		// Use primary image if available
 		if (!albumItemPictures.isEmpty()) {

@@ -40,13 +40,13 @@ public class CollectorTestExecuter {
 	public static final String PATH_TO_TEST_PIC1 = 
 			System.getProperty("user.dir") + File.separatorChar + "test-data" + 
 					File.separator + "testPictures"+
-					File.separatorChar + "test Pic1.png";
+					File.separatorChar + "testpic1.png";
 	public static final String PATH_TO_TEST_PIC2 = 
 			System.getProperty("user.dir") + File.separatorChar + "test-data" + 
 					File.separator + "testPictures"+
-					File.separatorChar + "test Pic2.png";
+					File.separatorChar + "testpic2.png";
 	public static final String PATH_TO_TEST_PIC3 = 
 			System.getProperty("user.dir") + File.separatorChar + "test-data" + 
 					File.separator + "testPictures"+
-					File.separatorChar + "test Pic3.png";
+					File.separatorChar + "testpic3.png";
 }
