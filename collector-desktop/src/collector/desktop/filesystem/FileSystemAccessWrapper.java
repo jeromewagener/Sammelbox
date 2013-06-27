@@ -49,6 +49,7 @@ public class FileSystemAccessWrapper {
 	public static final String COLLECTOR_HOME_ALBUM_PICTURES 	= COLLECTOR_HOME + File.separatorChar + "album-pictures";
 	public static final String PLACEHOLDERIMAGE 				= COLLECTOR_HOME_APPDATA + File.separatorChar + "placeholder.png";
 	public static final String PLACEHOLDERIMAGE2 				= COLLECTOR_HOME_APPDATA + File.separatorChar + "placeholder2.png";
+	public static final String PLACEHOLDERIMAGE3 				= COLLECTOR_HOME_APPDATA + File.separatorChar + "placeholder3.png";
 	public static final String LOGO 							= COLLECTOR_HOME_APPDATA + File.separatorChar + "logo.png";
 	public static final String LOGO_SMALL 						= COLLECTOR_HOME_APPDATA + File.separatorChar + "logo-small.png";
 	public static final String DATABASE_NAME					= "collector.db";
@@ -134,6 +135,11 @@ public class FileSystemAccessWrapper {
 		if (!placeholder2PNG.exists() || OVERWRITE_EXISITING_FILES) {		
 			copyResourceToFile("graphics/placeholder2.png", placeholder2PNG);
 		}
+		
+		File placeholder3PNG = new File(PLACEHOLDERIMAGE3);
+		if (!placeholder3PNG.exists() || OVERWRITE_EXISITING_FILES) {		
+			copyResourceToFile("graphics/placeholder3.png", placeholder3PNG);
+		}
 
 		File logoPNG = new File(LOGO);
 		if (!logoPNG.exists() || OVERWRITE_EXISITING_FILES) {		
@@ -153,11 +159,6 @@ public class FileSystemAccessWrapper {
 		File styleCSS = new File(COLLECTOR_HOME_APPDATA + File.separatorChar + "style.css");
 		if (!styleCSS.exists() || OVERWRITE_EXISITING_FILES) {		
 			copyResourceToFile("stylesheets/style.css", styleCSS);
-		}
-
-		File loadingHTML = new File(COLLECTOR_HOME_APPDATA + File.separatorChar + "loading.html");
-		if (!loadingHTML.exists() || OVERWRITE_EXISITING_FILES) {		
-			copyResourceToFile("htmlfiles/loading.html", loadingHTML);
 		}
 
 		return true;

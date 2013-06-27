@@ -2,21 +2,16 @@ package collector.desktop.database;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import collector.desktop.database.exceptions.DatabaseWrapperOperationException;
-import collector.desktop.filesystem.BuildInformation;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
 
+// TODO this class needs to be strongly refactored!!!
 public class DatabaseIntegrityManager {
 	/**The normal logger for all info, debug, error and warning in this class*/
 	private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseIntegrityManager.class);
@@ -36,7 +31,7 @@ public class DatabaseIntegrityManager {
 	 * @throws DatabaseWrapperOperationException 
 	 */
 	public static String createSavepoint() throws DatabaseWrapperOperationException  {
-		String savepointName = UUID.randomUUID().toString();
+		/*String savepointName = UUID.randomUUID().toString();
 	
 		try (PreparedStatement createSavepointStatement = ConnectionManager.connection.prepareStatement("SAVEPOINT " + DatabaseStringUtilities.encloseNameWithQuotes(savepointName));){			
 			createSavepointStatement.execute();
@@ -44,7 +39,9 @@ public class DatabaseIntegrityManager {
 		} catch (SQLException e) {
 			LOGGER.error("Creating the savepoint {} failed", savepointName);
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
-		}		
+		}*/
+		
+		return "";
 	}
 	
 	/**
@@ -58,7 +55,7 @@ public class DatabaseIntegrityManager {
 	 */
 	public static void releaseSavepoint(String savepointName) throws DatabaseWrapperOperationException {
 	
-		if (savepointName == null || savepointName.isEmpty()){
+		/*if (savepointName == null || savepointName.isEmpty()){
 			LOGGER.error("The savepoint could not be released since the name string is null or empty");
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState);
 		}
@@ -68,7 +65,7 @@ public class DatabaseIntegrityManager {
 		} catch (SQLException e) {
 			LOGGER.error("Releasing the savepoint {} failed", savepointName);
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState, e);
-		}
+		}*/
 	}
 	
 	/**
@@ -78,7 +75,7 @@ public class DatabaseIntegrityManager {
 	 */
 	public static void rollbackToSavepoint(String savepointName) throws DatabaseWrapperOperationException {
 	
-		if (savepointName == null || savepointName.isEmpty()){
+		/*if (savepointName == null || savepointName.isEmpty()){
 			LOGGER.error("The savepoint could not be rolledback to since the name string is null or empty");
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState);
 		}	
@@ -88,7 +85,7 @@ public class DatabaseIntegrityManager {
 		} catch (SQLException e) {
 			LOGGER.error("Rolling back the savepoint {} failed", savepointName);
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState,e);
-		}
+		}*/
 	}
 	
 	/**
@@ -96,17 +93,18 @@ public class DatabaseIntegrityManager {
 	 * @param filePath The path ending with the file name under which the backup will be stored.
 	 * @throws DatabaseWrapperOperationException 
 	 */
+	// TODO why do we create a temporary file? why not zip directly?
 	public static void backupToFile(String filePath) throws DatabaseWrapperOperationException {
-		// PIC check if the new picture file structure is backed up correctly. Especially with separate thumbnail folder
-		String tempDirName=  java.util.UUID.randomUUID().toString();
-		File tempDir = new File(System.getProperty("user.home")+File.separator,tempDirName);
-		if( !tempDir.exists() ) {
+		// create temporary directory which includes backup files
+		String tempDirName = java.util.UUID.randomUUID().toString();
+		File tempDir = new File(System.getProperty("user.home") + File.separator, tempDirName);
+		if (!tempDir.exists()) {
 			tempDir.mkdir();
 		}
 	
-		// backup application data
-		File tempAppDataDir = new File(tempDir.getPath() + File.separatorChar + "app-data");
-		File sourceAppDataDir = new File(FileSystemAccessWrapper.COLLECTOR_HOME_APPDATA);
+		// backup collector home
+		File tempAppDataDir = new File(tempDir.getPath());
+		File sourceAppDataDir = new File(FileSystemAccessWrapper.COLLECTOR_HOME);
 		try {
 			String lockFileRegex = "^\\.lock$"; 
 			FileSystemAccessWrapper.copyDirectory(sourceAppDataDir, tempAppDataDir, lockFileRegex);
@@ -114,14 +112,14 @@ public class DatabaseIntegrityManager {
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState,e);
 		}
 	
-		//boolean successState = true;
+		// backup database to file
 		try (Statement statement = ConnectionManager.connection.createStatement()){				
 			statement.executeUpdate("backup to '" + tempDir.getPath() + File.separatorChar + FileSystemAccessWrapper.DATABASE_TO_RESTORE_NAME+"'");
 		} catch (SQLException e) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState,e);
 		}
 	
-		// Zip the whole temp folder
+		// zip the whole temp folder
 		FileSystemAccessWrapper.zipFolderToFile(tempDir.getPath(), filePath);
 	
 		// delete temp folder
@@ -139,12 +137,12 @@ public class DatabaseIntegrityManager {
 	
 	
 		try (Statement statement = ConnectionManager.connection.createStatement()) {			
-			statement.executeUpdate("restore from '" + FileSystemAccessWrapper.DATABASE_TO_RESTORE+"'");
-			try {
+			statement.executeUpdate("restore from '" + FileSystemAccessWrapper.DATABASE_TO_RESTORE + "'");
+			/* TODO remove try {
 				DatabaseIntegrityManager.lastChangeTimeStamp =  DatabaseIntegrityManager.extractTimeStamp(new File(filePath));
 			} catch (DatabaseWrapperOperationException e) {
 				DatabaseIntegrityManager.lastChangeTimeStamp = System.currentTimeMillis();
-			}
+			}*/
 		} catch (SQLException e) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState,e);
 		}
@@ -160,26 +158,29 @@ public class DatabaseIntegrityManager {
 		if ( !FileSystemAccessWrapper.updateAlbumFileStructure(ConnectionManager.connection) ) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState);
 		}
+		
+		// TODO remove
 		// Update timestamp
-		DatabaseIntegrityManager.updateLastDatabaseChangeTimeStamp();
+		//DatabaseIntegrityManager.updateLastDatabaseChangeTimeStamp();
 	}
 	
 	/**
 	 * Gets the time stamp when the last change to the database happened.
 	 * @return The time in milliseconds when the last change to the database occured. -1 If not initialized.
 	 */
-	public static long getLastDatabaseChangeTimeStamp() {
+	/* TODO remove public static long getLastDatabaseChangeTimeStamp() {
 		return DatabaseIntegrityManager.lastChangeTimeStamp;
 	}
 	
 	static void updateLastDatabaseChangeTimeStamp() {
 		DatabaseIntegrityManager.lastChangeTimeStamp = System.currentTimeMillis();
-	}
+	}*/
 	
 	/**
 	 * Gets the list of existing autosaves sorted by filename timestamp, newest to oldest.
 	 * @return List of files of previous autosaves. Empty list if none exist
 	 */
+	/* TODO remove
 	public static List<File> getAllAutoSaves() throws DatabaseWrapperOperationException{
 		List<File> autoSaves = FileSystemAccessWrapper.getAllMatchingFilesInCollectorHome(DatabaseIntegrityManager.AUTO_SAVE_FILE_REGEX);
 		Collections.sort(autoSaves, new Comparator<File>() {
@@ -193,7 +194,7 @@ public class DatabaseIntegrityManager {
 			}
 		});
 		return autoSaves;
-	}
+	}*/
 	
 	/**
 	 * Extracts the database last change timestamp from the autosave file. Requires the correct format of the name.
@@ -201,7 +202,7 @@ public class DatabaseIntegrityManager {
 	 * @return A long integer representing the last change of the database.
 	 * @throws DatabaseWrapperOperationException 
 	 */
-	static long extractTimeStamp(File autoSaveFile) throws DatabaseWrapperOperationException {
+	/* TODO remove static long extractTimeStamp(File autoSaveFile) throws DatabaseWrapperOperationException {
 	
 		String fileName;
 		try {
@@ -220,7 +221,7 @@ public class DatabaseIntegrityManager {
 		} catch (NumberFormatException e) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
 		}
-	}
+	}*/
 	
 	/**
 	 * Creates an automatic backup when the current state of the database is newer than the most recent autosave.  
@@ -229,7 +230,7 @@ public class DatabaseIntegrityManager {
 	 * @throws DatabaseWrapperOperationException 
 	 */
 	public static void backupAutoSave() throws DatabaseWrapperOperationException {		
-		String programVersion = BuildInformation.instance().getBuildType() + "_" + BuildInformation.instance().getVersion();
+		/*String programVersion = BuildInformation.instance().getBuildType() + "_" + BuildInformation.instance().getVersion();
 		String timeStamp = Long.toString(getLastDatabaseChangeTimeStamp());		
 	
 		String autoSaveFilePath = FileSystemAccessWrapper.COLLECTOR_HOME_APPDATA + 
@@ -277,6 +278,6 @@ public class DatabaseIntegrityManager {
 				LOGGER.error("Autosave - backup failed");
 				throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState, e);
 			}
-		}
+		}*/
 	}
 }

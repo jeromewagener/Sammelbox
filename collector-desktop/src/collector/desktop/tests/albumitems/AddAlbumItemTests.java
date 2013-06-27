@@ -237,9 +237,9 @@ public class AddAlbumItemTests {
 		// Create picture field with 3 pictures
 		List<AlbumItemPicture> pictures = new ArrayList<AlbumItemPicture>();
 		
-		pictures.add(new AlbumItemPicture(CollectorTestExecuter.PATH_TO_TEST_PIC1, CollectorTestExecuter.PATH_TO_TEST_PIC1));
-		pictures.add(new AlbumItemPicture(CollectorTestExecuter.PATH_TO_TEST_PIC1, CollectorTestExecuter.PATH_TO_TEST_PIC1));
-		pictures.add(new AlbumItemPicture(CollectorTestExecuter.PATH_TO_TEST_PIC1, CollectorTestExecuter.PATH_TO_TEST_PIC1));
+		pictures.add(new AlbumItemPicture(CollectorTestExecuter.PATH_TO_TEST_PICTURE_1, CollectorTestExecuter.PATH_TO_TEST_PICTURE_1));
+		pictures.add(new AlbumItemPicture(CollectorTestExecuter.PATH_TO_TEST_PICTURE_1, CollectorTestExecuter.PATH_TO_TEST_PICTURE_1));
+		pictures.add(new AlbumItemPicture(CollectorTestExecuter.PATH_TO_TEST_PICTURE_1, CollectorTestExecuter.PATH_TO_TEST_PICTURE_1));
 		
 		// FIXME repair this testcase
 //		item.setFields(fields);

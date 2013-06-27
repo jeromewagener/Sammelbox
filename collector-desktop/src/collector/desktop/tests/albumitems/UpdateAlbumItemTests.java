@@ -144,7 +144,7 @@ public class UpdateAlbumItemTests {
 
 		// Change a text field
 		List<AlbumItemPicture> pictureList = originalAlbumItem.getPictures();
-		pictureList.add(new AlbumItemPicture(CollectorTestExecuter.PATH_TO_TEST_PIC3, CollectorTestExecuter.PATH_TO_TEST_PIC3));
+		pictureList.add(new AlbumItemPicture(CollectorTestExecuter.PATH_TO_TEST_PICTURE_3, CollectorTestExecuter.PATH_TO_TEST_PICTURE_3));
 		originalAlbumItem.getField("collectorPicture").setValue(pictureList);
 
 		DatabaseWrapper.updateAlbumItem(originalAlbumItem);

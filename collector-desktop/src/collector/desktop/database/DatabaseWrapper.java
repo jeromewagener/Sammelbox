@@ -122,7 +122,7 @@ public class DatabaseWrapper  {
 			// Change the entry in the album master table. OptionType.UNKNOWN indicates no change of the picture storing 
 			modifyAlbumInAlbumMasterTable(oldAlbumName, newAlbumName, newTypeInfoTableName, OptionType.UNKNOWN);			
 	
-			DatabaseIntegrityManager.updateLastDatabaseChangeTimeStamp();
+			//TODO remove DatabaseIntegrityManager.updateLastDatabaseChangeTimeStamp();
 		} catch (DatabaseWrapperOperationException e) {
 			if (e.ErrorState.equals(DBErrorState.ErrorWithDirtyState)) {
 				DatabaseIntegrityManager.rollbackToSavepoint(savepointName);
@@ -212,7 +212,7 @@ public class DatabaseWrapper  {
 			}
 	
 			rebuildIndexForTable(albumName, newFields);
-			DatabaseIntegrityManager.updateLastDatabaseChangeTimeStamp();
+			//TODO remove DatabaseIntegrityManager.updateLastDatabaseChangeTimeStamp();
 		} catch (DatabaseWrapperOperationException e) {
 			if (e.ErrorState.equals(DBErrorState.ErrorWithCleanState)) {
 				DatabaseIntegrityManager.rollbackToSavepoint(savepointName);					
@@ -269,7 +269,7 @@ public class DatabaseWrapper  {
 			renameFieldInAlbumItemList(oldMetaItemField, newMetaItemField, albumItems);
 		
 			rebuildIndexForTable(albumName, newFields);
-			DatabaseIntegrityManager.updateLastDatabaseChangeTimeStamp();
+			//TODO remove DatabaseIntegrityManager.updateLastDatabaseChangeTimeStamp();
 		} catch (DatabaseWrapperOperationException e) {
 			if (e.ErrorState.equals(DBErrorState.ErrorWithDirtyState)) {
 				DatabaseIntegrityManager.rollbackToSavepoint(savepointName);
@@ -323,7 +323,7 @@ public class DatabaseWrapper  {
 			}
 
 			rebuildIndexForTable(albumName, newFields);
-			DatabaseIntegrityManager.updateLastDatabaseChangeTimeStamp();
+			//TODO remove DatabaseIntegrityManager.updateLastDatabaseChangeTimeStamp();
 		} catch (DatabaseWrapperOperationException e) {
 			if (e.ErrorState.equals(DBErrorState.ErrorWithDirtyState)) {
 				DatabaseIntegrityManager.rollbackToSavepoint(savepointName);
@@ -356,7 +356,7 @@ public class DatabaseWrapper  {
 				createIndex(albumName, quickSearchableColumnNames);
 			}				
 			updateSchemaVersion(albumName);
-			DatabaseIntegrityManager.updateLastDatabaseChangeTimeStamp();
+			//TODO remove DatabaseIntegrityManager.updateLastDatabaseChangeTimeStamp();
 		} catch (DatabaseWrapperOperationException e) {
 			if (e.ErrorState.equals(DBErrorState.ErrorWithDirtyState)) {
 				DatabaseIntegrityManager.rollbackToSavepoint(savepointName);
@@ -493,7 +493,7 @@ public class DatabaseWrapper  {
 			FileSystemAccessWrapper.deleteDirectoryRecursively(
 					new File(FileSystemAccessWrapper.getFilePathForAlbum(albumName)));
 			
-			DatabaseIntegrityManager.updateLastDatabaseChangeTimeStamp();
+			//TODO remove DatabaseIntegrityManager.updateLastDatabaseChangeTimeStamp();
 		} catch (DatabaseWrapperOperationException e) {
 			if (e.ErrorState.equals(DBErrorState.ErrorWithDirtyState)) {
 				DatabaseIntegrityManager.rollbackToSavepoint(savepointName);
@@ -612,7 +612,7 @@ public class DatabaseWrapper  {
 		String savepointName = DatabaseIntegrityManager.createSavepoint();
 		try {
 			appendNewTableColumn(albumName, metaItemField);
-			DatabaseIntegrityManager.updateLastDatabaseChangeTimeStamp();
+			//TODO remove DatabaseIntegrityManager.updateLastDatabaseChangeTimeStamp();
 		} catch (DatabaseWrapperOperationException e) {
 			if (e.ErrorState.equals(DBErrorState.ErrorWithDirtyState)) {
 				DatabaseIntegrityManager.rollbackToSavepoint(savepointName);
@@ -1052,7 +1052,7 @@ public class DatabaseWrapper  {
 
 			}
 			updateContentVersion(item.getAlbumName(), idOfAddedItem, newUUID);
-			DatabaseIntegrityManager.updateLastDatabaseChangeTimeStamp();
+			//TODO remove DatabaseIntegrityManager.updateLastDatabaseChangeTimeStamp();
 			return idOfAddedItem;
 		} catch (SQLException e) {
 			DatabaseIntegrityManager.rollbackToSavepoint(savepointName);
@@ -1204,7 +1204,7 @@ public class DatabaseWrapper  {
 			}
 			
 			updateContentVersion(albumItem.getAlbumName(), id, generateNewUUID());
-			DatabaseIntegrityManager.updateLastDatabaseChangeTimeStamp();
+			//TODO remove DatabaseIntegrityManager.updateLastDatabaseChangeTimeStamp();
 		} catch (DatabaseWrapperOperationException e) {
 			if (e.ErrorState.equals(DBErrorState.ErrorWithDirtyState)) {
 				DatabaseIntegrityManager.rollbackToSavepoint(savepointName);
@@ -1235,7 +1235,7 @@ public class DatabaseWrapper  {
 		
 		try (PreparedStatement preparedStatement = ConnectionManager.connection.prepareStatement(deleteAlbumItemString)) {
 			preparedStatement.executeUpdate();
-			DatabaseIntegrityManager.updateLastDatabaseChangeTimeStamp();
+			//TODO remove DatabaseIntegrityManager.updateLastDatabaseChangeTimeStamp();
 			
 			// delete album pictures in picture table
 			removeAllPicturesForAlbumItemFromPictureTable(albumItem);

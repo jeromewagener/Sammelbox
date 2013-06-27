@@ -35,18 +35,21 @@ import collector.desktop.tests.searching.QuickSearchTests;
 
 public class CollectorTestExecuter {
 	public static final String PATH_TO_TEST_CBK = 
-			System.getProperty("user.dir") + File.separatorChar + "test-data" + 
-					File.separatorChar + "Test-Albums-Version-1.cbk";
-	public static final String PATH_TO_TEST_PIC1 = 
-			System.getProperty("user.dir") + File.separatorChar + "test-data" + 
-					File.separator + "testPictures"+
-					File.separatorChar + "testpic1.png";
-	public static final String PATH_TO_TEST_PIC2 = 
-			System.getProperty("user.dir") + File.separatorChar + "test-data" + 
-					File.separator + "testPictures"+
-					File.separatorChar + "testpic2.png";
-	public static final String PATH_TO_TEST_PIC3 = 
-			System.getProperty("user.dir") + File.separatorChar + "test-data" + 
-					File.separator + "testPictures"+
-					File.separatorChar + "testpic3.png";
+			System.getProperty("user.dir") + File.separatorChar + "testdata" + 
+					File.separatorChar + "test-albums-version-2.cbk";
+	
+	public static final String PATH_TO_TEST_PICTURE_1 = 
+			System.getProperty("user.dir") + File.separatorChar + "res" + 
+					File.separator + "graphics"+
+					File.separatorChar + "placeholder1.png";
+	
+	public static final String PATH_TO_TEST_PICTURE_2 = 
+			System.getProperty("user.dir") + File.separatorChar + "res" + 
+					File.separator + "graphics"+
+					File.separatorChar + "placeholder2.png";
+	
+	public static final String PATH_TO_TEST_PICTURE_3 = 
+			System.getProperty("user.dir") + File.separatorChar + "res" + 
+					File.separator + "graphics"+
+					File.separatorChar + "placeholder3.png";
 }
