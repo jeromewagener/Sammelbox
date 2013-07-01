@@ -11,7 +11,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-
 import collector.desktop.database.AlbumItemResultSet;
 import collector.desktop.database.ConnectionManager;
 import collector.desktop.database.DatabaseIntegrityManager;
@@ -20,65 +19,39 @@ import collector.desktop.database.QueryBuilder;
 import collector.desktop.database.QueryBuilder.QueryComponent;
 import collector.desktop.database.QueryBuilder.QueryOperator;
 import collector.desktop.database.exceptions.DatabaseWrapperOperationException;
-import collector.desktop.filesystem.FileSystemAccessWrapper;
 import collector.desktop.tests.CollectorTestExecuter;
 
 public class AdvancedSearchTests {
-	private static void resetEverything() {
-		try {			
-			ConnectionManager.closeConnection();
-
-			FileSystemAccessWrapper.removeCollectorHome();
-
-			Class.forName("org.sqlite.JDBC");
-
-			FileSystemAccessWrapper.updateCollectorFileStructure();			
-
-			ConnectionManager.openConnection();
-
-			FileSystemAccessWrapper.updateAlbumFileStructure(ConnectionManager.getConnection());
-		} 
-		catch (Exception e) {
-			e.printStackTrace();
-			fail("Could not open database!");
-		}
-	}
-
-
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 	}
 
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		resetEverything();
+		CollectorTestExecuter.resetEverything();
 	}
 
 	@Before
 	public void setUp() {
-		resetEverything();
+		CollectorTestExecuter.resetEverything();
 	}
 
 	@After
 	public void tearDown() throws Exception {
 		ConnectionManager.closeConnection();
-		resetEverything();
+		CollectorTestExecuter.resetEverything();
 	}
 
 	@Test
 	public void testSearchForTitleInDVDsUsingSQL() {
 		try {
-			// Use default test sample
 			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
-
 			AlbumItemResultSet searchResults = DatabaseWrapper.executeSQLQuery("SELECT * FROM DVDs WHERE Title = 'The Simpsons Movie'");
-
 			assertTrue("Resultset should not be null", searchResults != null);
 
 			int counter = 0;
 			while (searchResults.moveToNext()) {
 				counter++;
-
 				for (int i=1; i<searchResults.getFieldCount(); i++) {
 					if (searchResults.getFieldName(i).equals("Title")) {
 						assertTrue("The only result should be The Simpsons Movie", 
@@ -96,18 +69,14 @@ public class AdvancedSearchTests {
 	@Test
 	public void testSearchForTitleAndActorsInDVDsUsingSQL() {
 		try {
-			// Use default test sample
 			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
-
 			AlbumItemResultSet searchResults = DatabaseWrapper.executeSQLQuery(
 					"SELECT * FROM DVDs WHERE Title = 'The Simpsons Movie' and Actors = 'The Simpsons'");
-
 			assertTrue("Resultset should not be null", searchResults != null);
 
 			int counter = 0;
 			while (searchResults.moveToNext()) {
 				counter++;
-
 				for (int i=1; i<searchResults.getFieldCount(); i++) {
 					if (searchResults.getFieldName(i).equals("Title")) {
 						assertTrue("The only result should be The Simpsons Movie", 
@@ -125,12 +94,9 @@ public class AdvancedSearchTests {
 	@Test
 	public void testSearchForTitleInDVDsUsingQueryBuilder() {
 		try {
-			// Use default test sample
 			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
-
 			ArrayList<QueryComponent> queryComponents = new ArrayList<QueryComponent>();
 			queryComponents.add(QueryBuilder.getQueryComponent("Title", QueryOperator.equals, "Short Circuit 2"));
-
 			AlbumItemResultSet searchResults = DatabaseWrapper.executeSQLQuery(
 					QueryBuilder.buildQuery(queryComponents, true, "DVDs"));
 
@@ -139,7 +105,6 @@ public class AdvancedSearchTests {
 			int counter = 0;
 			while (searchResults.moveToNext()) {
 				counter++;
-
 				for (int i=1; i<searchResults.getFieldCount(); i++) {
 					if (searchResults.getFieldName(i).equals("Title")) {
 						assertTrue("The only result should be Short Circuit 2", 
@@ -157,7 +122,6 @@ public class AdvancedSearchTests {
 	@Test
 	public void testSearchForTitleAndAuthorInDVDsUsingQueryBuilder() {
 		try {
-			// Use default test sample
 			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
 
 			ArrayList<QueryComponent> queryComponents = new ArrayList<QueryComponent>();
@@ -190,14 +154,11 @@ public class AdvancedSearchTests {
 	@Test
 	public void testSearchForTitlesInDVDsUsingQueryBuilder() {
 		try {
-			// Use default test sample
 			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
-
 			ArrayList<QueryComponent> queryComponents = new ArrayList<QueryComponent>();
 			queryComponents.add(QueryBuilder.getQueryComponent("Title", QueryOperator.equals, "Short Circuit 2"));
 			queryComponents.add(QueryBuilder.getQueryComponent("Title", QueryOperator.equals, "One Flew Over The Cuckoo's Nest"));
 			queryComponents.add(QueryBuilder.getQueryComponent("Title", QueryOperator.equals, "RED"));
-
 			AlbumItemResultSet searchResults = DatabaseWrapper.executeSQLQuery(QueryBuilder.buildQuery(queryComponents, false, "DVDs"));
 
 			assertTrue("Resultset should not be null", searchResults != null);
@@ -205,7 +166,6 @@ public class AdvancedSearchTests {
 			int counter = 0;
 			while (searchResults.moveToNext()) {
 				counter++;
-
 				for (int i=1; i<searchResults.getFieldCount(); i++) {
 					if (searchResults.getFieldName(i).equals("Title")) {
 						assertTrue("The only results should be either Short Circuit 2, One Flew Over The Cuckoo's Nest or RED", 
@@ -225,12 +185,9 @@ public class AdvancedSearchTests {
 	@Test
 	public void testSearchByLikeForAuthorInBooksUsingQueryBuilder() {
 		try {
-			// Use default test sample
 			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
-
 			ArrayList<QueryComponent> queryComponents = new ArrayList<QueryComponent>();
 			queryComponents.add(QueryBuilder.getQueryComponent("Author", QueryOperator.like, "Helm"));
-
 			AlbumItemResultSet searchResults = DatabaseWrapper.executeSQLQuery(
 					QueryBuilder.buildQuery(queryComponents, true, "Books"));
 
@@ -239,7 +196,6 @@ public class AdvancedSearchTests {
 			int counter = 0;
 			while (searchResults.moveToNext()) {
 				counter++;
-
 				for (int i=1; i<searchResults.getFieldCount(); i++) {
 					if (searchResults.getFieldName(i).equals("Book Title")) {
 						assertTrue("The only result should be Design Patterns", 
@@ -258,14 +214,11 @@ public class AdvancedSearchTests {
 	@Test
 	public void testSearchByLikeForTitlesInBooksUsingQueryBuilder() {
 		try {
-			// Use default test sample
 			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
-
 			ArrayList<QueryComponent> queryComponents = new ArrayList<QueryComponent>();
 			queryComponents.add(QueryBuilder.getQueryComponent("Book Title", QueryOperator.like, "Code"));
 			queryComponents.add(QueryBuilder.getQueryComponent("Book Title", QueryOperator.like, "Design"));
 			queryComponents.add(QueryBuilder.getQueryComponent("Book Title", QueryOperator.like, "Programmer"));
-
 			AlbumItemResultSet searchResults = DatabaseWrapper.executeSQLQuery(
 					QueryBuilder.buildQuery(queryComponents, false, "Books"));
 
@@ -274,7 +227,6 @@ public class AdvancedSearchTests {
 			int counter = 0;
 			while (searchResults.moveToNext()) {
 				counter++;
-
 				for (int i=1; i<searchResults.getFieldCount(); i++) {
 					if (searchResults.getFieldName(i).equals("Book Title")) {
 						assertTrue("The only results should be either Design Patterns, Clean Code or 97 Things Every Programmer Should Know", 
@@ -289,18 +241,14 @@ public class AdvancedSearchTests {
 		} catch (DatabaseWrapperOperationException e) {
 			fail("testSearchByLikeForTitlesInBooksUsingQueryBuilder failed");
 		}
-
 	}
 
 	@Test
 	public void testSearchForHighPriceBooksUsingBiggerThan() {
 		try {
-			// Use default test sample
 			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
-
 			ArrayList<QueryComponent> queryComponents = new ArrayList<QueryComponent>();
 			queryComponents.add(QueryBuilder.getQueryComponent("Price", QueryOperator.biggerThan, "30.0"));
-
 			AlbumItemResultSet searchResults = DatabaseWrapper.executeSQLQuery(
 					QueryBuilder.buildQuery(queryComponents, true, "Books"));
 
@@ -320,12 +268,9 @@ public class AdvancedSearchTests {
 	@Test
 	public void testSearchForHighPriceBooksUsingBiggerThanOrEqual() {
 		try {
-			// Use default test sample
 			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
-
 			ArrayList<QueryComponent> queryComponents = new ArrayList<QueryComponent>();
 			queryComponents.add(QueryBuilder.getQueryComponent("Price", QueryOperator.biggerOrEqualThan, "30.0"));
-
 			AlbumItemResultSet searchResults = DatabaseWrapper.executeSQLQuery(
 					QueryBuilder.buildQuery(queryComponents, true, "Books"));
 
@@ -345,12 +290,9 @@ public class AdvancedSearchTests {
 	@Test
 	public void testSearchArtistInEmptyMusicAlbumUsingQueryBuilder() {
 		try {
-			// Use default test sample
 			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
-
 			ArrayList<QueryComponent> queryComponents = new ArrayList<QueryComponent>();
 			queryComponents.add(QueryBuilder.getQueryComponent("Artist", QueryOperator.equals, "Rick Astley"));
-
 			AlbumItemResultSet searchResults = DatabaseWrapper.executeSQLQuery(
 					QueryBuilder.buildQuery(queryComponents, true, "Music CDs"));
 
@@ -366,6 +308,4 @@ public class AdvancedSearchTests {
 			fail("testSearchArtistInEmptyMusicAlbumUsingQueryBuilder failed");
 		}
 	}
-
-
 }

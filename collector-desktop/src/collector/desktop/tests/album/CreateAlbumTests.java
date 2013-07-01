@@ -18,7 +18,7 @@ import collector.desktop.database.AlbumItemResultSet;
 import collector.desktop.database.ConnectionManager;
 import collector.desktop.database.DatabaseWrapper;
 import collector.desktop.database.exceptions.DatabaseWrapperOperationException;
-import collector.desktop.filesystem.FileSystemAccessWrapper;
+import collector.desktop.tests.CollectorTestExecuter;
 
 public class CreateAlbumTests {
 
@@ -29,44 +29,12 @@ public class CreateAlbumTests {
 
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		try {			
-			ConnectionManager.closeConnection();
-			
-			FileSystemAccessWrapper.removeCollectorHome();
-			
-			Class.forName("org.sqlite.JDBC");
-			
-			FileSystemAccessWrapper.updateCollectorFileStructure();			
-
-			ConnectionManager.openConnection();
-
-			FileSystemAccessWrapper.updateAlbumFileStructure(ConnectionManager.getConnection());
-		} 
-		catch (Exception e) {
-			e.printStackTrace();
-			fail("Could not open database!");
-		}
+		CollectorTestExecuter.resetEverything();
 	}
 
 	@Before
 	public void setUp() {
-		try {			
-			ConnectionManager.closeConnection();
-			
-			FileSystemAccessWrapper.removeCollectorHome();
-			
-			Class.forName("org.sqlite.JDBC");
-			
-			FileSystemAccessWrapper.updateCollectorFileStructure();			
-
-			ConnectionManager.openConnection();
-
-			FileSystemAccessWrapper.updateAlbumFileStructure(ConnectionManager.getConnection());
-		} 
-		catch (Exception e) {
-			e.printStackTrace();
-			fail("Could not open database!");
-		}
+		CollectorTestExecuter.resetEverything();
 	}
 
 	@After

@@ -6,47 +6,47 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.List;
 
 import org.jdbcdslog.ConnectionLoggingProxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import collector.desktop.database.exceptions.DatabaseWrapperOperationException;
+import collector.desktop.database.exceptions.DatabaseWrapperOperationException.DBErrorState;
 import collector.desktop.database.exceptions.ExceptionHelper;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
 
 public class ConnectionManager {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ConnectionManager.class);
-
-	static Connection connection = null;
+	private static final String sqliteConnectionString = "jdbc:sqlite:";
+	private static Connection connection = null;
 
 	/**
 	 * Opens the default connection for the FileSystemAccessWrapper.DATABASE database. Only opens a new connection if none is currently open.
 	 * @throws DatabaseWrapperOperationException 
 	 */
 	public static void openConnection() throws DatabaseWrapperOperationException {
-		// Catch the internal sql exception to give a definite state on the db connection using the collector exceptions
-		// This hides all internal sql exceptions
+		// Catch the internal SQL exception to give a definite state on the database connection using the collector exceptions
+		// This hides all internal SQL exceptions
 		try {
 			if (ConnectionManager.connection == null || connection.isClosed()) {
 				ConnectionManager.connection = DriverManager.getConnection(ConnectionManager.sqliteConnectionString + FileSystemAccessWrapper.DATABASE);
 				ConnectionManager.connection =  ConnectionLoggingProxy.wrap(connection);
 
 				ConnectionManager.enableForeignKeySupportForCurrentSession();
-				/* 
-				 * Autocommit state makes little difference here since all relevant public methods roll back on
-				 * failures anyway and we have only a single connection so concurrency is not relevan either.
-				 */				
+				
+				// The AutoCommit state makes little difference here since all relevant public methods roll back on
+				// failures anyway and we have only a single connection so concurrency is not relevant either.		
 				ConnectionManager.connection.setAutoCommit(true);
 
 				LOGGER.info("Autocommit is on {}", connection.getAutoCommit());				
 			}
+			
 			// Create the album master table if it does not exist 
-			DatabaseWrapper.createAlbumMasterTableIfNotExits();
+			DatabaseWrapper.createAlbumMasterTableIfItDoesNotExist();
 
-			// Run a fetch  to check if db is ok
-			if ( ConnectionManager.isConnectionReady() == false ) {
+			// Run a fetch  to check if the database connection is up and running
+			if (ConnectionManager.isConnectionReady() == false) {
 				throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState);
 			}
 		} catch (SQLException e) {			
@@ -60,10 +60,7 @@ public class ConnectionManager {
 	 */
 	public static void closeConnection() throws DatabaseWrapperOperationException {
 		try {
-			if (ConnectionManager.connection != null) {
-				if (ConnectionManager.connection.isClosed()) {
-					return;
-				}
+			if (ConnectionManager.connection != null && !ConnectionManager.connection.isClosed()) {
 				ConnectionManager.connection.close();
 			}
 		} catch (SQLException e) {
@@ -77,33 +74,17 @@ public class ConnectionManager {
 	 */
 	public static boolean isConnectionReady() {
 		try {
-			if (ConnectionManager.connection == null) {			
-				return false;
-			}		
-
-			if ( ConnectionManager.connection.isClosed()) {
+			// Querying all albums should be successful on all working databases, independently of how many albums are stored.
+			// If not, (e.g. due to connection problems) or missing albums, indicate the failure
+			if (ConnectionManager.connection == null || ConnectionManager.connection.isClosed() || DatabaseWrapper.listAllAlbums() == null) {			
 				return false;
 			}
-
-			// Querying all albums should be successful on all working dbs, independently of how many albums are stored.
-			List<String> albums = null;
-			try {
-				albums = DatabaseWrapper.listAllAlbums();
-			} catch (DatabaseWrapperOperationException e) {
-				
-				return false;
-			}
-
-			if (albums == null) {			
-				return false;
-			}
-			
-			return true;
-			
 		} catch (Exception ex) {
 			LOGGER.error("Unable to test the database connection \n Stacktrace: " + ExceptionHelper.toString(ex));
 			return false;			
 		}
+		
+		return true;
 	}
 
 	/**
@@ -163,13 +144,10 @@ public class ConnectionManager {
 
 	static void enableForeignKeySupportForCurrentSession() throws DatabaseWrapperOperationException {
 
-		try ( PreparedStatement preparedStatement = connection.prepareStatement("PRAGMA foreign_keys = ON");){			
+		try (PreparedStatement preparedStatement = connection.prepareStatement("PRAGMA foreign_keys = ON");) {			
 			preparedStatement.executeUpdate();
 		} catch (SQLException e) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState);
 		} 
 	}
-
-	static String sqliteConnectionString = "jdbc:sqlite:";	
-
 }

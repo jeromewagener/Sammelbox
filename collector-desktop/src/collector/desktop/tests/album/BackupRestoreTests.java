@@ -14,7 +14,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-
 import collector.desktop.album.AlbumItem;
 import collector.desktop.album.FieldType;
 import collector.desktop.album.ItemField;
@@ -29,40 +28,18 @@ import collector.desktop.filesystem.FileSystemAccessWrapper;
 import collector.desktop.tests.CollectorTestExecuter;
 
 public class BackupRestoreTests {
-	public static final String TEMP_DIR = System.getProperty("java.io.tmpdir");
-
-	public static void resetEverything() {
-		try {			
-			ConnectionManager.closeConnection();
-
-			FileSystemAccessWrapper.removeCollectorHome();
-
-			Class.forName("org.sqlite.JDBC");
-
-			FileSystemAccessWrapper.updateCollectorFileStructure();			
-
-			ConnectionManager.openConnection();
-
-			FileSystemAccessWrapper.updateAlbumFileStructure(ConnectionManager.getConnection());
-		} 
-		catch (Exception e) {
-			e.printStackTrace();
-			fail("Could not open database!");
-		}
-	}
-
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 	}
 
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		resetEverything();
+		CollectorTestExecuter.resetEverything();
 	}
 
 	@Before
 	public void setUp() {
-		resetEverything();
+		CollectorTestExecuter.resetEverything();
 	}
 
 	@After
@@ -89,12 +66,11 @@ public class BackupRestoreTests {
 		try {
 			DatabaseWrapper.createNewAlbum(albumName, columns, true);			
 		} catch (DatabaseWrapperOperationException e) {
-			fail("Creation of album "+ albumName + " failed");
+			fail("Creation of album " + albumName + " failed");
 		}
 	}
 
 	private void createDVDAlbum() {		
-		// Create Album for insertion
 		final String albumName = "DVD Album";
 
 		MetaItemField DVDTitleField = new MetaItemField("DVD Title", FieldType.Text, true);
@@ -107,12 +83,11 @@ public class BackupRestoreTests {
 		try {
 			DatabaseWrapper.createNewAlbum(albumName, columns, false);			
 		} catch (DatabaseWrapperOperationException e) {
-			fail("Creation of album "+ albumName + " failed");
+			fail("Creation of album " + albumName + " failed");
 		}
 	}
 
-	private void createMusicAlbum() {		
-		// Create Album for insertion
+	private void createMusicAlbum() {
 		final String albumName = "Music Album";
 
 		MetaItemField titleField = new MetaItemField("Title", FieldType.Text, true);
@@ -188,11 +163,9 @@ public class BackupRestoreTests {
 		final String albumName = "DVD Album";
 
 		AlbumItem item = new AlbumItem(albumName);
-
 		List<ItemField> fields = new ArrayList<ItemField>();
 		fields.add( new ItemField("DVD Title", FieldType.Text, "dvd title 1"));
 		fields.add( new ItemField("Actors", FieldType.Text, "actor 1"));
-
 		item.setFields(fields);
 
 		try {
@@ -202,11 +175,9 @@ public class BackupRestoreTests {
 		}
 
 		item = new AlbumItem(albumName);
-
 		fields = new ArrayList<ItemField>();
 		fields.add( new ItemField("DVD Title", FieldType.Text, "dvd title 2"));
 		fields.add( new ItemField("Actors", FieldType.Text, "actor 2"));
-
 		item.setFields(fields);
 
 		try {
@@ -220,11 +191,9 @@ public class BackupRestoreTests {
 	public void testBackupOfSingleAlbum() {
 		createBookAlbum();
 		fillBookAlbum();
+		
 		try {
-
-			// Check number of items in book album
 			AlbumItemResultSet allAlbumItems = DatabaseWrapper.executeSQLQuery("SELECT * FROM Books");
-
 			assertTrue("Resultset should not be null", allAlbumItems != null);
 
 			int counter = 0;
@@ -233,9 +202,8 @@ public class BackupRestoreTests {
 			}
 
 			assertTrue("Resultset should contain 3 items", counter == 3);
-
-			// Backup album
-			DatabaseIntegrityManager.backupToFile(TEMP_DIR + File.separatorChar + "testBackupRestoreOfSingleAlbum.cbk");
+			DatabaseIntegrityManager.backupToFile(FileSystemAccessWrapper.TEMP_DIR + 
+					File.separatorChar + "testBackupRestoreOfSingleAlbum.cbk");
 		} catch (DatabaseWrapperOperationException e) {
 			fail("testBackupOfSingleAlbum raised an exception");
 		} 
@@ -248,10 +216,9 @@ public class BackupRestoreTests {
 		createMusicAlbum();
 		fillBookAlbum();
 		fillDVDAlbum();
+		
 		try {
-			// Check number of items in book album
 			AlbumItemResultSet allAlbumItems = DatabaseWrapper.executeSQLQuery("SELECT * FROM Books");
-
 			assertTrue("Resultset should not be null", allAlbumItems != null);
 
 			int counter = 0;
@@ -260,10 +227,7 @@ public class BackupRestoreTests {
 			}
 
 			assertTrue("Resultset should contain 3 items", counter == 3);
-
-			// Check number of items in dvd album
 			allAlbumItems = DatabaseWrapper.executeSQLQuery("SELECT * FROM 'DVD Album'");
-
 			assertTrue("Resultset should not be null", allAlbumItems != null);
 
 			counter = 0;
@@ -272,10 +236,7 @@ public class BackupRestoreTests {
 			}
 
 			assertTrue("Resultset should contain 2 items", counter == 2);		
-
-			// Check number of items in music album
 			allAlbumItems = DatabaseWrapper.executeSQLQuery("SELECT * FROM 'Music Album'");
-
 			assertTrue("Resultset should not be null", allAlbumItems != null);
 
 			counter = 0;
@@ -284,9 +245,8 @@ public class BackupRestoreTests {
 			}
 
 			assertTrue("Resultset should contain 0 items", counter == 0);	
-
-			// Backup Albums
-			DatabaseIntegrityManager.backupToFile(TEMP_DIR + File.separatorChar + "testBackupRestoreOfMultipleAlbums.cbk");
+			DatabaseIntegrityManager.backupToFile(FileSystemAccessWrapper.TEMP_DIR + 
+					File.separatorChar + "testBackupRestoreOfMultipleAlbums.cbk");
 		} catch (DatabaseWrapperOperationException e) {
 			fail("Failed on internal db error");			
 		}
@@ -296,13 +256,10 @@ public class BackupRestoreTests {
 	public void testRestoreOfSingleAlbum() {
 		testBackupOfSingleAlbum();
 		try {
+			DatabaseIntegrityManager.restoreFromFile(FileSystemAccessWrapper.TEMP_DIR + 
+					File.separatorChar + "testBackupRestoreOfSingleAlbum.cbk");
 
-			// Restore album
-			DatabaseIntegrityManager.restoreFromFile(TEMP_DIR + File.separatorChar + "testBackupRestoreOfSingleAlbum.cbk");
-
-			// Check number of items in book album
 			AlbumItemResultSet allAlbumItems = DatabaseWrapper.executeSQLQuery("SELECT * FROM Books");
-
 			assertTrue("Resultset should not be null", allAlbumItems != null);
 
 			int counter = 0;
@@ -319,13 +276,12 @@ public class BackupRestoreTests {
 	@Test
 	public void testRestoreOfMultipleAlbums() {
 		testBackupOfMultipleAlbums();
+		
 		try {
-			// Restore albums
-			DatabaseIntegrityManager.restoreFromFile(TEMP_DIR + File.separatorChar + "testBackupRestoreOfMultipleAlbums.cbk");
+			DatabaseIntegrityManager.restoreFromFile(FileSystemAccessWrapper.TEMP_DIR + 
+					File.separatorChar + "testBackupRestoreOfMultipleAlbums.cbk");
 
-			// Check number of items in book album
 			AlbumItemResultSet allAlbumItems = DatabaseWrapper.executeSQLQuery("SELECT * FROM Books");
-
 			assertTrue("Resultset should not be null", allAlbumItems != null);
 
 			int counter = 0;
@@ -334,10 +290,7 @@ public class BackupRestoreTests {
 			}
 
 			assertTrue("Resultset should contain 3 items", counter == 3);
-
-			// Check number of items in dvd album
 			allAlbumItems = DatabaseWrapper.executeSQLQuery("SELECT * FROM 'DVD Album'");
-
 			assertTrue("Resultset should not be null", allAlbumItems != null);
 
 			counter = 0;
@@ -346,10 +299,7 @@ public class BackupRestoreTests {
 			}
 
 			assertTrue("Resultset should contain 2 items", counter == 2);		
-
-			// Check number of items in music album
 			allAlbumItems = DatabaseWrapper.executeSQLQuery("SELECT * FROM 'Music Album'");
-
 			assertTrue("Resultset should not be null", allAlbumItems != null);
 
 			counter = 0;
@@ -367,13 +317,9 @@ public class BackupRestoreTests {
 	public void testRestoreOfTestDataAlbums() {
 		try {
 			assertTrue(new File(CollectorTestExecuter.PATH_TO_TEST_CBK).exists());
-
-			// Restore albums
 			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
 
-			// Check number of items in Books album
 			AlbumItemResultSet allAlbumItems = DatabaseWrapper.executeSQLQuery("SELECT * FROM Books");
-
 			assertTrue("Resultset should not be null", allAlbumItems != null);
 
 			int counter = 0;
@@ -382,10 +328,7 @@ public class BackupRestoreTests {
 			}
 
 			assertTrue("Resultset should contain 10 items", counter == 10);
-
-			// Check number of items in DVDs album
 			allAlbumItems = DatabaseWrapper.executeSQLQuery("SELECT * FROM 'DVDs'");
-
 			assertTrue("Resultset should not be null", allAlbumItems != null);
 
 			counter = 0;
@@ -421,7 +364,8 @@ public class BackupRestoreTests {
 				fail("Album Item could not be inserted into album");
 			}
 
-			DatabaseIntegrityManager.backupToFile(TEMP_DIR + File.separatorChar + "testRestoreAndModificiationOfTestDataAlbums.cbk");
+			DatabaseIntegrityManager.backupToFile(FileSystemAccessWrapper.TEMP_DIR + 
+					File.separatorChar + "testRestoreAndModificiationOfTestDataAlbums.cbk");
 		} catch (DatabaseWrapperOperationException e) {
 			fail("Failed on internal db error");
 		}
@@ -430,12 +374,10 @@ public class BackupRestoreTests {
 	@Test
 	public void testRestoreOfModificiationOfTestDataAlbums() {
 		try {
-			// Restore modified albums
-			DatabaseIntegrityManager.restoreFromFile(TEMP_DIR + File.separatorChar + "testRestoreAndModificiationOfTestDataAlbums.cbk");
+			DatabaseIntegrityManager.restoreFromFile(FileSystemAccessWrapper.TEMP_DIR + 
+					File.separatorChar + "testRestoreAndModificiationOfTestDataAlbums.cbk");
 
-			// Check number of items in Books album (must contain one more item than the original)
 			AlbumItemResultSet allAlbumItems = DatabaseWrapper.executeSQLQuery("SELECT * FROM Books");
-
 			assertTrue("Resultset should not be null", allAlbumItems != null);
 
 			int counter = 0;
@@ -458,9 +400,11 @@ public class BackupRestoreTests {
 		try {
 			AlbumItemResultSet resultSet = DatabaseWrapper.executeSQLQuery("SELECT * FROM " + albumName);
 			int counter =0;
+			
 			while(resultSet.moveToNext()) {
 				counter++;
 			}
+			
 			return counter;
 		} catch (DatabaseWrapperOperationException e ) {
 			return -1;

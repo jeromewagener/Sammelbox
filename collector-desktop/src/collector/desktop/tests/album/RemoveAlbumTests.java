@@ -14,13 +14,11 @@ import org.junit.Test;
 
 import collector.desktop.album.FieldType;
 import collector.desktop.album.MetaItemField;
-import collector.desktop.database.ConnectionManager;
 import collector.desktop.database.DatabaseWrapper;
 import collector.desktop.database.exceptions.DatabaseWrapperOperationException;
-import collector.desktop.filesystem.FileSystemAccessWrapper;
+import collector.desktop.tests.CollectorTestExecuter;
 
 public class RemoveAlbumTests {
-	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 	}
@@ -31,24 +29,7 @@ public class RemoveAlbumTests {
 
 	@Before
 	public void setUp() throws Exception {
-		// Reset folder structure of the COLLECTOR HOME
-		try {			
-			ConnectionManager.closeConnection();
-
-			FileSystemAccessWrapper.removeCollectorHome();
-
-			Class.forName("org.sqlite.JDBC");
-
-			FileSystemAccessWrapper.updateCollectorFileStructure();			
-
-			ConnectionManager.openConnection();
-
-			FileSystemAccessWrapper.updateAlbumFileStructure(ConnectionManager.getConnection());
-		} 
-		catch (Exception e) {
-			e.printStackTrace();
-			fail("Could not open database!");
-		} 
+		CollectorTestExecuter.resetEverything();
 
 		// Create Album to delete
 		final String albumName = "Books";
@@ -68,46 +49,30 @@ public class RemoveAlbumTests {
 		try {
 			DatabaseWrapper.createNewAlbum(albumName, columns, true);
 		}catch (DatabaseWrapperOperationException e) {
-			fail("Creation of album"+ albumName + "failed");
+			fail("Creation of album" + albumName + " failed");
 		}	
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		// Reset folder structure of the COLLECTOR HOME
-		try {			
-			ConnectionManager.closeConnection();
-
-			FileSystemAccessWrapper.removeCollectorHome();
-
-			Class.forName("org.sqlite.JDBC");
-
-			FileSystemAccessWrapper.updateCollectorFileStructure();			
-
-			ConnectionManager.openConnection();
-
-			FileSystemAccessWrapper.updateAlbumFileStructure(ConnectionManager.getConnection());
-		} 
-		catch (Exception e) {
-			e.printStackTrace();
-			fail("Could not open database!");
-		} 
+		CollectorTestExecuter.resetEverything();
 	}
 
 	@Test
-	public void removeAlbumTest_ValidAlbumName() {
+	public void testRemovalOfExistingAlbum() {
 		final String albumName = "Books";
+		
 		try {
 			DatabaseWrapper.removeAlbum(albumName);		
 		} catch (DatabaseWrapperOperationException e) {
-			fail ("Could not remove album" + albumName);
+			fail ("Could not remove album: " + albumName);
 		}
+		
 		try {
 			List<String> albums = DatabaseWrapper.listAllAlbums();
 			Assert.assertFalse(albums.contains(albumName));
-			
 		} catch (DatabaseWrapperOperationException e) {
-			fail("Could not  fetch albums");
+			fail("Could not fetch album: " + albumName);
 		}
 	}
 }

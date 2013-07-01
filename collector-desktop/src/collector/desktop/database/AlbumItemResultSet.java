@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import collector.desktop.album.FieldType;
 import collector.desktop.album.MetaItemField;
 import collector.desktop.database.exceptions.DatabaseWrapperOperationException;
+import collector.desktop.database.exceptions.DatabaseWrapperOperationException.DBErrorState;
 
 public class AlbumItemResultSet {
 	private ResultSet items;

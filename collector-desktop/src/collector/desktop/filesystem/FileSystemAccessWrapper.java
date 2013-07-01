@@ -42,6 +42,9 @@ import collector.desktop.internationalization.Language;
 import collector.desktop.settings.ApplicationSettingsManager.ApplicationSettings;
 
 public class FileSystemAccessWrapper {
+	public static final String DATABASE_NAME					= "collector.db";
+	public static final String DATABASE_TO_RESTORE_NAME			= "collector.restore.db";
+	public static final String TEMP_DIR 						= System.getProperty("java.io.tmpdir");
 	public static final String USER_HOME 						= System.getProperty("user.home");
 	public static final String COLLECTOR_HOME 					= System.getProperty("user.home") + File.separatorChar + ".collector";
 	public static final String COLLECTOR_HOME_APPDATA 			= COLLECTOR_HOME + File.separatorChar + "app-data";
@@ -52,8 +55,6 @@ public class FileSystemAccessWrapper {
 	public static final String PLACEHOLDERIMAGE3 				= COLLECTOR_HOME_APPDATA + File.separatorChar + "placeholder3.png";
 	public static final String LOGO 							= COLLECTOR_HOME_APPDATA + File.separatorChar + "logo.png";
 	public static final String LOGO_SMALL 						= COLLECTOR_HOME_APPDATA + File.separatorChar + "logo-small.png";
-	public static final String DATABASE_NAME					= "collector.db";
-	public static final String DATABASE_TO_RESTORE_NAME			= "collector.restore.db";
 	public static final String DATABASE 						= COLLECTOR_HOME + File.separatorChar + DATABASE_NAME;
 	public static final String DATABASE_TO_RESTORE				= COLLECTOR_HOME + File.separatorChar + DATABASE_TO_RESTORE_NAME;
 	public static final String VIEW_FILE						= COLLECTOR_HOME_APPDATA + File.separatorChar + "views.xml";

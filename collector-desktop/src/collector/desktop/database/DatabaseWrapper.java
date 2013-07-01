@@ -31,6 +31,7 @@ import collector.desktop.album.StarRating;
 import collector.desktop.database.QueryBuilder.QueryComponent;
 import collector.desktop.database.QueryBuilder.QueryOperator;
 import collector.desktop.database.exceptions.DatabaseWrapperOperationException;
+import collector.desktop.database.exceptions.DatabaseWrapperOperationException.DBErrorState;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
 
 public class DatabaseWrapper  {
@@ -95,7 +96,7 @@ public class DatabaseWrapper  {
 		createPictureTable(albumName);
 		
 		// Create picture directory
-		FileSystemAccessWrapper.updateAlbumFileStructure(ConnectionManager.connection);
+		FileSystemAccessWrapper.updateAlbumFileStructure(ConnectionManager.getConnection());
 		
 		// Make columns quick searchable
 		createIndex(albumName, quickSearchableColumnNames);
@@ -148,21 +149,12 @@ public class DatabaseWrapper  {
 		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(newTableName));
 		String renameTableSQLString = sb.toString();
 
-		PreparedStatement preparedStatement = null;
-		try {
-			preparedStatement = ConnectionManager.connection.prepareStatement(renameTableSQLString);
+		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(renameTableSQLString);) {
 			preparedStatement.executeUpdate();
 		} catch (SQLException e) {
 			success = false;
-		}finally {
-			try {
-				if (preparedStatement != null) {
-					preparedStatement.close();
-				}
-			} catch (SQLException e) {
-				success = false;
-			}
 		}
+		
 		return success;
 	}
 
@@ -268,6 +260,10 @@ public class DatabaseWrapper  {
 			// Restore the old data from the java objects in the new tables [rename column]
 			renameFieldInAlbumItemList(oldMetaItemField, newMetaItemField, albumItems);
 		
+			for (AlbumItem albumItem : albumItems) {
+				addNewAlbumItem(albumItem, false);
+			}
+			
 			rebuildIndexForTable(albumName, newFields);
 			//TODO remove DatabaseIntegrityManager.updateLastDatabaseChangeTimeStamp();
 		} catch (DatabaseWrapperOperationException e) {
@@ -289,6 +285,7 @@ public class DatabaseWrapper  {
 	 */
 	public static void reorderAlbumItemField(String albumName, MetaItemField metaItemField, MetaItemField preceedingField) throws DatabaseWrapperOperationException {
 
+		// FIXME why commented?
 		// Check if the specified columns exists.
 //		List<MetaItemField> metaInfos =  getAllAlbumItemMetaItemFields(albumName);
 //		if (!metaInfos.contains(metaItemField)) {
@@ -302,7 +299,7 @@ public class DatabaseWrapper  {
 			// Create the new table pointing to new typeinfo
 			boolean hasPictureField = albumHasPictureField(albumName);
 			List<MetaItemField> newFields =  getAlbumItemFieldNamesAndTypes(albumName);
-			newFields = reorderFieldInMetaItemList(metaItemField, preceedingField, newFields);// [reorder column]
+			newFields = reorderFieldInMetaItemList(metaItemField, preceedingField, newFields);// [reorder column] TODO
 
 			// Drop the old table + typeTable
 			removeAlbum(albumName);
@@ -348,7 +345,7 @@ public class DatabaseWrapper  {
 			if (metaItemField.isQuickSearchable() && !quickSearchableColumnNames.contains(metaItemField.getName())) {
 				quickSearchableColumnNames.add(metaItemField.getName());
 	
-				dropIndex(albumName);
+ 				dropIndex(albumName);
 				createIndex(albumName, quickSearchableColumnNames);			
 			}else if (!metaItemField.isQuickSearchable()){	
 				// Disable for quicksearch feature
@@ -482,13 +479,12 @@ public class DatabaseWrapper  {
 		String savepointName = DatabaseIntegrityManager.createSavepoint();
 		try {	
 			String typeInfoTableName = getTypeInfoTableName(albumName);
+			
 			dropTable(albumName);
-				
 			dropTable(typeInfoTableName);
-	
+			dropTable(albumName + "_" + PICTURE_TABLE_SUFFIX);
+			
 			removeAlbumFromAlbumMasterTable(albumName); 
-	
-			dropPictureTableForAlbum(albumName);
 			
 			FileSystemAccessWrapper.deleteDirectoryRecursively(
 					new File(FileSystemAccessWrapper.getFilePathForAlbum(albumName)));
@@ -510,8 +506,8 @@ public class DatabaseWrapper  {
 	 * @throws DatabaseWrapperOperationException 
 	 */
 	private static void dropTable(String tableName) throws DatabaseWrapperOperationException  {
-		try (Statement statement = ConnectionManager.connection.createStatement()){		
-			statement.execute("DROP TABLE IF EXISTS "+DatabaseStringUtilities.encloseNameWithQuotes(tableName));
+		try (Statement statement = ConnectionManager.getConnection().createStatement()){		
+			statement.execute("DROP TABLE IF EXISTS " + DatabaseStringUtilities.encloseNameWithQuotes(tableName));
 		} catch (Exception e) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState, e);
 		}
@@ -588,7 +584,7 @@ public class DatabaseWrapper  {
 		// Add the album back to the album master table
 		addNewAlbumToAlbumMasterTable(tableName, typeInfoTableName, albumHasPictures);
 		
-		try (Statement statement = ConnectionManager.connection.createStatement()) {
+		try (Statement statement = ConnectionManager.getConnection().createStatement()) {
 			// Create the Album table			
 			statement.executeUpdate(createMainTableString);
 		}catch (SQLException sqlException) {
@@ -640,7 +636,7 @@ public class DatabaseWrapper  {
 		sb.append(" ");
 		sb.append(FieldType.Text.toDatabaseTypeString());
 
-		try (PreparedStatement preparedStatement = ConnectionManager.connection.prepareStatement(sb.toString())) {
+		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(sb.toString())) {
 			preparedStatement.executeUpdate();
 		} catch (SQLException e) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState, e);
@@ -685,6 +681,7 @@ public class DatabaseWrapper  {
 		}
 	}
 
+	// TODO use master table?
 	/**
 	 * Indicates whether the album contains a picture field.
 	 * @param albumName The name of the album to be queried.
@@ -697,8 +694,8 @@ public class DatabaseWrapper  {
 					   "  WHERE " + ALBUM_TABLENAME_IN_ALBUM_MASTER_TABLE + "=" + DatabaseStringUtilities.encloseNameWithQuotes(albumName) +
 					   "    AND " + PICTURE_COLUMN_NAME_IN_ALBUM_MASTER_TABLE + "=" + DatabaseStringUtilities.encloseNameWithQuotes(OptionType.YES.toString());
 		
-		try (Statement statement = ConnectionManager.connection.createStatement();
-			ResultSet resultSet = statement.executeQuery(query)) {		
+		try (Statement statement = ConnectionManager.getConnection().createStatement();
+			 ResultSet resultSet = statement.executeQuery(query)) {		
 			
 			if (resultSet.next()) {
 				return resultSet.getLong("numberOfItems") == 1;
@@ -747,7 +744,7 @@ public class DatabaseWrapper  {
 		dropTable(typeInfoTableName);			
 			
 		// Create the typeInfo table		
-		try (PreparedStatement preparedStatement = ConnectionManager.connection.prepareStatement(createTypeInfoTableString);) {
+		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(createTypeInfoTableString);) {
 			preparedStatement.executeUpdate();
 		} catch(SQLException e) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState, e);
@@ -785,7 +782,7 @@ public class DatabaseWrapper  {
 		sb.append(columnName);
 		sb.append(" TEXT");
 
-		try (PreparedStatement preparedStatement = ConnectionManager.connection.prepareStatement(sb.toString())) {
+		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(sb.toString())) {
 			preparedStatement.executeUpdate();					
 		}catch (SQLException e) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState);
@@ -798,7 +795,7 @@ public class DatabaseWrapper  {
 		sb.append(columnName);
 		sb.append(" = ?");
 		
-		try (PreparedStatement preparedStatement = ConnectionManager.connection.prepareStatement(sb.toString())){
+		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(sb.toString())){
 			preparedStatement.setString(1, metaItemField.getType().toString());
 			preparedStatement.executeUpdate();
 		}catch (SQLException e) {
@@ -845,7 +842,7 @@ public class DatabaseWrapper  {
 
 		sb.append(") ");
 		
-		try (PreparedStatement preparedStatement = ConnectionManager.connection.prepareStatement(sb.toString())) {			
+		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(sb.toString())) {			
 			// Replace the wildcard character '?' by the real type values
 			int parameterIndex = 1;
 			for (MetaItemField metaItemField : metafields){
@@ -921,7 +918,7 @@ public class DatabaseWrapper  {
 		}		
 		sqlStringbuiler.append(")");
 		
-		try (PreparedStatement preparedStatement = ConnectionManager.connection.prepareStatement(sqlStringbuiler.toString())) {
+		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(sqlStringbuiler.toString())) {
 			preparedStatement.execute();
 		} catch (SQLException e) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState, e);
@@ -931,21 +928,23 @@ public class DatabaseWrapper  {
 	/**
 	 * Drops the first index associated to the given table name. 
 	 * @param tableName The name of the table to which the index belongs.
-	 * @return True if the table has no associated index to it. False if the operation failed.
+	 * @return true if the table has no associated index to it. false if the operation failed.
 	 * @throws DatabaseWrapperOperationException 
 	 */
 	private static void dropIndex(String tableName) throws DatabaseWrapperOperationException {
 		String indexName = getTableIndexName(tableName);		
-		if (indexName == null) {			
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState);
+		
+		// null indicates that no index was there to drop
+		if (indexName == null) {
+			return;
 		}
 				
 		String quotedIndexName = DatabaseStringUtilities.encloseNameWithQuotes(indexName);
-		String sqlStatementString = "DROP INDEX IF EXISTS "+ quotedIndexName;
+		String sqlStatementString = "DROP INDEX IF EXISTS " + quotedIndexName;
 		
 		String savepointName = DatabaseIntegrityManager.createSavepoint();
 		
-		try (Statement statement = ConnectionManager.connection.createStatement()){			
+		try (Statement statement = ConnectionManager.getConnection().createStatement()){			
 			statement.execute(sqlStatementString);
 		} catch (SQLException e) {
 			DatabaseIntegrityManager.rollbackToSavepoint(savepointName);
@@ -956,7 +955,7 @@ public class DatabaseWrapper  {
 	}
 
 	/**
-	 * Adds the specified item to an existing album. Automatically sets a new contentVersion for the item if updateContentVersion flaag is set.
+	 * Adds the specified item to an existing album. Automatically sets a new contentVersion for the item if updateContentVersion flag is set.
 	 * Automatically links album item pictures to the album item by setting the foreign key
 	 * @param item The album item to be added. 
 	 * @param updateContentVersion True if the content version should be updated, this is the regular case for any content change. 
@@ -1013,8 +1012,7 @@ public class DatabaseWrapper  {
 		
 		String savepointName = DatabaseIntegrityManager.createSavepoint();
 	
-		try (PreparedStatement preparedStatement = ConnectionManager.connection.prepareStatement(sb.toString())){
-			ResultSet generatedKeys = null;
+		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(sb.toString())){
 			long idOfAddedItem = -1;
 
 			// Replace the wildcard character '?' by the real type values
@@ -1030,9 +1028,13 @@ public class DatabaseWrapper  {
 
 			// Retrieves the generated key used in the new  album item
 			preparedStatement.executeUpdate();
-			generatedKeys = preparedStatement.getGeneratedKeys();
-			if (generatedKeys.next()) {
-				idOfAddedItem = generatedKeys.getLong(1);
+			try(ResultSet generatedKeys = preparedStatement.getGeneratedKeys();) {
+				if (generatedKeys.next()) {
+					idOfAddedItem = generatedKeys.getLong(1);
+				}
+			} catch (SQLException sqlEx) {
+				DatabaseIntegrityManager.rollbackToSavepoint(savepointName);
+				throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, sqlEx);
 			}
 			
 			// Store picture links
@@ -1161,7 +1163,7 @@ public class DatabaseWrapper  {
 		
 		String savepointName =  DatabaseIntegrityManager.createSavepoint();		
 		
-		try (PreparedStatement preparedStatement = ConnectionManager.connection.prepareStatement(sb.toString())) {
+		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(sb.toString())) {
 			// Replace the wildcards
 			int parameterIndex = 1;
 			for (ItemField next : albumItem.getFields()) {
@@ -1233,7 +1235,7 @@ public class DatabaseWrapper  {
 		String deleteAlbumItemString = "DELETE FROM " + DatabaseStringUtilities.encloseNameWithQuotes(albumItem.getAlbumName()) + 
 				" WHERE id=" + albumItem.getItemID();
 		
-		try (PreparedStatement preparedStatement = ConnectionManager.connection.prepareStatement(deleteAlbumItemString)) {
+		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(deleteAlbumItemString)) {
 			preparedStatement.executeUpdate();
 			//TODO remove DatabaseIntegrityManager.updateLastDatabaseChangeTimeStamp();
 			
@@ -1256,8 +1258,9 @@ public class DatabaseWrapper  {
 
 	public static long getNumberOfItemsInAlbum(String albumName) throws DatabaseWrapperOperationException {
 				
-		try (Statement statement = ConnectionManager.connection.createStatement()){			
-			ResultSet resultSet = statement.executeQuery(QueryBuilder.createCountAsAliasStarWhere(albumName, "numberOfItems"));
+		try (Statement statement = ConnectionManager.getConnection().createStatement();
+			 ResultSet resultSet = statement.executeQuery(QueryBuilder.createCountAsAliasStarWhere(albumName, "numberOfItems"));){			
+			
 			if (resultSet.next()) {
 				return resultSet.getLong("numberOfItems");
 			}
@@ -1278,7 +1281,7 @@ public class DatabaseWrapper  {
 		sb.append(" = ? ");
 		sb.append("WHERE id = ?");
 		
-		try (PreparedStatement preparedStatement = ConnectionManager.connection.prepareStatement(sb.toString())){			
+		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(sb.toString())){			
 			preparedStatement.setString(1, newUuid.toString());
 			preparedStatement.setLong(2, itemID);
 			preparedStatement.executeUpdate();
@@ -1300,7 +1303,7 @@ public class DatabaseWrapper  {
 		sb.append(SCHEMA_VERSION_COLUMN_NAME);
 		sb.append(" = ?");
 		
-		try (PreparedStatement preparedStatement = ConnectionManager.connection.prepareStatement(sb.toString())) {		
+		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(sb.toString())) {		
 			preparedStatement.setString(1, generateNewUUID().toString());
 			preparedStatement.executeUpdate();
 		} catch (SQLException e) {
@@ -1323,7 +1326,7 @@ public class DatabaseWrapper  {
 	
 		Map<Integer, MetaItemField> metaInfoMap = DatabaseWrapper.getAlbumItemMetaMap(albumName);
 		
-		albumItemRS = new AlbumItemResultSet(ConnectionManager.connection, sqlStatement, metaInfoMap);
+		albumItemRS = new AlbumItemResultSet(ConnectionManager.getConnection(), sqlStatement, metaInfoMap);
 		return albumItemRS;
 	}
 
@@ -1336,7 +1339,7 @@ public class DatabaseWrapper  {
 	public static AlbumItemResultSet executeSQLQuery(String sqlStatement) throws DatabaseWrapperOperationException{
 		AlbumItemResultSet albumItemRS = null;
 		try {
-			albumItemRS = new AlbumItemResultSet(ConnectionManager.connection, sqlStatement);
+			albumItemRS = new AlbumItemResultSet(ConnectionManager.getConnection(), sqlStatement);
 			return albumItemRS;
 		} catch (DatabaseWrapperOperationException e) {
 			LOGGER.error("The query: \"{}\" could not be executed and terminated with message: {}", sqlStatement ,  e.getMessage());
@@ -1403,7 +1406,7 @@ public class DatabaseWrapper  {
 		List<String> albumList = new ArrayList<String>();
 		String queryAllAlbumsSQL = QueryBuilder.createSelectColumnQuery(ALBUM_MASTER_TABLE_NAME, ALBUM_TABLENAME_IN_ALBUM_MASTER_TABLE);
 
-		try (	Statement statement = ConnectionManager.connection.createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
+		try (	Statement statement = ConnectionManager.getConnection().createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
 				ResultSet rs = statement.executeQuery(queryAllAlbumsSQL);) {			
 			
 
@@ -1426,7 +1429,7 @@ public class DatabaseWrapper  {
 	private static String getTypeInfoTableName(String mainTableName) throws DatabaseWrapperOperationException  {
 		DatabaseMetaData dbmetadata = null;
 		try {
-			dbmetadata = ConnectionManager.connection.getMetaData();
+			dbmetadata = ConnectionManager.getConnection().getMetaData();
 		} catch (SQLException e) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
 		}
@@ -1437,7 +1440,7 @@ public class DatabaseWrapper  {
 
 				return typeInfoTable;
 			}
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, "No type info table found for "+mainTableName);
+			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, "No type info table found for " + mainTableName);
 		} catch (SQLException e) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
 		}		
@@ -1453,15 +1456,16 @@ public class DatabaseWrapper  {
 		List<String> indexedColumns = new ArrayList<String>();
 		DatabaseMetaData dbmetadata = null;
 		try {
-			dbmetadata = ConnectionManager.connection.getMetaData();			
+			dbmetadata = ConnectionManager.getConnection().getMetaData();			
 		} catch (SQLException e) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
 		}
 				
 		try (ResultSet indexRS = dbmetadata.getIndexInfo(null, null, tableName, false, true)) {	
 			while (indexRS.next()) {
-				if(indexRS.getString("COLUMN_NAME") != null)
-					indexedColumns.add(indexRS.getString("COLUMN_NAME"));
+				if (indexRS.getString("COLUMN_NAME") != null) {
+					indexedColumns.add(indexRS.getString("COLUMN_NAME")); // TODO extract
+				}
 			}
 			return indexedColumns;
 		} catch (SQLException e) {
@@ -1480,13 +1484,13 @@ public class DatabaseWrapper  {
 		String indexName = null;
 		DatabaseMetaData dbmetadata = null;
 		try {
-			dbmetadata =  ConnectionManager.connection.getMetaData();
+			dbmetadata =  ConnectionManager.getConnection().getMetaData();
 		} catch (SQLException e) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
 		}
 		
 		try (ResultSet indexRS = dbmetadata.getIndexInfo(null, null, tableName, false, true);) {			
-			if(indexRS.next()) {
+			if (indexRS.next()) {
 				indexName = indexRS.getString("INDEX_NAME");
 			}
 			return indexName;
@@ -1513,7 +1517,7 @@ public class DatabaseWrapper  {
 		String dbAlbumName = DatabaseStringUtilities.encloseNameWithQuotes(albumName);
 		
 		try (
-				Statement statement = ConnectionManager.connection.createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
+				Statement statement = ConnectionManager.getConnection().createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
 				ResultSet rs = statement.executeQuery(QueryBuilder.createSelectStarQuery(dbAlbumName));) {		
 
 			// Retrieve table metadata
@@ -1548,7 +1552,7 @@ public class DatabaseWrapper  {
 		List<MetaItemField> itemMetadata = new ArrayList<MetaItemField>();
 		List<String> quickSearchableColumnNames = getIndexedColumnNames(albumName);
 		try (
-			Statement statement = ConnectionManager.connection.createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
+			Statement statement = ConnectionManager.getConnection().createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
 			ResultSet rs = statement.executeQuery(QueryBuilder.createSelectStarQuery(albumName));) {					
 
 			// Retrieve table metadata
@@ -1580,10 +1584,10 @@ public class DatabaseWrapper  {
 
 		Map<Integer, MetaItemField> itemMetadata = new HashMap<Integer, MetaItemField>();
 		
-		try (Statement statement = ConnectionManager.connection.createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY)) {			
-			// Retrieve table metadata
-						
-			ResultSet set = statement.executeQuery(QueryBuilder.createSelectStarQuery(albumName)); 	
+		try (Statement statement = ConnectionManager.getConnection().createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
+			 ResultSet set = statement.executeQuery(QueryBuilder.createSelectStarQuery(albumName))) {			
+			
+			// Retrieve table metadata	
 			ResultSetMetaData metaData = set.getMetaData();
 			
 			int columnCount = metaData.getColumnCount();
@@ -1612,7 +1616,7 @@ public class DatabaseWrapper  {
 	private static FieldType detectDataType(String tableName, String columnName) throws DatabaseWrapperOperationException {
 		DatabaseMetaData dbmetadata = null;
 		try {
-			dbmetadata = ConnectionManager.connection.getMetaData();
+			dbmetadata = ConnectionManager.getConnection().getMetaData();
 		} catch (SQLException e1) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState);
 		}
@@ -1631,7 +1635,7 @@ public class DatabaseWrapper  {
 
 		String dbtypeInfoTableName = DatabaseStringUtilities.encloseNameWithQuotes(getTypeInfoTableName(tableName));
 		try (
-				Statement statement = ConnectionManager.connection.createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
+				Statement statement = ConnectionManager.getConnection().createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
 				ResultSet typeResultSet = statement.executeQuery(QueryBuilder.createSelectColumnQuery(dbtypeInfoTableName, columnName));) {			
 			return FieldType.valueOf(typeResultSet.getString(1));
 			
@@ -1801,8 +1805,8 @@ public class DatabaseWrapper  {
 		LinkedList<AlbumItem> list = new LinkedList<AlbumItem>();		
 		
 		try (
-				Statement statement = ConnectionManager.connection.createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
-				ResultSet rs = statement.executeQuery(queryString); ){
+			Statement statement = ConnectionManager.getConnection().createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
+			ResultSet rs = statement.executeQuery(queryString); ) {
 	
 			// Retrieve table metadata
 			ResultSetMetaData metaData = rs.getMetaData();
@@ -1850,7 +1854,7 @@ public class DatabaseWrapper  {
 	private static void updateTableColumnWithDefaultValue(String tableName, MetaItemField columnMetaInfo) throws DatabaseWrapperOperationException {		
 		String sqlString = "UPDATE "+ DatabaseStringUtilities.encloseNameWithQuotes(tableName)+ " SET " +DatabaseStringUtilities.encloseNameWithQuotes(columnMetaInfo.getName()) + "=?";
 		
-		try (PreparedStatement preparedStatement = ConnectionManager.connection.prepareStatement(sqlString)){						
+		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(sqlString)){						
 			
 			switch (columnMetaInfo.getType()) {
 			case Text: 
@@ -1907,7 +1911,7 @@ public class DatabaseWrapper  {
 		return false;
 	}
 
-	static void createAlbumMasterTableIfNotExits() throws DatabaseWrapperOperationException  {
+	static void createAlbumMasterTableIfItDoesNotExist() throws DatabaseWrapperOperationException  {
 		List<MetaItemField> fields = new ArrayList<MetaItemField>();
 		
 		// Add the table name column
@@ -1934,7 +1938,7 @@ public class DatabaseWrapper  {
 		
 		String registerNewAlbumToAlbumMasterableString = sb.toString();
 
-		try (PreparedStatement preparedStatement = ConnectionManager.connection.prepareStatement(registerNewAlbumToAlbumMasterableString)){			
+		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(registerNewAlbumToAlbumMasterableString)){			
 			// New album name
 			preparedStatement.setString(1, DatabaseStringUtilities.removeEnclosingNameWithQuotes(albumTableName));
 			// New type info name
@@ -1957,7 +1961,7 @@ public class DatabaseWrapper  {
 
 		String unRegisterNewAlbumFromAlbumMasterableString = sb.toString();		
 
-		try (PreparedStatement preparedStatement = ConnectionManager.connection.prepareStatement(unRegisterNewAlbumFromAlbumMasterableString)){  			
+		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(unRegisterNewAlbumFromAlbumMasterableString)){  			
 			// WHERE album name
 			preparedStatement.setString(1, albumTableName);
 			preparedStatement.executeUpdate();
@@ -1982,9 +1986,9 @@ public class DatabaseWrapper  {
 		sb.append(ALBUM_TABLENAME_IN_ALBUM_MASTER_TABLE);
 		sb.append(" = ?, ");
 		sb.append(TYPE_TABLENAME_ALBUM_MASTER_TABLE);
-		sb.append(" = ?, ");
+		sb.append(" = ? ");
 		if (newHasPicturesFlag != OptionType.UNKNOWN) {
-			sb.append(PICTURE_COLUMN_NAME_IN_ALBUM_MASTER_TABLE);
+			sb.append(", " + PICTURE_COLUMN_NAME_IN_ALBUM_MASTER_TABLE);
 			sb.append(" = ? ");
 		}
 		sb.append("WHERE ");
@@ -1993,7 +1997,7 @@ public class DatabaseWrapper  {
 
 		String unRegisterNewAlbumFromAlbumMasterableString = sb.toString();
 
-		try (PreparedStatement preparedStatement = ConnectionManager.connection.prepareStatement(unRegisterNewAlbumFromAlbumMasterableString);){			
+		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(unRegisterNewAlbumFromAlbumMasterableString);){			
 			// New album name
 			preparedStatement.setString(1, newAlbumTableName);
 			// New type info name
@@ -2050,7 +2054,7 @@ public class DatabaseWrapper  {
 		String createTableString = sb.toString();
 
 		// Create the table.		
-		try (PreparedStatement preparedStatement = ConnectionManager.connection.prepareStatement(createTableString);){			
+		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(createTableString);){			
 			preparedStatement.executeUpdate();
 		} catch (Exception e) {			
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState, e);
@@ -2087,7 +2091,7 @@ public class DatabaseWrapper  {
 
 		sb.append(" ) ");
 		
-		try (PreparedStatement preparedStatement = ConnectionManager.connection.prepareStatement(sb.toString())){			
+		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(sb.toString())){			
 			preparedStatement.executeUpdate();
 		} catch (SQLException e) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState, e);
@@ -2107,7 +2111,7 @@ public class DatabaseWrapper  {
 				   " FROM " + DatabaseStringUtilities.encloseNameWithQuotes(albumName + "_" + PICTURE_TABLE_SUFFIX) +
 				   " WHERE " + ALBUM_ITEM_ID_REFERENCE_IN_PICTURE_TABLE + " = " + String.valueOf(albumItemID) + ";";
 	
-			try (Statement statement = ConnectionManager.connection.createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
+			try (Statement statement = ConnectionManager.getConnection().createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
 				 ResultSet rs = statement.executeQuery(picturesQuery);) {			
 			
 				while (rs.next()) {
@@ -2130,21 +2134,7 @@ public class DatabaseWrapper  {
 		sb.append(" WHERE ");
 		sb.append(ALBUM_ITEM_ID_REFERENCE_IN_PICTURE_TABLE + " = " + albumItem.getItemID());
 				
-		try (PreparedStatement preparedStatement = ConnectionManager.connection.prepareStatement(sb.toString())) {						
-			preparedStatement.executeUpdate();
-		} catch (SQLException e) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState, e);
-		}
-	}
-	
-	/** Drops the picture table of the specified album
-	 * ATTENTION: this method does no delete the physical files!
-	 * @param albumName the album name for which the picture table should be droped */
-	public static void dropPictureTableForAlbum(String albumName) throws DatabaseWrapperOperationException {
-		StringBuilder sb = new StringBuilder("DROP TABLE ");
-		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(albumName + "_" + PICTURE_TABLE_SUFFIX));
-		
-		try (PreparedStatement preparedStatement = ConnectionManager.connection.prepareStatement(sb.toString())) {						
+		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(sb.toString())) {						
 			preparedStatement.executeUpdate();
 		} catch (SQLException e) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState, e);

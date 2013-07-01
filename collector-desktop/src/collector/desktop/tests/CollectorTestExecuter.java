@@ -1,10 +1,14 @@
 package collector.desktop.tests;
 
+import static org.junit.Assert.fail;
+
 import java.io.File;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
+import collector.desktop.database.ConnectionManager;
+import collector.desktop.filesystem.FileSystemAccessWrapper;
 import collector.desktop.tests.album.AlterAlbumTests;
 import collector.desktop.tests.album.BackupRestoreTests;
 import collector.desktop.tests.album.CreateAlbumTests;
@@ -36,7 +40,7 @@ import collector.desktop.tests.searching.QuickSearchTests;
 public class CollectorTestExecuter {
 	public static final String PATH_TO_TEST_CBK = 
 			System.getProperty("user.dir") + File.separatorChar + "testdata" + 
-					File.separatorChar + "test-albums-version-2.cbk";
+					File.separatorChar + "test-albums-version-2.1.cbk";
 	
 	public static final String PATH_TO_TEST_PICTURE_1 = 
 			System.getProperty("user.dir") + File.separatorChar + "res" + 
@@ -52,4 +56,17 @@ public class CollectorTestExecuter {
 			System.getProperty("user.dir") + File.separatorChar + "res" + 
 					File.separator + "graphics"+
 					File.separatorChar + "placeholder3.png";
+	
+	public static void resetEverything() {
+		try {			
+			ConnectionManager.closeConnection();
+			FileSystemAccessWrapper.removeCollectorHome();
+			Class.forName("org.sqlite.JDBC");
+			FileSystemAccessWrapper.updateCollectorFileStructure();			
+			ConnectionManager.openConnection();
+			FileSystemAccessWrapper.updateAlbumFileStructure(ConnectionManager.getConnection());
+		} catch (Exception e) {
+			fail("A problem occured while resetting everything for the alter album tests");
+		}
+	}
 }

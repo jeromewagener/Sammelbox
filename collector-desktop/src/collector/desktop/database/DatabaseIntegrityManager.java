@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import collector.desktop.database.exceptions.DatabaseWrapperOperationException;
+import collector.desktop.database.exceptions.DatabaseWrapperOperationException.DBErrorState;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
 
 // TODO this class needs to be strongly refactored!!!
@@ -113,7 +114,7 @@ public class DatabaseIntegrityManager {
 		}
 	
 		// backup database to file
-		try (Statement statement = ConnectionManager.connection.createStatement()){				
+		try (Statement statement = ConnectionManager.getConnection().createStatement()){				
 			statement.executeUpdate("backup to '" + tempDir.getPath() + File.separatorChar + FileSystemAccessWrapper.DATABASE_TO_RESTORE_NAME+"'");
 		} catch (SQLException e) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState,e);
@@ -136,7 +137,7 @@ public class DatabaseIntegrityManager {
 		FileSystemAccessWrapper.unzipFileToFolder(filePath, FileSystemAccessWrapper.COLLECTOR_HOME);
 	
 	
-		try (Statement statement = ConnectionManager.connection.createStatement()) {			
+		try (Statement statement = ConnectionManager.getConnection().createStatement()) {			
 			statement.executeUpdate("restore from '" + FileSystemAccessWrapper.DATABASE_TO_RESTORE + "'");
 			/* TODO remove try {
 				DatabaseIntegrityManager.lastChangeTimeStamp =  DatabaseIntegrityManager.extractTimeStamp(new File(filePath));
@@ -155,7 +156,7 @@ public class DatabaseIntegrityManager {
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState);
 		}
 	
-		if ( !FileSystemAccessWrapper.updateAlbumFileStructure(ConnectionManager.connection) ) {
+		if ( !FileSystemAccessWrapper.updateAlbumFileStructure(ConnectionManager.getConnection()) ) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState);
 		}
 		

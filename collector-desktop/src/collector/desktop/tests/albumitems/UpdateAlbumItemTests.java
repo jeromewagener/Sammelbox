@@ -5,6 +5,7 @@ import static org.junit.Assert.fail;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import junit.framework.Assert;
 
@@ -17,16 +18,14 @@ import org.junit.Test;
 import collector.desktop.album.AlbumItem;
 import collector.desktop.album.AlbumItem.AlbumItemPicture;
 import collector.desktop.album.FieldType;
+import collector.desktop.album.ItemField;
 import collector.desktop.album.MetaItemField;
 import collector.desktop.album.OptionType;
-import collector.desktop.database.ConnectionManager;
 import collector.desktop.database.DatabaseWrapper;
 import collector.desktop.database.exceptions.DatabaseWrapperOperationException;
-import collector.desktop.filesystem.FileSystemAccessWrapper;
 import collector.desktop.tests.CollectorTestExecuter;
 
 public class UpdateAlbumItemTests {
-
 	final String albumName = "Books";
 
 	@BeforeClass
@@ -39,33 +38,30 @@ public class UpdateAlbumItemTests {
 
 	@Before
 	public void setUp() throws Exception {
-		resetFolderStructure();
+		CollectorTestExecuter.resetEverything();
 		createBooksAlbum();
 		fillBooksAlbum();
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		resetFolderStructure();
+		CollectorTestExecuter.resetEverything();
 	}
 
 	@Test
 	public void updateTextfieldOfAlbumItem() {
 		try {
-		AlbumItem originalAlbumItem = DatabaseWrapper.fetchAlbumItem("Books", 1);
-
-		// Change a text field
-		originalAlbumItem.getField("Book Title").setValue("updated book title");
-
-		DatabaseWrapper.updateAlbumItem(originalAlbumItem);
-
-		AlbumItem updatedAlbumItem = DatabaseWrapper.fetchAlbumItem("Books", 1);
-		if (updatedAlbumItem == null) {
-			fail("The updatedAlbumItem is unexpectatly null");
-		}
-
-		Assert.assertTrue(originalAlbumItem.getAlbumName().equals(updatedAlbumItem.getAlbumName()));
-		Assert.assertTrue(originalAlbumItem.getFields().containsAll(updatedAlbumItem.getFields()));		
+			AlbumItem originalAlbumItem = DatabaseWrapper.fetchAlbumItem("Books", 1);
+			originalAlbumItem.getField("Book Title").setValue("updated book title");
+			DatabaseWrapper.updateAlbumItem(originalAlbumItem);
+			AlbumItem updatedAlbumItem = DatabaseWrapper.fetchAlbumItem("Books", 1);
+			
+			if (updatedAlbumItem == null) {
+				fail("The updatedAlbumItem is unexpectatly null");
+			}
+	
+			Assert.assertTrue(originalAlbumItem.getAlbumName().equals(updatedAlbumItem.getAlbumName()));
+			Assert.assertTrue(originalAlbumItem.getFields().containsAll(updatedAlbumItem.getFields()));		
 		} catch (DatabaseWrapperOperationException e) {
 			fail("updateTextfieldOfAlbumItem failed");
 		}
@@ -74,20 +70,17 @@ public class UpdateAlbumItemTests {
 	@Test
 	public void updateNumberfieldOfAlbumItem() {
 		try {
-		AlbumItem originalAlbumItem = DatabaseWrapper.fetchAlbumItem("Books", 1);
-
-		// Change a text field
-		originalAlbumItem.getField("Price").setValue(42.42d);
-
-		DatabaseWrapper.updateAlbumItem(originalAlbumItem);
-
-		AlbumItem updatedAlbumItem = DatabaseWrapper.fetchAlbumItem("Books", 1);
-		if (updatedAlbumItem == null) {
-			fail("The updatedAlbumItem is unexpectatly null");
-		}
-
-		Assert.assertTrue(originalAlbumItem.getAlbumName().equals(updatedAlbumItem.getAlbumName()));
-		Assert.assertTrue(originalAlbumItem.getFields().containsAll(updatedAlbumItem.getFields()));	
+			AlbumItem originalAlbumItem = DatabaseWrapper.fetchAlbumItem("Books", 1);
+			originalAlbumItem.getField("Price").setValue(42.42d);
+			DatabaseWrapper.updateAlbumItem(originalAlbumItem);
+			AlbumItem updatedAlbumItem = DatabaseWrapper.fetchAlbumItem("Books", 1);
+			
+			if (updatedAlbumItem == null) {
+				fail("The updatedAlbumItem is unexpectatly null");
+			}
+	
+			Assert.assertTrue(originalAlbumItem.getAlbumName().equals(updatedAlbumItem.getAlbumName()));
+			Assert.assertTrue(originalAlbumItem.getFields().containsAll(updatedAlbumItem.getFields()));	
 		} catch (DatabaseWrapperOperationException e) {
 			fail("updateNumberfieldOfAlbumItem failed");
 		}
@@ -96,20 +89,17 @@ public class UpdateAlbumItemTests {
 	@Test
 	public void updateDatefieldOfAlbumItem() {
 		try {
-		AlbumItem originalAlbumItem = DatabaseWrapper.fetchAlbumItem("Books", 1);
-
-		// Change a text field
-		originalAlbumItem.getField("Purchased").setValue(new Date(System.currentTimeMillis()));
-
-		DatabaseWrapper.updateAlbumItem(originalAlbumItem);
-
-		AlbumItem updatedAlbumItem = DatabaseWrapper.fetchAlbumItem("Books", 1);
-		if (updatedAlbumItem == null) {
-			fail("The updatedAlbumItem is unexpectatly null");
-		}
-
-		Assert.assertTrue(originalAlbumItem.getAlbumName().equals(updatedAlbumItem.getAlbumName()));
-		Assert.assertTrue(originalAlbumItem.getFields().containsAll(updatedAlbumItem.getFields()));	
+			AlbumItem originalAlbumItem = DatabaseWrapper.fetchAlbumItem("Books", 1);
+			originalAlbumItem.getField("Purchased").setValue(new Date(System.currentTimeMillis()));
+			DatabaseWrapper.updateAlbumItem(originalAlbumItem);
+			AlbumItem updatedAlbumItem = DatabaseWrapper.fetchAlbumItem("Books", 1);
+			
+			if (updatedAlbumItem == null) {
+				fail("The updatedAlbumItem is unexpectatly null");
+			}
+	
+			Assert.assertTrue(originalAlbumItem.getAlbumName().equals(updatedAlbumItem.getAlbumName()));
+			Assert.assertTrue(originalAlbumItem.getFields().containsAll(updatedAlbumItem.getFields()));	
 		} catch (DatabaseWrapperOperationException e) {
 			fail("updateDatefieldOfAlbumItem failed");
 		}
@@ -118,85 +108,42 @@ public class UpdateAlbumItemTests {
 	@Test
 	public void updateYesNofieldOfAlbumItem() {
 		try {
-		AlbumItem originalAlbumItem = DatabaseWrapper.fetchAlbumItem("Books", 1);
-
-		// Change a text field
-		originalAlbumItem.getField("Lent out").setValue(OptionType.NO);
-
-		DatabaseWrapper.updateAlbumItem(originalAlbumItem);
-
-		AlbumItem updatedAlbumItem = DatabaseWrapper.fetchAlbumItem("Books", 1);
-		if (updatedAlbumItem == null) {
-			fail("The updatedAlbumItem is unexpectatly null");
-		}
-
-		Assert.assertTrue(originalAlbumItem.getAlbumName().equals(updatedAlbumItem.getAlbumName()));
-		Assert.assertTrue(originalAlbumItem.getFields().containsAll(updatedAlbumItem.getFields()));		
+			AlbumItem originalAlbumItem = DatabaseWrapper.fetchAlbumItem("Books", 1);
+			originalAlbumItem.getField("Lent out").setValue(OptionType.NO);
+			DatabaseWrapper.updateAlbumItem(originalAlbumItem);
+			AlbumItem updatedAlbumItem = DatabaseWrapper.fetchAlbumItem("Books", 1);
+			
+			if (updatedAlbumItem == null) {
+				fail("The updatedAlbumItem is unexpectatly null");
+			}
+	
+			Assert.assertTrue(originalAlbumItem.getAlbumName().equals(updatedAlbumItem.getAlbumName()));
+			Assert.assertTrue(originalAlbumItem.getFields().containsAll(updatedAlbumItem.getFields()));		
 		} catch (DatabaseWrapperOperationException e) {
-			fail("update of yes no field failed");
+			fail("Update of Option field failed");
 		}
 	}
 
 	@Test
-	public void updatePicturefieldOfAlbumItem() {
+	public void updatePicturesOfAlbumItem() {
 		try {
-		AlbumItem originalAlbumItem = DatabaseWrapper.fetchAlbumItem("Books", 1);
-
-		// Change a text field
-		List<AlbumItemPicture> pictureList = originalAlbumItem.getPictures();
-		pictureList.add(new AlbumItemPicture(CollectorTestExecuter.PATH_TO_TEST_PICTURE_3, CollectorTestExecuter.PATH_TO_TEST_PICTURE_3));
-		originalAlbumItem.getField("collectorPicture").setValue(pictureList);
-
-		DatabaseWrapper.updateAlbumItem(originalAlbumItem);
-
-		AlbumItem updatedAlbumItem = DatabaseWrapper.fetchAlbumItem("Books", 1);
-		if (updatedAlbumItem == null) {
-			fail("The updatedAlbumItem is unexpectatly null");
-		}
+			AlbumItem originalAlbumItem = DatabaseWrapper.fetchAlbumItem("Books", 1);
+			List<AlbumItemPicture> pictureList = originalAlbumItem.getPictures();
+			pictureList.add(new AlbumItemPicture(CollectorTestExecuter.PATH_TO_TEST_PICTURE_3, CollectorTestExecuter.PATH_TO_TEST_PICTURE_3));
+			originalAlbumItem.setPictures(pictureList);
 		
-		// FIXME repair this testcase
-//		final String albumPicturePath = FileSystemAccessWrapper.COLLECTOR_HOME_ALBUM_PICTURES + File.separator + albumName;
-//		File picFile1 = new File (albumPicturePath + File.separator + "test Pic1.png");
-//		File picFile2 = new File (albumPicturePath + File.separator + "test Pic2.png");
-//		File picFile3 = new File (albumPicturePath + File.separator + "test Pic3.png");
-//		ItemField referencePictureField = new ItemField("collectorPicture", FieldType.Picture, Arrays.asList(picFile1.toURI(), picFile2.toURI(), picFile3.toURI()));
-//		
-//		// remove the picture field and replace it with the correct reference field
-//		originalAlbumItem.removeField(originalAlbumItem.getField("collectorPicture"));
-//		originalAlbumItem.getFields().add(referencePictureField);
-//
-//		Assert.assertTrue(originalAlbumItem.getAlbumName().equals(updatedAlbumItem.getAlbumName()));
-//		Assert.assertTrue(originalAlbumItem.getFields().containsAll(updatedAlbumItem.getFields()));
+			DatabaseWrapper.updateAlbumItem(originalAlbumItem);
+			AlbumItem updatedAlbumItem = DatabaseWrapper.fetchAlbumItem("Books", 1);
+			
+			if (updatedAlbumItem == null) {
+				fail("The updatedAlbumItem is unexpectatly null");
+			}
 		} catch (DatabaseWrapperOperationException e) {
 			fail("update of picture field failed");
-		}
-		
-		fail();
-	}
-
-	private void resetFolderStructure() {
-		// Reset folder structure of the COLLECTOR HOME
-		try {			
-			ConnectionManager.closeConnection();
-
-			FileSystemAccessWrapper.removeCollectorHome();
-
-			Class.forName("org.sqlite.JDBC");
-
-			FileSystemAccessWrapper.updateCollectorFileStructure();			
-
-			ConnectionManager.openConnection();
-
-			FileSystemAccessWrapper.updateAlbumFileStructure(ConnectionManager.getConnection());
-		} 
-		catch (Exception e) {
-			e.printStackTrace();
-			fail("Could not open database!");
 		}
 	}
 
 	private void createBooksAlbum() {
-		// Create Album for insertion
 		MetaItemField titleField = new MetaItemField("Book Title", FieldType.Text, true);
 		MetaItemField authorField = new MetaItemField("Author", FieldType.Text, true);
 		MetaItemField purchaseField = new MetaItemField("Purchased", FieldType.Date, false);
@@ -212,7 +159,6 @@ public class UpdateAlbumItemTests {
 
 		try {
 			DatabaseWrapper.createNewAlbum(albumName, columns, true);
-			
 		} catch (DatabaseWrapperOperationException e) {
 			fail("Creation of album"+ albumName + "failed");
 		}
@@ -220,8 +166,8 @@ public class UpdateAlbumItemTests {
 
 	private void fillBooksAlbum() {
 		final String albumName = "Books";
-
-		AlbumItem referenceAlbumItem = createReferenceAlbumItem(albumName);
+		AlbumItem referenceAlbumItem = createSampleAlbumItem(albumName);
+		
 		try {
 			DatabaseWrapper.addNewAlbumItem(referenceAlbumItem, false);
 		} catch (DatabaseWrapperOperationException e) {
@@ -229,28 +175,24 @@ public class UpdateAlbumItemTests {
 		}
 	}
 
-	private AlbumItem createReferenceAlbumItem(String albumName) {
-		// FIXME repair this testcase
-		//		AlbumItem item = new AlbumItem(albumName);
-		//
-		//		List<ItemField> fields = new ArrayList<ItemField>();
-		//		fields.add( new ItemField("Book Title", FieldType.Text, "book title"));
-		//		fields.add( new ItemField("Author", FieldType.Text, "the author"));
-		//		fields.add( new ItemField("Purchased", FieldType.Date, new Date(System.currentTimeMillis())));
-		//		fields.add( new ItemField("Price", FieldType.Number, 4.2d)); 
-		//		fields.add( new ItemField("Lent out", FieldType.Option, OptionType.YES));
-		//
-		//		// Create picture field with 3 pictures
-		//		List<AlbumItemPicture> albumItemPictures = new ArrayList<AlbumItemPicture>();
-		//		
-		//		albumItemPictures.add(new AlbumItemPicture(CollectorTestExecuter.PATH_TO_TEST_PIC1, CollectorTestExecuter.PATH_TO_TEST_PIC1, albumName));
-		//		albumItemPictures.add(new AlbumItemPicture(CollectorTestExecuter.PATH_TO_TEST_PIC2, CollectorTestExecuter.PATH_TO_TEST_PIC2, albumName));
-		//		
-		//		item.setFields(fields);
-		//		item.addField("collectorPicture", FieldType.Picture, albumItemPictures);
-		//		item.setContentVersion(UUID.randomUUID());
-		//		return item;
+	private AlbumItem createSampleAlbumItem(String albumName) {
+		AlbumItem item = new AlbumItem(albumName);
+
+		List<ItemField> fields = new ArrayList<ItemField>();
+		fields.add(new ItemField("Book Title", FieldType.Text, "book title"));
+		fields.add(new ItemField("Author", FieldType.Text, "the author"));
+		fields.add(new ItemField("Purchased", FieldType.Date, new Date(System.currentTimeMillis())));
+		fields.add(new ItemField("Price", FieldType.Number, 4.2d)); 
+		fields.add(new ItemField("Lent out", FieldType.Option, OptionType.YES));
+
+		List<AlbumItemPicture> albumItemPictures = new ArrayList<AlbumItemPicture>();
+		albumItemPictures.add(new AlbumItemPicture(CollectorTestExecuter.PATH_TO_TEST_PICTURE_1, CollectorTestExecuter.PATH_TO_TEST_PICTURE_1, albumName));
+		albumItemPictures.add(new AlbumItemPicture(CollectorTestExecuter.PATH_TO_TEST_PICTURE_2, CollectorTestExecuter.PATH_TO_TEST_PICTURE_2, albumName));
+		albumItemPictures.add(new AlbumItemPicture(CollectorTestExecuter.PATH_TO_TEST_PICTURE_3, CollectorTestExecuter.PATH_TO_TEST_PICTURE_3, albumName));
 		
-		return null;
+		item.setFields(fields);
+		item.setContentVersion(UUID.randomUUID());
+		
+		return item;
 	}
 }

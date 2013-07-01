@@ -11,48 +11,26 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-
 import collector.desktop.database.AlbumItemResultSet;
 import collector.desktop.database.ConnectionManager;
 import collector.desktop.database.DatabaseIntegrityManager;
 import collector.desktop.database.DatabaseWrapper;
 import collector.desktop.database.exceptions.DatabaseWrapperOperationException;
-import collector.desktop.filesystem.FileSystemAccessWrapper;
 import collector.desktop.tests.CollectorTestExecuter;
 
 public class QuickSearchTests {
-	public static void resetEverything() {
-		try {			
-			ConnectionManager.closeConnection();
-
-			FileSystemAccessWrapper.removeCollectorHome();
-
-			Class.forName("org.sqlite.JDBC");
-
-			FileSystemAccessWrapper.updateCollectorFileStructure();			
-
-			ConnectionManager.openConnection();
-
-			FileSystemAccessWrapper.updateAlbumFileStructure(ConnectionManager.getConnection());
-		} 
-		catch (Exception e) {
-			e.printStackTrace();
-			fail("Could not open database!");
-		}
-	}
-
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 	}
 
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		resetEverything();
+		CollectorTestExecuter.resetEverything();
 	}
 
 	@Before
 	public void setUp() {
-		resetEverything();
+		CollectorTestExecuter.resetEverything();
 	}
 
 	@After
@@ -63,12 +41,9 @@ public class QuickSearchTests {
 	@Test
 	public void testQuickSearchActorInDVDs() {
 		try {
-			// Use default test sample
 			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
-
 			ArrayList<String> quickSearchTerms = new ArrayList<String>();
 			quickSearchTerms.add("Smith");
-
 			AlbumItemResultSet searchResults = DatabaseWrapper.executeQuickSearch("DVDs", quickSearchTerms);
 
 			assertTrue("Resultset should not be null", searchResults != null);
@@ -76,7 +51,6 @@ public class QuickSearchTests {
 			int counter = 0;
 			while (searchResults.moveToNext()) {
 				counter++;
-
 				for (int i=1; i<searchResults.getFieldCount(); i++) {
 					if (searchResults.getFieldName(i).equals("Title")) {
 						assertTrue("The only results should be either Independence Day or Wild Wild West", 
@@ -95,13 +69,10 @@ public class QuickSearchTests {
 	@Test
 	public void testQuickSearchActorsInDVDs() {
 		try {
-			// Use default test sample
 			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
-
 			ArrayList<String> quickSearchTerms = new ArrayList<String>();
 			quickSearchTerms.add("Cooper");
 			quickSearchTerms.add("Wilson");
-
 			AlbumItemResultSet searchResults = DatabaseWrapper.executeQuickSearch("DVDs", quickSearchTerms);
 
 			assertTrue("Resultset should not be null", searchResults != null);
@@ -109,7 +80,6 @@ public class QuickSearchTests {
 			int counter = 0;
 			while (searchResults.moveToNext()) {
 				counter++;
-
 				for (int i=1; i<searchResults.getFieldCount(); i++) {
 					if (searchResults.getFieldName(i).equals("Title")) {
 						assertTrue("The only results should be either Limitless or Marley & Me", 
@@ -128,12 +98,9 @@ public class QuickSearchTests {
 	@Test
 	public void testQuickSearchTitleInDVDs() {
 		try {
-			// Use default test sample
 			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
-
 			ArrayList<String> quickSearchTerms = new ArrayList<String>();
 			quickSearchTerms.add("Me");
-
 			AlbumItemResultSet searchResults = DatabaseWrapper.executeQuickSearch("DVDs", quickSearchTerms);
 
 			assertTrue("Resultset should not be null", searchResults != null);
@@ -141,7 +108,6 @@ public class QuickSearchTests {
 			int counter = 0;
 			while (searchResults.moveToNext()) {
 				counter++;
-
 				for (int i=1; i<searchResults.getFieldCount(); i++) {
 					if (searchResults.getFieldName(i).equals("Title")) {
 						assertTrue("The only result should be Marley & Me", 
