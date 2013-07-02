@@ -2,27 +2,32 @@ package collector.desktop.database;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import collector.desktop.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.database.exceptions.DatabaseWrapperOperationException.DBErrorState;
+import collector.desktop.filesystem.BuildInformation;
 import collector.desktop.filesystem.FileSystemAccessWrapper;
 
 // TODO this class needs to be strongly refactored!!!
 public class DatabaseIntegrityManager {
-	/**The normal logger for all info, debug, error and warning in this class*/
 	private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseIntegrityManager.class);
-	/** The extension used on file names for autosaves.*/
+	/** The extension used on file names for autosaves */
 	private static final String AUTO_SAVE_EXTENSION = "autosave";
-	/** Regular expression describing the file name format including the extension of auto saves.*/
-	private  static final String AUTO_SAVE_FILE_REGEX = "(\\w)+(\\u005F([0-9]+)+\\."+AUTO_SAVE_EXTENSION+")$";
-	static final String corruptDatabaseSnapshotPrefix = ".corruptDatabaseSnapshot_";
-	/** The maximum amount of autosaves that can be stored until the oldes it overwritten */
-	private static int autoSaveLimit = 8;
+	/** Regular expression describing the file name format including the extension of auto saves */
+	private  static final String AUTO_SAVE_FILE_REGEX = "(\\w)+(\\u005F([0-9]+)+\\." + AUTO_SAVE_EXTENSION + ")$";
+	static final String CORRUPT_DATABASE_SNAPSHOT_PREFIX = ".corruptDatabaseSnapshot_";
+	/** The maximum amount of autosaves that can be stored until the existing autosaves are overwritten */
+	private static int autoSaveLimit = 5;
 	private static long lastChangeTimeStamp = -1;
 	
 	/**
@@ -32,17 +37,15 @@ public class DatabaseIntegrityManager {
 	 * @throws DatabaseWrapperOperationException 
 	 */
 	public static String createSavepoint() throws DatabaseWrapperOperationException  {
-		/*String savepointName = UUID.randomUUID().toString();
+		String savepointName = UUID.randomUUID().toString();
 	
-		try (PreparedStatement createSavepointStatement = ConnectionManager.connection.prepareStatement("SAVEPOINT " + DatabaseStringUtilities.encloseNameWithQuotes(savepointName));){			
+		try (PreparedStatement createSavepointStatement = ConnectionManager.getConnection().prepareStatement("SAVEPOINT " + DatabaseStringUtilities.encloseNameWithQuotes(savepointName));){			
 			createSavepointStatement.execute();
 			return savepointName;
 		} catch (SQLException e) {
 			LOGGER.error("Creating the savepoint {} failed", savepointName);
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
-		}*/
-		
-		return "";
+		}
 	}
 	
 	/**
@@ -56,17 +59,17 @@ public class DatabaseIntegrityManager {
 	 */
 	public static void releaseSavepoint(String savepointName) throws DatabaseWrapperOperationException {
 	
-		/*if (savepointName == null || savepointName.isEmpty()){
+		if (savepointName == null || savepointName.isEmpty()){
 			LOGGER.error("The savepoint could not be released since the name string is null or empty");
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState);
 		}
 		
-		try (PreparedStatement releaseSavepointStatement = ConnectionManager.connection.prepareStatement("RELEASE SAVEPOINT " + DatabaseStringUtilities.encloseNameWithQuotes(savepointName));){			
+		try (PreparedStatement releaseSavepointStatement = ConnectionManager.getConnection().prepareStatement("RELEASE SAVEPOINT " + DatabaseStringUtilities.encloseNameWithQuotes(savepointName));){			
 			releaseSavepointStatement.execute();
 		} catch (SQLException e) {
 			LOGGER.error("Releasing the savepoint {} failed", savepointName);
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState, e);
-		}*/
+		}
 	}
 	
 	/**
@@ -76,17 +79,17 @@ public class DatabaseIntegrityManager {
 	 */
 	public static void rollbackToSavepoint(String savepointName) throws DatabaseWrapperOperationException {
 	
-		/*if (savepointName == null || savepointName.isEmpty()){
+		if (savepointName == null || savepointName.isEmpty()){
 			LOGGER.error("The savepoint could not be rolledback to since the name string is null or empty");
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState);
 		}	
 	
-		try (PreparedStatement rollbackToSavepointStatement = ConnectionManager.connection.prepareStatement("ROLLBACK TO SAVEPOINT " + DatabaseStringUtilities.encloseNameWithQuotes(savepointName))){
+		try (PreparedStatement rollbackToSavepointStatement = ConnectionManager.getConnection().prepareStatement("ROLLBACK TO SAVEPOINT " + DatabaseStringUtilities.encloseNameWithQuotes(savepointName))){
 			rollbackToSavepointStatement.execute();
 		} catch (SQLException e) {
 			LOGGER.error("Rolling back the savepoint {} failed", savepointName);
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState,e);
-		}*/
+		}
 	}
 	
 	/**
@@ -139,11 +142,11 @@ public class DatabaseIntegrityManager {
 	
 		try (Statement statement = ConnectionManager.getConnection().createStatement()) {			
 			statement.executeUpdate("restore from '" + FileSystemAccessWrapper.DATABASE_TO_RESTORE + "'");
-			/* TODO remove try {
+			try {
 				DatabaseIntegrityManager.lastChangeTimeStamp =  DatabaseIntegrityManager.extractTimeStamp(new File(filePath));
 			} catch (DatabaseWrapperOperationException e) {
 				DatabaseIntegrityManager.lastChangeTimeStamp = System.currentTimeMillis();
-			}*/
+			}
 		} catch (SQLException e) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState,e);
 		}
@@ -160,28 +163,26 @@ public class DatabaseIntegrityManager {
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState);
 		}
 		
-		// TODO remove
 		// Update timestamp
-		//DatabaseIntegrityManager.updateLastDatabaseChangeTimeStamp();
+		DatabaseIntegrityManager.updateLastDatabaseChangeTimeStamp();
 	}
 	
 	/**
 	 * Gets the time stamp when the last change to the database happened.
 	 * @return The time in milliseconds when the last change to the database occured. -1 If not initialized.
 	 */
-	/* TODO remove public static long getLastDatabaseChangeTimeStamp() {
+	public static long getLastDatabaseChangeTimeStamp() {
 		return DatabaseIntegrityManager.lastChangeTimeStamp;
 	}
 	
 	static void updateLastDatabaseChangeTimeStamp() {
 		DatabaseIntegrityManager.lastChangeTimeStamp = System.currentTimeMillis();
-	}*/
+	}
 	
 	/**
 	 * Gets the list of existing autosaves sorted by filename timestamp, newest to oldest.
 	 * @return List of files of previous autosaves. Empty list if none exist
 	 */
-	/* TODO remove
 	public static List<File> getAllAutoSaves() throws DatabaseWrapperOperationException{
 		List<File> autoSaves = FileSystemAccessWrapper.getAllMatchingFilesInCollectorHome(DatabaseIntegrityManager.AUTO_SAVE_FILE_REGEX);
 		Collections.sort(autoSaves, new Comparator<File>() {
@@ -194,8 +195,9 @@ public class DatabaseIntegrityManager {
 				}
 			}
 		});
+		
 		return autoSaves;
-	}*/
+	}
 	
 	/**
 	 * Extracts the database last change timestamp from the autosave file. Requires the correct format of the name.
@@ -203,7 +205,7 @@ public class DatabaseIntegrityManager {
 	 * @return A long integer representing the last change of the database.
 	 * @throws DatabaseWrapperOperationException 
 	 */
-	/* TODO remove static long extractTimeStamp(File autoSaveFile) throws DatabaseWrapperOperationException {
+	 static long extractTimeStamp(File autoSaveFile) throws DatabaseWrapperOperationException {
 	
 		String fileName;
 		try {
@@ -222,7 +224,7 @@ public class DatabaseIntegrityManager {
 		} catch (NumberFormatException e) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
 		}
-	}*/
+	}
 	
 	/**
 	 * Creates an automatic backup when the current state of the database is newer than the most recent autosave.  
@@ -231,11 +233,11 @@ public class DatabaseIntegrityManager {
 	 * @throws DatabaseWrapperOperationException 
 	 */
 	public static void backupAutoSave() throws DatabaseWrapperOperationException {		
-		/*String programVersion = BuildInformation.instance().getBuildType() + "_" + BuildInformation.instance().getVersion();
+		String programVersion = BuildInformation.instance().getBuildType() + "_" + BuildInformation.instance().getVersion();
 		String timeStamp = Long.toString(getLastDatabaseChangeTimeStamp());		
 	
-		String autoSaveFilePath = FileSystemAccessWrapper.COLLECTOR_HOME_APPDATA + 
-				File.separator + "periodical_backup" + programVersion + "_"; // separator for the timestamp	
+		String autoSaveFilePath = FileSystemAccessWrapper.COLLECTOR_HOME_BACKUPS + 
+				File.separator + "PERIODICAL_BACKUP_" + programVersion + "_"; // separator for the timestamp	
 	
 		List<File> previousAutoSaveList = getAllAutoSaves();
 		if(DatabaseIntegrityManager.autoSaveLimit<1) {			
@@ -279,6 +281,6 @@ public class DatabaseIntegrityManager {
 				LOGGER.error("Autosave - backup failed");
 				throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState, e);
 			}
-		}*/
+		}
 	}
 }

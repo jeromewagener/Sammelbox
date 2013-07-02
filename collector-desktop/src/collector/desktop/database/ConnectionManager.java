@@ -101,7 +101,7 @@ public class ConnectionManager {
 
 		closeConnection();			
 
-		String corruptSnapshotFileName = DatabaseIntegrityManager.corruptDatabaseSnapshotPrefix + System.currentTimeMillis();
+		String corruptSnapshotFileName = DatabaseIntegrityManager.CORRUPT_DATABASE_SNAPSHOT_PREFIX + System.currentTimeMillis();
 		File corruptTemporarySnapshotFile = new File(FileSystemAccessWrapper.USER_HOME + File.separator + corruptSnapshotFileName);
 		corruptTemporarySnapshotFile.deleteOnExit();
 		// Copy file to temporary location

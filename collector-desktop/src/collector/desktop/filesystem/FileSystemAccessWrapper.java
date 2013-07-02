@@ -48,7 +48,8 @@ public class FileSystemAccessWrapper {
 	public static final String USER_HOME 						= System.getProperty("user.home");
 	public static final String COLLECTOR_HOME 					= System.getProperty("user.home") + File.separatorChar + ".collector";
 	public static final String COLLECTOR_HOME_APPDATA 			= COLLECTOR_HOME + File.separatorChar + "app-data";
-	public static final String COLLECTOR_HOME_THUMBNAILS_FOLDER = COLLECTOR_HOME + File.separatorChar + "thumbnails"; 
+	public static final String COLLECTOR_HOME_THUMBNAILS_FOLDER = COLLECTOR_HOME + File.separatorChar + "thumbnails";
+	public static final String COLLECTOR_HOME_BACKUPS			= COLLECTOR_HOME + File.separatorChar + "backups"; 
 	public static final String COLLECTOR_HOME_ALBUM_PICTURES 	= COLLECTOR_HOME + File.separatorChar + "album-pictures";
 	public static final String PLACEHOLDERIMAGE 				= COLLECTOR_HOME_APPDATA + File.separatorChar + "placeholder.png";
 	public static final String PLACEHOLDERIMAGE2 				= COLLECTOR_HOME_APPDATA + File.separatorChar + "placeholder2.png";
@@ -114,6 +115,15 @@ public class FileSystemAccessWrapper {
 		if (!appData.exists()) {
 			if (!appData.mkdir()) {
 				System.err.println("Cannot create collector app-data directory although it seems that it does not exist");
+				return false;
+			}
+		}
+		
+		// Create the backup directory
+		File backups = new File(COLLECTOR_HOME_BACKUPS);
+		if (!backups.exists()) {
+			if (!backups.mkdir()) {
+				System.err.println("Cannot create collector backup directory although it seems that it does not exist");
 				return false;
 			}
 		}
