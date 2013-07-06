@@ -15,14 +15,14 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import collector.desktop.album.AlbumItem;
-import collector.desktop.album.AlbumItem.AlbumItemPicture;
-import collector.desktop.album.FieldType;
-import collector.desktop.album.ItemField;
-import collector.desktop.album.MetaItemField;
-import collector.desktop.album.OptionType;
-import collector.desktop.database.DatabaseWrapper;
-import collector.desktop.database.exceptions.DatabaseWrapperOperationException;
+import collector.desktop.model.album.AlbumItem;
+import collector.desktop.model.album.AlbumItem.AlbumItemPicture;
+import collector.desktop.model.album.FieldType;
+import collector.desktop.model.album.ItemField;
+import collector.desktop.model.album.MetaItemField;
+import collector.desktop.model.album.OptionType;
+import collector.desktop.model.database.DatabaseWrapper;
+import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.tests.CollectorTestExecuter;
 
 public class UpdateAlbumItemTests {

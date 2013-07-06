@@ -12,10 +12,10 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import collector.desktop.album.FieldType;
-import collector.desktop.album.MetaItemField;
-import collector.desktop.database.DatabaseWrapper;
-import collector.desktop.database.exceptions.DatabaseWrapperOperationException;
+import collector.desktop.model.album.FieldType;
+import collector.desktop.model.album.MetaItemField;
+import collector.desktop.model.database.DatabaseWrapper;
+import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.tests.CollectorTestExecuter;
 
 public class RemoveAlbumTests {

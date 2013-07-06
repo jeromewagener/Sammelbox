@@ -7,8 +7,8 @@ import java.io.File;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
-import collector.desktop.database.ConnectionManager;
-import collector.desktop.filesystem.FileSystemAccessWrapper;
+import collector.desktop.controller.filesystem.FileSystemAccessWrapper;
+import collector.desktop.model.database.ConnectionManager;
 import collector.desktop.tests.album.AlterAlbumTests;
 import collector.desktop.tests.album.BackupRestoreTests;
 import collector.desktop.tests.album.CreateAlbumTests;
@@ -18,7 +18,6 @@ import collector.desktop.tests.albumitems.RemoveAlbumItemTests;
 import collector.desktop.tests.albumitems.UpdateAlbumItemTests;
 import collector.desktop.tests.searching.AdvancedSearchTests;
 import collector.desktop.tests.searching.QuickSearchTests;
-
 
 @RunWith(Suite.class)
 
