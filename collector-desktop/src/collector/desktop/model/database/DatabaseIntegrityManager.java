@@ -18,16 +18,17 @@ import collector.desktop.controller.filesystem.FileSystemAccessWrapper;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException.DBErrorState;
 
-// TODO this class needs to be strongly refactored!!!
 public class DatabaseIntegrityManager {
 	private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseIntegrityManager.class);
 	/** The extension used on file names for autosaves */
 	private static final String AUTO_SAVE_EXTENSION = "autosave";
 	/** Regular expression describing the file name format including the extension of auto saves */
 	private  static final String AUTO_SAVE_FILE_REGEX = "(\\w)+(\\u005F([0-9]+)+\\." + AUTO_SAVE_EXTENSION + ")$";
+	// comment
 	static final String CORRUPT_DATABASE_SNAPSHOT_PREFIX = ".corruptDatabaseSnapshot_";
 	/** The maximum amount of autosaves that can be stored until the existing autosaves are overwritten */
 	private static int autoSaveLimit = 5;
+	// TODO comment
 	private static long lastChangeTimeStamp = -1;
 	
 	/**

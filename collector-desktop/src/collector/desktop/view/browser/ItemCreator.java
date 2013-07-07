@@ -74,11 +74,9 @@ public class ItemCreator {
 			if (fieldItem.getType().equals(FieldType.UUID)) {
 				// schema or content version UUID --> ignore 
 			} else if (fieldItem.getType().equals(FieldType.ID)) {
-				if (!fieldItem.getName().equals("typeinfo")) {
+				if (fieldItem.getName().equals(DatabaseWrapper.ID_COLUMN_NAME)) {
 					// do not show, but store id
 					id = fieldItem.getValue();
-				} else {
-					LOGGER.warn("Found a field type that wasn't expected: " + fieldItem.getName());
 				}
 			} else if (fieldItem.getType().equals(FieldType.Option)) {
 				if (fieldItem.getValue() == OptionType.YES) {

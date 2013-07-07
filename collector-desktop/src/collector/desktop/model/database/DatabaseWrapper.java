@@ -285,12 +285,11 @@ public class DatabaseWrapper  {
 	 */
 	public static void reorderAlbumItemField(String albumName, MetaItemField metaItemField, MetaItemField preceedingField) throws DatabaseWrapperOperationException {
 
-		// FIXME why commented?
 		// Check if the specified columns exists.
-//		List<MetaItemField> metaInfos =  getAllAlbumItemMetaItemFields(albumName);
-//		if (!metaInfos.contains(metaItemField)) {
-//			throw new FailedDatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState);
-//		}
+		List<MetaItemField> metaInfos =  getAllAlbumItemMetaItemFields(albumName);
+		if (!metaInfos.contains(metaItemField)) {
+			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState);
+		}
 
 		String savepointName = DatabaseIntegrityManager.createSavepoint();
 		try {
@@ -681,7 +680,7 @@ public class DatabaseWrapper  {
 		}
 	}
 
-	// TODO use master table?
+	// TODO remove last line from query, check resultset for value
 	/**
 	 * Indicates whether the album contains a picture field.
 	 * @param albumName The name of the album to be queried.
@@ -1695,14 +1694,13 @@ public class DatabaseWrapper  {
 				if (rating != null && !rating.isEmpty()) {
 					value =  StarRating.valueOf(rating);
 				}else {
-					LOGGER.error("Fetching star ratingfor item field failed.- star rating string is unexpectantly null or empty");
+					LOGGER.error("Fetching star rating for item field failed. Star rating string is unexpectantly null or empty");
 				}
 				break;
 			case UUID:
 				value  = UUID.fromString(results.getString(columnIndex));
 				break;
 			default:
-				// FieldType by is default of type text
 				value = null;
 				break;
 			}

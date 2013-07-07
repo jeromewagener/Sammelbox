@@ -27,6 +27,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Widget;
 
+import collector.desktop.controller.GuiController;
+import collector.desktop.model.GuiState;
 import collector.desktop.model.album.AlbumItem.AlbumItemPicture;
 import collector.desktop.view.ApplicationUI;
 import collector.desktop.view.internationalization.DictKeys;
@@ -201,7 +203,7 @@ public class ImageDropAndManagementComposite extends Composite implements DropTa
 
 	@Override
 	public void drop(DropTargetEvent event) {
-		if (!ApplicationUI.hasSelectedAlbum()) {
+		if (GuiController.getGuiState().getSelectedAlbum().equals(GuiState.NO_ALBUM_SELECTED)) {
 			ComponentFactory.showErrorDialog(
 					ApplicationUI.getShell(), 
 					Translator.get(DictKeys.DIALOG_TITLE_NO_ALBUM_SELECTED), 
@@ -213,7 +215,8 @@ public class ImageDropAndManagementComposite extends Composite implements DropTa
 			String[] filenames = (String[]) event.data;
 			if (filenames.length > 0){
 				for (String filename : filenames) {
-					AlbumItemPicture picture = ImageManipulator.adaptAndStoreImageForCollector(new File(filename), ApplicationUI.getSelectedAlbum());
+					AlbumItemPicture picture = ImageManipulator.adaptAndStoreImageForCollector(
+							new File(filename), GuiController.getGuiState().getSelectedAlbum());
 					if (picture == null) {
 						showDroppedUnsupportedFileMessageBox(filename);
 					} else {

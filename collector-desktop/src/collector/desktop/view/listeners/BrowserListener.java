@@ -29,7 +29,7 @@ import collector.desktop.view.internationalization.Translator;
 import collector.desktop.view.sidepanes.EmptySidepane;
 import collector.desktop.view.sidepanes.UpdateAlbumItemSidepane;
 import collector.desktop.view.various.ComponentFactory;
-import collector.desktop.view.various.GuiConstants;
+import collector.desktop.view.various.Constants;
 import collector.desktop.view.various.PanelType;
 
 public class BrowserListener implements LocationListener, ProgressListener, MenuDetectListener {
@@ -61,8 +61,8 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 	 * is executed. (E.g. opening a new composite) 
 	 * @param event the location event used to identify the new location */
 	public void changing(LocationEvent event) {		
-		if (event.location.startsWith(GuiConstants.SHOW_UPDATE_COMPOSITE)) {
-			String id = event.location.substring(GuiConstants.SHOW_UPDATE_COMPOSITE.length());
+		if (event.location.startsWith(Constants.SHOW_UPDATE_COMPOSITE)) {
+			String id = event.location.substring(Constants.SHOW_UPDATE_COMPOSITE.length());
 			removeQuestionMarkAtTheEndIfPresent(id);
 
 			ApplicationUI.changeRightCompositeTo(PanelType.UpdateEntry,
@@ -72,8 +72,8 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 			// Do not change the page
 			event.doit = false;
 
-		} else if (event.location.startsWith(GuiConstants.SHOW_DELETE_COMPOSITE)) {
-			String id = event.location.substring(GuiConstants.SHOW_DELETE_COMPOSITE.length());
+		} else if (event.location.startsWith(Constants.SHOW_DELETE_COMPOSITE)) {
+			String id = event.location.substring(Constants.SHOW_DELETE_COMPOSITE.length());
 			removeQuestionMarkAtTheEndIfPresent(id);
 
 			int messageBoxStyle =  SWT.ICON_WARNING | SWT.YES | SWT.NO;			
@@ -97,8 +97,8 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 
 			// Do not change the page
 			event.doit = false;
-		} else if (event.location.startsWith(GuiConstants.SHOW_BIG_PICTURE)) {
-			String pathAndIdString = event.location.substring(GuiConstants.SHOW_BIG_PICTURE.length());
+		} else if (event.location.startsWith(Constants.SHOW_BIG_PICTURE)) {
+			String pathAndIdString = event.location.substring(Constants.SHOW_BIG_PICTURE.length());
 
 			removeQuestionMarkAtTheEndIfPresent(pathAndIdString);
 
@@ -109,13 +109,13 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 
 			// Do not change the page
 			event.doit = false;
-		} else if (event.location.startsWith(GuiConstants.SHOW_LAST_PAGE)) {
+		} else if (event.location.startsWith(Constants.SHOW_LAST_PAGE)) {
 			BrowserFacade.goBackToLastPage();
 
 			// Do not change the page
 			event.doit = false;
-		} else if (event.location.startsWith(GuiConstants.SHOW_DETAILS)) {
-			String id = event.location.substring(GuiConstants.SHOW_DETAILS.length());
+		} else if (event.location.startsWith(Constants.SHOW_DETAILS)) {
+			String id = event.location.substring(Constants.SHOW_DETAILS.length());
 			removeQuestionMarkAtTheEndIfPresent(id);
 
 			AlbumItem albumItem;
@@ -141,8 +141,8 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 
 			// Do not change the page
 			event.doit = false;
-		} else if (event.location.startsWith(GuiConstants.SHOW_DETAILS_COMPOSITE)) {
-			String id = event.location.substring(GuiConstants.SHOW_DETAILS_COMPOSITE.length());
+		} else if (event.location.startsWith(Constants.SHOW_DETAILS_COMPOSITE)) {
+			String id = event.location.substring(Constants.SHOW_DETAILS_COMPOSITE.length());
 			removeQuestionMarkAtTheEndIfPresent(id);
 
 			ApplicationUI.changeRightCompositeTo(PanelType.UpdateEntry,
@@ -158,12 +158,12 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 			} else {
 				event.doit = false;
 			}
-		} else if (event.location.equals(GuiConstants.ADD_ADDITIONAL_ALBUM_ITEMS)) {
+		} else if (event.location.equals(Constants.ADD_ADDITIONAL_ALBUM_ITEMS)) {
 			BrowserFacade.addAdditionalAlbumItems();
 
 			// Do not change the page
 			event.doit = false;
-		}else if (event.location.equals(GuiConstants.SHOW_DETAILS_VIEW_OF_ALBUM)) {
+		}else if (event.location.equals(Constants.SHOW_DETAILS_VIEW_OF_ALBUM)) {
 			BrowserFacade.performBrowserQueryAndShow(QueryBuilder.createSelectStarQuery(ApplicationUI.getSelectedAlbum()));
 			
 			ApplicationUI.changeRightCompositeTo(PanelType.Empty, EmptySidepane.build(ApplicationUI.getThreePanelComposite()));

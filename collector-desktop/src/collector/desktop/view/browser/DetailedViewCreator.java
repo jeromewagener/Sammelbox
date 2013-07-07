@@ -8,7 +8,7 @@ import collector.desktop.view.ApplicationUI;
 import collector.desktop.view.internationalization.DictKeys;
 import collector.desktop.view.internationalization.Translator;
 import collector.desktop.view.various.ComponentFactory;
-import collector.desktop.view.various.GuiConstants;
+import collector.desktop.view.various.Constants;
 
 public class DetailedViewCreator {	
 	static void showDetailedAlbum(Browser browser) {
@@ -37,7 +37,7 @@ public class DetailedViewCreator {
 		// If no album items have been found
 		if (htmlDataColumnContent.length() == 0 && htmlPictureColumnContent.length() == 0) {
 			albumItemTableRowHtml.delete(0, albumItemTableRowHtml.length());
-			albumItemTableRowHtml.append("<tr><td>" + GuiConstants.NO_ITEMS_FOUND + "</tr></td>");
+			albumItemTableRowHtml.append("<tr><td>" + Constants.NO_ITEMS_FOUND + "</tr></td>");
 		}
 
 		// Create final page html
@@ -45,9 +45,9 @@ public class DetailedViewCreator {
 				"<!DOCTYPE HTML>" +
 				"  <html>" +
 				"    <head>" +
-				"      <meta " + GuiConstants.META_PARAMS + ">" + 
-				"      <link rel=stylesheet href=\"" + GuiConstants.STYLE_CSS + "\" />" +
-				"      <script src=\"" + GuiConstants.EFFECTS_JS + "\"></script>" +
+				"      <meta " + Constants.META_PARAMS + ">" + 
+				"      <link rel=stylesheet href=\"" + Constants.STYLE_CSS + "\" />" +
+				"      <script src=\"" + Constants.EFFECTS_JS + "\"></script>" +
 				"    </head>" +
 				"    <body bgcolor=white>" +
 				"      <font face=\"" + Utilities.getDefaultSystemFont() + "\">" + 

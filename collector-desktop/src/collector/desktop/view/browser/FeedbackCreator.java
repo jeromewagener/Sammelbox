@@ -13,7 +13,7 @@ import collector.desktop.model.database.exceptions.ExceptionHelper;
 import collector.desktop.view.ApplicationUI;
 import collector.desktop.view.internationalization.DictKeys;
 import collector.desktop.view.internationalization.Translator;
-import collector.desktop.view.various.GuiConstants;
+import collector.desktop.view.various.Constants;
 
 public class FeedbackCreator {
 	private final static Logger LOGGER = LoggerFactory.getLogger(FeedbackCreator.class);
@@ -60,9 +60,9 @@ public class FeedbackCreator {
 		return 	"<!DOCTYPE HTML>" +
 				"  <html>" +
 				"    <head>" +
-				"      <meta " + GuiConstants.META_PARAMS + ">" +
-				"      <link rel=stylesheet href=\"" + GuiConstants.STYLE_CSS + "\" />" +
-				"      <script src=\"" + GuiConstants.EFFECTS_JS + "\"></script>" +
+				"      <meta " + Constants.META_PARAMS + ">" +
+				"      <link rel=stylesheet href=\"" + Constants.STYLE_CSS + "\" />" +
+				"      <script src=\"" + Constants.EFFECTS_JS + "\"></script>" +
 				"    </head>" +
 				"    <body bgcolor=white>" +
 				"      <font face=\"" + Utilities.getDefaultSystemFont() + "\">" +
@@ -97,9 +97,9 @@ public class FeedbackCreator {
 		return "<!DOCTYPE HTML>" +
 			   "  <html>" +
 			   "    <head>" +
-			   "      <meta " + GuiConstants.META_PARAMS + ">" + 
-			   "      <link rel=stylesheet href=\"" + GuiConstants.STYLE_CSS + "\" />" +
-			   "      <script src=\"" + GuiConstants.EFFECTS_JS + "\"></script>" +
+			   "      <meta " + Constants.META_PARAMS + ">" + 
+			   "      <link rel=stylesheet href=\"" + Constants.STYLE_CSS + "\" />" +
+			   "      <script src=\"" + Constants.EFFECTS_JS + "\"></script>" +
 			   "    </head>" +
 			   "    <body>" +
 		       "      <h1>" + title + "</h1>" +

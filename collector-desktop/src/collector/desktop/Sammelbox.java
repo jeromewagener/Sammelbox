@@ -15,11 +15,10 @@ import collector.desktop.model.database.exceptions.DatabaseWrapperOperationExcep
 import collector.desktop.view.ApplicationUI;
 import collector.desktop.view.internationalization.DictKeys;
 import collector.desktop.view.internationalization.Translator;
+import collector.desktop.view.managers.WelcomePageManager;
 import collector.desktop.view.various.ComponentFactory;
 
 public class Sammelbox {
-	/** TODO why? This logger must NOT be used since it always logs the start and end of the program */
-	private final static Logger GATE_LOGGER = LoggerFactory.getLogger("collector.desktop.GateLogger");
 	private final static Logger LOGGER = LoggerFactory.getLogger(Sammelbox.class);
 	
 	/**
@@ -35,17 +34,21 @@ public class Sammelbox {
 		} catch (DatabaseWrapperOperationException ex){
 			try {
 				ConnectionManager.openCleanConnection();				
-			}catch (DatabaseWrapperOperationException ex2) {
-				LOGGER.error("The database is corrupt since opening a connection failed. A dump of the db can be found in the program App folder.");
+			} catch (DatabaseWrapperOperationException ex2) {
+				LOGGER.error("The database is corrupt since opening a connection failed. " +
+						"Recent autosaves of the database can be found in: " + FileSystemAccessWrapper.COLLECTOR_HOME_BACKUPS);
 			}			
 		}
 	}
 	
 	/** The main method initializes the database (using the collector constructor) and establishes the user interface */
 	public static void main(String[] args) throws ClassNotFoundException {
-		GATE_LOGGER.trace("Collector (build: " + BuildInformation.instance().getVersion() + " build on " + BuildInformation.instance().getBuildTimeStamp() +") started");
+		LOGGER.trace("Sammelbox (build: " + BuildInformation.instance().getVersion() + 
+				" build on " + BuildInformation.instance().getBuildTimeStamp() + ") started");
 		try {
 			ApplicationSettingsManager.initializeFromSettingsFile();
+			WelcomePageManager.initializeFromWelcomeFile();
+			
 			Translator.setLanguageFromSettingsOrSystem();
 			// Ensure that folder structure including lock file exists before locking
 			FileSystemAccessWrapper.updateCollectorFileStructure();
@@ -58,7 +61,7 @@ public class Sammelbox {
 				setupConnectionAndFilesystem();
 
 				// create the shell and show the user interface. This blocks until the shell is closed
-				ApplicationUI.createCollectorShell(ApplicationUI.getShell());
+				ApplicationUI.initialize(ApplicationUI.getShell());
 
 				// close the database connection if the the shell is closed
 				ConnectionManager.closeConnection();
@@ -73,10 +76,9 @@ public class Sammelbox {
 						SWT.ICON_INFORMATION).open();
 			}
 		} catch (Exception ex) {
-			GATE_LOGGER.error("Collector crashed", ex);
+			LOGGER.error("Sammelbox crashed", ex);
 		}finally {
-			GATE_LOGGER.trace("Collector ended");
+			LOGGER.trace("Sammelbox stopped");
 		}
 	}
-
 }

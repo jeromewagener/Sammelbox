@@ -1,6 +1,5 @@
 package collector.desktop.view;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.eclipse.swt.SWT;
@@ -12,20 +11,19 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.List;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import collector.desktop.controller.AutosaveController;
+import collector.desktop.controller.events.EventObservable;
+import collector.desktop.controller.events.Observer;
+import collector.desktop.controller.events.SammelboxEvent;
 import collector.desktop.controller.filesystem.FileSystemAccessWrapper;
-import collector.desktop.controller.interfaces.UIObservable;
-import collector.desktop.controller.interfaces.UIObserver;
-import collector.desktop.model.database.DatabaseIntegrityManager;
 import collector.desktop.model.database.DatabaseWrapper;
 import collector.desktop.model.database.QueryBuilder;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
@@ -43,59 +41,48 @@ import collector.desktop.view.managers.AlbumViewManager.AlbumView;
 import collector.desktop.view.managers.MenuManager;
 import collector.desktop.view.sidepanes.EmptySidepane;
 import collector.desktop.view.sidepanes.QuickControlSidepane;
-import collector.desktop.view.various.ComponentFactory;
-import collector.desktop.view.various.LoadingOverlayShell;
+import collector.desktop.view.various.Constants;
 import collector.desktop.view.various.PanelType;
 
-public class ApplicationUI implements UIObservable, UIObserver {
-	private static final int RIGHT_PANEL_LARGE_WIDTH = 320;
-	private static final int RIGHT_PANEL_MEDIUM_WIDTH = 225;
-	private static final int RIGHT_PANEL_SMALL_WIDTH = 150;
-	private static final int RIGHT_PANEL_NO_WIDTH = 0;
-
-	/** The minimum width of the shell in pixels. The shell can never have a smaller width than this. */
-	private static final int MIN_SHELL_WIDTH = 1110;
-	/** The minimum height of the shell in pixels. The shell can never have a smaller height than this. */
-	private static final int MIN_SHELL_HEIGHT = 700;
+public class ApplicationUI implements Observer {
+	private final static Logger LOGGER = LoggerFactory.getLogger(ApplicationUI.class);
 	/** A reference to the main display */
 	private final static Display display = new Display();
 	/** A reference to the main shell */
 	private final static Shell shell = new Shell(display);
-	/** A reference to a composite being part of the general user interface */
-	private static Composite threePanelComposite = null, upperLeftSubComposite = null, lowerLeftSubComposite = null, 
-			leftComposite = null, rightComposite = null, centerComposite = null, statusComposite = null, toolbarComposite = null;
 	/** The currently selected album. The selected album changes via selections within the album list */
 	private static String selectedAlbum = "";
 	/** A reference to the SWT list containing all available albums */
-	private static List albumSWTList;
+	private static List albumList;
 	/** A reference to the SWT Text representing the quickSearch field*/
 	private static Text quickSearchTextField;
 	/** A reference to the SWT list containing all available views */
-	private static List viewSWTList;
-	/** True if the current view is list based, false if item based (picture based) */
-	private static boolean viewIsDetailed = true;	
+	private static List viewList;
+	/** A reference to a composite being part of the general user interface */
+	private static Composite threePanelComposite = null, upperLeftSubComposite = null, lowerLeftSubComposite = null, 
+			leftComposite = null, rightComposite = null, centerComposite = null, statusComposite = null, toolbarComposite = null;
 	/** A reference to the SWT browser in charge of presenting album items */
-	private static Browser albumItemSWTBrowser;
+	private static Browser albumItemBrowser;
 	/** A reference to the SWT album item browser listener*/
-	private static BrowserListener albumItemSWTBrowserListener;
+	private static BrowserListener albumItemBrowserListener;
 	/** The panel type that is currently visible on the right of the main three panel composite */
 	private static PanelType currentRightPanelType = PanelType.Empty;
-	/** A list of observers, waiting for certain global changes */
-	private static ArrayList<UIObserver> observers = new ArrayList<UIObserver>();
-	/** An instance to the main collector */
-	private static ApplicationUI instance = null;
-	/** This flag indicates if an error (e.g. corrupt db) was encountered during startup*/
-	private static boolean normalStartup = true;
-	/** The normal logger for all info, debug, error and warning in the collector class */
-	private final static Logger LOGGER = LoggerFactory.getLogger(ApplicationUI.class);
-
+	/** An instance in order to register as an observer to event observable */
+	private static ApplicationUI instance = new ApplicationUI();
+	
 	private ApplicationUI() {
+		EventObservable.registerObserver(this);
 	}
 
-	/** This method creates the main user interface. This involves the creation of different sub-composites 
-	 * using the CompositeFactory 
-	 * @param shell the shell used to create the user interface */
-	public static void createCollectorShell(final Shell shell) {				
+	public void unregisterFromObservables() {
+		EventObservable.unregisterObserver(instance);
+	}
+	
+	/** This method initializes the main user interface. This involves the creation of different sub-composites
+	 * @param shell the shell which should be initialized */
+	public static void initialize(final Shell shell) {				
+		instance = new ApplicationUI();		
+		
 		// set program icon
 		shell.setImage(new Image(shell.getDisplay(), FileSystemAccessWrapper.LOGO_SMALL));
 		
@@ -103,12 +90,13 @@ public class ApplicationUI implements UIObservable, UIObserver {
 		GridLayout shellGridLayout = new GridLayout(1, false);
 		shellGridLayout.marginHeight = 0;
 		shellGridLayout.marginWidth = 0;		
-		shell.setMinimumSize(MIN_SHELL_WIDTH, MIN_SHELL_HEIGHT);
+		shell.setMinimumSize(Constants.MIN_SHELL_WIDTH, Constants.MIN_SHELL_HEIGHT);
 
 		// setup the Shell
 		shell.setText(Translator.get(DictKeys.TITLE_MAIN_WINDOW));				
 		shell.setLayout(shellGridLayout);
 
+		// FIXME handle multiple monitors
 		// center the shell to primary screen
 		Monitor primaryMonitor = display.getPrimaryMonitor();
 		Rectangle primaryMonitorBounds = primaryMonitor.getClientArea();
@@ -152,10 +140,10 @@ public class ApplicationUI implements UIObservable, UIObserver {
 		gridDataForStatusBarComposite.grabExcessVerticalSpace = false;
 
 		// Setup composites using layout definitions from before
-		toolbarComposite = ToolbarComposite.getInstance(shell).getToolBarComposite();
+		toolbarComposite = new ToolbarComposite(shell);
 		toolbarComposite.setLayout(new GridLayout(1, false));
 		toolbarComposite.setLayoutData(gridDataForToolbarComposite);
-
+		
 		threePanelComposite = new Composite(shell, SWT.NONE);
 		threePanelComposite.setLayout(mainGridLayout);
 		threePanelComposite.setLayoutData(gridDataForThreePanelComposite);
@@ -167,8 +155,8 @@ public class ApplicationUI implements UIObservable, UIObserver {
 		upperLeftSubComposite.setLayoutData(gridDataForUpperLeftComposite);
 		lowerLeftSubComposite = EmptySidepane.build(leftComposite);		
 		lowerLeftSubComposite.setLayoutData(gridDataForLowerLeftComposite);
-		albumItemSWTBrowserListener = new BrowserListener(threePanelComposite);
-		centerComposite = BrowserComposite.getBrowserComposite(threePanelComposite, albumItemSWTBrowserListener);
+		albumItemBrowserListener = new BrowserListener(threePanelComposite);
+		centerComposite = BrowserComposite.getBrowserComposite(threePanelComposite, albumItemBrowserListener);
 		centerComposite.setLayout(new GridLayout(1, false));
 		centerComposite.setLayoutData(gridDataForCenterComposite);
 		rightComposite = EmptySidepane.build(threePanelComposite);
@@ -182,11 +170,6 @@ public class ApplicationUI implements UIObservable, UIObserver {
 		// Create the menu bar
 		MenuManager.createAndInitializeMenuBar(shell);
 		
-		// Register the toolbar as an observer for collector updates
-		AlbumManager.getInstance().registerObserver(instance);
-		ToolbarComposite.getInstance(ApplicationUI.getShell()).registerAsObserverToCollectorUpdates();
-		AlbumViewManager.getInstance().registerObserver(instance);
-		
 		// SWT display management
 		shell.pack();
 
@@ -195,17 +178,20 @@ public class ApplicationUI implements UIObservable, UIObserver {
 			shell.setMaximized(true);
 		}
 		
-		createAutosaveOverlay();		
+		// Create autosave overlay
+		AutosaveController.createAutosaveOverlay();		
 		
 		shell.open();
 		
+		// TODO Although a message makes sense, the normalStartup variable was always initialized to true
+		/*
 		if (!normalStartup) {
 			ComponentFactory.getMessageBox(shell, 
 					Translator.toBeTranslated("Fatal error occured during startup"), 
 					Translator.toBeTranslated("The database is corrupt and was removed. A snapshot can be found in the program folder"),
 					SWT.ICON_INFORMATION)
 				.open();
-		}
+		}*/
 
 		selectDefaultAndShowWelcomePage();		
 
@@ -223,8 +209,8 @@ public class ApplicationUI implements UIObservable, UIObserver {
 	}
 
 	public static void selectDefaultAndShowWelcomePage() {
-		if (albumSWTList.getItemCount() > 0) {
-			albumSWTList.setSelection(-1);
+		if (albumList.getItemCount() > 0) {
+			albumList.setSelection(-1);
 		}
 
 		BrowserFacade.loadWelcomePage();
@@ -262,14 +248,14 @@ public class ApplicationUI implements UIObservable, UIObserver {
 
 	public static HashMap<PanelType, Integer> panelTypeToPixelSize = new HashMap<PanelType, Integer>() {
 		private static final long serialVersionUID = 1L;	{
-			put(PanelType.Empty, RIGHT_PANEL_NO_WIDTH);
-			put(PanelType.AddAlbum, RIGHT_PANEL_LARGE_WIDTH);
-			put(PanelType.AddEntry, RIGHT_PANEL_LARGE_WIDTH);
-			put(PanelType.AdvancedSearch, RIGHT_PANEL_LARGE_WIDTH);
-			put(PanelType.AlterAlbum, RIGHT_PANEL_LARGE_WIDTH);
-			put(PanelType.Synchronization, RIGHT_PANEL_MEDIUM_WIDTH);
-			put(PanelType.UpdateEntry, RIGHT_PANEL_LARGE_WIDTH);
-			put(PanelType.Help, RIGHT_PANEL_SMALL_WIDTH);
+			put(PanelType.Empty, Constants.RIGHT_PANEL_NO_WIDTH);
+			put(PanelType.AddAlbum, Constants.RIGHT_PANEL_LARGE_WIDTH);
+			put(PanelType.AddEntry, Constants.RIGHT_PANEL_LARGE_WIDTH);
+			put(PanelType.AdvancedSearch, Constants.RIGHT_PANEL_LARGE_WIDTH);
+			put(PanelType.AlterAlbum, Constants.RIGHT_PANEL_LARGE_WIDTH);
+			put(PanelType.Synchronization, Constants.RIGHT_PANEL_MEDIUM_WIDTH);
+			put(PanelType.UpdateEntry, Constants.RIGHT_PANEL_LARGE_WIDTH);
+			put(PanelType.Help, Constants.RIGHT_PANEL_SMALL_WIDTH);
 		}
 	};
 
@@ -304,9 +290,9 @@ public class ApplicationUI implements UIObservable, UIObserver {
 		} else {
 			if (ScrolledComposite.class.isInstance(newRightComposite)) {
 				ScrolledComposite sc = (ScrolledComposite) newRightComposite;
-				layoutData.widthHint = RIGHT_PANEL_MEDIUM_WIDTH - sc.getVerticalBar().getSize().x;
+				layoutData.widthHint = Constants.RIGHT_PANEL_MEDIUM_WIDTH - sc.getVerticalBar().getSize().x;
 			} else {		
-				layoutData.widthHint = RIGHT_PANEL_MEDIUM_WIDTH;
+				layoutData.widthHint = Constants.RIGHT_PANEL_MEDIUM_WIDTH;
 			}
 		}
 
@@ -317,7 +303,7 @@ public class ApplicationUI implements UIObservable, UIObserver {
 		rightComposite.moveBelow(centerComposite);
 		rightComposite.getParent().layout();
 
-		instance.notifyObservers();
+		EventObservable.addEventToQueue(SammelboxEvent.RIGHT_SIDEPANE_CHANGED);
 	}
 
 	/** Returns the currently selected/active album or view
@@ -353,15 +339,15 @@ public class ApplicationUI implements UIObservable, UIObserver {
 		// Set the album name and verify that it is in the list
 		ApplicationUI.selectedAlbum = albumName;
 		if (albumName== null || albumName.isEmpty()) {
-			ApplicationUI.albumSWTList.deselectAll();
+			ApplicationUI.albumList.deselectAll();
 			return true;
 		}
 		
-		int albumListItemCount = ApplicationUI.albumSWTList.getItemCount();
+		int albumListItemCount = ApplicationUI.albumList.getItemCount();
 		boolean albumSelectionIsInSync = false;
 		for (int itemIndex = 0; itemIndex<albumListItemCount; itemIndex++) {
-			 if ( ApplicationUI.albumSWTList.getItem(itemIndex).equals(albumName) ) {
-				 ApplicationUI.albumSWTList.setSelection(itemIndex);
+			 if (ApplicationUI.albumList.getItem(itemIndex).equals(albumName) ) {
+				 ApplicationUI.albumList.setSelection(itemIndex);
 				 albumSelectionIsInSync = true;
 				 break;
 			 }
@@ -381,52 +367,52 @@ public class ApplicationUI implements UIObservable, UIObserver {
 		BrowserFacade.performBrowserQueryAndShow(QueryBuilder.createSelectStarQuery(albumName));
 		
 		ApplicationUI.getViewSWTList().setEnabled(AlbumViewManager.hasAlbumViewsAttached(albumName));
-		AlbumViewManager.getInstance().notifyObservers();
-		ToolbarComposite.getInstance(ApplicationUI.getThreePanelComposite()).enableAlbumButtons(albumName);
+		EventObservable.addEventToQueue(SammelboxEvent.ALBUM_SELECTED);
+		ToolbarComposite.enableAlbumButtons(albumName);
 		
 		return true;
 	}
 	
 	/** After adding/removing albums, this method should be used to refresh the SWT album list with the current album names thus leaving no album selected.*/
 	public static void refreshSWTAlbumList() {
-		instance.update(AlbumManager.class);
+		EventObservable.addEventToQueue(SammelboxEvent.ALBUM_LIST_UPDATED);
 		ApplicationUI.getQuickSearchTextField().setEnabled(false);
 	}
 
 	/** Sets the the list of albums
 	 * @param albumSWTList the list of albums */ 
 	public static void setAlbumSWTList(List albumSWTList) {
-		ApplicationUI.albumSWTList = albumSWTList;
+		ApplicationUI.albumList = albumSWTList;
 	}
 
 	/** Returns the list of albums 
 	 * @return the album SWT list */
 	public static List getAlbumSWTList() {
-		return albumSWTList;
+		return albumList;
 	}
 
 	/** Sets the the list of views
-	 * @param albumSWTList the list of albums */ 
+	 * @param albumList the list of albums */ 
 	public static void setViewSWTList(List viewSWTList) {
-		ApplicationUI.viewSWTList = viewSWTList;
+		ApplicationUI.viewList = viewSWTList;
 	}
 
 	/** Returns the list of views 
 	 * @return the album SWT list */
 	public static List getViewSWTList() {
-		return viewSWTList;
+		return viewList;
 	}
 
 	/** Sets the album item SWT browser
 	 * @param browser the reference to the albumItemSWTBrowser */
 	public static void setAlbumItemSWTBrowser(Browser browser) {
-		ApplicationUI.albumItemSWTBrowser = browser;
+		ApplicationUI.albumItemBrowser = browser;
 	}
 
 	/** Returns the album item SWT browser
 	 * @return the album item SWT browser */
 	public static Browser getAlbumItemSWTBrowser() {
-		return albumItemSWTBrowser;
+		return albumItemBrowser;
 	}
 	
 	public static PanelType getCurrentRightPanelType() {
@@ -437,63 +423,8 @@ public class ApplicationUI implements UIObservable, UIObserver {
 		ApplicationUI.currentRightPanelType = currentRightPanel;
 	}
 
-	public void registerObserver(UIObserver observer) {
-		observers.add(observer);
-	}
-
-	public void unregisterObserver(UIObserver observer) {
-		observers.remove(observer);
-	}
-
-	public void unregisterAllObservers() {
-		observers.clear();
-	}
-
-	public void notifyObservers() {
-		for (UIObserver observer : observers) {
-			observer.update(this.getClass());
-		}
-	}
-
-	public static ApplicationUI getInstance() {
-		if (instance == null) {
-			instance = new ApplicationUI();
-		}
-		
-		return instance;
-	}
-
-	public static boolean isViewDetailed() {
-		return viewIsDetailed;
-	}
-
-	public static void setViewIsDetailed(boolean viewIsDetailed) {
-		ApplicationUI.viewIsDetailed = viewIsDetailed;
-	}
-
 	public static Shell getShell() {
 		return shell;
-	}
-
-	@Override
-	public void update(Class<?> origin) {
-		if (origin == AlbumManager.class) {
-			albumSWTList.removeAll();
-			
-			for (String album : AlbumManager.getInstance().getAlbums()) {
-				albumSWTList.add(album);
-			}
-		} else if (origin == AlbumViewManager.class) {
-			viewSWTList.removeAll();
-
-			for (AlbumView albumView : AlbumViewManager.getAlbumViews(selectedAlbum)) {
-				viewSWTList.add(albumView.getName());				
-			}
-			
-			if (viewSWTList.isEnabled() == false && viewSWTList.getItemCount() != 0) {
-				viewSWTList.setEnabled(true);
-			}
-		}
 	}
 	
 	/**
@@ -502,50 +433,29 @@ public class ApplicationUI implements UIObservable, UIObserver {
 	 * it returns true, False otherwise.
 	 */
 	public static boolean maximizeShellOnStartUp(int screenWidth, int screenHeight) {
-		if (MIN_SHELL_WIDTH >= screenWidth || MIN_SHELL_HEIGHT >= screenHeight){
+		if (Constants.MIN_SHELL_WIDTH >= screenWidth || Constants.MIN_SHELL_HEIGHT >= screenHeight){
 			return true;
 		}
 		return false;
 	}
 	
-	private static LoadingOverlayShell createAutosaveOverlay () {
-		final LoadingOverlayShell loadingOverlayShell = new LoadingOverlayShell(shell, Translator.toBeTranslated("Autosaving the database"));
-		loadingOverlayShell.setCloseParentWhenDone(true);
-		shell.addListener(SWT.Close, new Listener() {			
-			@Override
-			public void handleEvent(Event event) {
-				// Show the loading overlay while creating a database autosave. 
-				if (!loadingOverlayShell.isDone()) {
-					launchLoadingOverlayShell(loadingOverlayShell, false);					
-					event.doit =  false;
-				}
+	@Override
+	public void update(SammelboxEvent event) {		
+		if (event.equals(SammelboxEvent.ALBUM_LIST_UPDATED)) {
+			albumList.removeAll();
+			for (String album : AlbumManager.getAlbums()) {
+				albumList.add(album);
 			}
-		});		
-		return loadingOverlayShell;
-	}
-	
-	private static void launchLoadingOverlayShell(final LoadingOverlayShell shell, boolean useWorkerThread) {
-		shell.start();
-		if (useWorkerThread){
-			final Thread performer = new Thread(new Runnable() {
-				@Override
-				public void run() {
-					createAutoSaveOfDatabase(shell);
-				}
-			});
-			performer.start();
-		}else {
-			createAutoSaveOfDatabase(shell);
-		}
-	}
+		} else if (event.equals(SammelboxEvent.ALBUM_LIST_UPDATED)) {
+			viewList.removeAll();
 
-	private static void createAutoSaveOfDatabase(LoadingOverlayShell shell) {
-		// Backup the database in a Thread running in parallel to the SWT UI Thread. 
-		try {
-			DatabaseIntegrityManager.backupAutoSave();
-		} catch (DatabaseWrapperOperationException ex) {
-			LOGGER.error("Couldn't backup the auto save \n Stacktrace:" + ExceptionHelper.toString(ex));
+			for (AlbumView albumView : AlbumViewManager.getAlbumViews(selectedAlbum)) {
+				viewList.add(albumView.getName());				
+			}
+			
+			if (viewList.isEnabled() == false && viewList.getItemCount() != 0) {
+				viewList.setEnabled(true);
+			}
 		}
-		shell.stop();
-	}	
+	}
 }

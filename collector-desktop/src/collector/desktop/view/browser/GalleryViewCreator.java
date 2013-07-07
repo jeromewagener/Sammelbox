@@ -16,7 +16,7 @@ import collector.desktop.model.database.DatabaseWrapper;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.model.database.exceptions.ExceptionHelper;
 import collector.desktop.view.ApplicationUI;
-import collector.desktop.view.various.GuiConstants;
+import collector.desktop.view.various.Constants;
 
 public class GalleryViewCreator {
 	private final static Logger LOGGER = LoggerFactory.getLogger(GalleryViewCreator.class);
@@ -66,9 +66,9 @@ public class GalleryViewCreator {
 		String finalPageAsHtml = "<!DOCTYPE HTML>" +
 								 "  <html>" +
 								 "    <head>" +
-								 "      <meta " + GuiConstants.META_PARAMS + ">" + 
-								 "      <link rel=stylesheet href=\"" + GuiConstants.STYLE_CSS + "\" />" +
-								 "      <script src=\"" + GuiConstants.EFFECTS_JS + "\"></script>" +
+								 "      <meta " + Constants.META_PARAMS + ">" + 
+								 "      <link rel=stylesheet href=\"" + Constants.STYLE_CSS + "\" />" +
+								 "      <script src=\"" + Constants.EFFECTS_JS + "\"></script>" +
 								 "    </head>" +
 								 "    <body>" +
 								 "      <font face=\"" + Utilities.getDefaultSystemFont() + "\"><div id=\"albumItems\">" +

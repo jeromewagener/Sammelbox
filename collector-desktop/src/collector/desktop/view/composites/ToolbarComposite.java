@@ -15,7 +15,10 @@ import org.eclipse.swt.widgets.Label;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import collector.desktop.controller.interfaces.UIObserver;
+import collector.desktop.controller.GuiController;
+import collector.desktop.controller.events.EventObservable;
+import collector.desktop.controller.events.Observer;
+import collector.desktop.controller.events.SammelboxEvent;
 import collector.desktop.model.database.DatabaseWrapper;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.model.database.exceptions.ExceptionHelper;
@@ -31,22 +34,21 @@ import collector.desktop.view.sidepanes.SynchronizeSidepane;
 import collector.desktop.view.various.ComponentFactory;
 import collector.desktop.view.various.PanelType;
 
-public class ToolbarComposite implements UIObserver {
+public class ToolbarComposite extends Composite implements Observer {
 	private final static Logger LOGGER = LoggerFactory.getLogger(ToolbarComposite.class);
 	
-	private static ToolbarComposite instance = null;
-	private Composite toolbarComposite = null;
-	private Image home = null, addAlbum = null, addEntry = null,
+	private static Composite toolbarComposite = null;
+	private static Image home = null, addAlbum = null, addEntry = null,
 			detailedView = null, pictureView = null, search = null,
 			sync = null, help = null;
-	private Image homeActive = null, addAlbumActive = null,
+	private static Image homeActive = null, addAlbumActive = null,
 			addEntryActive = null, searchActive = null, syncActive = null,
 			helpActive = null;
-	private Button homeBtn = null, addAlbumBtn = null, addEntryBtn = null,
+	private static Button homeBtn = null, addAlbumBtn = null, addEntryBtn = null,
 			viewBtn = null, searchBtn = null, syncBtn = null, helpBtn = null;
-	private PanelType lastSelectedPanelType = PanelType.Empty;
+	private static PanelType lastSelectedPanelType = PanelType.Empty;
 
-	private void disableActiveButtons() {
+	private static void disableActiveButtons() {
 		homeBtn.setImage(home);
 		addAlbumBtn.setImage(addAlbum);
 		addEntryBtn.setImage(addEntry);
@@ -56,9 +58,12 @@ public class ToolbarComposite implements UIObserver {
 		helpBtn.setImage(help);
 	}
 
-	private ToolbarComposite(final Composite parentComposite) {
+	public ToolbarComposite(final Composite parentComposite) {
+		super(parentComposite, SWT.NONE);
 		toolbarComposite = new Composite(parentComposite, SWT.NONE);
 
+		EventObservable.registerObserver(this);
+		
 		GridLayout gridLayout = new GridLayout(1, false);
 		gridLayout.marginHeight = 0;
 		gridLayout.marginWidth = 0;
@@ -281,14 +286,14 @@ public class ToolbarComposite implements UIObserver {
 		viewBtn.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseUp(MouseEvent arg0) {
-				if (!ApplicationUI.isViewDetailed()) {
+				if (GuiController.getGuiState().isViewDetailed()) {
 					viewBtn.setImage(pictureView);
 					viewBtn.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_TOGGLE_TO_GALLERY));
-					ApplicationUI.setViewIsDetailed(true);
+					GuiController.getGuiState().setViewDetailed(true);
 				} else {
 					viewBtn.setImage(detailedView);
 					viewBtn.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_TOGGLE_TO_DETAILS));
-					ApplicationUI.setViewIsDetailed(false);
+					GuiController.getGuiState().setViewDetailed(true);
 				}
 				
 				BrowserFacade.rerunLastQuery();
@@ -432,31 +437,17 @@ public class ToolbarComposite implements UIObserver {
 		new Label(toolbarComposite, SWT.SEPARATOR | SWT.HORIZONTAL)
 				.setLayoutData(seperatorGridData);
 	}
-
-	public static ToolbarComposite getInstance(Composite parentComposite) {
-		if (instance == null) {
-			instance = new ToolbarComposite(parentComposite);
-		}
-
-		return instance;
-	}
-
-	public Composite getToolBarComposite() {
-		return toolbarComposite;
-	}
-
+	
 	@Override
-	public void update(Class<?> origin) {
-		if (lastSelectedPanelType != ApplicationUI.getCurrentRightPanelType()) {
-			disableActiveButtons();
+	public void update(SammelboxEvent event) {
+		if (event.equals(SammelboxEvent.RIGHT_SIDEPANE_CHANGED)) {
+			if (lastSelectedPanelType != ApplicationUI.getCurrentRightPanelType()) {
+				disableActiveButtons();
+			}
 		}
 	}
 
-	public void registerAsObserverToCollectorUpdates() {
-		ApplicationUI.getInstance().registerObserver(instance);
-	}
-
-	public void enableAlbumButtons(String albumName) {
+	public static void enableAlbumButtons(String albumName) {
 		homeBtn.setImage(home);
 		addEntryBtn.setEnabled(true);
 
@@ -474,7 +465,7 @@ public class ToolbarComposite implements UIObserver {
 					" \n Stacktrace:" + ExceptionHelper.toString(ex));
 		}
 
-		ApplicationUI.setViewIsDetailed(true);
+		GuiController.getGuiState().setViewDetailed(true);
 		BrowserFacade.rerunLastQuery();
 		searchBtn.setEnabled(true);
 	}

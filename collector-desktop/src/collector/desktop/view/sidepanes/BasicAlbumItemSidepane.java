@@ -522,7 +522,7 @@ public class BasicAlbumItemSidepane {
 					
 					// Update GUI
 					ApplicationUI.changeRightCompositeTo(PanelType.Empty, EmptySidepane.build(ApplicationUI.getThreePanelComposite()));
-					WelcomePageManager.getInstance().updateLastModifiedWithCurrentDate(ApplicationUI.getSelectedAlbum());
+					WelcomePageManager.updateLastModifiedWithCurrentDate(ApplicationUI.getSelectedAlbum());
 				} catch (DatabaseWrapperOperationException ex) {
 					LOGGER.error("A database related error occured \n " + ExceptionHelper.toString(ex));
 				}

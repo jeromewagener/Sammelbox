@@ -6,19 +6,16 @@ import java.util.LinkedList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import collector.desktop.controller.events.EventObservable;
+import collector.desktop.controller.events.SammelboxEvent;
 import collector.desktop.controller.filesystem.FileSystemAccessWrapper;
-import collector.desktop.controller.interfaces.UIObservable;
-import collector.desktop.controller.interfaces.UIObserver;
 import collector.desktop.model.database.DatabaseWrapper;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.model.database.exceptions.ExceptionHelper;
 
-public class AlbumViewManager implements UIObservable {
+public class AlbumViewManager {
 	private final static Logger LOGGER = LoggerFactory.getLogger(AlbumViewManager.class);
-	
-	private static AlbumViewManager instance = new AlbumViewManager();
 	private static Collection<AlbumView> albumViews = new LinkedList<AlbumView>();
-	private static Collection<UIObserver> uiObservers = new LinkedList<UIObserver>();
 	
 	private AlbumViewManager() {
 		initialize();
@@ -48,9 +45,7 @@ public class AlbumViewManager implements UIObservable {
 	public static void addAlbumView(String name, String album, String sqlQuery) {
 		albumViews.add(new AlbumView(name, album, sqlQuery));
 		
-		storeViews();
-		
-		instance.notifyObservers();
+		storeViewAndAddAlbumViewListUpdatedEvent();
 	}
 	
 	public static void removeAlbumView(String name) {
@@ -60,9 +55,7 @@ public class AlbumViewManager implements UIObservable {
 			}
 		}
 		
-		storeViews();
-		
-		instance.notifyObservers();
+		storeViewAndAddAlbumViewListUpdatedEvent();
 	}
 	
 	public static boolean hasViewWithName(String viewName) {
@@ -131,32 +124,6 @@ public class AlbumViewManager implements UIObservable {
 			this.sqlQuery = sqlQuery;
 		}
 	}
-	
-	@Override
-	public void registerObserver(UIObserver observer) {
-		uiObservers.add(observer);		
-	}
-
-	@Override
-	public void unregisterObserver(UIObserver observer) {
-		uiObservers.remove(observer);
-	}
-
-	@Override
-	public void unregisterAllObservers() {
-		uiObservers.clear();
-	}
-
-	@Override
-	public void notifyObservers() {
-		for (UIObserver uiObserver : uiObservers) {
-			uiObserver.update(this.getClass());
-		}
-	}
-	
-	public static AlbumViewManager getInstance() {
-		return instance;
-	}
 
 	public static String getSqlQueryByName(String queryName) {
 		for (AlbumView albumView : albumViews) {
@@ -183,9 +150,7 @@ public class AlbumViewManager implements UIObservable {
 		((LinkedList<AlbumView>) albumViews).remove(selectionIndex);
 		((LinkedList<AlbumView>) albumViews).addFirst(tmp);
 		
-		storeViews();
-		
-		instance.notifyObservers();
+		storeViewAndAddAlbumViewListUpdatedEvent();
 	}
 
 	public static void moveOneUp(int selectionIndex) {
@@ -195,9 +160,7 @@ public class AlbumViewManager implements UIObservable {
 			((LinkedList<AlbumView>) albumViews).set(selectionIndex-1, ((LinkedList<AlbumView>) albumViews).get(selectionIndex));
 			((LinkedList<AlbumView>) albumViews).set(selectionIndex, tmp);
 			
-			storeViews();
-			
-			instance.notifyObservers();
+			storeViewAndAddAlbumViewListUpdatedEvent();
 		}
 	}
 
@@ -208,9 +171,7 @@ public class AlbumViewManager implements UIObservable {
 			((LinkedList<AlbumView>) albumViews).set(selectionIndex+1, ((LinkedList<AlbumView>) albumViews).get(selectionIndex));
 			((LinkedList<AlbumView>) albumViews).set(selectionIndex, tmp);
 			
-			storeViews();
-			
-			instance.notifyObservers();
+			storeViewAndAddAlbumViewListUpdatedEvent();
 		}
 	}
 
@@ -219,9 +180,7 @@ public class AlbumViewManager implements UIObservable {
 		((LinkedList<AlbumView>) albumViews).remove(selectionIndex);
 		((LinkedList<AlbumView>) albumViews).addLast(tmp);
 		
-		storeViews();
-		
-		instance.notifyObservers();
+		storeViewAndAddAlbumViewListUpdatedEvent();
 	}
 
 	public static void removeAlbumViews(String selectedAlbum) {
@@ -231,8 +190,11 @@ public class AlbumViewManager implements UIObservable {
 			}
 		}
 		
+		storeViewAndAddAlbumViewListUpdatedEvent();
+	}
+	
+	private static void storeViewAndAddAlbumViewListUpdatedEvent() {
 		storeViews();
-		
-		instance.notifyObservers();
+		EventObservable.addEventToQueue(SammelboxEvent.ALBUM_VIEW_LIST_UPDATED);
 	}
 }

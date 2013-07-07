@@ -101,12 +101,11 @@ public class QuickControlSidepane {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (albumList.getSelectionIndex() != -1)	{			
-
 					ApplicationUI.setSelectedAlbum(albumList.getItem(albumList.getSelectionIndex()));
 
 					ApplicationUI.changeRightCompositeTo(PanelType.Empty, EmptySidepane.build(ApplicationUI.getThreePanelComposite()));
 
-					WelcomePageManager.getInstance().increaseClickCountForAlbumOrView(albumList.getItem(albumList.getSelectionIndex()));
+					WelcomePageManager.increaseClickCountForAlbumOrView(albumList.getItem(albumList.getSelectionIndex()));
 				}
 			}
 		});
@@ -117,28 +116,28 @@ public class QuickControlSidepane {
 		moveAlbumTop.setText(Translator.get(DictKeys.DROPDOWN_MOVE_TO_TOP));
 		moveAlbumTop.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				AlbumManager.getInstance().moveToFront(albumList.getSelectionIndex());
+				AlbumManager.moveToFront(albumList.getSelectionIndex());
 			}
 		});
 		MenuItem moveAlbumOneUp = new MenuItem(albumPopupMenu, SWT.NONE);
 		moveAlbumOneUp.setText(Translator.get(DictKeys.DROPDOWN_MOVE_ONE_UP));
 		moveAlbumOneUp.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				AlbumManager.getInstance().moveOneUp(albumList.getSelectionIndex());
+				AlbumManager.moveOneUp(albumList.getSelectionIndex());
 			}
 		});
 		MenuItem moveAlbumOneDown = new MenuItem(albumPopupMenu, SWT.NONE);
 		moveAlbumOneDown.setText(Translator.get(DictKeys.DROPDOWN_MOVE_ONE_DOWN));
 		moveAlbumOneDown.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				AlbumManager.getInstance().moveOneDown(albumList.getSelectionIndex());
+				AlbumManager.moveOneDown(albumList.getSelectionIndex());
 			}
 		});
 		MenuItem moveAlbumBottom = new MenuItem(albumPopupMenu, SWT.NONE);
 		moveAlbumBottom.setText(Translator.get(DictKeys.DROPDOWN_MOVE_TO_BOTTOM));
 		moveAlbumBottom.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				AlbumManager.getInstance().moveToBottom(albumList.getSelectionIndex());
+				AlbumManager.moveToBottom(albumList.getSelectionIndex());
 			}
 		});
 
@@ -196,14 +195,14 @@ public class QuickControlSidepane {
 				BrowserFacade.performBrowserQueryAndShow(					
 						AlbumViewManager.getSqlQueryByName(viewList.getItem(viewList.getSelectionIndex())));
 
-				WelcomePageManager.getInstance().increaseClickCountForAlbumOrView(viewList.getItem(viewList.getSelectionIndex()));
+				WelcomePageManager.increaseClickCountForAlbumOrView(viewList.getItem(viewList.getSelectionIndex()));
 			}
 		});
 
 		quickSearchText.setEnabled(false);
 
 		// Add all albums to album list
-		for (String album : AlbumManager.getInstance().getAlbums()) {
+		for (String album : AlbumManager.getAlbums()) {
 			albumList.add(album);
 		}		
 

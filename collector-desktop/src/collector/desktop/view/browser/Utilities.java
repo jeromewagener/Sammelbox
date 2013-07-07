@@ -8,6 +8,7 @@ import org.eclipse.swt.widgets.Display;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import collector.desktop.controller.GuiController;
 import collector.desktop.controller.filesystem.FileSystemAccessWrapper;
 import collector.desktop.model.album.AlbumItem;
 import collector.desktop.model.database.AlbumItemResultSet;
@@ -88,7 +89,7 @@ public class Utilities {
 	}
 
 	static void showAlbum(Browser browser) {
-		if (ApplicationUI.isViewDetailed()) {
+		if (GuiController.getGuiState().isViewDetailed()) {
 			DetailedViewCreator.showDetailedAlbum(browser);
 		} else {
 			GalleryViewCreator.showOverviewAlbum(browser);
@@ -100,9 +101,11 @@ public class Utilities {
 	}
 	
 	static void loadHelpPage() {
+		// FIXME repair this
+		/*
 		loadHtmlPage(
 				ApplicationUI.getAlbumItemSWTBrowser(),
-				ApplicationUI.getInstance().getClass().getClassLoader().getResourceAsStream("helpfiles/index.html"));
+				ApplicationUI.getClassLoader().getResourceAsStream("helpfiles/index.html"));*/
 	}
 	
 	static String getBackgroundColorOfWidgetInHex() {
@@ -139,7 +142,7 @@ public class Utilities {
 	}
 	
 	static void addAdditionalAlbumItems() {
-		if (ApplicationUI.isViewDetailed()) {
+		if (GuiController.getGuiState().isViewDetailed()) {
 			if (!AlbumItemStore.isStopIndexAtEnd()) {
 				StringBuilder rows = new StringBuilder();
 

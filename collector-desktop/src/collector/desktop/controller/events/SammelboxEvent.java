@@ -1,0 +1,10 @@
+package collector.desktop.controller.events;
+
+public enum SammelboxEvent {
+	ALBUM_SELECTED,
+	ALBUM_VIEW_SELECTED,
+	ALBUM_LIST_UPDATED,
+	ALBUM_VIEW_LIST_UPDATED,
+	TOOLBAR_BUTTON_PRESSED,
+	RIGHT_SIDEPANE_CHANGED
+}

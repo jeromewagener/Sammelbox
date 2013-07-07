@@ -13,7 +13,7 @@ import collector.desktop.view.ApplicationUI;
 import collector.desktop.view.composites.StatusBarComposite;
 import collector.desktop.view.internationalization.DictKeys;
 import collector.desktop.view.internationalization.Translator;
-import collector.desktop.view.various.GuiConstants;
+import collector.desktop.view.various.Constants;
 
 public class PictureViewCreator {
 	private static final Logger LOGGER = LoggerFactory.getLogger(PictureViewCreator.class);
@@ -59,9 +59,9 @@ public class PictureViewCreator {
 			picturePage.append(
 					"<html>" +
 	                "  <head>" +
-					"      <meta " + GuiConstants.META_PARAMS + ">" + 
-					"      <link rel=stylesheet href=\"" + GuiConstants.STYLE_CSS + "\" />" +
-					"      <script src=\"" + GuiConstants.EFFECTS_JS + "\"></script>" +
+					"      <meta " + Constants.META_PARAMS + ">" + 
+					"      <link rel=stylesheet href=\"" + Constants.STYLE_CSS + "\" />" +
+					"      <script src=\"" + Constants.EFFECTS_JS + "\"></script>" +
 			        "  </head>" +
 			        "  <body>" +
 			        "    <table>" +

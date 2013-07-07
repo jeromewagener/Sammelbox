@@ -21,35 +21,21 @@ import collector.desktop.view.internationalization.Translator;
 
 public class WelcomePageManager {
 	private final static Logger LOGGER = LoggerFactory.getLogger(WelcomePageManager.class);
+	private static Map<String, Integer> albumAndViewsToClicks;
+	private static Map<String, Long> albumToLastModified;
 	
-	private static WelcomePageManager instance;
-	private Map<String, Integer> albumAndViewsToClicks;
-	private Map<String, Long> albumToLastModified;
-
-	private WelcomePageManager() {
-		initializeWelcomePageManager();
-	}
-
-	private void initializeWelcomePageManager() {
+	public static void initializeFromWelcomeFile() {
 		albumAndViewsToClicks = FileSystemAccessWrapper.getAlbumAndViewsToClicks();
 		albumToLastModified = FileSystemAccessWrapper.getAlbumToLastModified();
 	}
 
-	public static WelcomePageManager getInstance() {
-		if (instance == null) {
-			instance = new WelcomePageManager();
-		}
-
-		return WelcomePageManager.instance;
-	}
-
-	public void updateLastModifiedWithCurrentDate(String albumName) {
+	public static void updateLastModifiedWithCurrentDate(String albumName) {
 		albumToLastModified.put(albumName, System.currentTimeMillis());
 
 		storeWelcomePageManagerInformation();
 	}
 
-	public void increaseClickCountForAlbumOrView(String albumOrViewName) {
+	public static void increaseClickCountForAlbumOrView(String albumOrViewName) {
 		Integer count = albumAndViewsToClicks.get(albumOrViewName);
 
 		if (count != null) {
@@ -61,15 +47,15 @@ public class WelcomePageManager {
 		storeWelcomePageManagerInformation();
 	}
 
-	private void storeWelcomePageManagerInformation() {
+	private static void storeWelcomePageManagerInformation() {
 		FileSystemAccessWrapper.storeWelcomePageManagerInformation(albumAndViewsToClicks, albumToLastModified);
 	}
 
-	public Map<String, Integer> getAlbumAndViewsSortedByClicks() {
+	public static Map<String, Integer> getAlbumAndViewsSortedByClicks() {
 		return sortByValue(albumAndViewsToClicks);
 	}
 
-	public String getLastModifiedDate(String albumName) {
+	public static String getLastModifiedDate(String albumName) {
 		for (String key : albumToLastModified.keySet()) {
 			if (key.equals(albumName)) {
 				SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy");
@@ -81,7 +67,7 @@ public class WelcomePageManager {
 		return Translator.get(DictKeys.BROWSER_NEVER);
 	}
 
-	public Long getNumberOfItemsInAlbum(String albumName) {
+	public static Long getNumberOfItemsInAlbum(String albumName) {
 		try {
 			return DatabaseWrapper.getNumberOfItemsInAlbum(albumName);
 		} catch (DatabaseWrapperOperationException ex) {
@@ -91,7 +77,7 @@ public class WelcomePageManager {
 		}
 	}
 
-	public static <K, V extends Comparable<? super V>> Map<K, V> sortByValue( Map<K, V> map ) {
+	private static <K, V extends Comparable<? super V>> Map<K, V> sortByValue( Map<K, V> map ) {
 		List<Map.Entry<K, V>> list = new LinkedList<Map.Entry<K, V>>( map.entrySet() );
 		Collections.sort( list, new Comparator<Map.Entry<K, V>>() {
 			public int compare( Map.Entry<K, V> o1, Map.Entry<K, V> o2 ) {
