@@ -1,5 +1,7 @@
 package collector.desktop.view;
 
+import java.awt.GraphicsEnvironment;
+import java.awt.HeadlessException;
 import java.util.HashMap;
 
 import org.eclipse.swt.SWT;
@@ -78,6 +80,16 @@ public class ApplicationUI implements Observer {
 		EventObservable.unregisterObserver(instance);
 	}
 	
+	private static int getNumberOfScreens() {
+		try {
+            GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            return env.getScreenDevices().length;
+        } catch (HeadlessException e) {
+            LOGGER.warn("Couldn't determine the number of screens. Assuming single screen.");
+            return 1;
+        }
+	}
+	
 	/** This method initializes the main user interface. This involves the creation of different sub-composites
 	 * @param shell the shell which should be initialized */
 	public static void initialize(final Shell shell) {				
@@ -101,7 +113,7 @@ public class ApplicationUI implements Observer {
 		Monitor primaryMonitor = display.getPrimaryMonitor();
 		Rectangle primaryMonitorBounds = primaryMonitor.getClientArea();
 		Rectangle shellBounds = shell.getBounds();
-		int xCoordinateForShell = primaryMonitorBounds.x + (primaryMonitorBounds.width - shellBounds.width) / 2;
+		int xCoordinateForShell = primaryMonitorBounds.x + (((int)(primaryMonitorBounds.width / (float) getNumberOfScreens())) - shellBounds.width) / 2;
 		int yCoordinateForShell = primaryMonitorBounds.y + (primaryMonitorBounds.height - shellBounds.height) / 2;
 		shell.setLocation(xCoordinateForShell, yCoordinateForShell);
 
