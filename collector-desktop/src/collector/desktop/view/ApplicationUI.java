@@ -108,13 +108,13 @@ public class ApplicationUI implements Observer {
 		shell.setText(Translator.get(DictKeys.TITLE_MAIN_WINDOW));				
 		shell.setLayout(shellGridLayout);
 
-		// FIXME handle multiple monitors
 		// center the shell to primary screen
 		Monitor primaryMonitor = display.getPrimaryMonitor();
 		Rectangle primaryMonitorBounds = primaryMonitor.getClientArea();
-		Rectangle shellBounds = shell.getBounds();
-		int xCoordinateForShell = primaryMonitorBounds.x + (((int)(primaryMonitorBounds.width / (float) getNumberOfScreens())) - shellBounds.width) / 2;
-		int yCoordinateForShell = primaryMonitorBounds.y + (primaryMonitorBounds.height - shellBounds.height) / 2;
+		int totalPrimaryScreenWidth = primaryMonitorBounds.x + (int) (primaryMonitorBounds.width / (float) getNumberOfScreens());
+		int totalPrimaryScreenHeight = primaryMonitorBounds.y + primaryMonitorBounds.height;
+		int xCoordinateForShell = totalPrimaryScreenWidth / 2 - Constants.MIN_SHELL_WIDTH / 2;
+		int yCoordinateForShell = totalPrimaryScreenHeight / 2 - Constants.MIN_SHELL_HEIGHT / 2;
 		shell.setLocation(xCoordinateForShell, yCoordinateForShell);
 
 		// define toolbar composite layout data
