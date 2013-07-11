@@ -18,7 +18,7 @@ import collector.desktop.model.database.exceptions.ExceptionHelper;
 
 public class ConnectionManager {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ConnectionManager.class);
-	private static final String sqliteConnectionString = "jdbc:sqlite:";
+	private static final String SQLITE_CONNECTION_STRING = "jdbc:sqlite:";
 	private static Connection connection = null;
 
 	/**
@@ -30,8 +30,8 @@ public class ConnectionManager {
 		// This hides all internal SQL exceptions
 		try {
 			if (ConnectionManager.connection == null || connection.isClosed()) {
-				ConnectionManager.connection = DriverManager.getConnection(ConnectionManager.sqliteConnectionString + FileSystemAccessWrapper.DATABASE);
-				ConnectionManager.connection =  ConnectionLoggingProxy.wrap(connection);
+				ConnectionManager.connection = DriverManager.getConnection(ConnectionManager.SQLITE_CONNECTION_STRING + FileSystemAccessWrapper.DATABASE);
+				ConnectionManager.connection = ConnectionLoggingProxy.wrap(connection);
 
 				ConnectionManager.enableForeignKeySupportForCurrentSession();
 				

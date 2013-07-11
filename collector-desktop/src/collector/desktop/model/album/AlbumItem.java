@@ -108,7 +108,9 @@ public class AlbumItem {
 	public void setFieldValue(String fieldName, Object value) {
 		for (ItemField itemField : fields) {
 			if (itemField.getName().equals(fieldName)) {
-				 itemField.setValue(value);
+				itemField.setValue(value);
+			} else if (itemField.getName().equals(DatabaseWrapper.ID_COLUMN_NAME)) {
+				itemId = (Long) itemField.getValue();
 			}
 		}
 	}
@@ -137,6 +139,13 @@ public class AlbumItem {
 	 */
 	public void setFields(List<ItemField> fields) {
 		this.fields = fields;
+		
+		for (ItemField itemField : fields) {
+			if (itemField.getName().equals(DatabaseWrapper.ID_COLUMN_NAME)) {
+				itemId = (Long) itemField.getValue();
+				break;
+			}
+		}
 	}
 	
 	/**
@@ -162,6 +171,10 @@ public class AlbumItem {
 	 */
 	public void addField(String fieldName,  FieldType type, Object value, boolean quickSearchable) {
 		fields.add(new ItemField(fieldName, type, value, quickSearchable));
+		
+		if (fieldName.equals(DatabaseWrapper.ID_COLUMN_NAME)) {
+			itemId = (Long) value;
+		}
 	}
 	
 	/**
@@ -173,6 +186,10 @@ public class AlbumItem {
 	 */
 	public void addField(String fieldName,  FieldType type, Object value) {
 		fields.add(new ItemField(fieldName, type, value));
+	
+		if (fieldName.equals(DatabaseWrapper.ID_COLUMN_NAME)) {
+			itemId = (Long) value;
+		}
 	}
 	
 	/**
@@ -327,6 +344,7 @@ public class AlbumItem {
 		}
 	}
 	
+	// TODO create own class file
 	public static class AlbumItemPicture {
 		public static final String ALBUM_ITEM_PICTURE = "ALBUM_ITEM_PICTURE";
 		

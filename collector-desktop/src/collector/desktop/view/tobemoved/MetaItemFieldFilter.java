@@ -7,6 +7,7 @@ import java.util.List;
 import collector.desktop.model.album.FieldType;
 import collector.desktop.model.album.MetaItemField;
 
+// TODO move this class
 public class MetaItemFieldFilter {
 	
 	/** Returns all valid MetaItemFields. Hereby valid means that only user editable fields are returned

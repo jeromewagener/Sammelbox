@@ -36,7 +36,7 @@ import collector.desktop.model.database.exceptions.DatabaseWrapperOperationExcep
 
 public class DatabaseWrapper  {
 	/** The suffix to the table containing all picture information for a single album */
-	private static final String PICTURE_TABLE_SUFFIX = "pictures";
+	private static final String PICTURE_TABLE_SUFFIX = "_pictures";
 	/** The name of the picture table column that stores the filename of the original picture */
 	private static final String ORIGINAL_PICTURE_FILE_NAME_IN_PICTURE_TABLE = "original_picture_filename";
 	/** The name of the picture table column that stores the filename of the thumbnail picture */
@@ -62,7 +62,7 @@ public class DatabaseWrapper  {
 	/** The column name for the album table. */
 	private static final String ALBUM_TABLENAME_IN_ALBUM_MASTER_TABLE= "album_table_name";
 	/** The column name for the album type table. */
-	private static final String TYPE_TABLENAME_ALBUM_MASTER_TABLE = "album_type_table_name";
+	private static final String TYPE_TABLENAME_ALBUM_MASTER_TABLE = "album_type_table_name"; // TODO why is this column necessary?
 	/** The final name of the picture column. Currently only a single column is supported, this is its name.*/
 	private static final String PICTURE_COLUMN_NAME_IN_ALBUM_MASTER_TABLE = "has_pictures";
 	/** The default name for ID columns */
@@ -108,7 +108,6 @@ public class DatabaseWrapper  {
 	 * @param newAlbumName The new name of the album.
 	 * @throws DatabaseWrapperOperationException 
 	 */
-	// FIXME also rename picture table
 	public static void renameAlbum(String oldAlbumName, String newAlbumName) throws DatabaseWrapperOperationException {		
 		String savepointName =  DatabaseIntegrityManager.createSavepoint();
 		try {
@@ -118,8 +117,13 @@ public class DatabaseWrapper  {
 			// Rename the type info table		
 			String oldTypeInfoTableName = makeTypeInfoTableName(oldAlbumName);
 			String newTypeInfoTableName = makeTypeInfoTableName(newAlbumName);
-	
 			renameTable(oldTypeInfoTableName, newTypeInfoTableName);
+			
+			//  Rename the picture table
+			String oldPictureTableName = makePictureTableName(oldAlbumName);
+			String newPictureTableName = makePictureTableName(newAlbumName);
+			renameTable(oldPictureTableName, newPictureTableName);
+			
 			// Change the entry in the album master table. OptionType.UNKNOWN indicates no change of the picture storing 
 			modifyAlbumInAlbumMasterTable(oldAlbumName, newAlbumName, newTypeInfoTableName, OptionType.UNKNOWN);			
 	
@@ -481,7 +485,7 @@ public class DatabaseWrapper  {
 			
 			dropTable(albumName);
 			dropTable(typeInfoTableName);
-			dropTable(albumName + "_" + PICTURE_TABLE_SUFFIX);
+			dropTable(albumName + PICTURE_TABLE_SUFFIX);
 			
 			removeAlbumFromAlbumMasterTable(albumName); 
 			
@@ -763,6 +767,13 @@ public class DatabaseWrapper  {
 		return albumTableName + TYPE_INFO_SUFFIX;
 	}
 
+	private static String makePictureTableName(String albumTableName) {
+		if (albumTableName == null || albumTableName.isEmpty()) {
+			return "";
+		}
+		
+		return albumTableName + PICTURE_TABLE_SUFFIX;
+	}
 
 	/**
 	 * Appends a new column to the typeInfoTable. Necessary when the main table is altered to have additional columns.
@@ -2069,12 +2080,12 @@ public class DatabaseWrapper  {
 		columns.add(new MetaItemField(DatabaseStringUtilities.encloseNameWithQuotes(ALBUM_ITEM_ID_REFERENCE_IN_PICTURE_TABLE), FieldType.ID));
 	
 		
-		createTableWithIdAsPrimaryKey(DatabaseStringUtilities.encloseNameWithQuotes(albumName + "_" + PICTURE_TABLE_SUFFIX), columns , false, true);
+		createTableWithIdAsPrimaryKey(DatabaseStringUtilities.encloseNameWithQuotes(albumName + PICTURE_TABLE_SUFFIX), columns , false, true);
 	}
 	
 	private static void addToPictureTable(AlbumItemPicture albumItemPicture) throws DatabaseWrapperOperationException {
 		StringBuilder sb = new StringBuilder("INSERT INTO ");
-		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(albumItemPicture.getAlbumName() + "_" + PICTURE_TABLE_SUFFIX));
+		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(albumItemPicture.getAlbumName() + PICTURE_TABLE_SUFFIX));
 		sb.append(" ( ");
 
 		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(ORIGINAL_PICTURE_FILE_NAME_IN_PICTURE_TABLE) + ", ");
@@ -2106,9 +2117,14 @@ public class DatabaseWrapper  {
 						THUMBNAIL_PICTURE_FILE_NAME_IN_PICTURE_TABLE + ", " +
 						ORIGINAL_PICTURE_FILE_NAME_IN_PICTURE_TABLE + ", " +
 						ALBUM_ITEM_ID_REFERENCE_IN_PICTURE_TABLE +
-				   " FROM " + DatabaseStringUtilities.encloseNameWithQuotes(albumName + "_" + PICTURE_TABLE_SUFFIX) +
-				   " WHERE " + ALBUM_ITEM_ID_REFERENCE_IN_PICTURE_TABLE + " = " + String.valueOf(albumItemID) + ";";
+				   " FROM " + DatabaseStringUtilities.encloseNameWithQuotes(albumName + PICTURE_TABLE_SUFFIX) +
+				   " WHERE " + ALBUM_ITEM_ID_REFERENCE_IN_PICTURE_TABLE + " = " + String.valueOf(albumItemID);
 	
+			ConnectionManager.isConnectionReady();
+			
+			// FIXME SQL error or missing database (no such table: ...)
+			// http://stackoverflow.com/questions/14998695/java-missing-database-error
+			// http://stackoverflow.com/questions/14502665/using-sqlite-with-c-sharp
 			try (Statement statement = ConnectionManager.getConnection().createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
 				 ResultSet rs = statement.executeQuery(picturesQuery);) {			
 			
@@ -2128,7 +2144,7 @@ public class DatabaseWrapper  {
 	 * @param albumItem the album item for which all picture records should be deleted */
 	public static void removeAllPicturesForAlbumItemFromPictureTable(AlbumItem albumItem) throws DatabaseWrapperOperationException {		
 		StringBuilder sb = new StringBuilder("DELETE FROM ");
-		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(albumItem.getAlbumName() + "_" + PICTURE_TABLE_SUFFIX));
+		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(albumItem.getAlbumName() + PICTURE_TABLE_SUFFIX));
 		sb.append(" WHERE ");
 		sb.append(ALBUM_ITEM_ID_REFERENCE_IN_PICTURE_TABLE + " = " + albumItem.getItemID());
 				
