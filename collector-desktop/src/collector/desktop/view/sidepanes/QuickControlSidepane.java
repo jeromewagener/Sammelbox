@@ -173,7 +173,7 @@ public class QuickControlSidepane {
 				if (messageBox.open() == SWT.YES) {
 					AlbumViewManager.removeAlbumViews(ApplicationUI.getSelectedAlbum());
 					try {
-						DatabaseWrapper.removeAlbum(ApplicationUI.getSelectedAlbum());
+						DatabaseWrapper.removeAlbumAndAlbumPictures(ApplicationUI.getSelectedAlbum());
 					} catch (DatabaseWrapperOperationException ex) {
 						LOGGER.error("A database error occured while removing the following album: '" + ApplicationUI.getSelectedAlbum() + "'" +
 								" \n Stacktrace: " + ExceptionHelper.toString(ex));

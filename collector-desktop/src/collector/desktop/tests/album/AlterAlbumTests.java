@@ -257,7 +257,7 @@ public class AlterAlbumTests {
 	public static int numberOfAlbumItems(String albumName) {
 		try {
 			AlbumItemResultSet resultSet = DatabaseWrapper.executeSQLQuery("SELECT * FROM " + albumName);
-			int counter =0;
+			int counter = 0;
 			
 			while (resultSet.moveToNext()) {
 				counter++;

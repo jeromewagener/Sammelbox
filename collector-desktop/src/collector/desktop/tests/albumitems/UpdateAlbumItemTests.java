@@ -129,7 +129,7 @@ public class UpdateAlbumItemTests {
 		try {
 			AlbumItem originalAlbumItem = DatabaseWrapper.fetchAlbumItem("Books", 1);
 			List<AlbumItemPicture> pictureList = originalAlbumItem.getPictures();
-			pictureList.add(new AlbumItemPicture(CollectorTestExecuter.PATH_TO_TEST_PICTURE_3, CollectorTestExecuter.PATH_TO_TEST_PICTURE_3));
+			pictureList.add(new AlbumItemPicture(CollectorTestExecuter.PATH_TO_TEST_PICTURE_3, CollectorTestExecuter.PATH_TO_TEST_PICTURE_3, "Books", 1));
 			originalAlbumItem.setPictures(pictureList);
 		
 			DatabaseWrapper.updateAlbumItem(originalAlbumItem);

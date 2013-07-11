@@ -357,6 +357,7 @@ public class AlbumItem {
 		private long albumItemID;
 					
 		/** Creates an initially unassigned picture object for an album */
+		@Deprecated
 		public AlbumItemPicture(String thumbnailPictureName, String originalPictureName) {
 			this.pictureID = -1;
 			this.thumbnailPictureName = thumbnailPictureName;
@@ -366,12 +367,21 @@ public class AlbumItem {
 		}
 		
 		/** Creates an initially unassigned picture object for an album */
+		@Deprecated
 		public AlbumItemPicture(String thumbnailPictureName, String originalPictureName, String albumName) {
 			this.pictureID = -1;
 			this.thumbnailPictureName = thumbnailPictureName;
 			this.originalPictureName = originalPictureName;
 			this.albumName = albumName;
 			this.albumItemID = -1;
+		}
+		
+		/** Creates an initially unassigned picture object for an album */
+		public AlbumItemPicture(String thumbnailPictureName, String originalPictureName, String albumName, long albumItemID) {
+			this.thumbnailPictureName = thumbnailPictureName;
+			this.originalPictureName = originalPictureName;
+			this.albumName = albumName;
+			this.albumItemID = albumItemID;
 		}
 		
 		/** Creates an initially unassigned picture object for an album */

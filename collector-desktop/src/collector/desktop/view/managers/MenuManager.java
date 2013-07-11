@@ -213,7 +213,7 @@ public class MenuManager {
 					messageBox.setMessage(Translator.get(DictKeys.DIALOG_CONTENT_DELETE_ALBUM, ApplicationUI.getSelectedAlbum()));
 					if (messageBox.open() == SWT.YES) {
 						try {
-							DatabaseWrapper.removeAlbum(ApplicationUI.getSelectedAlbum());
+							DatabaseWrapper.removeAlbumAndAlbumPictures(ApplicationUI.getSelectedAlbum());
 							ApplicationUI.refreshSWTAlbumList();
 							BrowserFacade.loadHtmlFromInputStream(ApplicationUI.getShell().getClass().getClassLoader().getResourceAsStream("htmlfiles/album_deleted.html"));
 						} catch (DatabaseWrapperOperationException ex) {

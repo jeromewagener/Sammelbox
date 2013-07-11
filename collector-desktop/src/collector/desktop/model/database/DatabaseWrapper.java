@@ -473,6 +473,12 @@ public class DatabaseWrapper  {
 		return newAlbumItemList; 
 	}
 
+	// TODO comment
+	public static void removeAlbumAndAlbumPictures(String albumName) throws DatabaseWrapperOperationException {
+		removeAlbum(albumName);
+		removeAlbumPictures(albumName);
+	}
+	
 	/**
 	 * Permanently removes an album along with its typeInfo metadata.
 	 * @param albumName The name of the album which is to be removed.
@@ -485,12 +491,8 @@ public class DatabaseWrapper  {
 			
 			dropTable(albumName);
 			dropTable(typeInfoTableName);
-			dropTable(albumName + PICTURE_TABLE_SUFFIX);
 			
 			removeAlbumFromAlbumMasterTable(albumName); 
-			
-			FileSystemAccessWrapper.deleteDirectoryRecursively(
-					new File(FileSystemAccessWrapper.getFilePathForAlbum(albumName)));
 			
 			DatabaseIntegrityManager.updateLastDatabaseChangeTimeStamp();
 		} catch (DatabaseWrapperOperationException e) {
@@ -498,11 +500,29 @@ public class DatabaseWrapper  {
 				DatabaseIntegrityManager.rollbackToSavepoint(savepointName);
 				throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
 			}
-		}finally {
+		} finally {
 			DatabaseIntegrityManager.releaseSavepoint(savepointName);
 		}
 	}
 
+	// TODO comment
+	public static void removeAlbumPictures(String albumName) throws DatabaseWrapperOperationException {
+		String savepointName = DatabaseIntegrityManager.createSavepoint();
+		try {
+			dropTable(albumName + PICTURE_TABLE_SUFFIX);
+			
+			FileSystemAccessWrapper.deleteDirectoryRecursively(
+					new File(FileSystemAccessWrapper.getFilePathForAlbum(albumName)));
+		} catch (DatabaseWrapperOperationException e) {
+			if (e.ErrorState.equals(DBErrorState.ErrorWithDirtyState)) {
+				DatabaseIntegrityManager.rollbackToSavepoint(savepointName);
+				throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
+			}
+		} finally {
+			DatabaseIntegrityManager.releaseSavepoint(savepointName);
+		}
+	}
+	
 	/**
 	 * Drops a table if it exists. No error or side effects if it does not exist.
 	 * @param tableName The name of the table which is to be dropped.
@@ -1527,9 +1547,9 @@ public class DatabaseWrapper  {
 		String dbAlbumName = DatabaseStringUtilities.encloseNameWithQuotes(albumName);
 		
 		try (
-				Statement statement = ConnectionManager.getConnection().createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
-				ResultSet rs = statement.executeQuery(QueryBuilder.createSelectStarQuery(dbAlbumName));) {		
-
+			Statement statement = ConnectionManager.getConnection().createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
+			ResultSet rs = statement.executeQuery(QueryBuilder.createSelectStarQuery(dbAlbumName));)
+		{
 			// Retrieve table metadata
 			ResultSetMetaData metaData = rs.getMetaData();
 
@@ -1537,7 +1557,7 @@ public class DatabaseWrapper  {
 			// Each ItemField. Classic for loop since meta data only provides access via indices.
 			for (int columnIndex = 1; columnIndex <= columnCount; columnIndex++) {
 
-				//Excludes all columns that are for internal use only.
+				// Excludes all columns that are for internal use only.
 				String columnName = metaData.getColumnName(columnIndex);
 				if (!internalColumnNames.contains(columnName)) {
 					FieldType type = detectDataType(albumName, columnName);
@@ -2119,8 +2139,6 @@ public class DatabaseWrapper  {
 						ALBUM_ITEM_ID_REFERENCE_IN_PICTURE_TABLE +
 				   " FROM " + DatabaseStringUtilities.encloseNameWithQuotes(albumName + PICTURE_TABLE_SUFFIX) +
 				   " WHERE " + ALBUM_ITEM_ID_REFERENCE_IN_PICTURE_TABLE + " = " + String.valueOf(albumItemID);
-	
-			ConnectionManager.isConnectionReady();
 			
 			// FIXME SQL error or missing database (no such table: ...)
 			// http://stackoverflow.com/questions/14998695/java-missing-database-error
