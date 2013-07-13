@@ -13,8 +13,8 @@ import org.junit.Test;
 
 import collector.desktop.model.database.AlbumItemResultSet;
 import collector.desktop.model.database.ConnectionManager;
+import collector.desktop.model.database.DatabaseFacade;
 import collector.desktop.model.database.DatabaseIntegrityManager;
-import collector.desktop.model.database.DatabaseWrapper;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.tests.CollectorTestExecuter;
 
@@ -44,7 +44,7 @@ public class QuickSearchTests {
 			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
 			ArrayList<String> quickSearchTerms = new ArrayList<String>();
 			quickSearchTerms.add("Smith");
-			AlbumItemResultSet searchResults = DatabaseWrapper.executeQuickSearch("DVDs", quickSearchTerms);
+			AlbumItemResultSet searchResults = DatabaseFacade.executeQuickSearch("DVDs", quickSearchTerms);
 
 			assertTrue("Resultset should not be null", searchResults != null);
 
@@ -73,7 +73,7 @@ public class QuickSearchTests {
 			ArrayList<String> quickSearchTerms = new ArrayList<String>();
 			quickSearchTerms.add("Cooper");
 			quickSearchTerms.add("Wilson");
-			AlbumItemResultSet searchResults = DatabaseWrapper.executeQuickSearch("DVDs", quickSearchTerms);
+			AlbumItemResultSet searchResults = DatabaseFacade.executeQuickSearch("DVDs", quickSearchTerms);
 
 			assertTrue("Resultset should not be null", searchResults != null);
 
@@ -101,7 +101,7 @@ public class QuickSearchTests {
 			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
 			ArrayList<String> quickSearchTerms = new ArrayList<String>();
 			quickSearchTerms.add("Me");
-			AlbumItemResultSet searchResults = DatabaseWrapper.executeQuickSearch("DVDs", quickSearchTerms);
+			AlbumItemResultSet searchResults = DatabaseFacade.executeQuickSearch("DVDs", quickSearchTerms);
 
 			assertTrue("Resultset should not be null", searchResults != null);
 

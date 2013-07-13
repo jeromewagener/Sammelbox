@@ -19,7 +19,7 @@ import collector.desktop.model.album.FieldType;
 import collector.desktop.model.album.ItemField;
 import collector.desktop.model.album.MetaItemField;
 import collector.desktop.model.database.AlbumItemResultSet;
-import collector.desktop.model.database.DatabaseWrapper;
+import collector.desktop.model.database.DatabaseFacade;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.tests.CollectorTestExecuter;
 
@@ -58,21 +58,21 @@ public class RemoveAlbumItemTests {
 					   "WHERE ([" + DVD_TITLE_FIELD_NAME + "] = '" + DVD_TITLE_FIELD_VALUE + "')";
 		
 		try {
-			AlbumItemResultSet resultSet = DatabaseWrapper.executeSQLQuery(query);
+			AlbumItemResultSet resultSet = DatabaseFacade.executeSQLQuery(query);
 			
 			if (resultSet.moveToNext() == false || !resultSet.getFieldName(1).equals("id")) {
 				fail("The id of the item to be deleted could not be retrieved");
 			} 
 			
 			albumItemId  = resultSet.getFieldValue(1);
-			AlbumItem albumItem = DatabaseWrapper.fetchAlbumItem(DVD_ALBUM_NAME, albumItemId);
-			DatabaseWrapper.deleteAlbumItem(albumItem);						
+			AlbumItem albumItem = DatabaseFacade.fetchAlbumItem(DVD_ALBUM_NAME, albumItemId);
+			DatabaseFacade.deleteAlbumItem(albumItem);						
 		} catch (DatabaseWrapperOperationException e) {
 			fail("Deletion of item with id: " + albumItemId + " failed!");
 		}
 		
 		try { 
-			AlbumItem item = DatabaseWrapper.fetchAlbumItem(DVD_ALBUM_NAME, albumItemId);
+			AlbumItem item = DatabaseFacade.fetchAlbumItem(DVD_ALBUM_NAME, albumItemId);
 			Assert.assertNull("Item should be null since it has been deleted!", item);
 		} catch (DatabaseWrapperOperationException e) {
 			assertTrue(true);
@@ -89,7 +89,7 @@ public class RemoveAlbumItemTests {
 		columns.add(DVDTitleField);
 		columns.add(actorField);
 		try {
-			DatabaseWrapper.createNewAlbum(albumName, columns, false);
+			DatabaseFacade.createNewAlbum(albumName, columns, false);
 		} catch (DatabaseWrapperOperationException e) {
 			fail("Creation of album "+ albumName + " failed");
 		}
@@ -105,7 +105,7 @@ public class RemoveAlbumItemTests {
 		item.setFields(fields);
 		
 		try {
-			DatabaseWrapper.addNewAlbumItem(item, true);
+			DatabaseFacade.addNewAlbumItem(item, true);
 		}catch (DatabaseWrapperOperationException e) {
 			fail("Album Item could not be inserted into album");
 		}
@@ -117,7 +117,7 @@ public class RemoveAlbumItemTests {
 		item.setFields(fields);
 		
 		try {
-			DatabaseWrapper.addNewAlbumItem(item, true);			
+			DatabaseFacade.addNewAlbumItem(item, true);			
 		} catch (DatabaseWrapperOperationException e) {
 			fail("Album Item could not be inserted into album");
 		}

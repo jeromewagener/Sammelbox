@@ -19,7 +19,7 @@ import collector.desktop.controller.GuiController;
 import collector.desktop.controller.events.EventObservable;
 import collector.desktop.controller.events.Observer;
 import collector.desktop.controller.events.SammelboxEvent;
-import collector.desktop.model.database.DatabaseWrapper;
+import collector.desktop.model.database.DatabaseFacade;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.model.database.exceptions.ExceptionHelper;
 import collector.desktop.view.ApplicationUI;
@@ -452,7 +452,7 @@ public class ToolbarComposite extends Composite implements Observer {
 		addEntryBtn.setEnabled(true);
 
 		try {
-			if (DatabaseWrapper.albumHasPictureField(albumName)) {
+			if (DatabaseFacade.albumHasPictureField(albumName)) {
 				viewBtn.setImage(pictureView);
 				viewBtn.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_TOGGLE_TO_GALLERY));
 				viewBtn.setEnabled(true);

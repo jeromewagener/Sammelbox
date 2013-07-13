@@ -22,8 +22,8 @@ import collector.desktop.model.album.MetaItemField;
 import collector.desktop.model.album.OptionType;
 import collector.desktop.model.database.AlbumItemResultSet;
 import collector.desktop.model.database.ConnectionManager;
+import collector.desktop.model.database.DatabaseFacade;
 import collector.desktop.model.database.DatabaseIntegrityManager;
-import collector.desktop.model.database.DatabaseWrapper;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.tests.CollectorTestExecuter;
 
@@ -64,7 +64,7 @@ public class BackupRestoreTests {
 		columns.add(lenttoField);
 
 		try {
-			DatabaseWrapper.createNewAlbum(albumName, columns, true);			
+			DatabaseFacade.createNewAlbum(albumName, columns, true);			
 		} catch (DatabaseWrapperOperationException e) {
 			fail("Creation of album " + albumName + " failed");
 		}
@@ -81,7 +81,7 @@ public class BackupRestoreTests {
 		columns.add(actorField);
 
 		try {
-			DatabaseWrapper.createNewAlbum(albumName, columns, false);			
+			DatabaseFacade.createNewAlbum(albumName, columns, false);			
 		} catch (DatabaseWrapperOperationException e) {
 			fail("Creation of album " + albumName + " failed");
 		}
@@ -98,7 +98,7 @@ public class BackupRestoreTests {
 		columns.add(artistField);
 
 		try {
-			DatabaseWrapper.createNewAlbum(albumName, columns, true);			
+			DatabaseFacade.createNewAlbum(albumName, columns, true);			
 		} catch (DatabaseWrapperOperationException e) {
 			fail("Creation of album "+ albumName + " failed");
 		}
@@ -119,7 +119,7 @@ public class BackupRestoreTests {
 		item.setFields(fields);
 
 		try {
-			DatabaseWrapper.addNewAlbumItem(item, true);			
+			DatabaseFacade.addNewAlbumItem(item, true);			
 		} catch (DatabaseWrapperOperationException e) {
 			fail("Album Item could not be inserted into album");
 		}
@@ -136,7 +136,7 @@ public class BackupRestoreTests {
 		item.setFields(fields);
 
 		try {
-			DatabaseWrapper.addNewAlbumItem(item, true);			
+			DatabaseFacade.addNewAlbumItem(item, true);			
 		} catch (DatabaseWrapperOperationException e) {
 			fail("Album Item could not be inserted into album");
 		}
@@ -153,7 +153,7 @@ public class BackupRestoreTests {
 		item.setFields(fields);
 
 		try {
-			DatabaseWrapper.addNewAlbumItem(item, true);			
+			DatabaseFacade.addNewAlbumItem(item, true);			
 		} catch (DatabaseWrapperOperationException e) {
 			fail("Album Item could not be inserted into album");
 		}
@@ -169,7 +169,7 @@ public class BackupRestoreTests {
 		item.setFields(fields);
 
 		try {
-			DatabaseWrapper.addNewAlbumItem(item, true);			
+			DatabaseFacade.addNewAlbumItem(item, true);			
 		} catch (DatabaseWrapperOperationException e) {
 			fail("Album Item could not be inserted into album");
 		}
@@ -181,7 +181,7 @@ public class BackupRestoreTests {
 		item.setFields(fields);
 
 		try {
-			DatabaseWrapper.addNewAlbumItem(item, true);			
+			DatabaseFacade.addNewAlbumItem(item, true);			
 		} catch (DatabaseWrapperOperationException e) {
 			fail("Album Item could not be inserted into album");
 		}
@@ -193,7 +193,7 @@ public class BackupRestoreTests {
 		fillBookAlbum();
 		
 		try {
-			AlbumItemResultSet allAlbumItems = DatabaseWrapper.executeSQLQuery("SELECT * FROM Books");
+			AlbumItemResultSet allAlbumItems = DatabaseFacade.executeSQLQuery("SELECT * FROM Books");
 			assertTrue("Resultset should not be null", allAlbumItems != null);
 
 			int counter = 0;
@@ -218,7 +218,7 @@ public class BackupRestoreTests {
 		fillDVDAlbum();
 		
 		try {
-			AlbumItemResultSet allAlbumItems = DatabaseWrapper.executeSQLQuery("SELECT * FROM Books");
+			AlbumItemResultSet allAlbumItems = DatabaseFacade.executeSQLQuery("SELECT * FROM Books");
 			assertTrue("Resultset should not be null", allAlbumItems != null);
 
 			int counter = 0;
@@ -227,7 +227,7 @@ public class BackupRestoreTests {
 			}
 
 			assertTrue("Resultset should contain 3 items", counter == 3);
-			allAlbumItems = DatabaseWrapper.executeSQLQuery("SELECT * FROM 'DVD Album'");
+			allAlbumItems = DatabaseFacade.executeSQLQuery("SELECT * FROM 'DVD Album'");
 			assertTrue("Resultset should not be null", allAlbumItems != null);
 
 			counter = 0;
@@ -236,7 +236,7 @@ public class BackupRestoreTests {
 			}
 
 			assertTrue("Resultset should contain 2 items", counter == 2);		
-			allAlbumItems = DatabaseWrapper.executeSQLQuery("SELECT * FROM 'Music Album'");
+			allAlbumItems = DatabaseFacade.executeSQLQuery("SELECT * FROM 'Music Album'");
 			assertTrue("Resultset should not be null", allAlbumItems != null);
 
 			counter = 0;
@@ -259,7 +259,7 @@ public class BackupRestoreTests {
 			DatabaseIntegrityManager.restoreFromFile(FileSystemAccessWrapper.TEMP_DIR + 
 					File.separatorChar + "testBackupRestoreOfSingleAlbum.cbk");
 
-			AlbumItemResultSet allAlbumItems = DatabaseWrapper.executeSQLQuery("SELECT * FROM Books");
+			AlbumItemResultSet allAlbumItems = DatabaseFacade.executeSQLQuery("SELECT * FROM Books");
 			assertTrue("Resultset should not be null", allAlbumItems != null);
 
 			int counter = 0;
@@ -281,7 +281,7 @@ public class BackupRestoreTests {
 			DatabaseIntegrityManager.restoreFromFile(FileSystemAccessWrapper.TEMP_DIR + 
 					File.separatorChar + "testBackupRestoreOfMultipleAlbums.cbk");
 
-			AlbumItemResultSet allAlbumItems = DatabaseWrapper.executeSQLQuery("SELECT * FROM Books");
+			AlbumItemResultSet allAlbumItems = DatabaseFacade.executeSQLQuery("SELECT * FROM Books");
 			assertTrue("Resultset should not be null", allAlbumItems != null);
 
 			int counter = 0;
@@ -290,7 +290,7 @@ public class BackupRestoreTests {
 			}
 
 			assertTrue("Resultset should contain 3 items", counter == 3);
-			allAlbumItems = DatabaseWrapper.executeSQLQuery("SELECT * FROM 'DVD Album'");
+			allAlbumItems = DatabaseFacade.executeSQLQuery("SELECT * FROM 'DVD Album'");
 			assertTrue("Resultset should not be null", allAlbumItems != null);
 
 			counter = 0;
@@ -299,7 +299,7 @@ public class BackupRestoreTests {
 			}
 
 			assertTrue("Resultset should contain 2 items", counter == 2);		
-			allAlbumItems = DatabaseWrapper.executeSQLQuery("SELECT * FROM 'Music Album'");
+			allAlbumItems = DatabaseFacade.executeSQLQuery("SELECT * FROM 'Music Album'");
 			assertTrue("Resultset should not be null", allAlbumItems != null);
 
 			counter = 0;
@@ -319,7 +319,7 @@ public class BackupRestoreTests {
 			assertTrue(new File(CollectorTestExecuter.PATH_TO_TEST_CBK).exists());
 			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
 
-			AlbumItemResultSet allAlbumItems = DatabaseWrapper.executeSQLQuery("SELECT * FROM Books");
+			AlbumItemResultSet allAlbumItems = DatabaseFacade.executeSQLQuery("SELECT * FROM Books");
 			assertTrue("Resultset should not be null", allAlbumItems != null);
 
 			int counter = 0;
@@ -328,7 +328,7 @@ public class BackupRestoreTests {
 			}
 
 			assertTrue("Resultset should contain 10 items", counter == 10);
-			allAlbumItems = DatabaseWrapper.executeSQLQuery("SELECT * FROM 'DVDs'");
+			allAlbumItems = DatabaseFacade.executeSQLQuery("SELECT * FROM 'DVDs'");
 			assertTrue("Resultset should not be null", allAlbumItems != null);
 
 			counter = 0;
@@ -360,7 +360,7 @@ public class BackupRestoreTests {
 
 			item.setFields(fields);
 
-			if (DatabaseWrapper.addNewAlbumItem(item, true) == -1) {
+			if (DatabaseFacade.addNewAlbumItem(item, true) == -1) {
 				fail("Album Item could not be inserted into album");
 			}
 
@@ -377,7 +377,7 @@ public class BackupRestoreTests {
 			DatabaseIntegrityManager.restoreFromFile(FileSystemAccessWrapper.TEMP_DIR + 
 					File.separatorChar + "testRestoreAndModificiationOfTestDataAlbums.cbk");
 
-			AlbumItemResultSet allAlbumItems = DatabaseWrapper.executeSQLQuery("SELECT * FROM Books");
+			AlbumItemResultSet allAlbumItems = DatabaseFacade.executeSQLQuery("SELECT * FROM Books");
 			assertTrue("Resultset should not be null", allAlbumItems != null);
 
 			int counter = 0;
@@ -398,7 +398,7 @@ public class BackupRestoreTests {
 	 */
 	public static int numberOfAlbumItems(String albumName) {
 		try {
-			AlbumItemResultSet resultSet = DatabaseWrapper.executeSQLQuery("SELECT * FROM " + albumName);
+			AlbumItemResultSet resultSet = DatabaseFacade.executeSQLQuery("SELECT * FROM " + albumName);
 			int counter =0;
 			
 			while(resultSet.moveToNext()) {

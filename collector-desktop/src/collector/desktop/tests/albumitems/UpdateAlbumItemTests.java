@@ -16,12 +16,12 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import collector.desktop.model.album.AlbumItem;
-import collector.desktop.model.album.AlbumItem.AlbumItemPicture;
+import collector.desktop.model.album.AlbumItemPicture;
 import collector.desktop.model.album.FieldType;
 import collector.desktop.model.album.ItemField;
 import collector.desktop.model.album.MetaItemField;
 import collector.desktop.model.album.OptionType;
-import collector.desktop.model.database.DatabaseWrapper;
+import collector.desktop.model.database.DatabaseFacade;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.tests.CollectorTestExecuter;
 
@@ -51,10 +51,10 @@ public class UpdateAlbumItemTests {
 	@Test
 	public void updateTextfieldOfAlbumItem() {
 		try {
-			AlbumItem originalAlbumItem = DatabaseWrapper.fetchAlbumItem("Books", 1);
+			AlbumItem originalAlbumItem = DatabaseFacade.fetchAlbumItem("Books", 1);
 			originalAlbumItem.getField("Book Title").setValue("updated book title");
-			DatabaseWrapper.updateAlbumItem(originalAlbumItem);
-			AlbumItem updatedAlbumItem = DatabaseWrapper.fetchAlbumItem("Books", 1);
+			DatabaseFacade.updateAlbumItem(originalAlbumItem);
+			AlbumItem updatedAlbumItem = DatabaseFacade.fetchAlbumItem("Books", 1);
 			
 			if (updatedAlbumItem == null) {
 				fail("The updatedAlbumItem is unexpectatly null");
@@ -70,10 +70,10 @@ public class UpdateAlbumItemTests {
 	@Test
 	public void updateNumberfieldOfAlbumItem() {
 		try {
-			AlbumItem originalAlbumItem = DatabaseWrapper.fetchAlbumItem("Books", 1);
+			AlbumItem originalAlbumItem = DatabaseFacade.fetchAlbumItem("Books", 1);
 			originalAlbumItem.getField("Price").setValue(42.42d);
-			DatabaseWrapper.updateAlbumItem(originalAlbumItem);
-			AlbumItem updatedAlbumItem = DatabaseWrapper.fetchAlbumItem("Books", 1);
+			DatabaseFacade.updateAlbumItem(originalAlbumItem);
+			AlbumItem updatedAlbumItem = DatabaseFacade.fetchAlbumItem("Books", 1);
 			
 			if (updatedAlbumItem == null) {
 				fail("The updatedAlbumItem is unexpectatly null");
@@ -89,10 +89,10 @@ public class UpdateAlbumItemTests {
 	@Test
 	public void updateDatefieldOfAlbumItem() {
 		try {
-			AlbumItem originalAlbumItem = DatabaseWrapper.fetchAlbumItem("Books", 1);
+			AlbumItem originalAlbumItem = DatabaseFacade.fetchAlbumItem("Books", 1);
 			originalAlbumItem.getField("Purchased").setValue(new Date(System.currentTimeMillis()));
-			DatabaseWrapper.updateAlbumItem(originalAlbumItem);
-			AlbumItem updatedAlbumItem = DatabaseWrapper.fetchAlbumItem("Books", 1);
+			DatabaseFacade.updateAlbumItem(originalAlbumItem);
+			AlbumItem updatedAlbumItem = DatabaseFacade.fetchAlbumItem("Books", 1);
 			
 			if (updatedAlbumItem == null) {
 				fail("The updatedAlbumItem is unexpectatly null");
@@ -108,10 +108,10 @@ public class UpdateAlbumItemTests {
 	@Test
 	public void updateYesNofieldOfAlbumItem() {
 		try {
-			AlbumItem originalAlbumItem = DatabaseWrapper.fetchAlbumItem("Books", 1);
+			AlbumItem originalAlbumItem = DatabaseFacade.fetchAlbumItem("Books", 1);
 			originalAlbumItem.getField("Lent out").setValue(OptionType.NO);
-			DatabaseWrapper.updateAlbumItem(originalAlbumItem);
-			AlbumItem updatedAlbumItem = DatabaseWrapper.fetchAlbumItem("Books", 1);
+			DatabaseFacade.updateAlbumItem(originalAlbumItem);
+			AlbumItem updatedAlbumItem = DatabaseFacade.fetchAlbumItem("Books", 1);
 			
 			if (updatedAlbumItem == null) {
 				fail("The updatedAlbumItem is unexpectatly null");
@@ -127,13 +127,13 @@ public class UpdateAlbumItemTests {
 	@Test
 	public void updatePicturesOfAlbumItem() {
 		try {
-			AlbumItem originalAlbumItem = DatabaseWrapper.fetchAlbumItem("Books", 1);
+			AlbumItem originalAlbumItem = DatabaseFacade.fetchAlbumItem("Books", 1);
 			List<AlbumItemPicture> pictureList = originalAlbumItem.getPictures();
 			pictureList.add(new AlbumItemPicture(CollectorTestExecuter.PATH_TO_TEST_PICTURE_3, CollectorTestExecuter.PATH_TO_TEST_PICTURE_3, "Books", 1));
 			originalAlbumItem.setPictures(pictureList);
 		
-			DatabaseWrapper.updateAlbumItem(originalAlbumItem);
-			AlbumItem updatedAlbumItem = DatabaseWrapper.fetchAlbumItem("Books", 1);
+			DatabaseFacade.updateAlbumItem(originalAlbumItem);
+			AlbumItem updatedAlbumItem = DatabaseFacade.fetchAlbumItem("Books", 1);
 			
 			if (updatedAlbumItem == null) {
 				fail("The updatedAlbumItem is unexpectatly null");
@@ -158,7 +158,7 @@ public class UpdateAlbumItemTests {
 		columns.add(lenttoField);
 
 		try {
-			DatabaseWrapper.createNewAlbum(albumName, columns, true);
+			DatabaseFacade.createNewAlbum(albumName, columns, true);
 		} catch (DatabaseWrapperOperationException e) {
 			fail("Creation of album"+ albumName + "failed");
 		}
@@ -169,7 +169,7 @@ public class UpdateAlbumItemTests {
 		AlbumItem referenceAlbumItem = createSampleAlbumItem(albumName);
 		
 		try {
-			DatabaseWrapper.addNewAlbumItem(referenceAlbumItem, false);
+			DatabaseFacade.addNewAlbumItem(referenceAlbumItem, false);
 		} catch (DatabaseWrapperOperationException e) {
 			fail("fillBooksAlbum failed");
 		}
@@ -186,9 +186,12 @@ public class UpdateAlbumItemTests {
 		fields.add(new ItemField("Lent out", FieldType.Option, OptionType.YES));
 
 		List<AlbumItemPicture> albumItemPictures = new ArrayList<AlbumItemPicture>();
-		albumItemPictures.add(new AlbumItemPicture(CollectorTestExecuter.PATH_TO_TEST_PICTURE_1, CollectorTestExecuter.PATH_TO_TEST_PICTURE_1, albumName));
-		albumItemPictures.add(new AlbumItemPicture(CollectorTestExecuter.PATH_TO_TEST_PICTURE_2, CollectorTestExecuter.PATH_TO_TEST_PICTURE_2, albumName));
-		albumItemPictures.add(new AlbumItemPicture(CollectorTestExecuter.PATH_TO_TEST_PICTURE_3, CollectorTestExecuter.PATH_TO_TEST_PICTURE_3, albumName));
+		albumItemPictures.add(new AlbumItemPicture(CollectorTestExecuter.PATH_TO_TEST_PICTURE_1, 
+				CollectorTestExecuter.PATH_TO_TEST_PICTURE_1, albumName, AlbumItemPicture.PICTURE_ID_UNDEFINED));
+		albumItemPictures.add(new AlbumItemPicture(CollectorTestExecuter.PATH_TO_TEST_PICTURE_2, 
+				CollectorTestExecuter.PATH_TO_TEST_PICTURE_2, albumName, AlbumItemPicture.PICTURE_ID_UNDEFINED));
+		albumItemPictures.add(new AlbumItemPicture(CollectorTestExecuter.PATH_TO_TEST_PICTURE_3, 
+				CollectorTestExecuter.PATH_TO_TEST_PICTURE_3, albumName, AlbumItemPicture.PICTURE_ID_UNDEFINED));
 		
 		item.setFields(fields);
 		item.setContentVersion(UUID.randomUUID());

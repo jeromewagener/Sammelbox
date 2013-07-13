@@ -13,7 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import collector.desktop.controller.filesystem.FileSystemAccessWrapper;
-import collector.desktop.model.database.DatabaseWrapper;
+import collector.desktop.model.database.DatabaseFacade;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.model.database.exceptions.ExceptionHelper;
 import collector.desktop.view.internationalization.DictKeys;
@@ -69,7 +69,7 @@ public class WelcomePageManager {
 
 	public static Long getNumberOfItemsInAlbum(String albumName) {
 		try {
-			return DatabaseWrapper.getNumberOfItemsInAlbum(albumName);
+			return DatabaseFacade.getNumberOfItemsInAlbum(albumName);
 		} catch (DatabaseWrapperOperationException ex) {
 			LOGGER.error("Could not retrieve the number of items in the '" + albumName + "' album \n Stacktrace: " + ExceptionHelper.toString(ex));
 			

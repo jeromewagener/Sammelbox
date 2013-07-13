@@ -29,7 +29,7 @@ import org.eclipse.swt.widgets.Widget;
 
 import collector.desktop.controller.GuiController;
 import collector.desktop.model.GuiState;
-import collector.desktop.model.album.AlbumItem.AlbumItemPicture;
+import collector.desktop.model.album.AlbumItemPicture;
 import collector.desktop.view.ApplicationUI;
 import collector.desktop.view.internationalization.DictKeys;
 import collector.desktop.view.internationalization.Translator;
@@ -228,10 +228,10 @@ public class ImageDropAndManagementComposite extends Composite implements DropTa
 		}
 	}
 
-
 	@Override
 	public void dropAccept(DropTargetEvent arg0) {	
 	}
+	
 	/** This method displays a message box informing the user of trying to drop the unsupported file.*/
 	public void showDroppedUnsupportedFileMessageBox(String filePathToUnsupportedFilegeBox){
 		MessageBox messageBox = new MessageBox(getShell(), SWT.ICON_ERROR);

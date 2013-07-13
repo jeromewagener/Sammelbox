@@ -10,11 +10,11 @@ import org.slf4j.LoggerFactory;
 import collector.desktop.controller.filesystem.FileSystemAccessWrapper;
 import collector.desktop.controller.settings.ApplicationSettingsManager;
 import collector.desktop.model.album.AlbumItem;
-import collector.desktop.model.album.AlbumItem.AlbumItemPicture;
+import collector.desktop.model.album.AlbumItemPicture;
 import collector.desktop.model.album.FieldType;
 import collector.desktop.model.album.ItemField;
 import collector.desktop.model.album.OptionType;
-import collector.desktop.model.database.DatabaseWrapper;
+import collector.desktop.model.database.DatabaseFacade;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.model.database.exceptions.ExceptionHelper;
 import collector.desktop.view.ApplicationUI;
@@ -74,7 +74,7 @@ public class ItemCreator {
 			if (fieldItem.getType().equals(FieldType.UUID)) {
 				// schema or content version UUID --> ignore 
 			} else if (fieldItem.getType().equals(FieldType.ID)) {
-				if (fieldItem.getName().equals(DatabaseWrapper.ID_COLUMN_NAME)) {
+				if (fieldItem.getName().equals(DatabaseFacade.ID_COLUMN_NAME)) {
 					// do not show, but store id
 					id = fieldItem.getValue();
 				}
@@ -98,8 +98,8 @@ public class ItemCreator {
 		}
 				
 		try {
-			if (!albumItem.getPictures().isEmpty() || DatabaseWrapper.albumHasPictureField(ApplicationUI.getSelectedAlbum())) {
-				List<AlbumItemPicture> pictures = DatabaseWrapper.getAlbumItemPictures(ApplicationUI.getSelectedAlbum(), id);
+			if (!albumItem.getPictures().isEmpty() || DatabaseFacade.albumHasPictureField(ApplicationUI.getSelectedAlbum())) {
+				List<AlbumItemPicture> pictures = DatabaseFacade.getAlbumItemPictures(ApplicationUI.getSelectedAlbum(), id);
 				htmlPictureColumnContent.append(
 						"<table border=0>" +
 						"  <tr>" +

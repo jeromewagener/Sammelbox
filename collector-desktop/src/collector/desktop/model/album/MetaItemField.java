@@ -1,6 +1,6 @@
 package collector.desktop.model.album;
 
-import collector.desktop.model.database.DatabaseWrapper;
+import collector.desktop.model.database.DatabaseFacade;
 
 public class MetaItemField {
 
@@ -17,7 +17,7 @@ public class MetaItemField {
 	
 	/**
 	 *  Alternative constructor. Disables the quicksearch support by default if item is inserted into database.
-	 * Recommended for internal use by the {@link DatabaseWrapper} only.
+	 * Recommended for internal use by the {@link DatabaseFacade} only.
 	 * @param name The name of the field.
 	 * @param type The type of the field. All values inserted must be of the specified type.
 	 */
@@ -29,7 +29,7 @@ public class MetaItemField {
 	
 	/**
 	 * Constructor with explicit quicksearch switch. For any retrieval, insertion of deletion query through
-	 * the {@link DatabaseWrapper} it is recommended to use this constructor. More specifically since the equals
+	 * the {@link DatabaseFacade} it is recommended to use this constructor. More specifically since the equals
 	 * takes all fields (including the quicksearch) into account to correctly identify a album item field. 
 	 * @param name The name of the field.
 	 * @param type The type of the field. All values inserted must be of the specified type.

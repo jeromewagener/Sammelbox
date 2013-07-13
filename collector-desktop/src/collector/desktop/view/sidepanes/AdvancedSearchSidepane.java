@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 import collector.desktop.model.album.FieldType;
 import collector.desktop.model.album.MetaItemField;
 import collector.desktop.model.album.OptionType;
-import collector.desktop.model.database.DatabaseWrapper;
+import collector.desktop.model.database.DatabaseFacade;
 import collector.desktop.model.database.QueryBuilder;
 import collector.desktop.model.database.QueryBuilder.QueryComponent;
 import collector.desktop.model.database.QueryBuilder.QueryOperator;
@@ -70,8 +70,8 @@ public class AdvancedSearchSidepane {
 
 		try {
 			// Fill the comboBox
-			fieldToSearchCombo.setData("validMetaItemFields", MetaItemFieldFilter.getValidMetaItemFields(DatabaseWrapper.getAlbumItemFieldNamesAndTypes(album)));
-			fieldToSearchCombo.setItems(MetaItemFieldFilter.getValidFieldNamesAsStringArray(DatabaseWrapper.getAlbumItemFieldNamesAndTypes(album)));	
+			fieldToSearchCombo.setData("validMetaItemFields", MetaItemFieldFilter.getValidMetaItemFields(DatabaseFacade.getAlbumItemFieldNamesAndTypes(album)));
+			fieldToSearchCombo.setItems(MetaItemFieldFilter.getValidFieldNamesAsStringArray(DatabaseFacade.getAlbumItemFieldNamesAndTypes(album)));	
 		} catch (DatabaseWrapperOperationException ex) {
 			LOGGER.error("A database related error occured \n Stacktrace: " + ExceptionHelper.toString(ex));
 		}
@@ -221,8 +221,8 @@ public class AdvancedSearchSidepane {
 
 		try {
 			// Fill the comboBox
-			fieldToSortCombo.setData("validMetaItemFields", MetaItemFieldFilter.getValidMetaItemFields(DatabaseWrapper.getAlbumItemFieldNamesAndTypes(album)));
-			fieldToSortCombo.setItems(MetaItemFieldFilter.getValidFieldNamesAsStringArray(DatabaseWrapper.getAlbumItemFieldNamesAndTypes(album)));
+			fieldToSortCombo.setData("validMetaItemFields", MetaItemFieldFilter.getValidMetaItemFields(DatabaseFacade.getAlbumItemFieldNamesAndTypes(album)));
+			fieldToSortCombo.setItems(MetaItemFieldFilter.getValidFieldNamesAsStringArray(DatabaseFacade.getAlbumItemFieldNamesAndTypes(album)));
 		} catch (DatabaseWrapperOperationException ex) {
 			LOGGER.error("A database related error occured \n Stacktrace: " + ExceptionHelper.toString(ex));
 		}
@@ -312,7 +312,7 @@ public class AdvancedSearchSidepane {
 		try {
 			for ( int i=0 ; i < searchQueryTable.getItemCount() ; i++ ) {					
 				// In case of a date
-				if (DatabaseWrapper.isDateField(ApplicationUI.getSelectedAlbum(), searchQueryTable.getItem(i).getText(0))) {
+				if (DatabaseFacade.isDateField(ApplicationUI.getSelectedAlbum(), searchQueryTable.getItem(i).getText(0))) {
 					// Convert string to milliseconds
 					DateFormat df = new SimpleDateFormat("d/M/yyyy");
 					java.util.Date result = null;
@@ -334,7 +334,7 @@ public class AdvancedSearchSidepane {
 					}
 
 					// In case of an option
-				} else if (DatabaseWrapper.isOptionField(ApplicationUI.getSelectedAlbum(), searchQueryTable.getItem(i).getText(0))) {
+				} else if (DatabaseFacade.isOptionField(ApplicationUI.getSelectedAlbum(), searchQueryTable.getItem(i).getText(0))) {
 					String value = searchQueryTable.getItem(i).getText(2);
 
 					String option = null;

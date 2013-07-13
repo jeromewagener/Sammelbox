@@ -13,8 +13,8 @@ import org.slf4j.LoggerFactory;
 
 import collector.desktop.controller.filesystem.export.CSVExporter;
 import collector.desktop.controller.filesystem.export.HTMLExporter;
+import collector.desktop.model.database.DatabaseFacade;
 import collector.desktop.model.database.DatabaseIntegrityManager;
-import collector.desktop.model.database.DatabaseWrapper;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.model.database.exceptions.ExceptionHelper;
 import collector.desktop.view.ApplicationUI;
@@ -213,7 +213,7 @@ public class MenuManager {
 					messageBox.setMessage(Translator.get(DictKeys.DIALOG_CONTENT_DELETE_ALBUM, ApplicationUI.getSelectedAlbum()));
 					if (messageBox.open() == SWT.YES) {
 						try {
-							DatabaseWrapper.removeAlbumAndAlbumPictures(ApplicationUI.getSelectedAlbum());
+							DatabaseFacade.removeAlbumAndAlbumPictures(ApplicationUI.getSelectedAlbum());
 							ApplicationUI.refreshSWTAlbumList();
 							BrowserFacade.loadHtmlFromInputStream(ApplicationUI.getShell().getClass().getClassLoader().getResourceAsStream("htmlfiles/album_deleted.html"));
 						} catch (DatabaseWrapperOperationException ex) {

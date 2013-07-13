@@ -8,11 +8,11 @@ import org.slf4j.LoggerFactory;
 
 import collector.desktop.controller.filesystem.FileSystemAccessWrapper;
 import collector.desktop.model.album.AlbumItem;
-import collector.desktop.model.album.AlbumItem.AlbumItemPicture;
+import collector.desktop.model.album.AlbumItemPicture;
 import collector.desktop.model.album.FieldType;
 import collector.desktop.model.album.ItemField;
 import collector.desktop.model.database.AlbumItemStore;
-import collector.desktop.model.database.DatabaseWrapper;
+import collector.desktop.model.database.DatabaseFacade;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.model.database.exceptions.ExceptionHelper;
 import collector.desktop.view.ApplicationUI;
@@ -41,7 +41,7 @@ public class GalleryViewCreator {
 
 			List<AlbumItemPicture> pictures = null;
 			try {
-				pictures = DatabaseWrapper.getAlbumItemPictures(ApplicationUI.getSelectedAlbum(), id);
+				pictures = DatabaseFacade.getAlbumItemPictures(ApplicationUI.getSelectedAlbum(), id);
 			} catch (DatabaseWrapperOperationException ex) {
 				LOGGER.error("An error occured while retrieving the pictures associated with the album item #'" + 
 					id + "' from the album '" + ApplicationUI.getSelectedAlbum() + "' \n Stacktrace: " + ExceptionHelper.toString(ex));

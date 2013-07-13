@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import collector.desktop.controller.events.EventObservable;
 import collector.desktop.controller.events.SammelboxEvent;
 import collector.desktop.controller.filesystem.FileSystemAccessWrapper;
-import collector.desktop.model.database.DatabaseWrapper;
+import collector.desktop.model.database.DatabaseFacade;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.model.database.exceptions.ExceptionHelper;
 
@@ -25,13 +25,13 @@ public class AlbumManager {
 		albums = FileSystemAccessWrapper.loadAlbums();
 		
 		try {
-			for (String album : DatabaseWrapper.listAllAlbums()) {
+			for (String album : DatabaseFacade.listAllAlbums()) {
 				if (!albums.contains(album)) {
 					albums.add(album);
 				}
 			}
 
-			albums.retainAll(DatabaseWrapper.listAllAlbums());
+			albums.retainAll(DatabaseFacade.listAllAlbums());
 
 		} catch (DatabaseWrapperOperationException ex) {
 			LOGGER.error("A problem occured while retrieving the list of albums from the database \n Stacktrace: " + ExceptionHelper.toString(ex));

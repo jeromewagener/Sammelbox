@@ -27,12 +27,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import collector.desktop.model.album.AlbumItem;
-import collector.desktop.model.album.AlbumItem.AlbumItemPicture;
+import collector.desktop.model.album.AlbumItemPicture;
 import collector.desktop.model.album.FieldType;
 import collector.desktop.model.album.MetaItemField;
 import collector.desktop.model.album.OptionType;
 import collector.desktop.model.album.StarRating;
-import collector.desktop.model.database.DatabaseWrapper;
+import collector.desktop.model.database.DatabaseFacade;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.model.database.exceptions.ExceptionHelper;
 import collector.desktop.view.ApplicationUI;
@@ -93,14 +93,14 @@ public class BasicAlbumItemSidepane {
 		try {
 			// if data should be loaded, it must be fetched from the database
 			if (loadDataIntoFields) {
-				albumItem = DatabaseWrapper.fetchAlbumItem(album, albumItemId);
+				albumItem = DatabaseFacade.fetchAlbumItem(album, albumItemId);
 			}	
 
 			// fetch the field names and types from the database
-			metaItemFields = DatabaseWrapper.getAlbumItemFieldNamesAndTypes(album);
+			metaItemFields = DatabaseFacade.getAlbumItemFieldNamesAndTypes(album);
 			
 			// if the album contains pictures, show the picture composite
-			addPictureComposite = DatabaseWrapper.albumHasPictureField(album);
+			addPictureComposite = DatabaseFacade.albumHasPictureField(album);
 		} catch(DatabaseWrapperOperationException ex) {
 			LOGGER.error("A database related error occured \n Stacktrace: " + ExceptionHelper.toString(ex));
 		}
@@ -367,7 +367,7 @@ public class BasicAlbumItemSidepane {
 				List<AlbumItemPicture> pictures;
 				
 				if (loadDataIntoFields) {
-					pictures = DatabaseWrapper.getAlbumItemPictures(ApplicationUI.getSelectedAlbum(), albumItemId);
+					pictures = DatabaseFacade.getAlbumItemPictures(ApplicationUI.getSelectedAlbum(), albumItemId);
 					imageDropAndManagementComposite = new ImageDropAndManagementComposite(basicAlbumItemComposite, pictures);
 				} else {
 					imageDropAndManagementComposite = new ImageDropAndManagementComposite(basicAlbumItemComposite);					
@@ -511,12 +511,12 @@ public class BasicAlbumItemSidepane {
 					if (isUpdateAlbumItemComposite) {
 						albumItem.addField("id", FieldType.ID, albumItemId);
 						
-						DatabaseWrapper.updateAlbumItem(albumItem);
+						DatabaseFacade.updateAlbumItem(albumItem);
 						BrowserFacade.generateAlbumItemAddedPage(albumItemId);
 					} else {						
 						// Create album item
 						BrowserFacade.generateAlbumItemAddedPage(
-								DatabaseWrapper.addNewAlbumItem(albumItem, true)
+								DatabaseFacade.addNewAlbumItem(albumItem, true)
 						);
 					}
 					

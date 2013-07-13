@@ -13,7 +13,7 @@ import collector.desktop.controller.filesystem.FileSystemAccessWrapper;
 import collector.desktop.model.album.AlbumItem;
 import collector.desktop.model.database.AlbumItemResultSet;
 import collector.desktop.model.database.AlbumItemStore;
-import collector.desktop.model.database.DatabaseWrapper;
+import collector.desktop.model.database.DatabaseFacade;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.model.database.exceptions.ExceptionHelper;
 import collector.desktop.view.ApplicationUI;
@@ -39,7 +39,7 @@ public class Utilities {
 
 	static void performBrowserQueryAndShow(Browser browser, String sqlQuery) {				
 		try {
-			AlbumItemStore.reinitializeStore(DatabaseWrapper.executeSQLQuery(sqlQuery));
+			AlbumItemStore.reinitializeStore(DatabaseFacade.executeSQLQuery(sqlQuery));
 		} catch (DatabaseWrapperOperationException ex) {
 			LOGGER.error("An error occured while reinitializing the album item store using the following SQL query (" + sqlQuery + ") " +
 					"\n Stacktrace:" + ExceptionHelper.toString(ex));
@@ -101,11 +101,9 @@ public class Utilities {
 	}
 	
 	static void loadHelpPage() {
-		// FIXME repair this
-		/*
 		loadHtmlPage(
 				ApplicationUI.getAlbumItemSWTBrowser(),
-				ApplicationUI.getClassLoader().getResourceAsStream("helpfiles/index.html"));*/
+				ApplicationUI.class.getClassLoader().getResourceAsStream("helpfiles/index.html"));
 	}
 	
 	static String getBackgroundColorOfWidgetInHex() {

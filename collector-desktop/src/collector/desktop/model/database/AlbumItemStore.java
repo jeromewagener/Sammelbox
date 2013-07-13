@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import collector.desktop.controller.filesystem.FileSystemAccessWrapper;
 import collector.desktop.model.album.AlbumItem;
-import collector.desktop.model.album.AlbumItem.AlbumItemPicture;
+import collector.desktop.model.album.AlbumItemPicture;
 import collector.desktop.model.album.FieldType;
 import collector.desktop.model.album.ItemField;
 import collector.desktop.model.album.MetaItemField;
@@ -23,6 +23,7 @@ import collector.desktop.view.internationalization.Translator;
 public class AlbumItemStore {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AlbumItemStore.class);
 	
+	private static final String SAMPLE = "Sample";
 	private static final int DEFAULT_STOP_INDEX_INCREASE_AMOUNT = 10;
 	private static final int DEFAULT_STOP_INDEX = 40;
 	
@@ -114,12 +115,15 @@ public class AlbumItemStore {
 	public static AlbumItem getSamplePictureAlbumItemWithoutFields() {
 		List<AlbumItemPicture> pictures = new ArrayList<AlbumItemPicture>();
 		
-		pictures.add(new AlbumItemPicture(FileSystemAccessWrapper.PLACEHOLDERIMAGE, FileSystemAccessWrapper.PLACEHOLDERIMAGE));
-		pictures.add(new AlbumItemPicture(FileSystemAccessWrapper.PLACEHOLDERIMAGE2, FileSystemAccessWrapper.PLACEHOLDERIMAGE2));
+		pictures.add(new AlbumItemPicture(
+				FileSystemAccessWrapper.PLACEHOLDERIMAGE, FileSystemAccessWrapper.PLACEHOLDERIMAGE, SAMPLE, Long.MAX_VALUE));
+		pictures.add(new AlbumItemPicture(
+				FileSystemAccessWrapper.PLACEHOLDERIMAGE2, FileSystemAccessWrapper.PLACEHOLDERIMAGE2, SAMPLE, Long.MAX_VALUE));
 		
 		List<ItemField> itemFields = new ArrayList<ItemField>();
 		
-		itemFields.add(new ItemField(Translator.get(DictKeys.BROWSER_NO_FIELDS_ADDED_YET), FieldType.Text, Translator.get(DictKeys.BROWSER_PLEASE_USE_NEW_ALBUM_SIDEPANE)));		
+		itemFields.add(new ItemField(Translator.get(
+				DictKeys.BROWSER_NO_FIELDS_ADDED_YET), FieldType.Text, Translator.get(DictKeys.BROWSER_PLEASE_USE_NEW_ALBUM_SIDEPANE)));		
 		
 		try {
 			AlbumItem albumItem = new AlbumItem("DummyItem", itemFields);
@@ -138,16 +142,20 @@ public class AlbumItemStore {
 		List<AlbumItemPicture> pictures = new ArrayList<AlbumItemPicture>();		
 		
 		if (containsPictures) {
-			pictures.add(new AlbumItemPicture(FileSystemAccessWrapper.PLACEHOLDERIMAGE, FileSystemAccessWrapper.PLACEHOLDERIMAGE));
-			pictures.add(new AlbumItemPicture(FileSystemAccessWrapper.PLACEHOLDERIMAGE2, FileSystemAccessWrapper.PLACEHOLDERIMAGE2));
+			pictures.add(new AlbumItemPicture(
+					FileSystemAccessWrapper.PLACEHOLDERIMAGE, FileSystemAccessWrapper.PLACEHOLDERIMAGE, SAMPLE, Long.MAX_VALUE));
+			pictures.add(new AlbumItemPicture(
+					FileSystemAccessWrapper.PLACEHOLDERIMAGE2, FileSystemAccessWrapper.PLACEHOLDERIMAGE2, SAMPLE, Long.MAX_VALUE));
 		}
 		
 		if (metaItemFields.isEmpty()) {
-			itemFields.add(new ItemField(Translator.get(DictKeys.BROWSER_NO_FIELDS_ADDED_YET), FieldType.Text, Translator.get(DictKeys.BROWSER_PLEASE_USE_NEW_ALBUM_SIDEPANE)));
+			itemFields.add(new ItemField(Translator.get(
+					DictKeys.BROWSER_NO_FIELDS_ADDED_YET), FieldType.Text, Translator.get(DictKeys.BROWSER_PLEASE_USE_NEW_ALBUM_SIDEPANE)));
 		} else {
 			for (MetaItemField metaItemField : metaItemFields) {
 				if (metaItemField.getType().equals(FieldType.Text)) {
-					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), Translator.get(DictKeys.BROWSER_THIS_IS_A_SAMPLE_TEXT, metaItemField.getName()), false));
+					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), Translator.get(
+							DictKeys.BROWSER_THIS_IS_A_SAMPLE_TEXT, metaItemField.getName()), false));
 				} else if (metaItemField.getType().equals(FieldType.Date)) {
 					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), new java.sql.Date(System.currentTimeMillis()), false));
 				} else if (metaItemField.getType().equals(FieldType.Integer)) {

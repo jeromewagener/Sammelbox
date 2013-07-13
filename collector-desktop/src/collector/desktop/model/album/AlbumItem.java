@@ -1,6 +1,5 @@
 package collector.desktop.model.album;
 
-import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
@@ -8,15 +7,16 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import collector.desktop.controller.filesystem.FileSystemAccessWrapper;
+import collector.desktop.model.database.DatabaseFacade;
 import collector.desktop.model.database.DatabaseStringUtilities;
-import collector.desktop.model.database.DatabaseWrapper;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
 
 public class AlbumItem {
+	public static Long ITEM_ID_UNDEFINED = Long.MAX_VALUE;
+	
 	private final static Logger LOGGER = LoggerFactory.getLogger(AlbumItem.class);
 	
-	protected long itemId = -1;
+	protected long itemId = ITEM_ID_UNDEFINED;
 	protected String albumName = "";
 	protected List<ItemField> fields;
 	protected List<AlbumItemPicture> albumItemPictures;
@@ -42,7 +42,7 @@ public class AlbumItem {
 		fields = itemFields;
 		
 		for (ItemField itemField : itemFields) {
-			if (itemField.getName().equals(DatabaseWrapper.ID_COLUMN_NAME)) {
+			if (itemField.getName().equals(DatabaseFacade.ID_COLUMN_NAME)) {
 				itemId = (Long) itemField.getValue();
 				break;
 			}
@@ -66,7 +66,7 @@ public class AlbumItem {
 	}
 	
 	public long getItemID() {
-		return getField(DatabaseWrapper.ID_COLUMN_NAME).getValue();
+		return getField(DatabaseFacade.ID_COLUMN_NAME).getValue();
 	}
 	
 	/**
@@ -109,7 +109,7 @@ public class AlbumItem {
 		for (ItemField itemField : fields) {
 			if (itemField.getName().equals(fieldName)) {
 				itemField.setValue(value);
-			} else if (itemField.getName().equals(DatabaseWrapper.ID_COLUMN_NAME)) {
+			} else if (itemField.getName().equals(DatabaseFacade.ID_COLUMN_NAME)) {
 				itemId = (Long) itemField.getValue();
 			}
 		}
@@ -141,7 +141,7 @@ public class AlbumItem {
 		this.fields = fields;
 		
 		for (ItemField itemField : fields) {
-			if (itemField.getName().equals(DatabaseWrapper.ID_COLUMN_NAME)) {
+			if (itemField.getName().equals(DatabaseFacade.ID_COLUMN_NAME)) {
 				itemId = (Long) itemField.getValue();
 				break;
 			}
@@ -172,7 +172,7 @@ public class AlbumItem {
 	public void addField(String fieldName,  FieldType type, Object value, boolean quickSearchable) {
 		fields.add(new ItemField(fieldName, type, value, quickSearchable));
 		
-		if (fieldName.equals(DatabaseWrapper.ID_COLUMN_NAME)) {
+		if (fieldName.equals(DatabaseFacade.ID_COLUMN_NAME)) {
 			itemId = (Long) value;
 		}
 	}
@@ -187,7 +187,7 @@ public class AlbumItem {
 	public void addField(String fieldName,  FieldType type, Object value) {
 		fields.add(new ItemField(fieldName, type, value));
 	
-		if (fieldName.equals(DatabaseWrapper.ID_COLUMN_NAME)) {
+		if (fieldName.equals(DatabaseFacade.ID_COLUMN_NAME)) {
 			itemId = (Long) value;
 		}
 	}
@@ -241,16 +241,17 @@ public class AlbumItem {
 	public void reorderField(MetaItemField metaItemField, MetaItemField moveAfterField) {
 		ItemField toMove = null;
 		for (ItemField itemField : fields) {
-			 MetaItemField tempMetaItemField = new MetaItemField(itemField.getName(), itemField.getType());	
+			MetaItemField tempMetaItemField = new MetaItemField(itemField.getName(), itemField.getType());	
 			if (tempMetaItemField.equals(metaItemField)) {
 				toMove = itemField;
 			}
 		}
+		
 		if (moveAfterField == null){
 			moveAfterField = fields.get(0);
 		}
-		int moveAfterIndex = fields.indexOf(moveAfterField);
 		
+		int moveAfterIndex = fields.indexOf(moveAfterField);
 		if (toMove != null && moveAfterIndex != -1) {
 			fields.remove(toMove);
 			fields.add(moveAfterIndex<=fields.size() ? moveAfterIndex : fields.size()-1, toMove);
@@ -307,7 +308,7 @@ public class AlbumItem {
 	/** Loads the pictures associated with this album item from the database.*/
 	public void loadPicturesFromDatabase() {
 		try {
-			setPictures(DatabaseWrapper.getAlbumItemPictures(albumName, itemId));
+			setPictures(DatabaseFacade.getAlbumItemPictures(albumName, itemId));
 		} catch (DatabaseWrapperOperationException e) {
 			LOGGER.error("Couldn't load album item pictures for album " + albumName + " with id " + itemId + "\n" + 
 							" Stacktrace: " +  e.getMessage());
@@ -341,111 +342,6 @@ public class AlbumItem {
 			return albumItemPictures.get(0);
 		} else {
 			return null;
-		}
-	}
-	
-	// TODO create own class file
-	public static class AlbumItemPicture {
-		public static final String ALBUM_ITEM_PICTURE = "ALBUM_ITEM_PICTURE";
-		
-		private long pictureID;
-		/** Is always a uuid.extension e.g. 8bdb7e3f-c66b-4df6-9640-95642c4d823b_1348734436938.png */
-		private String thumbnailPictureName;
-		/** Is always a uuid.extension e.g. 3294367d-7901-4bb2-8757-ad13ff3616f7_1348734351845.jpg */
-		private String originalPictureName;		
-		private String albumName;
-		private long albumItemID;
-					
-		/** Creates an initially unassigned picture object for an album */
-		@Deprecated
-		public AlbumItemPicture(String thumbnailPictureName, String originalPictureName) {
-			this.pictureID = -1;
-			this.thumbnailPictureName = thumbnailPictureName;
-			this.originalPictureName = originalPictureName;
-			this.albumName = null;
-			this.albumItemID = -1;
-		}
-		
-		/** Creates an initially unassigned picture object for an album */
-		@Deprecated
-		public AlbumItemPicture(String thumbnailPictureName, String originalPictureName, String albumName) {
-			this.pictureID = -1;
-			this.thumbnailPictureName = thumbnailPictureName;
-			this.originalPictureName = originalPictureName;
-			this.albumName = albumName;
-			this.albumItemID = -1;
-		}
-		
-		/** Creates an initially unassigned picture object for an album */
-		public AlbumItemPicture(String thumbnailPictureName, String originalPictureName, String albumName, long albumItemID) {
-			this.thumbnailPictureName = thumbnailPictureName;
-			this.originalPictureName = originalPictureName;
-			this.albumName = albumName;
-			this.albumItemID = albumItemID;
-		}
-		
-		/** Creates an initially unassigned picture object for an album */
-		public AlbumItemPicture(long pictureID, String thumbnailPictureName, String originalPictureName, String albumName, long albumItemID) {
-			this.pictureID = pictureID;
-			this.thumbnailPictureName = thumbnailPictureName;
-			this.originalPictureName = originalPictureName;
-			this.albumName = albumName;
-			this.albumItemID = albumItemID;
-		}
-		
-		/** Returns the picture ID which cannot be set manually. It stays at -1 until it is persisted. 
-		 * Only after it is reloaded from the database, the value will be different to -1 
-		 * @return the database ID, or -1 if not yet stored/reloaded from the database */
-		public long getPictureID() {
-			return pictureID;
-		}	
-		
-		public void setPictureID(long pictureID) {
-			this.pictureID = pictureID;
-		}	
-		
-		public void setThumbnailPictureName(String thumbnailPictureName) {
-			this.thumbnailPictureName = thumbnailPictureName;
-		}
-		
-		public String getOriginalPictureName() {
-			return originalPictureName;
-		}
-		
-		public void setOriginalPictureName(String originalPictureName) {
-			this.originalPictureName = originalPictureName;
-		}		
-		
-		public String getThumbnailPictureName() {
-			return thumbnailPictureName;
-		}
-
-		public String getAlbumName() {
-			return albumName;
-		}
-
-		/** If not set, the album name is automatically initialized when the album item is persisted */
-		public void setAlbumName(String albumName) {
-			this.albumName = albumName;
-		}
-
-		public long getAlbumItemID() {
-			return albumItemID;
-		}
-
-		/** If not set, the album item id is automatically initialized when the album item is persisted */
-		public void setAlbumItemID(long albumItemID) {
-			this.albumItemID = albumItemID;
-		}
-		
-		public String getThumbnailPicturePath() {
-			return FileSystemAccessWrapper.COLLECTOR_HOME_THUMBNAILS_FOLDER + 
-					File.separatorChar + getThumbnailPictureName();
-		}
-		
-		public String getOriginalPicturePath() {
-			return FileSystemAccessWrapper.COLLECTOR_HOME_ALBUM_PICTURES + 
-					File.separatorChar + albumName + File.separatorChar + getOriginalPictureName();
 		}
 	}
 }

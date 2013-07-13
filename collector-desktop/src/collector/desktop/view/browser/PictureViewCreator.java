@@ -5,8 +5,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import collector.desktop.model.album.AlbumItem.AlbumItemPicture;
-import collector.desktop.model.database.DatabaseWrapper;
+import collector.desktop.model.album.AlbumItemPicture;
+import collector.desktop.model.database.DatabaseFacade;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.model.database.exceptions.ExceptionHelper;
 import collector.desktop.view.ApplicationUI;
@@ -23,7 +23,7 @@ public class PictureViewCreator {
 
 		StringBuilder picturePage = new StringBuilder();
 		try {
-			List<AlbumItemPicture> pictures = DatabaseWrapper.getAlbumItemPictures(ApplicationUI.getSelectedAlbum(), albumItemId);
+			List<AlbumItemPicture> pictures = DatabaseFacade.getAlbumItemPictures(ApplicationUI.getSelectedAlbum(), albumItemId);
 			
 			String originalPathToPicture = "";
 			if (pictures.size() >= 1) {

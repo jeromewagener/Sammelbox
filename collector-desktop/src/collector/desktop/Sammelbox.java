@@ -33,6 +33,7 @@ public class Sammelbox {
 			ConnectionManager.openConnection();
 		} catch (DatabaseWrapperOperationException ex){
 			try {
+				LOGGER.warn("Couldn't open a database connection. Will try to open a clean connection instead.");
 				ConnectionManager.openCleanConnection();				
 			} catch (DatabaseWrapperOperationException ex2) {
 				LOGGER.error("The database is corrupt since opening a connection failed. " +
@@ -50,13 +51,13 @@ public class Sammelbox {
 			WelcomePageManager.initializeFromWelcomeFile();
 			
 			Translator.setLanguageFromSettingsOrSystem();
-			// Ensure that folder structure including lock file exists before locking
+			// Ensure that the folder structure including the lock file exists before locking
 			FileSystemAccessWrapper.updateCollectorFileStructure();
 
-			RandomAccessFile randomFile = new RandomAccessFile(FileSystemAccessWrapper.LOCK_FILE, "rw");
-			FileChannel channel = randomFile.getChannel();
+			RandomAccessFile lockFile = new RandomAccessFile(FileSystemAccessWrapper.LOCK_FILE, "rw");
+			FileChannel fileChannel = lockFile.getChannel();
 
-			if (channel.tryLock() != null) {
+			if (fileChannel.tryLock() != null) {
 				// Initialize the Database connection
 				setupConnectionAndFilesystem();
 
@@ -67,8 +68,8 @@ public class Sammelbox {
 				ConnectionManager.closeConnection();
 
 				// close file & channel
-				channel.close();
-				randomFile.close();
+				fileChannel.close();
+				lockFile.close();
 			} else {
 				ComponentFactory.getMessageBox(ApplicationUI.getShell(), 
 						Translator.get(DictKeys.DIALOG_TITLE_PROGRAM_IS_RUNNING), 

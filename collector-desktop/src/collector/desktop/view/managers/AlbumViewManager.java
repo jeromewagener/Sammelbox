@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import collector.desktop.controller.events.EventObservable;
 import collector.desktop.controller.events.SammelboxEvent;
 import collector.desktop.controller.filesystem.FileSystemAccessWrapper;
-import collector.desktop.model.database.DatabaseWrapper;
+import collector.desktop.model.database.DatabaseFacade;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.model.database.exceptions.ExceptionHelper;
 
@@ -77,7 +77,7 @@ public class AlbumViewManager {
 		
 		for (AlbumView albumView : FileSystemAccessWrapper.loadViews()) {
 			try {
-				if (DatabaseWrapper.listAllAlbums().contains(albumView.getAlbum())) {
+				if (DatabaseFacade.listAllAlbums().contains(albumView.getAlbum())) {
 					validAlbumViews.add(albumView);
 				}
 			} catch (DatabaseWrapperOperationException ex) {

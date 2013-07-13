@@ -12,7 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import collector.desktop.controller.filesystem.FileSystemAccessWrapper;
-import collector.desktop.model.album.AlbumItem.AlbumItemPicture;
+import collector.desktop.model.album.AlbumItemPicture;
 import collector.desktop.model.database.exceptions.ExceptionHelper;
 import collector.desktop.view.ApplicationUI;
 
@@ -24,7 +24,7 @@ public class ImageManipulator {
 	/** The maximum width of a thumb nail in pixels. Only originals with a higher resolution will be resized */
 	private final static int MAX_WIDTH_IN_PIXELS = 200;
 	
-	/** This method is used to copy originals, and create thumbnails, within the picture folder
+	/** This method is used to copy originals, and create thumb nails, within the picture folder
 	 * @param pictureFile the original image
 	 * @param album the album to which the image should be assigned 
 	 * @return a picture pointing to the location of the original file and thumb nail within the album */	
@@ -68,7 +68,7 @@ public class ImageManipulator {
 
 			FileSystemAccessWrapper.copyFile(new File(pictureFile.getPath()), new File(newFileLocationForOriginal));
 						
-			return new AlbumItemPicture(newFileNameForThumbnail, newFileNameForOriginal, album);
+			return new AlbumItemPicture(newFileNameForThumbnail, newFileNameForOriginal, album, AlbumItemPicture.PICTURE_ID_UNDEFINED);
 			
 		} catch (Exception ex) {
 			LOGGER.error("An error occured while manipulating an image \n Stacktrace: " + ExceptionHelper.toString(ex));

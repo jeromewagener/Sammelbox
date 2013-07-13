@@ -28,7 +28,7 @@ import collector.desktop.controller.filesystem.FileSystemAccessWrapper;
 import collector.desktop.model.album.FieldType;
 import collector.desktop.model.album.MetaItemField;
 import collector.desktop.model.database.AlbumItemStore;
-import collector.desktop.model.database.DatabaseWrapper;
+import collector.desktop.model.database.DatabaseFacade;
 import collector.desktop.model.database.QueryBuilder;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.model.database.exceptions.ExceptionHelper;
@@ -278,7 +278,7 @@ public class CreateAlbumSidepane {
 				String albumName = albumNameText.getText();
 
 				try {
-					if (!DatabaseWrapper.albumNameIsAvailable(albumName)) {
+					if (!DatabaseFacade.albumNameIsAvailable(albumName)) {
 						ComponentFactory.getMessageBox(
 								parentComposite, 
 								Translator.get(DictKeys.DIALOG_TITLE_ALBUM_NAME_ALREADY_USED), 
@@ -317,7 +317,7 @@ public class CreateAlbumSidepane {
 				}
 
 				try {
-					DatabaseWrapper.createNewAlbum(albumName, metaItemFields, willContainImages);
+					DatabaseFacade.createNewAlbum(albumName, metaItemFields, willContainImages);
 				} catch (DatabaseWrapperOperationException failedDatabaseWrapperOperationException) {
 					ComponentFactory.getMessageBox(
 							parentComposite, 

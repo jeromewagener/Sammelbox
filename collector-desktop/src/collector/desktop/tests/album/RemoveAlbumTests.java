@@ -14,7 +14,7 @@ import org.junit.Test;
 
 import collector.desktop.model.album.FieldType;
 import collector.desktop.model.album.MetaItemField;
-import collector.desktop.model.database.DatabaseWrapper;
+import collector.desktop.model.database.DatabaseFacade;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.tests.CollectorTestExecuter;
 
@@ -47,7 +47,7 @@ public class RemoveAlbumTests {
 		columns.add(lenttoField);
 
 		try {
-			DatabaseWrapper.createNewAlbum(albumName, columns, true);
+			DatabaseFacade.createNewAlbum(albumName, columns, true);
 		}catch (DatabaseWrapperOperationException e) {
 			fail("Creation of album" + albumName + " failed");
 		}	
@@ -63,13 +63,13 @@ public class RemoveAlbumTests {
 		final String albumName = "Books";
 		
 		try {
-			DatabaseWrapper.removeAlbum(albumName);		
+			DatabaseFacade.removeAlbum(albumName);		
 		} catch (DatabaseWrapperOperationException e) {
 			fail ("Could not remove album: " + albumName);
 		}
 		
 		try {
-			List<String> albums = DatabaseWrapper.listAllAlbums();
+			List<String> albums = DatabaseFacade.listAllAlbums();
 			Assert.assertFalse(albums.contains(albumName));
 		} catch (DatabaseWrapperOperationException e) {
 			fail("Could not fetch album: " + albumName);

@@ -43,7 +43,7 @@ public class ConnectionManager {
 			}
 			
 			// Create the album master table if it does not exist 
-			DatabaseWrapper.createAlbumMasterTableIfItDoesNotExist();
+			DatabaseWrapperImpl.createAlbumMasterTableIfItDoesNotExist();
 
 			// Run a fetch  to check if the database connection is up and running
 			if (ConnectionManager.isConnectionReady() == false) {
@@ -76,7 +76,7 @@ public class ConnectionManager {
 		try {
 			// Querying all albums should be successful on all working databases, independently of how many albums are stored.
 			// If not, (e.g. due to connection problems) or missing albums, indicate the failure
-			if (ConnectionManager.connection == null || ConnectionManager.connection.isClosed() || DatabaseWrapper.listAllAlbums() == null) {			
+			if (ConnectionManager.connection == null || ConnectionManager.connection.isClosed() || DatabaseFacade.listAllAlbums() == null) {			
 				return false;
 			}
 		} catch (Exception ex) {

@@ -13,8 +13,8 @@ import org.junit.Test;
 
 import collector.desktop.model.database.AlbumItemResultSet;
 import collector.desktop.model.database.ConnectionManager;
+import collector.desktop.model.database.DatabaseFacade;
 import collector.desktop.model.database.DatabaseIntegrityManager;
-import collector.desktop.model.database.DatabaseWrapper;
 import collector.desktop.model.database.QueryBuilder;
 import collector.desktop.model.database.QueryBuilder.QueryComponent;
 import collector.desktop.model.database.QueryBuilder.QueryOperator;
@@ -46,7 +46,7 @@ public class AdvancedSearchTests {
 	public void testSearchForTitleInDVDsUsingSQL() {
 		try {
 			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
-			AlbumItemResultSet searchResults = DatabaseWrapper.executeSQLQuery("SELECT * FROM DVDs WHERE Title = 'The Simpsons Movie'");
+			AlbumItemResultSet searchResults = DatabaseFacade.executeSQLQuery("SELECT * FROM DVDs WHERE Title = 'The Simpsons Movie'");
 			assertTrue("Resultset should not be null", searchResults != null);
 
 			int counter = 0;
@@ -70,7 +70,7 @@ public class AdvancedSearchTests {
 	public void testSearchForTitleAndActorsInDVDsUsingSQL() {
 		try {
 			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
-			AlbumItemResultSet searchResults = DatabaseWrapper.executeSQLQuery(
+			AlbumItemResultSet searchResults = DatabaseFacade.executeSQLQuery(
 					"SELECT * FROM DVDs WHERE Title = 'The Simpsons Movie' and Actors = 'The Simpsons'");
 			assertTrue("Resultset should not be null", searchResults != null);
 
@@ -97,7 +97,7 @@ public class AdvancedSearchTests {
 			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
 			ArrayList<QueryComponent> queryComponents = new ArrayList<QueryComponent>();
 			queryComponents.add(QueryBuilder.getQueryComponent("Title", QueryOperator.equals, "Short Circuit 2"));
-			AlbumItemResultSet searchResults = DatabaseWrapper.executeSQLQuery(
+			AlbumItemResultSet searchResults = DatabaseFacade.executeSQLQuery(
 					QueryBuilder.buildQuery(queryComponents, true, "DVDs"));
 
 			assertTrue("Resultset should not be null", searchResults != null);
@@ -128,7 +128,7 @@ public class AdvancedSearchTests {
 			queryComponents.add(QueryBuilder.getQueryComponent("Title", QueryOperator.equals, "Short Circuit 2"));
 			queryComponents.add(QueryBuilder.getQueryComponent("Actors", QueryOperator.equals, "Cynthia Gibb, Fisher Stevens"));
 
-			AlbumItemResultSet searchResults = DatabaseWrapper.executeSQLQuery(
+			AlbumItemResultSet searchResults = DatabaseFacade.executeSQLQuery(
 					QueryBuilder.buildQuery(queryComponents, true, "DVDs"));
 
 			assertTrue("Resultset should not be null", searchResults != null);
@@ -159,7 +159,7 @@ public class AdvancedSearchTests {
 			queryComponents.add(QueryBuilder.getQueryComponent("Title", QueryOperator.equals, "Short Circuit 2"));
 			queryComponents.add(QueryBuilder.getQueryComponent("Title", QueryOperator.equals, "One Flew Over The Cuckoo's Nest"));
 			queryComponents.add(QueryBuilder.getQueryComponent("Title", QueryOperator.equals, "RED"));
-			AlbumItemResultSet searchResults = DatabaseWrapper.executeSQLQuery(QueryBuilder.buildQuery(queryComponents, false, "DVDs"));
+			AlbumItemResultSet searchResults = DatabaseFacade.executeSQLQuery(QueryBuilder.buildQuery(queryComponents, false, "DVDs"));
 
 			assertTrue("Resultset should not be null", searchResults != null);
 
@@ -188,7 +188,7 @@ public class AdvancedSearchTests {
 			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
 			ArrayList<QueryComponent> queryComponents = new ArrayList<QueryComponent>();
 			queryComponents.add(QueryBuilder.getQueryComponent("Author", QueryOperator.like, "Helm"));
-			AlbumItemResultSet searchResults = DatabaseWrapper.executeSQLQuery(
+			AlbumItemResultSet searchResults = DatabaseFacade.executeSQLQuery(
 					QueryBuilder.buildQuery(queryComponents, true, "Books"));
 
 			assertTrue("Resultset should not be null", searchResults != null);
@@ -219,7 +219,7 @@ public class AdvancedSearchTests {
 			queryComponents.add(QueryBuilder.getQueryComponent("Book Title", QueryOperator.like, "Code"));
 			queryComponents.add(QueryBuilder.getQueryComponent("Book Title", QueryOperator.like, "Design"));
 			queryComponents.add(QueryBuilder.getQueryComponent("Book Title", QueryOperator.like, "Programmer"));
-			AlbumItemResultSet searchResults = DatabaseWrapper.executeSQLQuery(
+			AlbumItemResultSet searchResults = DatabaseFacade.executeSQLQuery(
 					QueryBuilder.buildQuery(queryComponents, false, "Books"));
 
 			assertTrue("Resultset should not be null", searchResults != null);
@@ -249,7 +249,7 @@ public class AdvancedSearchTests {
 			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
 			ArrayList<QueryComponent> queryComponents = new ArrayList<QueryComponent>();
 			queryComponents.add(QueryBuilder.getQueryComponent("Price", QueryOperator.biggerThan, "30.0"));
-			AlbumItemResultSet searchResults = DatabaseWrapper.executeSQLQuery(
+			AlbumItemResultSet searchResults = DatabaseFacade.executeSQLQuery(
 					QueryBuilder.buildQuery(queryComponents, true, "Books"));
 
 			assertTrue("Resultset should not be null", searchResults != null);
@@ -271,7 +271,7 @@ public class AdvancedSearchTests {
 			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
 			ArrayList<QueryComponent> queryComponents = new ArrayList<QueryComponent>();
 			queryComponents.add(QueryBuilder.getQueryComponent("Price", QueryOperator.biggerOrEqualThan, "30.0"));
-			AlbumItemResultSet searchResults = DatabaseWrapper.executeSQLQuery(
+			AlbumItemResultSet searchResults = DatabaseFacade.executeSQLQuery(
 					QueryBuilder.buildQuery(queryComponents, true, "Books"));
 
 			assertTrue("Resultset should not be null", searchResults != null);
@@ -293,7 +293,7 @@ public class AdvancedSearchTests {
 			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
 			ArrayList<QueryComponent> queryComponents = new ArrayList<QueryComponent>();
 			queryComponents.add(QueryBuilder.getQueryComponent("Artist", QueryOperator.equals, "Rick Astley"));
-			AlbumItemResultSet searchResults = DatabaseWrapper.executeSQLQuery(
+			AlbumItemResultSet searchResults = DatabaseFacade.executeSQLQuery(
 					QueryBuilder.buildQuery(queryComponents, true, "Music CDs"));
 
 			assertTrue("Resultset should not be null", searchResults != null);
