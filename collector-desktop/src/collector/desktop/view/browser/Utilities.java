@@ -1,5 +1,6 @@
 package collector.desktop.view.browser;
 
+import java.io.File;
 import java.io.InputStream;
 
 import org.eclipse.swt.SWT;
@@ -159,6 +160,10 @@ public class Utilities {
 									"tbody.parentNode.replaceChild(temp.firstChild.firstChild, tbody); ";
 
 				ApplicationUI.getAlbumItemSWTBrowser().execute(javascript);
+				
+				// FIXME remove
+				FileSystemAccessWrapper.writeToFile(ApplicationUI.getAlbumItemSWTBrowser().getText(),
+						FileSystemAccessWrapper.COLLECTOR_HOME + File.separatorChar + "browser.html");
 			}
 		} else {
 			if (!AlbumItemStore.isStopIndexAtEnd()) {
@@ -175,6 +180,10 @@ public class Utilities {
 									"div.innerHTML = div.innerHTML + '" + divs + "';";
 
 				ApplicationUI.getAlbumItemSWTBrowser().execute(javascript);
+				
+				// FIXME remove
+				FileSystemAccessWrapper.writeToFile(ApplicationUI.getAlbumItemSWTBrowser().getText(),
+						FileSystemAccessWrapper.COLLECTOR_HOME + File.separatorChar + "browser.html");
 			}
 		}
 	}

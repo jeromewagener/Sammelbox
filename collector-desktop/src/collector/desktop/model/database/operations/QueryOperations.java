@@ -344,27 +344,27 @@ public class QueryOperations {
 			// For each albumItem
 			while (rs.next()) {
 				// Create a new AlbumItem instance
-				AlbumItem item = new AlbumItem("");
+				AlbumItem albumItem = new AlbumItem("");
 				// Each ItemField
 				for (int columnIndex = 1; columnIndex <= columnCount; columnIndex++) {
 
 					// Add new field
 					String fieldName = metaData.getColumnName(columnIndex);
 					String albumName = metaData.getTableName(1);
-					item.setAlbumName(albumName);
+					albumItem.setAlbumName(albumName);
 					FieldType type = HelperOperations.detectDataType(albumName, fieldName);
 					Object value = HelperOperations.fetchFieldItemValue(rs, columnIndex, type, albumName);
 					boolean quicksearchable = isAlbumFieldQuicksearchable(albumName, fieldName);
 					// omit the typeinfo field and set the contentVersion separately
 					if (type == FieldType.ID && fieldName.endsWith(DatabaseConstants.TYPE_INFO_COLUMN_NAME)){
 						continue;
-					}else if (type.equals(FieldType.UUID) && fieldName.equals(DatabaseConstants.CONTENT_VERSION_COLUMN_NAME)) {
-						item.setContentVersion((UUID) value);
-					}else {
-						item.addField(fieldName, type, value, quicksearchable);
+					} else if (type.equals(FieldType.UUID) && fieldName.equals(DatabaseConstants.CONTENT_VERSION_COLUMN_NAME)) {
+						albumItem.setContentVersion((UUID) value);
+					} else {
+						albumItem.addField(fieldName, type, value, quicksearchable);
 					}
 				}
-				list.add(item);
+				list.add(albumItem);
 			}
 
 		} catch (SQLException e) {

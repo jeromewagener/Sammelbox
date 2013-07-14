@@ -78,7 +78,7 @@ public class Sammelbox {
 			}
 		} catch (Exception ex) {
 			LOGGER.error("Sammelbox crashed", ex);
-		}finally {
+		} finally {
 			LOGGER.trace("Sammelbox stopped");
 		}
 	}
