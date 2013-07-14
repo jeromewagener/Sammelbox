@@ -1,6 +1,5 @@
 package collector.desktop.view.browser;
 
-import java.io.File;
 import java.io.InputStream;
 
 import org.eclipse.swt.SWT;
@@ -159,11 +158,11 @@ public class Utilities {
 									"temp.innerHTML = '<table>' + tbody.innerHTML + '" + rows + "</table>'; " +
 									"tbody.parentNode.replaceChild(temp.firstChild.firstChild, tbody); ";
 
-				ApplicationUI.getAlbumItemSWTBrowser().execute(javascript);
 				
-				// FIXME remove
-				FileSystemAccessWrapper.writeToFile(ApplicationUI.getAlbumItemSWTBrowser().getText(),
-						FileSystemAccessWrapper.COLLECTOR_HOME + File.separatorChar + "browser.html");
+				// In JavaScript (as in Java), a backslash will escape the following character. 
+				// However, Windows uses the backslash also as the file separator character. For this reason 
+				// we have to escape possible backslashes by using the backslash character itself
+				ApplicationUI.getAlbumItemSWTBrowser().execute(javascript.replace("\\", "\\\\"));
 			}
 		} else {
 			if (!AlbumItemStore.isStopIndexAtEnd()) {
@@ -179,11 +178,10 @@ public class Utilities {
 				String javascript = "var div = document.getElementById('albumItems');" +
 									"div.innerHTML = div.innerHTML + '" + divs + "';";
 
-				ApplicationUI.getAlbumItemSWTBrowser().execute(javascript);
-				
-				// FIXME remove
-				FileSystemAccessWrapper.writeToFile(ApplicationUI.getAlbumItemSWTBrowser().getText(),
-						FileSystemAccessWrapper.COLLECTOR_HOME + File.separatorChar + "browser.html");
+				// In JavaScript (as in Java), a backslash will escape the following character. 
+				// However, Windows uses the backslash also as the file separator character. For this reason 
+				// we have to escape possible backslashes by using the backslash character itself
+				ApplicationUI.getAlbumItemSWTBrowser().execute(javascript.replace("\\", "\\\\"));
 			}
 		}
 	}
