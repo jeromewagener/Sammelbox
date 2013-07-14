@@ -6,9 +6,9 @@ import java.io.IOException;
 import java.util.List;
 
 import collector.desktop.model.album.AlbumItem;
+import collector.desktop.model.album.AlbumItemStore;
 import collector.desktop.model.album.FieldType;
 import collector.desktop.model.album.OptionType;
-import collector.desktop.model.database.AlbumItemStore;
 import collector.desktop.view.internationalization.DictKeys;
 import collector.desktop.view.internationalization.Translator;
 

@@ -1,4 +1,4 @@
-package collector.desktop.model.database;
+package collector.desktop.model.database.utilities;
 
 import java.util.ArrayList;
 

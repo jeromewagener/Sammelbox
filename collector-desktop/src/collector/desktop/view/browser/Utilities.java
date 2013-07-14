@@ -11,11 +11,11 @@ import org.slf4j.LoggerFactory;
 import collector.desktop.controller.GuiController;
 import collector.desktop.controller.filesystem.FileSystemAccessWrapper;
 import collector.desktop.model.album.AlbumItem;
-import collector.desktop.model.database.AlbumItemResultSet;
-import collector.desktop.model.database.AlbumItemStore;
-import collector.desktop.model.database.DatabaseFacade;
+import collector.desktop.model.album.AlbumItemResultSet;
+import collector.desktop.model.album.AlbumItemStore;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.model.database.exceptions.ExceptionHelper;
+import collector.desktop.model.database.operations.DatabaseOperations;
 import collector.desktop.view.ApplicationUI;
 
 public class Utilities {
@@ -39,7 +39,7 @@ public class Utilities {
 
 	static void performBrowserQueryAndShow(Browser browser, String sqlQuery) {				
 		try {
-			AlbumItemStore.reinitializeStore(DatabaseFacade.executeSQLQuery(sqlQuery));
+			AlbumItemStore.reinitializeStore(DatabaseOperations.executeSQLQuery(sqlQuery));
 		} catch (DatabaseWrapperOperationException ex) {
 			LOGGER.error("An error occured while reinitializing the album item store using the following SQL query (" + sqlQuery + ") " +
 					"\n Stacktrace:" + ExceptionHelper.toString(ex));

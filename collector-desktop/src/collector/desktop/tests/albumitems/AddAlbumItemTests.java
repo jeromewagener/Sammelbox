@@ -23,8 +23,8 @@ import collector.desktop.model.album.ItemField;
 import collector.desktop.model.album.MetaItemField;
 import collector.desktop.model.album.OptionType;
 import collector.desktop.model.album.StarRating;
-import collector.desktop.model.database.DatabaseFacade;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
+import collector.desktop.model.database.operations.DatabaseOperations;
 import collector.desktop.tests.CollectorTestExecuter;
 
 public class AddAlbumItemTests {
@@ -67,18 +67,18 @@ public class AddAlbumItemTests {
 		item.setFields(fields);
 		item.setContentVersion(UUID.randomUUID());
 		try {
-			long newAlbumID = DatabaseFacade.addNewAlbumItem(item, false);
+			long newAlbumID = DatabaseOperations.addAlbumItem(item, false);
 			if (newAlbumID == -1) {
 				fail("Album Item could not be inserted into album");
 			}
 
-			AlbumItem actualAlbumItem = DatabaseFacade.fetchAlbumItem(albumName, newAlbumID);
+			AlbumItem actualAlbumItem = DatabaseOperations.getAlbumItem(albumName, newAlbumID);
 
 			if (actualAlbumItem == null) {
 				fail("Inserted album item could not be retrieved");
 			}
 
-			List<MetaItemField> metaItemFields = DatabaseFacade.getAlbumItemFieldNamesAndTypes(albumName);
+			List<MetaItemField> metaItemFields = DatabaseOperations.getAlbumItemFieldNamesAndTypes(albumName);
 
 			for (MetaItemField metaItemField : metaItemFields) {
 				for (ItemField itemField : fields) {
@@ -114,17 +114,17 @@ public class AddAlbumItemTests {
 		item.setFields(fields);
 		
 		try {
-			long newAlbumID = DatabaseFacade.addNewAlbumItem(item, true);
+			long newAlbumID = DatabaseOperations.addAlbumItem(item, true);
 			if (newAlbumID == -1) {
 				fail("Album Item could not be inserted into album");
 			}
 
-			AlbumItem actualAlbumItem = DatabaseFacade.fetchAlbumItem(albumName, newAlbumID);
+			AlbumItem actualAlbumItem = DatabaseOperations.getAlbumItem(albumName, newAlbumID);
 			if (actualAlbumItem == null) {
 				fail("Inserted album item could not be retrieved");
 			}
 
-			List<MetaItemField> metaItemFields = DatabaseFacade.getAlbumItemFieldNamesAndTypes(albumName);
+			List<MetaItemField> metaItemFields = DatabaseOperations.getAlbumItemFieldNamesAndTypes(albumName);
 
 			for (MetaItemField metaItemField : metaItemFields) {
 				for (ItemField itemField : fields) {
@@ -162,17 +162,17 @@ public class AddAlbumItemTests {
 		item.setFields(fields);
 		
 		try {
-			long newAlbumID = DatabaseFacade.addNewAlbumItem(item, true);
+			long newAlbumID = DatabaseOperations.addAlbumItem(item, true);
 			if (newAlbumID == -1) {
 				fail("Album Item could not be inserted into album");
 			}
 
-			AlbumItem actualAlbumItem = DatabaseFacade.fetchAlbumItem(albumName, newAlbumID);
+			AlbumItem actualAlbumItem = DatabaseOperations.getAlbumItem(albumName, newAlbumID);
 			if (actualAlbumItem == null) {
 				fail("Inserted album item could not be retrieved");
 			}
 
-			List<MetaItemField> metaItemFields = DatabaseFacade.getAlbumItemFieldNamesAndTypes(albumName);
+			List<MetaItemField> metaItemFields = DatabaseOperations.getAlbumItemFieldNamesAndTypes(albumName);
 			for (MetaItemField metaItemField : metaItemFields) {
 				for (ItemField itemField : fields) {
 					if (itemField.getName().equals(metaItemField.getName())) {
@@ -214,7 +214,7 @@ public class AddAlbumItemTests {
 		columns.add(timeStamp);
 		
 		try {
-			DatabaseFacade.createNewAlbum(albumName, columns, true);
+			DatabaseOperations.createNewAlbum(albumName, columns, true);
 		} catch (DatabaseWrapperOperationException e) {
 			fail("Creation of album"+ albumName + "failed");
 		}

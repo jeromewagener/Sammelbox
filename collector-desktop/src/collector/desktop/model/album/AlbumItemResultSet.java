@@ -1,4 +1,4 @@
-package collector.desktop.model.database;
+package collector.desktop.model.album;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -11,10 +11,10 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import collector.desktop.model.album.FieldType;
-import collector.desktop.model.album.MetaItemField;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException.DBErrorState;
+import collector.desktop.model.database.operations.DatabaseConstants;
+import collector.desktop.model.database.operations.DatabaseOperations;
 
 public class AlbumItemResultSet {
 	private ResultSet items;
@@ -36,7 +36,7 @@ public class AlbumItemResultSet {
 			this.items = statement.executeQuery(sqlStatement);
 			this.metaData = items.getMetaData();
 			this.albumName = metaData.getTableName(1);			
-			this.metaInfoMap = DatabaseFacade.getAlbumItemMetaMap(albumName);
+			this.metaInfoMap = DatabaseOperations.getAlbumItemMetaMap(albumName);
 		} catch (SQLException sqlException) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState);
 		}		
@@ -118,7 +118,7 @@ public class AlbumItemResultSet {
 		FieldType type =  metaInfoMap.get(fieldIndex).getType();
 		Object outValue = null;
 		try {
-			outValue = DatabaseFacade.fetchFieldItemValue(items, fieldIndex, type, albumName);
+			outValue = DatabaseOperations.fetchFieldItemValue(items, fieldIndex, type, albumName);
 			return (T)outValue;
 		} catch (DatabaseWrapperOperationException e) {
 			LOGGER.error("Fetching the field value for the index {} failed", fieldIndex);
@@ -162,7 +162,7 @@ public class AlbumItemResultSet {
 	 * @return True if the field is of type FieldType.ID. False otherwise.
 	 */
 	public boolean isItemID(int fieldIndex) {
-		if (getFieldName(fieldIndex).equals(DatabaseWrapperImpl.TYPE_INFO_COLUMN_NAME)) {
+		if (getFieldName(fieldIndex).equals(DatabaseConstants.TYPE_INFO_COLUMN_NAME)) {
 			return false;
 		}
 		return true; 

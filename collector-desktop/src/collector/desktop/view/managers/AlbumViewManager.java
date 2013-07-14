@@ -9,9 +9,9 @@ import org.slf4j.LoggerFactory;
 import collector.desktop.controller.events.EventObservable;
 import collector.desktop.controller.events.SammelboxEvent;
 import collector.desktop.controller.filesystem.FileSystemAccessWrapper;
-import collector.desktop.model.database.DatabaseFacade;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.model.database.exceptions.ExceptionHelper;
+import collector.desktop.model.database.operations.DatabaseOperations;
 
 public class AlbumViewManager {
 	private final static Logger LOGGER = LoggerFactory.getLogger(AlbumViewManager.class);
@@ -77,7 +77,7 @@ public class AlbumViewManager {
 		
 		for (AlbumView albumView : FileSystemAccessWrapper.loadViews()) {
 			try {
-				if (DatabaseFacade.listAllAlbums().contains(albumView.getAlbum())) {
+				if (DatabaseOperations.getListOfAllAlbums().contains(albumView.getAlbum())) {
 					validAlbumViews.add(albumView);
 				}
 			} catch (DatabaseWrapperOperationException ex) {

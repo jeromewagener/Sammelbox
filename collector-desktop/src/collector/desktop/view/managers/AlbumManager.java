@@ -9,9 +9,9 @@ import org.slf4j.LoggerFactory;
 import collector.desktop.controller.events.EventObservable;
 import collector.desktop.controller.events.SammelboxEvent;
 import collector.desktop.controller.filesystem.FileSystemAccessWrapper;
-import collector.desktop.model.database.DatabaseFacade;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.model.database.exceptions.ExceptionHelper;
+import collector.desktop.model.database.operations.DatabaseOperations;
 
 public class AlbumManager {
 	private final static Logger LOGGER = LoggerFactory.getLogger(AlbumManager.class);
@@ -25,13 +25,13 @@ public class AlbumManager {
 		albums = FileSystemAccessWrapper.loadAlbums();
 		
 		try {
-			for (String album : DatabaseFacade.listAllAlbums()) {
+			for (String album : DatabaseOperations.getListOfAllAlbums()) {
 				if (!albums.contains(album)) {
 					albums.add(album);
 				}
 			}
 
-			albums.retainAll(DatabaseFacade.listAllAlbums());
+			albums.retainAll(DatabaseOperations.getListOfAllAlbums());
 
 		} catch (DatabaseWrapperOperationException ex) {
 			LOGGER.error("A problem occured while retrieving the list of albums from the database \n Stacktrace: " + ExceptionHelper.toString(ex));

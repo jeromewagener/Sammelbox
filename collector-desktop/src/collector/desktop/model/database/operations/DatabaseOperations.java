@@ -1,19 +1,17 @@
-package collector.desktop.model.database;
+package collector.desktop.model.database.operations;
 
 import java.sql.ResultSet;
 import java.util.List;
 import java.util.Map;
 
 import collector.desktop.model.album.AlbumItem;
+import collector.desktop.model.album.AlbumItemResultSet;
 import collector.desktop.model.album.FieldType;
 import collector.desktop.model.album.MetaItemField;
 import collector.desktop.model.album.AlbumItemPicture;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
 
-public class DatabaseFacade {
-	/** The default name for ID columns */
-	public static final String ID_COLUMN_NAME = "id";
-	
+public class DatabaseOperations {	
 	/**
 	 * Creates a new album according to the specified properties.
 	 * @param albumName The name of the album to be created.
@@ -23,113 +21,7 @@ public class DatabaseFacade {
 	 * @throws DatabaseWrapperOperationException 
 	 */
 	public static void createNewAlbum(String albumName, List<MetaItemField> fields, boolean hasAlbumPictures) throws DatabaseWrapperOperationException {
-		DatabaseWrapperImpl.createNewAlbum(albumName, fields, hasAlbumPictures);
-	}
-	
-	/**
-	 * Permanently renames an album in the specified database
-	 * @param oldAlbumName The old name of the album to be renamed
-	 * @param newAlbumName The new name of the album.
-	 * @throws DatabaseWrapperOperationException 
-	 */
-	public static void renameAlbum(String oldAlbumName, String newAlbumName) throws DatabaseWrapperOperationException {	
-		DatabaseWrapperImpl.renameAlbum(oldAlbumName, newAlbumName);
-	}
-	
-	/**
-	 * Permanently removes a field from an album. Removing fields of type ID is not allowed.
-	 * @param albumName The name of the album to be removed.
-	 * @param metaItemField A description, name, type and quicksearch flag of the original metaItemField. 
-	 * The object does not need to be a reference to the original metaItemfield of the album but in order to delete the item field
-	 * ALL values of the meta item field have to be set correctly including the quicksearch flag.
-	 * To remove pictures please use {@link removePictureField}
-	 * @throws DatabaseWrapperOperationException 
-	 */
-	public static void removeAlbumItemField(String albumName, MetaItemField metaItemField) throws DatabaseWrapperOperationException {
-		DatabaseWrapperImpl.removeAlbumItemField(albumName, metaItemField);
-	}
-	
-	/**
-	 * Renames the field specified in oldMetaItemField to the name in newMetaItemField. No type change nor renaming fields of type ID is allowed.
-	 * @param albumName The name of the album to which the item belongs.
-	 * @param oldMetaItemField A description of the original metaItemField, no need for direct reference.
-	 * A description, name, type and quicksearch flag of the original metaItemField. In order to rename the item field
-	 * ALL values of the meta item field have to be set correctly including the quicksearch flag.
-	 * @param newMetaItemField A description of the new metaItemField, no need for direct reference.
-	 * @throws DatabaseWrapperOperationException 
-	 */
-	public static void renameAlbumItemField(String albumName, MetaItemField oldMetaItemField, MetaItemField newMetaItemField) throws DatabaseWrapperOperationException {
-		DatabaseWrapperImpl.renameAlbumItemField(albumName, oldMetaItemField, newMetaItemField);
-	}
-	
-	/**
-	 * Moves the specified field to a the position directly after the column with the name moveAfterColumnName.
-	 * @param albumName The name of the album to which the item belongs.
-	 * @param metaItemField The metadata to identify the field (column) to be moved.
-	 * @param preceedingField The field (column) which is preceeding the field after the reordering. 
-	 * @throws DatabaseWrapperOperationException 
-	 */
-	public static void reorderAlbumItemField(String albumName, MetaItemField metaItemField, MetaItemField preceedingField) throws DatabaseWrapperOperationException {
-		DatabaseWrapperImpl.reorderAlbumItemField(albumName, metaItemField, preceedingField);
-	}
-	
-	/**
-	 * Sets the ability of albumField to the value found in the metaItemField describing that field.
-	 * @param albumName The name of the album to which the item belongs.
-	 * @param metaItemField The field (column) to be set quicksearchable.
-	 * @throws DatabaseWrapperOperationException 
-	 */
-	public static void setQuickSearchable(String albumName, MetaItemField metaItemField) throws DatabaseWrapperOperationException {
-		DatabaseWrapperImpl.setQuickSearchable(albumName, metaItemField);
-	}
-	
-	// TODO comment
-	public static void removeAlbumAndAlbumPictures(String albumName) throws DatabaseWrapperOperationException {
-		DatabaseWrapperImpl.removeAlbumAndAlbumPictures(albumName);
-	}
-	
-	/**
-	 * Permanently removes an album along with its typeInfo metadata.
-	 * @param albumName The name of the album which is to be removed.
-	 * @throws DatabaseWrapperOperationException 
-	 */
-	public static void removeAlbum(String albumName) throws DatabaseWrapperOperationException {
-		DatabaseWrapperImpl.removeAlbum(albumName);
-	}
-	
-	// TODO comment
-	public static void removeAlbumPictures(String albumName) throws DatabaseWrapperOperationException {
-		DatabaseWrapperImpl.removeAlbumPictures(albumName);
-	}
-	
-	/**
-	 * Appends new field to the end of the album. Fields with the type FieldType.ID or FieldType.Picture fail the whole operation, no fields will be added then.
-	 * @param albumName The name of the album to be modified.
-	 * @param metaItemField The metaItemField to be appended to the album. Must not be null for successful insertion
-	 * @throws DatabaseWrapperOperationException 
-	 */
-	public static void appendNewAlbumField(String albumName, MetaItemField metaItemField) throws DatabaseWrapperOperationException {
-		DatabaseWrapperImpl.appendNewAlbumField(albumName, metaItemField);
-	}
-	
-	/**
-	 * Enables or disables the picture functionality for a given album
-	 * @param albumName The name of the album which is concerned
-	 * @param albumPicturesEnabled true if pictures are enabled, false otherwise
-	 * @throws DatabaseWrapperOperationException 
-	 */
-	public static void setAlbumPictureFunctionality(String albumName, boolean albumPicturesEnabled) throws DatabaseWrapperOperationException {
-		DatabaseWrapperImpl.setAlbumPictureFunctionality(albumName, albumPicturesEnabled);
-	}
-	
-	/**
-	 * Indicates whether the album contains a picture field.
-	 * @param albumName The name of the album to be queried.
-	 * @return True if the album contains a picture field, false otherwise.
-	 * @throws DatabaseWrapperOperationException 
-	 */
-	public static boolean albumHasPictureField(String albumName) throws DatabaseWrapperOperationException {	
-		return DatabaseWrapperImpl.albumHasPictureField(albumName);
+		CreateOperations.createNewAlbum(albumName, fields, hasAlbumPictures);
 	}
 	
 	/**
@@ -142,8 +34,72 @@ public class DatabaseFacade {
 	 * @return The ID of the newly added item.
 	 * @throws DatabaseWrapperOperationException 
 	 */
-	public static long addNewAlbumItem(AlbumItem item, boolean updateContentVersion) throws DatabaseWrapperOperationException {
-		return DatabaseWrapperImpl.addNewAlbumItem(item, updateContentVersion);
+	public static long addAlbumItem(AlbumItem item, boolean updateContentVersion) throws DatabaseWrapperOperationException {
+		return CreateOperations.addAlbumItem(item, updateContentVersion);
+	}
+	
+	/**
+	 * Permanently renames an album in the specified database
+	 * @param oldAlbumName The old name of the album to be renamed
+	 * @param newAlbumName The new name of the album.
+	 * @throws DatabaseWrapperOperationException 
+	 */
+	public static void renameAlbum(String oldAlbumName, String newAlbumName) throws DatabaseWrapperOperationException {	
+		UpdateOperations.renameAlbum(oldAlbumName, newAlbumName);
+	}
+	
+	/**
+	 * Renames the field specified in oldMetaItemField to the name in newMetaItemField. No type change nor renaming fields of type ID is allowed.
+	 * @param albumName The name of the album to which the item belongs.
+	 * @param oldMetaItemField A description of the original metaItemField, no need for direct reference.
+	 * A description, name, type and quicksearch flag of the original metaItemField. In order to rename the item field
+	 * ALL values of the meta item field have to be set correctly including the quicksearch flag.
+	 * @param newMetaItemField A description of the new metaItemField, no need for direct reference.
+	 * @throws DatabaseWrapperOperationException 
+	 */
+	public static void renameAlbumItemField(String albumName, MetaItemField oldMetaItemField, MetaItemField newMetaItemField) throws DatabaseWrapperOperationException {
+		UpdateOperations.renameAlbumItemField(albumName, oldMetaItemField, newMetaItemField);
+	}
+	
+	/**
+	 * Moves the specified field to a the position directly after the column with the name moveAfterColumnName.
+	 * @param albumName The name of the album to which the item belongs.
+	 * @param metaItemField The metadata to identify the field (column) to be moved.
+	 * @param preceedingField The field (column) which is preceeding the field after the reordering. 
+	 * @throws DatabaseWrapperOperationException 
+	 */
+	public static void reorderAlbumItemField(String albumName, MetaItemField metaItemField, MetaItemField preceedingField) throws DatabaseWrapperOperationException {
+		UpdateOperations.reorderAlbumItemField(albumName, metaItemField, preceedingField);
+	}
+	
+	/**
+	 * Sets the ability of albumField to the value found in the metaItemField describing that field.
+	 * @param albumName The name of the album to which the item belongs.
+	 * @param metaItemField The field (column) to be set quicksearchable.
+	 * @throws DatabaseWrapperOperationException 
+	 */
+	public static void setQuickSearchable(String albumName, MetaItemField metaItemField) throws DatabaseWrapperOperationException {
+		UpdateOperations.setQuickSearchable(albumName, metaItemField);
+	}
+	
+	/**
+	 * Appends new field to the end of the album. Fields with the type FieldType.ID or FieldType.Picture fail the whole operation, no fields will be added then.
+	 * @param albumName The name of the album to be modified.
+	 * @param metaItemField The metaItemField to be appended to the album. Must not be null for successful insertion
+	 * @throws DatabaseWrapperOperationException 
+	 */
+	public static void appendNewAlbumField(String albumName, MetaItemField metaItemField) throws DatabaseWrapperOperationException {
+		UpdateOperations.appendNewAlbumField(albumName, metaItemField);
+	}
+	
+	/**
+	 * Enables or disables the picture functionality for a given album
+	 * @param albumName The name of the album which is concerned
+	 * @param albumPicturesEnabled true if pictures are enabled, false otherwise
+	 * @throws DatabaseWrapperOperationException 
+	 */
+	public static void setAlbumPictureFunctionality(String albumName, boolean albumPicturesEnabled) throws DatabaseWrapperOperationException {
+		UpdateOperations.setAlbumPictureFunctionality(albumName, albumPicturesEnabled);
 	}
 	
 	/**
@@ -152,23 +108,7 @@ public class DatabaseFacade {
 	 * @throws DatabaseWrapperOperationException 
 	 */
 	public static void updateAlbumItem(AlbumItem albumItem) throws DatabaseWrapperOperationException {
-		DatabaseWrapperImpl.updateAlbumItem(albumItem);
-	}
-	
-	/**
-	 * Permanently deletes the albumItem with the specified id from the database.
-	 * @param albumName The name of the album to which the item belongs.
-	 * @param albumItemId The id of the item to be deleted.
-	 * @return  True if the operation was successful. False otherwise.
-	 * @throws DatabaseWrapperOperationException 
-	 */
-	public static void deleteAlbumItem(AlbumItem albumItem) throws DatabaseWrapperOperationException {
-		DatabaseWrapperImpl.deleteAlbumItem(albumItem);
-	}
-	
-	// TODO comment
-	public static long getNumberOfItemsInAlbum(String albumName) throws DatabaseWrapperOperationException {
-		return DatabaseWrapperImpl.getNumberOfItemsInAlbum(albumName);
+		UpdateOperations.updateAlbumItem(albumItem);
 	}
 	
 	/**
@@ -179,7 +119,7 @@ public class DatabaseFacade {
 	 * @throws DatabaseWrapperOperationException 
 	 */
 	public static AlbumItemResultSet executeSQLQuery(String sqlStatement, String albumName) throws DatabaseWrapperOperationException {
-		return DatabaseWrapperImpl.executeSQLQuery(sqlStatement, albumName);
+		return QueryOperations.executeSQLQuery(sqlStatement, albumName);
 	}
 	
 	/**
@@ -189,7 +129,7 @@ public class DatabaseFacade {
 	 * @throws DatabaseWrapperOperationException 
 	 */
 	public static AlbumItemResultSet executeSQLQuery(String sqlStatement) throws DatabaseWrapperOperationException {
-		return DatabaseWrapperImpl.executeSQLQuery(sqlStatement);
+		return QueryOperations.executeSQLQuery(sqlStatement);
 	}
 	
 	/**
@@ -201,7 +141,22 @@ public class DatabaseFacade {
 	 * @throws DatabaseWrapperOperationException 
 	 */
 	public static AlbumItemResultSet executeQuickSearch(String albumName, List<String> quickSearchTerms) throws DatabaseWrapperOperationException {
-		return DatabaseWrapperImpl.executeQuickSearch(albumName, quickSearchTerms);
+		return QueryOperations.executeQuickSearch(albumName, quickSearchTerms);
+	}
+	
+	/**
+	 * Indicates whether the album contains pictures or not
+	 * @param albumName The name of the album to be queried
+	 * @return true if the album contains a picture field, false otherwise
+	 * @throws DatabaseWrapperOperationException 
+	 */
+	public static boolean isPictureAlbum(String albumName) throws DatabaseWrapperOperationException {	
+		return QueryOperations.isPictureAlbum(albumName);
+	}
+	
+	// TODO comment
+	public static long getNumberOfItemsInAlbum(String albumName) throws DatabaseWrapperOperationException {
+		return QueryOperations.getNumberOfItemsInAlbum(albumName);
 	}
 	
 	/**
@@ -209,8 +164,8 @@ public class DatabaseFacade {
 	 * @return A list of album names. May be empty if no albums were created yet. Null in case of an error.
 	 * @throws DatabaseWrapperOperationException 
 	 */
-	public static List<String> listAllAlbums() throws DatabaseWrapperOperationException {
-		return DatabaseWrapperImpl.listAllAlbums();
+	public static List<String> getListOfAllAlbums() throws DatabaseWrapperOperationException {
+		return QueryOperations.getListOfAllAlbums();
 	}
 	
 	/**
@@ -222,7 +177,7 @@ public class DatabaseFacade {
 	 * @throws DatabaseWrapperOperationException 
 	 */
 	public static List<String> getIndexedColumnNames(String tableName) throws DatabaseWrapperOperationException {
-		return DatabaseWrapperImpl.getIndexedColumnNames(tableName);
+		return QueryOperations.getIndexedColumnNames(tableName);
 	}
 	
 	/**
@@ -233,7 +188,7 @@ public class DatabaseFacade {
 	 * @throws DatabaseWrapperOperationException 
 	 */
 	public static String getTableIndexName(String tableName) throws DatabaseWrapperOperationException {
-		return DatabaseWrapperImpl.getTableIndexName(tableName);
+		return QueryOperations.getTableIndexName(tableName);
 	}
 	
 	/**
@@ -242,7 +197,7 @@ public class DatabaseFacade {
 	 * @return The list of MetaItemFields. 
 	 */
 	public static List<MetaItemField> getAlbumItemFieldNamesAndTypes(String albumName) throws DatabaseWrapperOperationException {
-		return DatabaseWrapperImpl.getAlbumItemFieldNamesAndTypes(albumName);
+		return QueryOperations.getAlbumItemFieldNamesAndTypes(albumName);
 	}
 	
 	/**
@@ -252,7 +207,7 @@ public class DatabaseFacade {
 	 * @throws DatabaseWrapperOperationException 
 	 */
 	public static Map<Integer, MetaItemField> getAlbumItemMetaMap(String albumName) throws DatabaseWrapperOperationException {
-		return DatabaseWrapperImpl.getAlbumItemMetaMap(albumName);
+		return QueryOperations.getAlbumItemMetaMap(albumName);
 	}
 	
 	/**
@@ -264,7 +219,7 @@ public class DatabaseFacade {
 	 * @throws DatabaseWrapperOperationException 
 	 */
 	public static Object fetchFieldItemValue(ResultSet results, int columnIndex, FieldType type, String albumName) throws DatabaseWrapperOperationException {
-		return DatabaseWrapperImpl.fetchFieldItemValue(results, columnIndex, type, albumName);
+		return HelperOperations.fetchFieldItemValue(results, columnIndex, type, albumName);
 	}
 	
 	/**
@@ -275,7 +230,7 @@ public class DatabaseFacade {
 	 * @throws DatabaseWrapperOperationException 
 	 */
 	public static boolean isAlbumFieldQuicksearchable(String albumName, String fieldName) throws DatabaseWrapperOperationException {
-		return DatabaseWrapperImpl.isAlbumFieldQuicksearchable(albumName, fieldName);
+		return QueryOperations.isAlbumFieldQuicksearchable(albumName, fieldName);
 	}
 	
 	/**
@@ -285,7 +240,7 @@ public class DatabaseFacade {
 	 * @throws DatabaseWrapperOperationException 
 	 */
 	public static boolean isAlbumQuicksearchable(String albumName) throws DatabaseWrapperOperationException {
-		return DatabaseWrapperImpl.isAlbumQuicksearchable(albumName);
+		return QueryOperations.isAlbumQuicksearchable(albumName);
 	}
 	
 	/**
@@ -294,8 +249,8 @@ public class DatabaseFacade {
 	 * @return True if the name can be inserted into the database. False otherwise.
 	 * @throws DatabaseWrapperOperationException 
 	 */
-	public static boolean albumNameIsAvailable(String requestedAlbumName) throws DatabaseWrapperOperationException {
-		return DatabaseWrapperImpl.albumNameIsAvailable(requestedAlbumName);
+	public static boolean isAlbumNameAvailable(String requestedAlbumName) throws DatabaseWrapperOperationException {
+		return QueryOperations.isAlbumNameAvailable(requestedAlbumName);
 	}
 	
 	/**
@@ -304,8 +259,8 @@ public class DatabaseFacade {
 	 * @return True if the name can be inserted into the database. False otherwise.
 	 * @throws DatabaseWrapperOperationException 
 	 */
-	public static boolean itemFieldNameIsAvailable(String albumName, String requestedFieldName) throws DatabaseWrapperOperationException {
-		return DatabaseWrapperImpl.itemFieldNameIsAvailable(albumName, requestedFieldName);
+	public static boolean isItemFieldNameAvailable(String albumName, String requestedFieldName) throws DatabaseWrapperOperationException {
+		return QueryOperations.isItemFieldNameAvailable(albumName, requestedFieldName);
 	}
 	
 	/**
@@ -315,8 +270,8 @@ public class DatabaseFacade {
 	 * @return The requested albumItem. Null if no item with the specified id was found.
 	 * @throws DatabaseWrapperOperationException 
 	 */
-	public static AlbumItem fetchAlbumItem(String albumName, long albumItemId) throws DatabaseWrapperOperationException {
-		return DatabaseWrapperImpl.fetchAlbumItem(albumName, albumItemId);
+	public static AlbumItem getAlbumItem(String albumName, long albumItemId) throws DatabaseWrapperOperationException {
+		return QueryOperations.getAlbumItem(albumName, albumItemId);
 	}
 	
 	/**
@@ -325,34 +280,82 @@ public class DatabaseFacade {
 	 * @return The list albumItems making up the results of the query. An empty list if no matching album item were found.
 	 * @throws DatabaseWrapperOperationException 
 	 */
-	public static List<AlbumItem> fetchAlbumItemsFromDatabase(String queryString) throws DatabaseWrapperOperationException {
-		return DatabaseWrapperImpl.fetchAlbumItemsFromDatabase(queryString);
+	public static List<AlbumItem> getAlbumItems(String queryString) throws DatabaseWrapperOperationException {
+		return QueryOperations.getAlbumItems(queryString);
 	}
 	
 	// TODO comment
 	public static boolean isDateField(String albumName, String fieldName) throws DatabaseWrapperOperationException {
-		return DatabaseWrapperImpl.isDateField(albumName, fieldName);
+		return QueryOperations.isDateField(albumName, fieldName);
 	}
 	
 	// TODO comment
 	public static boolean isOptionField(String albumName, String fieldName) throws DatabaseWrapperOperationException {
-		return DatabaseWrapperImpl.isOptionField(albumName, fieldName);
+		return QueryOperations.isOptionField(albumName, fieldName);
 	}
 	
 	// TODO comment
 	public static void createPictureTable(String albumName) throws DatabaseWrapperOperationException {	
-		DatabaseWrapperImpl.createPictureTable(albumName);
+		CreateOperations.createPictureTable(albumName);
 	}
 	
 	// TODO comment
 	public static List<AlbumItemPicture> getAlbumItemPictures(String albumName, long albumItemID) throws DatabaseWrapperOperationException {
-		return DatabaseWrapperImpl.getAlbumItemPictures(albumName, albumItemID);
+		return QueryOperations.getAlbumItemPictures(albumName, albumItemID);
 	}
 	
 	/** Removes all picture records from the picture table for the given album item
 	 * ATTENTION: this method does no delete the physical files!
 	 * @param albumItem the album item for which all picture records should be deleted */
 	public static void removeAllPicturesForAlbumItemFromPictureTable(AlbumItem albumItem) throws DatabaseWrapperOperationException {	
-		DatabaseWrapperImpl.removeAllPicturesForAlbumItemFromPictureTable(albumItem);
+		DeleteOperations.removeAllPicturesForAlbumItemFromPictureTable(albumItem);
+	}
+	
+	// TODO comment
+	public static void createAlbumMasterTableIfItDoesNotExist() throws DatabaseWrapperOperationException {
+		CreateOperations.createAlbumMasterTableIfItDoesNotExist();
+	}
+	
+	/**
+	 * Permanently deletes the albumItem with the specified id from the database.
+	 * @param albumName The name of the album to which the item belongs.
+	 * @param albumItemId The id of the item to be deleted.
+	 * @return  True if the operation was successful. False otherwise.
+	 * @throws DatabaseWrapperOperationException 
+	 */
+	public static void deleteAlbumItem(AlbumItem albumItem) throws DatabaseWrapperOperationException {
+		DeleteOperations.deleteAlbumItem(albumItem);
+	}
+	
+	/**
+	 * Permanently removes a field from an album. Removing fields of type ID is not allowed.
+	 * @param albumName The name of the album to be removed.
+	 * @param metaItemField A description, name, type and quicksearch flag of the original metaItemField. 
+	 * The object does not need to be a reference to the original metaItemfield of the album but in order to delete the item field
+	 * ALL values of the meta item field have to be set correctly including the quicksearch flag.
+	 * To remove pictures please use {@link removePictureField}
+	 * @throws DatabaseWrapperOperationException 
+	 */
+	public static void removeAlbumItemField(String albumName, MetaItemField metaItemField) throws DatabaseWrapperOperationException {
+		DeleteOperations.removeAlbumItemField(albumName, metaItemField);
+	}
+	
+	// TODO comment
+	public static void removeAlbumAndAlbumPictures(String albumName) throws DatabaseWrapperOperationException {
+		DeleteOperations.removeAlbumAndAlbumPictures(albumName);
+	}
+	
+	/**
+	 * Permanently removes an album along with its typeInfo metadata.
+	 * @param albumName The name of the album which is to be removed.
+	 * @throws DatabaseWrapperOperationException 
+	 */
+	public static void removeAlbum(String albumName) throws DatabaseWrapperOperationException {
+		DeleteOperations.removeAlbum(albumName);
+	}
+	
+	// TODO comment
+	public static void removeAlbumPictures(String albumName) throws DatabaseWrapperOperationException {
+		DeleteOperations.removeAlbumPictures(albumName);
 	}
 }

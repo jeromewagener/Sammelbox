@@ -3,7 +3,7 @@ package collector.desktop.view.browser;
 import org.eclipse.swt.browser.Browser;
 
 import collector.desktop.model.album.AlbumItem;
-import collector.desktop.model.database.AlbumItemStore;
+import collector.desktop.model.album.AlbumItemStore;
 import collector.desktop.view.ApplicationUI;
 import collector.desktop.view.internationalization.DictKeys;
 import collector.desktop.view.internationalization.Translator;

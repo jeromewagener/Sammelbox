@@ -1,4 +1,4 @@
-package collector.desktop.model.database;
+package collector.desktop.model.database.utilities;
 
 public class DatabaseStringUtilities {
 
@@ -27,10 +27,10 @@ public class DatabaseStringUtilities {
 	/**
 	 * Removes one layer of any single quotes enclosing the name. Quotes are unnecessary if setString is used to
 	 * add the name to a query.    
-	 * @param regularName The usual name with possibly enclosing singhle quotes.
+	 * @param regularName The usual name with possibly enclosing single quotes.
 	 * @return The proper string with one layer of single quotes removed if present.
 	 */
-	static String removeEnclosingNameWithQuotes(String regularName) {
+	public static String removeQuotesEnclosingName(String regularName) {
 		if (regularName.startsWith("'") && regularName.endsWith("'")) {
 			return regularName.substring(1, regularName.length()-1);
 		}

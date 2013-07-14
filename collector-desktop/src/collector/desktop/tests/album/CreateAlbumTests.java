@@ -12,12 +12,12 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import collector.desktop.model.album.AlbumItemResultSet;
 import collector.desktop.model.album.FieldType;
 import collector.desktop.model.album.MetaItemField;
-import collector.desktop.model.database.AlbumItemResultSet;
-import collector.desktop.model.database.ConnectionManager;
-import collector.desktop.model.database.DatabaseFacade;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
+import collector.desktop.model.database.operations.DatabaseOperations;
+import collector.desktop.model.database.utilities.ConnectionManager;
 import collector.desktop.tests.CollectorTestExecuter;
 
 public class CreateAlbumTests {
@@ -59,13 +59,13 @@ public class CreateAlbumTests {
 		columns.add(lenttoField);
 		
 		try {
-			DatabaseFacade.createNewAlbum(albumName, columns, true);
+			DatabaseOperations.createNewAlbum(albumName, columns, true);
 		} catch (DatabaseWrapperOperationException e) {
 			fail("Creation of album"+ albumName + "failed");
 		}
 		
 		try {
-		List<MetaItemField> albumMetaFields = DatabaseFacade.getAlbumItemFieldNamesAndTypes(albumName);
+		List<MetaItemField> albumMetaFields = DatabaseOperations.getAlbumItemFieldNamesAndTypes(albumName);
 		
 		Assert.assertTrue(albumMetaFields.containsAll(columns));
 		} catch (DatabaseWrapperOperationException e) {
@@ -90,12 +90,12 @@ public class CreateAlbumTests {
 		columns.add(lenttoField);
 
 		try {
-			DatabaseFacade.createNewAlbum(albumName, columns, true);
+			DatabaseOperations.createNewAlbum(albumName, columns, true);
 		} catch (DatabaseWrapperOperationException e) {
 			fail("Creation of album"+ albumName + "failed");
 		}		
 		try {
-		List<MetaItemField> albumMetaFields = DatabaseFacade.getAlbumItemFieldNamesAndTypes(albumName);
+		List<MetaItemField> albumMetaFields = DatabaseOperations.getAlbumItemFieldNamesAndTypes(albumName);
 		
 		Assert.assertTrue(albumMetaFields.containsAll(columns));
 		}catch (DatabaseWrapperOperationException e) {
@@ -109,13 +109,13 @@ public class CreateAlbumTests {
 		List<MetaItemField> columns = new ArrayList<MetaItemField>();
 
 		try {
-			DatabaseFacade.createNewAlbum(albumName, columns, true);
+			DatabaseOperations.createNewAlbum(albumName, columns, true);
 		} catch (DatabaseWrapperOperationException e) {
 			fail("Creation of album"+ albumName + "failed");
 		}
 
 		try {
-		AlbumItemResultSet resultSet =  DatabaseFacade.executeSQLQuery("SELECT * FROM "+albumName);
+		AlbumItemResultSet resultSet =  DatabaseOperations.executeSQLQuery("SELECT * FROM "+albumName);
 				
 		Assert.assertTrue(resultSet != null && resultSet.getAlbumName().equals(albumName));
 		}catch (DatabaseWrapperOperationException e) {

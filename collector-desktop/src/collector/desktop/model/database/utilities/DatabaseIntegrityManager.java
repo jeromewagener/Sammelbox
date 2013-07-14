@@ -1,4 +1,4 @@
-package collector.desktop.model.database;
+package collector.desktop.model.database.utilities;
 
 import java.io.File;
 import java.io.IOException;
@@ -176,7 +176,7 @@ public class DatabaseIntegrityManager {
 		return DatabaseIntegrityManager.lastChangeTimeStamp;
 	}
 	
-	static void updateLastDatabaseChangeTimeStamp() {
+	public static void updateLastDatabaseChangeTimeStamp() {
 		DatabaseIntegrityManager.lastChangeTimeStamp = System.currentTimeMillis();
 	}
 	

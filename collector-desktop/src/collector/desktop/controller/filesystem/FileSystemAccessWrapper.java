@@ -35,9 +35,9 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 import collector.desktop.controller.settings.ApplicationSettingsManager.ApplicationSettings;
-import collector.desktop.model.database.DatabaseFacade;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.model.database.exceptions.ExceptionHelper;
+import collector.desktop.model.database.operations.DatabaseOperations;
 import collector.desktop.view.internationalization.Language;
 import collector.desktop.view.managers.AlbumViewManager.AlbumView;
 
@@ -201,10 +201,10 @@ public class FileSystemAccessWrapper {
 	public static boolean updateAlbumFileStructure(Connection databaseConnection) {
 		// Create inside the album home directory all album directories
 		try {
-			for (String albumName : DatabaseFacade.listAllAlbums()) {
+			for (String albumName : DatabaseOperations.getListOfAllAlbums()) {
 				File albumDirectory = new File(getFilePathForAlbum(albumName));
 
-				if ( DatabaseFacade.albumHasPictureField(albumName) && !albumDirectory.exists()) {
+				if (DatabaseOperations.isPictureAlbum(albumName) && !albumDirectory.exists()) {
 					if (!albumDirectory.mkdir()) {
 						LOGGER.error("Cannot create collector album directory although it seems that it does not exist");
 						return false;

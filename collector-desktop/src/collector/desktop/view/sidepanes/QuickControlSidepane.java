@@ -17,9 +17,9 @@ import org.eclipse.swt.widgets.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import collector.desktop.model.database.DatabaseFacade;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.model.database.exceptions.ExceptionHelper;
+import collector.desktop.model.database.operations.DatabaseOperations;
 import collector.desktop.view.ApplicationUI;
 import collector.desktop.view.browser.BrowserFacade;
 import collector.desktop.view.internationalization.DictKeys;
@@ -173,7 +173,7 @@ public class QuickControlSidepane {
 				if (messageBox.open() == SWT.YES) {
 					AlbumViewManager.removeAlbumViews(ApplicationUI.getSelectedAlbum());
 					try {
-						DatabaseFacade.removeAlbumAndAlbumPictures(ApplicationUI.getSelectedAlbum());
+						DatabaseOperations.removeAlbumAndAlbumPictures(ApplicationUI.getSelectedAlbum());
 					} catch (DatabaseWrapperOperationException ex) {
 						LOGGER.error("A database error occured while removing the following album: '" + ApplicationUI.getSelectedAlbum() + "'" +
 								" \n Stacktrace: " + ExceptionHelper.toString(ex));

@@ -3,7 +3,7 @@ package collector.desktop.view.browser;
 import java.io.InputStream;
 
 import collector.desktop.model.album.AlbumItem;
-import collector.desktop.model.database.AlbumItemResultSet;
+import collector.desktop.model.album.AlbumItemResultSet;
 import collector.desktop.view.ApplicationUI;
 
 public class BrowserFacade {

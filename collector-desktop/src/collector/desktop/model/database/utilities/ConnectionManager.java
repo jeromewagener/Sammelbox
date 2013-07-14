@@ -1,4 +1,4 @@
-package collector.desktop.model.database;
+package collector.desktop.model.database.utilities;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,6 +15,7 @@ import collector.desktop.controller.filesystem.FileSystemAccessWrapper;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException.DBErrorState;
 import collector.desktop.model.database.exceptions.ExceptionHelper;
+import collector.desktop.model.database.operations.DatabaseOperations;
 
 public class ConnectionManager {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ConnectionManager.class);
@@ -43,7 +44,7 @@ public class ConnectionManager {
 			}
 			
 			// Create the album master table if it does not exist 
-			DatabaseWrapperImpl.createAlbumMasterTableIfItDoesNotExist();
+			DatabaseOperations.createAlbumMasterTableIfItDoesNotExist();
 
 			// Run a fetch  to check if the database connection is up and running
 			if (ConnectionManager.isConnectionReady() == false) {
@@ -76,7 +77,7 @@ public class ConnectionManager {
 		try {
 			// Querying all albums should be successful on all working databases, independently of how many albums are stored.
 			// If not, (e.g. due to connection problems) or missing albums, indicate the failure
-			if (ConnectionManager.connection == null || ConnectionManager.connection.isClosed() || DatabaseFacade.listAllAlbums() == null) {			
+			if (ConnectionManager.connection == null || ConnectionManager.connection.isClosed() || DatabaseOperations.getListOfAllAlbums() == null) {			
 				return false;
 			}
 		} catch (Exception ex) {

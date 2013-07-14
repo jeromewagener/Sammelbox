@@ -11,13 +11,13 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import collector.desktop.model.album.AlbumItemResultSet;
 import collector.desktop.model.album.FieldType;
 import collector.desktop.model.album.MetaItemField;
-import collector.desktop.model.database.AlbumItemResultSet;
-import collector.desktop.model.database.ConnectionManager;
-import collector.desktop.model.database.DatabaseFacade;
-import collector.desktop.model.database.DatabaseIntegrityManager;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
+import collector.desktop.model.database.operations.DatabaseOperations;
+import collector.desktop.model.database.utilities.ConnectionManager;
+import collector.desktop.model.database.utilities.DatabaseIntegrityManager;
 import collector.desktop.tests.CollectorTestExecuter;
 
 public class AlterAlbumTests {
@@ -48,8 +48,8 @@ public class AlterAlbumTests {
 			MetaItemField metaItemField = new MetaItemField("Publisher", FieldType.Text, false);
 			int originalAlbumItemCount = numberOfAlbumItems("Books");
 
-			DatabaseFacade.appendNewAlbumField("Books", metaItemField);
-			List<MetaItemField> metaDataItems = DatabaseFacade.getAlbumItemFieldNamesAndTypes("Books");
+			DatabaseOperations.appendNewAlbumField("Books", metaItemField);
+			List<MetaItemField> metaDataItems = DatabaseOperations.getAlbumItemFieldNamesAndTypes("Books");
 
 			assertTrue("New publisher text column should be added at the end", 
 					metaDataItems.get(metaDataItems.size()-1).getName().equals("Publisher"));
@@ -68,8 +68,8 @@ public class AlterAlbumTests {
 			MetaItemField metaItemField = new MetaItemField("Publisher", FieldType.Text, true);
 			int originalAlbumItemCount = numberOfAlbumItems("Books");
 
-			DatabaseFacade.appendNewAlbumField("Books", metaItemField);
-			List<MetaItemField> metaDataItems = DatabaseFacade.getAlbumItemFieldNamesAndTypes("Books");
+			DatabaseOperations.appendNewAlbumField("Books", metaItemField);
+			List<MetaItemField> metaDataItems = DatabaseOperations.getAlbumItemFieldNamesAndTypes("Books");
 
 			assertTrue("New publisher text column should be added at the end", 
 					metaDataItems.get(metaDataItems.size()-1).getName().equals("Publisher"));
@@ -88,23 +88,23 @@ public class AlterAlbumTests {
 
 			MetaItemField metaItemField = new MetaItemField("Publisher", FieldType.Text, false);
 
-			DatabaseFacade.appendNewAlbumField("Books", metaItemField);
-			List<MetaItemField> metaDataItems = DatabaseFacade.getAlbumItemFieldNamesAndTypes("Books");
+			DatabaseOperations.appendNewAlbumField("Books", metaItemField);
+			List<MetaItemField> metaDataItems = DatabaseOperations.getAlbumItemFieldNamesAndTypes("Books");
 			
 			assertTrue("New publisher text column should be added at the end", 
 					metaDataItems.get(metaDataItems.size()-1).getName().equals("Publisher"));
 
-			DatabaseFacade.reorderAlbumItemField("Books", metaDataItems.get(metaDataItems.size()-1), metaDataItems.get(metaDataItems.size()-3));
-			metaDataItems = DatabaseFacade.getAlbumItemFieldNamesAndTypes("Books");
+			DatabaseOperations.reorderAlbumItemField("Books", metaDataItems.get(metaDataItems.size()-1), metaDataItems.get(metaDataItems.size()-3));
+			metaDataItems = DatabaseOperations.getAlbumItemFieldNamesAndTypes("Books");
 			
-			DatabaseFacade.reorderAlbumItemField("Books", metaDataItems.get(metaDataItems.size()-2), metaDataItems.get(metaDataItems.size()-4));
-			metaDataItems = DatabaseFacade.getAlbumItemFieldNamesAndTypes("Books");
+			DatabaseOperations.reorderAlbumItemField("Books", metaDataItems.get(metaDataItems.size()-2), metaDataItems.get(metaDataItems.size()-4));
+			metaDataItems = DatabaseOperations.getAlbumItemFieldNamesAndTypes("Books");
 			
-			DatabaseFacade.reorderAlbumItemField("Books", metaDataItems.get(metaDataItems.size()-3), metaDataItems.get(metaDataItems.size()-5));
-			metaDataItems = DatabaseFacade.getAlbumItemFieldNamesAndTypes("Books");
+			DatabaseOperations.reorderAlbumItemField("Books", metaDataItems.get(metaDataItems.size()-3), metaDataItems.get(metaDataItems.size()-5));
+			metaDataItems = DatabaseOperations.getAlbumItemFieldNamesAndTypes("Books");
 			
-			DatabaseFacade.reorderAlbumItemField("Books", metaDataItems.get(metaDataItems.size()-4), metaDataItems.get(metaDataItems.size()-6));
-			metaDataItems = DatabaseFacade.getAlbumItemFieldNamesAndTypes("Books");
+			DatabaseOperations.reorderAlbumItemField("Books", metaDataItems.get(metaDataItems.size()-4), metaDataItems.get(metaDataItems.size()-6));
+			metaDataItems = DatabaseOperations.getAlbumItemFieldNamesAndTypes("Books");
 			
 			assertTrue("New publisher text column should be at the fourth position after reordering", 
 					metaDataItems.get(2).getName().equals("Publisher"));
@@ -121,27 +121,27 @@ public class AlterAlbumTests {
 		try {
 			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
 
-			List<MetaItemField> metaDataItems = DatabaseFacade.getAlbumItemFieldNamesAndTypes("DVDs");
+			List<MetaItemField> metaDataItems = DatabaseOperations.getAlbumItemFieldNamesAndTypes("DVDs");
 			int originalAlbumItemCount = numberOfAlbumItems("DVDs");
 
 			assertTrue("Title text column should be at the beginning", 
 					metaDataItems.get(0).getName().equals("Title"));
 
-			DatabaseFacade.reorderAlbumItemField("DVDs", metaDataItems.get(0), metaDataItems.get(1));
+			DatabaseOperations.reorderAlbumItemField("DVDs", metaDataItems.get(0), metaDataItems.get(1));
 
-			metaDataItems = DatabaseFacade.getAlbumItemFieldNamesAndTypes("DVDs");
-			DatabaseFacade.reorderAlbumItemField("DVDs", metaDataItems.get(1), metaDataItems.get(2));
+			metaDataItems = DatabaseOperations.getAlbumItemFieldNamesAndTypes("DVDs");
+			DatabaseOperations.reorderAlbumItemField("DVDs", metaDataItems.get(1), metaDataItems.get(2));
 
-			metaDataItems = DatabaseFacade.getAlbumItemFieldNamesAndTypes("DVDs");
-			DatabaseFacade.reorderAlbumItemField("DVDs", metaDataItems.get(2), metaDataItems.get(3));
+			metaDataItems = DatabaseOperations.getAlbumItemFieldNamesAndTypes("DVDs");
+			DatabaseOperations.reorderAlbumItemField("DVDs", metaDataItems.get(2), metaDataItems.get(3));
 
-			metaDataItems = DatabaseFacade.getAlbumItemFieldNamesAndTypes("DVDs");
-			DatabaseFacade.reorderAlbumItemField("DVDs", metaDataItems.get(3), metaDataItems.get(4));
+			metaDataItems = DatabaseOperations.getAlbumItemFieldNamesAndTypes("DVDs");
+			DatabaseOperations.reorderAlbumItemField("DVDs", metaDataItems.get(3), metaDataItems.get(4));
 
-			metaDataItems = DatabaseFacade.getAlbumItemFieldNamesAndTypes("DVDs");
-			DatabaseFacade.reorderAlbumItemField("DVDs", metaDataItems.get(4), metaDataItems.get(5));
+			metaDataItems = DatabaseOperations.getAlbumItemFieldNamesAndTypes("DVDs");
+			DatabaseOperations.reorderAlbumItemField("DVDs", metaDataItems.get(4), metaDataItems.get(5));
 
-			metaDataItems = DatabaseFacade.getAlbumItemFieldNamesAndTypes("DVDs");
+			metaDataItems = DatabaseOperations.getAlbumItemFieldNamesAndTypes("DVDs");
 
 			assertTrue("Title text column should be at the end", 
 					metaDataItems.get(5).getName().equals("Title"));
@@ -158,7 +158,7 @@ public class AlterAlbumTests {
 		try {
 			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
 
-			List<MetaItemField> metaDataItems = DatabaseFacade.getAlbumItemFieldNamesAndTypes("Books");
+			List<MetaItemField> metaDataItems = DatabaseOperations.getAlbumItemFieldNamesAndTypes("Books");
 			int originalAlbumItemCount = numberOfAlbumItems("Books");
 
 			assertTrue("The first column name should be 'Book Title'", metaDataItems.get(0).getName().equals("Book Title"));
@@ -166,9 +166,9 @@ public class AlterAlbumTests {
 			MetaItemField bookTitleField = metaDataItems.get(0);
 			MetaItemField titleField = new MetaItemField("Title", FieldType.Text, false);
 
-			DatabaseFacade.renameAlbumItemField("Books", bookTitleField, titleField);
+			DatabaseOperations.renameAlbumItemField("Books", bookTitleField, titleField);
 
-			metaDataItems = DatabaseFacade.getAlbumItemFieldNamesAndTypes("Books");
+			metaDataItems = DatabaseOperations.getAlbumItemFieldNamesAndTypes("Books");
 
 			assertTrue("The first column name should now be 'Title'", metaDataItems.get(0).getName().equals("Title"));
 			assertTrue("The album item count incorrectly changed", originalAlbumItemCount == numberOfAlbumItems("Books"));
@@ -182,7 +182,7 @@ public class AlterAlbumTests {
 		try {
 			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
 
-			List<MetaItemField> metaDataItems = DatabaseFacade.getAlbumItemFieldNamesAndTypes("DVDs");
+			List<MetaItemField> metaDataItems = DatabaseOperations.getAlbumItemFieldNamesAndTypes("DVDs");
 			int originalAlbumItemCount = numberOfAlbumItems("DVDs");
 			if (!metaDataItems.get(0).getName().equals("Title")) {
 				fail("The second column name should be 'Title'" );
@@ -191,8 +191,8 @@ public class AlterAlbumTests {
 			MetaItemField dvdTitleField = metaDataItems.get(0);
 			MetaItemField titleField = new MetaItemField("DVD Title", FieldType.Text, dvdTitleField.isQuickSearchable());
 
-			DatabaseFacade.renameAlbumItemField("DVDs", dvdTitleField, titleField);
-			metaDataItems = DatabaseFacade.getAlbumItemFieldNamesAndTypes("DVDs");
+			DatabaseOperations.renameAlbumItemField("DVDs", dvdTitleField, titleField);
+			metaDataItems = DatabaseOperations.getAlbumItemFieldNamesAndTypes("DVDs");
 
 			assertTrue("The first column name should now be 'DVD Title'", metaDataItems.get(0).getName().equals("DVD Title"));
 			assertTrue("The album item count incorrectly changed", originalAlbumItemCount == numberOfAlbumItems("DVDs"));
@@ -206,17 +206,17 @@ public class AlterAlbumTests {
 		try {
 			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
 
-			List<String> albumList = DatabaseFacade.listAllAlbums();
+			List<String> albumList = DatabaseOperations.getListOfAllAlbums();
 
 			assertTrue("There should be three albums present", albumList.size() == 3);
 			assertTrue("There should be an album with the name 'Books'", albumList.contains("Books"));
 			assertTrue("There should be an album with the name 'DVDs'", albumList.contains("DVDs"));
 			assertTrue("There should be an album with the name 'Music CDs'", albumList.contains("Music CDs"));
 
-			DatabaseFacade.renameAlbum("DVDs", "Movie DVDs");
-			DatabaseFacade.renameAlbum("Books", "My Books");
+			DatabaseOperations.renameAlbum("DVDs", "Movie DVDs");
+			DatabaseOperations.renameAlbum("Books", "My Books");
 
-			albumList = DatabaseFacade.listAllAlbums();
+			albumList = DatabaseOperations.getListOfAllAlbums();
 
 			assertTrue("There should be an album with the name 'My Books'", albumList.contains("My Books"));
 			assertTrue("There should be an album with the name 'Movie DVDs'", albumList.contains("Movie DVDs"));
@@ -230,14 +230,14 @@ public class AlterAlbumTests {
 	public void testDeleteAuthorField() {
 		try {
 			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
-			List<MetaItemField> metaDataItems = DatabaseFacade.getAlbumItemFieldNamesAndTypes("Books");
+			List<MetaItemField> metaDataItems = DatabaseOperations.getAlbumItemFieldNamesAndTypes("Books");
 			int originalAlbumItemCount = numberOfAlbumItems("Books");
 
 			assertTrue("The second column name should be 'Author'", metaDataItems.get(1).getName().equals("Author"));
 
 			MetaItemField authorMetaItemField = new MetaItemField("Author", FieldType.Text, false);
-			DatabaseFacade.removeAlbumItemField("Books", authorMetaItemField);
-			metaDataItems = DatabaseFacade.getAlbumItemFieldNamesAndTypes("Books");
+			DatabaseOperations.removeAlbumItemField("Books", authorMetaItemField);
+			metaDataItems = DatabaseOperations.getAlbumItemFieldNamesAndTypes("Books");
 
 			for (MetaItemField metaItemField : metaDataItems) {
 				assertTrue("The 'Author' field should no longer be present", metaItemField.getName().equals("Books") == false);
@@ -256,7 +256,7 @@ public class AlterAlbumTests {
 	 */
 	public static int numberOfAlbumItems(String albumName) {
 		try {
-			AlbumItemResultSet resultSet = DatabaseFacade.executeSQLQuery("SELECT * FROM " + albumName);
+			AlbumItemResultSet resultSet = DatabaseOperations.executeSQLQuery("SELECT * FROM " + albumName);
 			int counter = 0;
 			
 			while (resultSet.moveToNext()) {

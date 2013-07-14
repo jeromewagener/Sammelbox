@@ -26,10 +26,10 @@ import collector.desktop.controller.events.EventObservable;
 import collector.desktop.controller.events.Observer;
 import collector.desktop.controller.events.SammelboxEvent;
 import collector.desktop.controller.filesystem.FileSystemAccessWrapper;
-import collector.desktop.model.database.DatabaseFacade;
-import collector.desktop.model.database.QueryBuilder;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.model.database.exceptions.ExceptionHelper;
+import collector.desktop.model.database.operations.DatabaseOperations;
+import collector.desktop.model.database.utilities.QueryBuilder;
 import collector.desktop.view.browser.BrowserFacade;
 import collector.desktop.view.composites.BrowserComposite;
 import collector.desktop.view.composites.StatusBarComposite;
@@ -371,7 +371,7 @@ public class ApplicationUI implements Observer {
 	
 		ApplicationUI.getQuickSearchTextField().setText("");
 		try {
-			ApplicationUI.getQuickSearchTextField().setEnabled(DatabaseFacade.isAlbumQuicksearchable(albumName));
+			ApplicationUI.getQuickSearchTextField().setEnabled(DatabaseOperations.isAlbumQuicksearchable(albumName));
 		} catch (DatabaseWrapperOperationException ex) {
 			LOGGER.error("An error occured while enabling the quick search field \n Stacktrace: " + ExceptionHelper.toString(ex));
 		}

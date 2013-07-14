@@ -1,4 +1,4 @@
-package collector.desktop.model.database;
+package collector.desktop.model.album;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -9,12 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import collector.desktop.controller.filesystem.FileSystemAccessWrapper;
-import collector.desktop.model.album.AlbumItem;
-import collector.desktop.model.album.AlbumItemPicture;
-import collector.desktop.model.album.FieldType;
-import collector.desktop.model.album.ItemField;
-import collector.desktop.model.album.MetaItemField;
-import collector.desktop.model.album.OptionType;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.model.database.exceptions.ExceptionHelper;
 import collector.desktop.view.internationalization.DictKeys;

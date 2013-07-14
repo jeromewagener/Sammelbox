@@ -17,10 +17,10 @@ import org.slf4j.LoggerFactory;
 import collector.desktop.model.album.AlbumItem;
 import collector.desktop.model.album.FieldType;
 import collector.desktop.model.album.ItemField;
-import collector.desktop.model.database.DatabaseFacade;
-import collector.desktop.model.database.QueryBuilder;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.model.database.exceptions.ExceptionHelper;
+import collector.desktop.model.database.operations.DatabaseOperations;
+import collector.desktop.model.database.utilities.QueryBuilder;
 import collector.desktop.view.ApplicationUI;
 import collector.desktop.view.browser.BrowserFacade;
 import collector.desktop.view.composites.StatusBarComposite;
@@ -84,8 +84,8 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 
 			if (messageBox.open() == SWT.YES) {
 				try {
-					AlbumItem albumItemToBeDeleted = DatabaseFacade.fetchAlbumItem(ApplicationUI.getSelectedAlbum(), Long.parseLong(id));
-					DatabaseFacade.deleteAlbumItem(albumItemToBeDeleted);
+					AlbumItem albumItemToBeDeleted = DatabaseOperations.getAlbumItem(ApplicationUI.getSelectedAlbum(), Long.parseLong(id));
+					DatabaseOperations.deleteAlbumItem(albumItemToBeDeleted);
 				} catch (NumberFormatException nfe) {
 					LOGGER.error("Couldn't parse the following id: '" + id + "' \n Stacktrace: " + ExceptionHelper.toString(nfe));
 				} catch (DatabaseWrapperOperationException ex) {
@@ -120,7 +120,7 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 
 			AlbumItem albumItem;
 			try {
-				albumItem = DatabaseFacade.fetchAlbumItem(ApplicationUI.getSelectedAlbum(), Long.parseLong(id));
+				albumItem = DatabaseOperations.getAlbumItem(ApplicationUI.getSelectedAlbum(), Long.parseLong(id));
 
 				List<ItemField> itemFields = albumItem.getFields();
 	

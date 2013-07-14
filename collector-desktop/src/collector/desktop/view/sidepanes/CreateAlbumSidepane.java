@@ -25,13 +25,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import collector.desktop.controller.filesystem.FileSystemAccessWrapper;
+import collector.desktop.model.album.AlbumItemStore;
 import collector.desktop.model.album.FieldType;
 import collector.desktop.model.album.MetaItemField;
-import collector.desktop.model.database.AlbumItemStore;
-import collector.desktop.model.database.DatabaseFacade;
-import collector.desktop.model.database.QueryBuilder;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.model.database.exceptions.ExceptionHelper;
+import collector.desktop.model.database.operations.DatabaseOperations;
+import collector.desktop.model.database.utilities.QueryBuilder;
 import collector.desktop.view.ApplicationUI;
 import collector.desktop.view.browser.BrowserFacade;
 import collector.desktop.view.internationalization.DictKeys;
@@ -278,7 +278,7 @@ public class CreateAlbumSidepane {
 				String albumName = albumNameText.getText();
 
 				try {
-					if (!DatabaseFacade.albumNameIsAvailable(albumName)) {
+					if (!DatabaseOperations.isAlbumNameAvailable(albumName)) {
 						ComponentFactory.getMessageBox(
 								parentComposite, 
 								Translator.get(DictKeys.DIALOG_TITLE_ALBUM_NAME_ALREADY_USED), 
@@ -317,7 +317,7 @@ public class CreateAlbumSidepane {
 				}
 
 				try {
-					DatabaseFacade.createNewAlbum(albumName, metaItemFields, willContainImages);
+					DatabaseOperations.createNewAlbum(albumName, metaItemFields, willContainImages);
 				} catch (DatabaseWrapperOperationException failedDatabaseWrapperOperationException) {
 					ComponentFactory.getMessageBox(
 							parentComposite, 

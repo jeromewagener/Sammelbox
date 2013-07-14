@@ -14,9 +14,10 @@ import collector.desktop.model.album.AlbumItemPicture;
 import collector.desktop.model.album.FieldType;
 import collector.desktop.model.album.ItemField;
 import collector.desktop.model.album.OptionType;
-import collector.desktop.model.database.DatabaseFacade;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.model.database.exceptions.ExceptionHelper;
+import collector.desktop.model.database.operations.DatabaseConstants;
+import collector.desktop.model.database.operations.DatabaseOperations;
 import collector.desktop.view.ApplicationUI;
 import collector.desktop.view.internationalization.DictKeys;
 import collector.desktop.view.internationalization.Translator;
@@ -74,7 +75,7 @@ public class ItemCreator {
 			if (fieldItem.getType().equals(FieldType.UUID)) {
 				// schema or content version UUID --> ignore 
 			} else if (fieldItem.getType().equals(FieldType.ID)) {
-				if (fieldItem.getName().equals(DatabaseFacade.ID_COLUMN_NAME)) {
+				if (fieldItem.getName().equals(DatabaseConstants.ID_COLUMN_NAME)) {
 					// do not show, but store id
 					id = fieldItem.getValue();
 				}
@@ -98,8 +99,8 @@ public class ItemCreator {
 		}
 				
 		try {
-			if (!albumItem.getPictures().isEmpty() || DatabaseFacade.albumHasPictureField(ApplicationUI.getSelectedAlbum())) {
-				List<AlbumItemPicture> pictures = DatabaseFacade.getAlbumItemPictures(ApplicationUI.getSelectedAlbum(), id);
+			if (!albumItem.getPictures().isEmpty() || DatabaseOperations.isPictureAlbum(ApplicationUI.getSelectedAlbum())) {
+				List<AlbumItemPicture> pictures = DatabaseOperations.getAlbumItemPictures(ApplicationUI.getSelectedAlbum(), id);
 				htmlPictureColumnContent.append(
 						"<table border=0>" +
 						"  <tr>" +

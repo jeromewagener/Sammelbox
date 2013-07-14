@@ -8,9 +8,9 @@ import org.eclipse.swt.widgets.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import collector.desktop.model.database.DatabaseFacade;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.model.database.exceptions.ExceptionHelper;
+import collector.desktop.model.database.operations.DatabaseOperations;
 import collector.desktop.view.ApplicationUI;
 import collector.desktop.view.browser.BrowserFacade;
 import collector.desktop.view.internationalization.DictKeys;
@@ -33,9 +33,9 @@ public class QuickSearchModifyListener implements ModifyListener {
 		}
 		try {
 			if (((Text) e.widget).getText().equals("")) {
-				BrowserFacade.showResultSet(DatabaseFacade.executeQuickSearch(ApplicationUI.getSelectedAlbum(), null));
+				BrowserFacade.showResultSet(DatabaseOperations.executeQuickSearch(ApplicationUI.getSelectedAlbum(), null));
 			} else {
-				BrowserFacade.showResultSet(DatabaseFacade.executeQuickSearch(ApplicationUI.getSelectedAlbum(), 
+				BrowserFacade.showResultSet(DatabaseOperations.executeQuickSearch(ApplicationUI.getSelectedAlbum(), 
 						Arrays.asList(((Text) e.widget).getText().split(" "))));
 			}
 		} catch (DatabaseWrapperOperationException ex) {

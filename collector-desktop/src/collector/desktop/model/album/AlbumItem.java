@@ -7,9 +7,10 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import collector.desktop.model.database.DatabaseFacade;
-import collector.desktop.model.database.DatabaseStringUtilities;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
+import collector.desktop.model.database.operations.DatabaseConstants;
+import collector.desktop.model.database.operations.DatabaseOperations;
+import collector.desktop.model.database.utilities.DatabaseStringUtilities;
 
 public class AlbumItem {
 	public static Long ITEM_ID_UNDEFINED = Long.MAX_VALUE;
@@ -42,7 +43,7 @@ public class AlbumItem {
 		fields = itemFields;
 		
 		for (ItemField itemField : itemFields) {
-			if (itemField.getName().equals(DatabaseFacade.ID_COLUMN_NAME)) {
+			if (itemField.getName().equals(DatabaseConstants.ID_COLUMN_NAME)) {
 				itemId = (Long) itemField.getValue();
 				break;
 			}
@@ -66,7 +67,7 @@ public class AlbumItem {
 	}
 	
 	public long getItemID() {
-		return getField(DatabaseFacade.ID_COLUMN_NAME).getValue();
+		return getField(DatabaseConstants.ID_COLUMN_NAME).getValue();
 	}
 	
 	/**
@@ -109,7 +110,7 @@ public class AlbumItem {
 		for (ItemField itemField : fields) {
 			if (itemField.getName().equals(fieldName)) {
 				itemField.setValue(value);
-			} else if (itemField.getName().equals(DatabaseFacade.ID_COLUMN_NAME)) {
+			} else if (itemField.getName().equals(DatabaseConstants.ID_COLUMN_NAME)) {
 				itemId = (Long) itemField.getValue();
 			}
 		}
@@ -141,7 +142,7 @@ public class AlbumItem {
 		this.fields = fields;
 		
 		for (ItemField itemField : fields) {
-			if (itemField.getName().equals(DatabaseFacade.ID_COLUMN_NAME)) {
+			if (itemField.getName().equals(DatabaseConstants.ID_COLUMN_NAME)) {
 				itemId = (Long) itemField.getValue();
 				break;
 			}
@@ -172,7 +173,7 @@ public class AlbumItem {
 	public void addField(String fieldName,  FieldType type, Object value, boolean quickSearchable) {
 		fields.add(new ItemField(fieldName, type, value, quickSearchable));
 		
-		if (fieldName.equals(DatabaseFacade.ID_COLUMN_NAME)) {
+		if (fieldName.equals(DatabaseConstants.ID_COLUMN_NAME)) {
 			itemId = (Long) value;
 		}
 	}
@@ -187,7 +188,7 @@ public class AlbumItem {
 	public void addField(String fieldName,  FieldType type, Object value) {
 		fields.add(new ItemField(fieldName, type, value));
 	
-		if (fieldName.equals(DatabaseFacade.ID_COLUMN_NAME)) {
+		if (fieldName.equals(DatabaseConstants.ID_COLUMN_NAME)) {
 			itemId = (Long) value;
 		}
 	}
@@ -308,7 +309,7 @@ public class AlbumItem {
 	/** Loads the pictures associated with this album item from the database.*/
 	public void loadPicturesFromDatabase() {
 		try {
-			setPictures(DatabaseFacade.getAlbumItemPictures(albumName, itemId));
+			setPictures(DatabaseOperations.getAlbumItemPictures(albumName, itemId));
 		} catch (DatabaseWrapperOperationException e) {
 			LOGGER.error("Couldn't load album item pictures for album " + albumName + " with id " + itemId + "\n" + 
 							" Stacktrace: " +  e.getMessage());

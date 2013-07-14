@@ -7,9 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import collector.desktop.model.album.AlbumItem;
-import collector.desktop.model.database.DatabaseFacade;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.model.database.exceptions.ExceptionHelper;
+import collector.desktop.model.database.operations.DatabaseOperations;
 import collector.desktop.view.ApplicationUI;
 import collector.desktop.view.internationalization.DictKeys;
 import collector.desktop.view.internationalization.Translator;
@@ -24,7 +24,7 @@ public class FeedbackCreator {
 	static void generatAlbumItemUpdatedPage(long albumItemId) {
 		AlbumItem updatedAlbumItem;
 		try {
-			updatedAlbumItem = DatabaseFacade.fetchAlbumItem(ApplicationUI.getSelectedAlbum(), albumItemId);
+			updatedAlbumItem = DatabaseOperations.getAlbumItem(ApplicationUI.getSelectedAlbum(), albumItemId);
 
 
 			if (updatedAlbumItem != null) {
@@ -42,7 +42,7 @@ public class FeedbackCreator {
 	static void generateAlbumItemAddedPage(long albumItemId) {
 		AlbumItem addedAlbumItem;
 		try {
-			addedAlbumItem = DatabaseFacade.fetchAlbumItem(ApplicationUI.getSelectedAlbum(), albumItemId);
+			addedAlbumItem = DatabaseOperations.getAlbumItem(ApplicationUI.getSelectedAlbum(), albumItemId);
 
 			if (addedAlbumItem != null) {
 				ApplicationUI.getAlbumItemSWTBrowser().setText(
