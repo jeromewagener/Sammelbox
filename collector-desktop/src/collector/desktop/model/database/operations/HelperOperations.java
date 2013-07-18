@@ -104,7 +104,7 @@ public class HelperOperations {
 			return FieldType.Text;
 		}	
 
-		String dbtypeInfoTableName = DatabaseStringUtilities.encloseNameWithQuotes(QueryOperations.getTypeInfoTableName(tableName));
+		String dbtypeInfoTableName = DatabaseStringUtilities.generateTypeInfoTableName(tableName);
 		try (
 				Statement statement = ConnectionManager.getConnection().createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
 				ResultSet typeResultSet = statement.executeQuery(QueryBuilder.createSelectColumnQuery(dbtypeInfoTableName, columnName));) {			
@@ -118,7 +118,6 @@ public class HelperOperations {
 		
 	}
 
-	// TODO comment
 	static Object fetchFieldItemValue(ResultSet results, int columnIndex, FieldType type, String albumName) throws DatabaseWrapperOperationException {
 		Object value = null;
 		try {

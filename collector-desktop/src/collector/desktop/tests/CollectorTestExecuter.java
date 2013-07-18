@@ -39,7 +39,7 @@ import collector.desktop.tests.searching.QuickSearchTests;
 public class CollectorTestExecuter {
 	public static final String PATH_TO_TEST_CBK = 
 			System.getProperty("user.dir") + File.separatorChar + "testdata" + 
-					File.separatorChar + "test-albums-version-2.1.cbk";
+					File.separatorChar + "test-albums-version-2.5.cbk";
 	
 	public static final String PATH_TO_TEST_PICTURE_1 = 
 			System.getProperty("user.dir") + File.separatorChar + "res" + 

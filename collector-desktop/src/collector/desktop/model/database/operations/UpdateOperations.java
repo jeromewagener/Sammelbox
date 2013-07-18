@@ -36,17 +36,17 @@ public class UpdateOperations {
 			renameTable(oldAlbumName, newAlbumName);
 			
 			// Rename the type info table		
-			String oldTypeInfoTableName = HelperOperations.buildTypeInfoTableName(oldAlbumName);
-			String newTypeInfoTableName = HelperOperations.buildTypeInfoTableName(newAlbumName);
+			String oldTypeInfoTableName = DatabaseStringUtilities.generateTypeInfoTableName(oldAlbumName);
+			String newTypeInfoTableName = DatabaseStringUtilities.generateTypeInfoTableName(newAlbumName);
 			renameTable(oldTypeInfoTableName, newTypeInfoTableName);
 			
 			//  Rename the picture table
-			String oldPictureTableName = HelperOperations.buildPictureTableName(oldAlbumName);
-			String newPictureTableName = HelperOperations.buildPictureTableName(newAlbumName);
+			String oldPictureTableName = DatabaseStringUtilities.generatePictureTableName(oldAlbumName);
+			String newPictureTableName = DatabaseStringUtilities.generatePictureTableName(newAlbumName);
 			renameTable(oldPictureTableName, newPictureTableName);
 			
 			// Change the entry in the album master table. OptionType.UNKNOWN indicates no change of the picture storing 
-			modifyAlbumInAlbumMasterTable(oldAlbumName, newAlbumName, newTypeInfoTableName, OptionType.UNKNOWN);			
+			updateAlbumInAlbumMasterTable(oldAlbumName, newAlbumName, OptionType.UNKNOWN);			
 	
 			DatabaseIntegrityManager.updateLastDatabaseChangeTimeStamp();
 		} catch (DatabaseWrapperOperationException e) {
@@ -69,9 +69,9 @@ public class UpdateOperations {
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("ALTER TABLE ");
-		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(oldTableName));
+		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(DatabaseStringUtilities.generateTableName(oldTableName)));
 		sb.append(" RENAME TO ");
-		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(newTableName));
+		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(DatabaseStringUtilities.generateTableName(newTableName)));
 		String renameTableSQLString = sb.toString();
 
 		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(renameTableSQLString);) {
@@ -90,7 +90,7 @@ public class UpdateOperations {
 		if (!metaInfos.contains(oldMetaItemField) || oldMetaItemField.getType().equals(FieldType.ID)) {
 			if (metaInfos.contains(new MetaItemField(oldMetaItemField.getName(), oldMetaItemField.getType(), !oldMetaItemField.isQuickSearchable()))){
 				LOGGER.error("The specified meta item field's quicksearch flag is not set appropriately!");
-			}else {
+			} else {
 				LOGGER.error("The specified meta item field is not part of the album");
 			}
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState);
@@ -113,7 +113,8 @@ public class UpdateOperations {
 			newFields = removeFieldFromMetaItemList(new MetaItemField("id", FieldType.ID), newFields);
 			newFields = removeFieldFromMetaItemList(new MetaItemField(DatabaseConstants.TYPE_INFO_COLUMN_NAME, FieldType.ID), newFields);
 
-			CreateOperations.createNewAlbumTable(newFields, albumName, hasPictureField);	
+			CreateOperations.createNewAlbumTable(newFields, albumName, 
+					DatabaseStringUtilities.encloseNameWithQuotes(DatabaseStringUtilities.generateTableName(albumName)), hasPictureField);	
 
 			// Restore the old data from the java objects in the new tables [rename column]
 			renameFieldInAlbumItemList(oldMetaItemField, newMetaItemField, albumItems);
@@ -148,7 +149,7 @@ public class UpdateOperations {
 			// Create the new table pointing to new typeinfo
 			boolean hasPictureField = QueryOperations.isPictureAlbum(albumName);
 			List<MetaItemField> newFields = QueryOperations.getAlbumItemFieldNamesAndTypes(albumName);
-			newFields = reorderFieldInMetaItemList(metaItemField, preceedingField, newFields);// [reorder column] TODO
+			newFields = reorderFieldInMetaItemList(metaItemField, preceedingField, newFields);
 
 			// Drop the old table + typeTable
 			DeleteOperations.removeAlbum(albumName);
@@ -158,7 +159,8 @@ public class UpdateOperations {
 			newFields = removeFieldFromMetaItemList(new MetaItemField(DatabaseConstants.TYPE_INFO_COLUMN_NAME, FieldType.ID), newFields);
 
 			// Create the new table pointing to new typeinfo
-			CreateOperations.createNewAlbumTable(newFields, albumName, hasPictureField);
+			CreateOperations.createNewAlbumTable(newFields, albumName, 
+					DatabaseStringUtilities.encloseNameWithQuotes(DatabaseStringUtilities.generateTableName(albumName)), hasPictureField);
 
 			// Restore the old data from the temporary tables in the new tables [reorder column]
 			List<AlbumItem> newAlbumItems = reorderFieldInAlbumItemList(metaItemField, preceedingField, albumItems);
@@ -183,7 +185,7 @@ public class UpdateOperations {
 	static void setQuickSearchable(String albumName, MetaItemField metaItemField) throws DatabaseWrapperOperationException {
 		String savepointName = DatabaseIntegrityManager.createSavepoint();
 		try {
-			List<String> quickSearchableColumnNames = QueryOperations.getIndexedColumnNames(albumName);			
+			List<String> quickSearchableColumnNames = QueryOperations.getIndexedColumnNames(DatabaseStringUtilities.generateTableName(albumName));			
 			// Enable for quicksearch feature
 			if (metaItemField.isQuickSearchable() && !quickSearchableColumnNames.contains(metaItemField.getName())) {
 				quickSearchableColumnNames.add(metaItemField.getName());
@@ -321,7 +323,8 @@ public class UpdateOperations {
 	private static void appendNewTableColumn(String albumName, MetaItemField metaItemField) throws DatabaseWrapperOperationException {
 		// Prepare the append column string for the main table.
 		StringBuilder sb = new StringBuilder("ALTER TABLE ");
-		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(albumName));
+		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(
+				DatabaseStringUtilities.generateTableName(albumName)));
 		sb.append(" ADD COLUMN ");
 		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(metaItemField.getName()));
 		sb.append(" ");
@@ -349,12 +352,10 @@ public class UpdateOperations {
 		}
 
 		try {
-			String albumTypeInfoTableName = QueryOperations.getTypeInfoTableName(albumName);
-			
 			if (albumPicturesEnabled) {			
-				modifyAlbumInAlbumMasterTable(albumName, albumName, albumTypeInfoTableName, OptionType.YES);
+				updateAlbumInAlbumMasterTable(albumName, albumName, OptionType.YES);
 			} else {
-				modifyAlbumInAlbumMasterTable(albumName, albumName, albumTypeInfoTableName, OptionType.NO);
+				updateAlbumInAlbumMasterTable(albumName, albumName, OptionType.NO);
 			}
 		} catch ( DatabaseWrapperOperationException e) {
 			if (e.ErrorState.equals(DBErrorState.ErrorWithDirtyState)) {
@@ -373,11 +374,11 @@ public class UpdateOperations {
 	 * @throws DatabaseWrapperOperationException 
 	 */
 	private static void appendNewTypeInfoTableColumn(String tableName, MetaItemField metaItemField) throws DatabaseWrapperOperationException {
-		String quotedTypeInfoTableName = DatabaseStringUtilities.encloseNameWithQuotes(QueryOperations.getTypeInfoTableName(tableName));
+		String typeInfoTableName = DatabaseStringUtilities.generateTypeInfoTableName(tableName);
 		String columnName = DatabaseStringUtilities.encloseNameWithQuotes(metaItemField.getName());
 		// Prepare the append column string for the type table.
 		StringBuilder sb = new StringBuilder("ALTER TABLE ");
-		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(quotedTypeInfoTableName));
+		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(typeInfoTableName));
 		sb.append(" ADD COLUMN ");
 		sb.append(columnName);
 		sb.append(" TEXT");
@@ -390,7 +391,7 @@ public class UpdateOperations {
 		
 		sb.delete(0,sb.length());
 		sb.append("UPDATE ");
-		sb.append(quotedTypeInfoTableName);
+		sb.append(typeInfoTableName);
 		sb.append(" SET ");
 		sb.append(columnName);
 		sb.append(" = ?");
@@ -414,7 +415,7 @@ public class UpdateOperations {
 	 */
 	static void addTypeInfo(String typeInfoTableName, List<MetaItemField> metafields) throws DatabaseWrapperOperationException {
 		StringBuilder sb = new StringBuilder("INSERT INTO ");
-		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(typeInfoTableName));
+		sb.append(typeInfoTableName);
 		sb.append(" ( ");
 
 		// The 'while iterator loop' is used here because it is cheaper and more reliable than a foreach
@@ -507,7 +508,8 @@ public class UpdateOperations {
 
 		// Build the string with place-holders '?'
 		StringBuilder sb = new StringBuilder("UPDATE ");
-		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(albumItem.getAlbumName()));
+		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(
+				DatabaseStringUtilities.generateTableName(albumItem.getAlbumName())));
 		sb.append(" SET ");
 
 		// Add each field to be update by the query
@@ -590,7 +592,7 @@ public class UpdateOperations {
 		String savepointName = DatabaseIntegrityManager.createSavepoint();
 		
 		StringBuilder sb = new StringBuilder("UPDATE ");
-		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(albumName));
+		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(DatabaseStringUtilities.generateTableName(albumName)));
 		sb.append(" SET ");
 		sb.append(DatabaseConstants.CONTENT_VERSION_COLUMN_NAME);
 		sb.append(" = ? ");
@@ -611,9 +613,9 @@ public class UpdateOperations {
 	private static void updateSchemaVersion(String albumName) throws DatabaseWrapperOperationException  {
 		String savepointName = DatabaseIntegrityManager.createSavepoint();
 		
-		String typeInfoTableName = QueryOperations.getTypeInfoTableName(albumName);
+		String typeInfoTableName = DatabaseStringUtilities.generateTypeInfoTableName(albumName);
 		StringBuilder sb = new StringBuilder("UPDATE ");
-		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(typeInfoTableName));
+		sb.append(typeInfoTableName);
 		sb.append(" SET ");
 		sb.append(DatabaseConstants.SCHEMA_VERSION_COLUMN_NAME);
 		sb.append(" = ?");
@@ -636,9 +638,9 @@ public class UpdateOperations {
 	 * @throws DatabaseWrapperOperationException 
 	 */
 	private static void updateTableColumnWithDefaultValue(String tableName, MetaItemField columnMetaInfo) throws DatabaseWrapperOperationException {		
-		String sqlString = "UPDATE "+ DatabaseStringUtilities.encloseNameWithQuotes(tableName)+ " SET " +DatabaseStringUtilities.encloseNameWithQuotes(columnMetaInfo.getName()) + "=?";
+		String sqlString = "UPDATE " + tableName + " SET " +DatabaseStringUtilities.encloseNameWithQuotes(columnMetaInfo.getName()) + "=?";
 		
-		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(sqlString)){						
+		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(sqlString)) {						
 			
 			switch (columnMetaInfo.getType()) {
 			case Text: 
@@ -677,25 +679,25 @@ public class UpdateOperations {
 		}
 	}
 	
-	static void addNewAlbumToAlbumMasterTable(String albumTableName, String albumTypeInfoTableName, boolean hasPictures) throws DatabaseWrapperOperationException {		
+	static void addNewAlbumToAlbumMasterTable(String albumName, boolean hasPictures) throws DatabaseWrapperOperationException {		
 		StringBuilder sb = new StringBuilder("INSERT INTO ");
-		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(DatabaseConstants.ALBUM_MASTER_TABLE_NAME));
+		sb.append(DatabaseConstants.ALBUM_MASTER_TABLE_NAME);
 		sb.append(" (");
-		sb.append(DatabaseConstants.ALBUM_TABLENAME_IN_ALBUM_MASTER_TABLE);
+		sb.append(DatabaseConstants.ALBUMNAME_IN_ALBUM_MASTER_TABLE);
 		sb.append(", ");
-		sb.append(DatabaseConstants.TYPE_TABLENAME_ALBUM_MASTER_TABLE);		
+		sb.append(DatabaseConstants.ALBUM_TABLENAME_IN_ALBUM_MASTER_TABLE);		
 		sb.append(", ");
-		sb.append(DatabaseConstants.PICTURE_COLUMN_NAME_IN_ALBUM_MASTER_TABLE);
+		sb.append(DatabaseConstants.HAS_PICTURES_COLUMN_IN_ALBUM_MASTER_TABLE);
 		sb.append(") VALUES( ?, ?, ?)");
 
-		
-		String registerNewAlbumToAlbumMasterableString = sb.toString();
+		String addAlbumQuery = sb.toString();
 
-		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(registerNewAlbumToAlbumMasterableString)){			
+		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(addAlbumQuery)){			
 			// New album name
-			preparedStatement.setString(1, DatabaseStringUtilities.removeQuotesEnclosingName(albumTableName));
-			// New type info name
-			preparedStatement.setString(2, DatabaseStringUtilities.removeQuotesEnclosingName(albumTypeInfoTableName));
+			preparedStatement.setString(1, DatabaseStringUtilities.removeQuotesEnclosingName(albumName));
+			// New album table name
+			preparedStatement.setString(2, DatabaseStringUtilities.generateTableName(
+					DatabaseStringUtilities.removeQuotesEnclosingName(albumName)));
 			// New album contains picture flag
 			OptionType hasPictureFlag = hasPictures ? OptionType.YES : OptionType.NO ; 
 			preparedStatement.setString(3, hasPictureFlag.toString());
@@ -705,18 +707,18 @@ public class UpdateOperations {
 		}
 	}
 
-	static void removeAlbumFromAlbumMasterTable(String albumTableName) throws DatabaseWrapperOperationException  {
+	static void removeAlbumFromAlbumMasterTable(String albumName) throws DatabaseWrapperOperationException  {
 		StringBuilder sb = new StringBuilder("DELETE FROM ");	
-		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(DatabaseConstants.ALBUM_MASTER_TABLE_NAME));
+		sb.append(DatabaseConstants.ALBUM_MASTER_TABLE_NAME);
 		sb.append(" WHERE ");
-		sb.append(DatabaseConstants.ALBUM_TABLENAME_IN_ALBUM_MASTER_TABLE);
+		sb.append(DatabaseConstants.ALBUMNAME_IN_ALBUM_MASTER_TABLE);
 		sb.append(" = ?");
 
 		String unRegisterNewAlbumFromAlbumMasterableString = sb.toString();		
 
 		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(unRegisterNewAlbumFromAlbumMasterableString)){  			
 			// WHERE album name
-			preparedStatement.setString(1, albumTableName);
+			preparedStatement.setString(1, albumName);
 			preparedStatement.executeUpdate();
 		} catch (SQLException e) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState, e);
@@ -724,45 +726,43 @@ public class UpdateOperations {
 	}
 
 	/**
-	 * 
-	 * @param oldAlbumTableName
-	 * @param newAlbumTableName
-	 * @param newAlbumTypeInfoTableName
-	 * @param newHasPicturesFlag OptionType.UNKNOWN will be ignored. Yes and no will be set accordingly
-	 * @throws DatabaseWrapperOperationException
+	 * Updates the album name and the album table reference in the album master table
+	 * @param oldAlbumName the original album name which should be updated
+	 * @param newAlbumName the new album name
+	 * @param newHasPicturesFlagOptionType.UNKNOWN will be ignored. Yes and no will be set accordingly
 	 */
-	private static void modifyAlbumInAlbumMasterTable(String oldAlbumTableName, String newAlbumTableName, String newAlbumTypeInfoTableName, OptionType newHasPicturesFlag) throws DatabaseWrapperOperationException  {
+	private static void updateAlbumInAlbumMasterTable(String oldAlbumName, String newAlbumName, OptionType newHasPicturesFlag) throws DatabaseWrapperOperationException  {
 
 		StringBuilder sb = new StringBuilder("UPDATE ");		
-		sb.append(DatabaseConstants.ALBUM_MASTER_TABLE_NAME);
+		sb.append(DatabaseStringUtilities.transformColumnNameToSelectQueryName(DatabaseConstants.ALBUM_MASTER_TABLE_NAME));
 		sb.append(" SET ");
-		sb.append(DatabaseConstants.ALBUM_TABLENAME_IN_ALBUM_MASTER_TABLE);
+		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(DatabaseConstants.ALBUMNAME_IN_ALBUM_MASTER_TABLE));
 		sb.append(" = ?, ");
-		sb.append(DatabaseConstants.TYPE_TABLENAME_ALBUM_MASTER_TABLE);
+		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(DatabaseConstants.ALBUM_TABLENAME_IN_ALBUM_MASTER_TABLE));
 		sb.append(" = ? ");
 		if (newHasPicturesFlag != OptionType.UNKNOWN) {
-			sb.append(", " + DatabaseConstants.PICTURE_COLUMN_NAME_IN_ALBUM_MASTER_TABLE);
+			sb.append(", " + DatabaseStringUtilities.encloseNameWithQuotes(DatabaseConstants.HAS_PICTURES_COLUMN_IN_ALBUM_MASTER_TABLE));
 			sb.append(" = ? ");
 		}
 		sb.append("WHERE ");
-		sb.append(DatabaseConstants.ALBUM_TABLENAME_IN_ALBUM_MASTER_TABLE);
+		sb.append(DatabaseStringUtilities.transformColumnNameToSelectQueryName(DatabaseConstants.ALBUMNAME_IN_ALBUM_MASTER_TABLE));
 		sb.append(" = ?");
 
 		String unRegisterNewAlbumFromAlbumMasterableString = sb.toString();
 
 		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(unRegisterNewAlbumFromAlbumMasterableString);){			
 			// New album name
-			preparedStatement.setString(1, newAlbumTableName);
-			// New type info name
-			preparedStatement.setString(2, newAlbumTypeInfoTableName);
+			preparedStatement.setString(1, newAlbumName);
+			// New album table name
+			preparedStatement.setString(2, DatabaseStringUtilities.generateTableName(newAlbumName));
 			if (newHasPicturesFlag != OptionType.UNKNOWN) {
 				// New hasPictures flag
 				preparedStatement.setString(3, newHasPicturesFlag.toString());				
 				// Where old album name
-				preparedStatement.setString(4, oldAlbumTableName);
+				preparedStatement.setString(4, oldAlbumName);
 			} else {		
 				// Where old album name
-				preparedStatement.setString(3, oldAlbumTableName);
+				preparedStatement.setString(3, oldAlbumName);
 			}
 			
 			preparedStatement.executeUpdate();

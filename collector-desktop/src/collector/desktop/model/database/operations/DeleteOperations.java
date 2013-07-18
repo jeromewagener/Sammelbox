@@ -51,7 +51,8 @@ public class DeleteOperations {
 			// The following three columns are automatically created by createNewAlbumTable
 			newFields = UpdateOperations.removeFieldFromMetaItemList(new MetaItemField("id", FieldType.ID), newFields);
 			newFields = UpdateOperations.removeFieldFromMetaItemList(new MetaItemField(DatabaseConstants.TYPE_INFO_COLUMN_NAME, FieldType.ID), newFields);
-			CreateOperations.createNewAlbumTable( newFields, albumName, keepPictureField);
+			CreateOperations.createNewAlbumTable(newFields, albumName, DatabaseStringUtilities.encloseNameWithQuotes(
+					DatabaseStringUtilities.generateTableName(albumName)), keepPictureField);
 			
 			// Restore the old data from the java objects in the new tables [delete column]
 			List<AlbumItem> newAlbumItems = removeFieldFromAlbumItemList(metaItemField, albumItems);
@@ -87,19 +88,25 @@ public class DeleteOperations {
 		return newAlbumItemList; 
 	}
 	
-	// TODO comment
 	static void removeAlbumAndAlbumPictures(String albumName) throws DatabaseWrapperOperationException {
 		removeAlbum(albumName);
 		removeAlbumPictures(albumName);
 	}
 	
+	/**
+	 * Permanently removes an album along with its typeInfo metadata
+	 * @param albumName The name of the album which is to be removed
+	 * @throws DatabaseWrapperOperationException 
+	 */
 	static void removeAlbum(String albumName) throws DatabaseWrapperOperationException {
 		String savepointName = DatabaseIntegrityManager.createSavepoint();
 		try {	
-			String typeInfoTableName = QueryOperations.getTypeInfoTableName(albumName);
+			String typeInfoTableName = DatabaseStringUtilities.generateTypeInfoTableName(albumName);
+			String pictureTableName = DatabaseStringUtilities.generatePictureTableName(albumName);
 			
 			dropTable(albumName);
 			dropTable(typeInfoTableName);
+			dropTable(pictureTableName);
 			
 			UpdateOperations.removeAlbumFromAlbumMasterTable(albumName); 
 			
@@ -114,7 +121,11 @@ public class DeleteOperations {
 		}
 	}
 
-	// TODO comment
+	/**
+	 * Removes the album pictures for the given album
+	 * @param albumName the album for which the pictures should be removed
+	 * @throws DatabaseWrapperOperationException
+	 */
 	static void removeAlbumPictures(String albumName) throws DatabaseWrapperOperationException {
 		String savepointName = DatabaseIntegrityManager.createSavepoint();
 		try {
@@ -132,9 +143,13 @@ public class DeleteOperations {
 		}
 	}
 	
+	/** Removes all picture records from the picture table for the given album item
+	 * ATTENTION: this method does no delete the physical files!
+	 * @param albumItem the album item for which all picture records should be deleted */
 	static void removeAllPicturesForAlbumItemFromPictureTable(AlbumItem albumItem) throws DatabaseWrapperOperationException {		
 		StringBuilder sb = new StringBuilder("DELETE FROM ");
-		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(albumItem.getAlbumName() + DatabaseConstants.PICTURE_TABLE_SUFFIX));
+		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(
+				DatabaseStringUtilities.generatePictureTableName(albumItem.getAlbumName())));
 		sb.append(" WHERE ");
 		sb.append(DatabaseConstants.ALBUM_ITEM_ID_REFERENCE_IN_PICTURE_TABLE + " = " + albumItem.getItemID());
 				
@@ -152,7 +167,7 @@ public class DeleteOperations {
 	 */
 	static void dropTable(String tableName) throws DatabaseWrapperOperationException  {
 		try (Statement statement = ConnectionManager.getConnection().createStatement()){		
-			statement.execute("DROP TABLE IF EXISTS " + DatabaseStringUtilities.encloseNameWithQuotes(tableName));
+			statement.execute("DROP TABLE IF EXISTS " + tableName);
 		} catch (Exception e) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState, e);
 		}
@@ -194,8 +209,8 @@ public class DeleteOperations {
 		List<AlbumItemPicture> picturesToBeRemoved = QueryOperations.getAlbumItemPictures(albumItem.getAlbumName(), albumItem.getItemID());
 		
 		// delete album item in table
-		String deleteAlbumItemString = "DELETE FROM " + DatabaseStringUtilities.encloseNameWithQuotes(albumItem.getAlbumName()) + 
-				" WHERE id=" + albumItem.getItemID();
+		String deleteAlbumItemString = "DELETE FROM " + DatabaseStringUtilities.encloseNameWithQuotes(
+				DatabaseStringUtilities.generateTableName(albumItem.getAlbumName())) + " WHERE id=" + albumItem.getItemID();
 		
 		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(deleteAlbumItemString)) {
 			preparedStatement.executeUpdate();

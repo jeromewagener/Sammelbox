@@ -3,6 +3,7 @@ package collector.desktop.tests.album;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.After;
@@ -11,7 +12,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import collector.desktop.model.album.AlbumItemResultSet;
+import collector.desktop.model.album.AlbumItem;
+import collector.desktop.model.album.AlbumItemPicture;
 import collector.desktop.model.album.FieldType;
 import collector.desktop.model.album.MetaItemField;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
@@ -19,6 +21,7 @@ import collector.desktop.model.database.operations.DatabaseOperations;
 import collector.desktop.model.database.utilities.ConnectionManager;
 import collector.desktop.model.database.utilities.DatabaseIntegrityManager;
 import collector.desktop.tests.CollectorTestExecuter;
+import collector.desktop.tests.utilities.TestQueries;
 
 public class AlterAlbumTests {
 	@BeforeClass
@@ -46,7 +49,7 @@ public class AlterAlbumTests {
 			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
 
 			MetaItemField metaItemField = new MetaItemField("Publisher", FieldType.Text, false);
-			int originalAlbumItemCount = numberOfAlbumItems("Books");
+			long originalAlbumItemCount = DatabaseOperations.getNumberOfItemsInAlbum("Books");
 
 			DatabaseOperations.appendNewAlbumField("Books", metaItemField);
 			List<MetaItemField> metaDataItems = DatabaseOperations.getAlbumItemFieldNamesAndTypes("Books");
@@ -54,7 +57,8 @@ public class AlterAlbumTests {
 			assertTrue("New publisher text column should be added at the end", 
 					metaDataItems.get(metaDataItems.size()-1).getName().equals("Publisher"));
 
-			assertTrue("The album item count incorrectly changed", originalAlbumItemCount == numberOfAlbumItems("Books"));
+			assertTrue("The album item count incorrectly changed", 
+					originalAlbumItemCount == DatabaseOperations.getNumberOfItemsInAlbum("Books"));
 		} catch (DatabaseWrapperOperationException e) {
 			fail(e.getMessage());
 		}
@@ -66,7 +70,7 @@ public class AlterAlbumTests {
 			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
 
 			MetaItemField metaItemField = new MetaItemField("Publisher", FieldType.Text, true);
-			int originalAlbumItemCount = numberOfAlbumItems("Books");
+			long originalAlbumItemCount = DatabaseOperations.getNumberOfItemsInAlbum("Books");
 
 			DatabaseOperations.appendNewAlbumField("Books", metaItemField);
 			List<MetaItemField> metaDataItems = DatabaseOperations.getAlbumItemFieldNamesAndTypes("Books");
@@ -74,7 +78,8 @@ public class AlterAlbumTests {
 			assertTrue("New publisher text column should be added at the end", 
 					metaDataItems.get(metaDataItems.size()-1).getName().equals("Publisher"));
 
-			assertTrue("The album item count incorrectly changed", originalAlbumItemCount == numberOfAlbumItems("Books"));
+			assertTrue("The album item count incorrectly changed", 
+					originalAlbumItemCount == DatabaseOperations.getNumberOfItemsInAlbum("Books"));
 		}catch (DatabaseWrapperOperationException e ) {
 			fail(e.getMessage());
 		}
@@ -84,7 +89,7 @@ public class AlterAlbumTests {
 	public void testAddPublisherFieldAndMoveFourUp() {
 		try {
 			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
-			int originalAlbumItemCount = numberOfAlbumItems("Books");
+			long originalAlbumItemCount = DatabaseOperations.getNumberOfItemsInAlbum("Books");
 
 			MetaItemField metaItemField = new MetaItemField("Publisher", FieldType.Text, false);
 
@@ -109,7 +114,8 @@ public class AlterAlbumTests {
 			assertTrue("New publisher text column should be at the fourth position after reordering", 
 					metaDataItems.get(2).getName().equals("Publisher"));
 
-			assertTrue("The album item count incorrectly changed", originalAlbumItemCount == numberOfAlbumItems("Books"));
+			assertTrue("The album item count incorrectly changed", 
+					originalAlbumItemCount == DatabaseOperations.getNumberOfItemsInAlbum("Books"));
 		} catch (DatabaseWrapperOperationException e ) {
 			fail(e.getMessage());
 			e.printStackTrace();
@@ -122,7 +128,7 @@ public class AlterAlbumTests {
 			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
 
 			List<MetaItemField> metaDataItems = DatabaseOperations.getAlbumItemFieldNamesAndTypes("DVDs");
-			int originalAlbumItemCount = numberOfAlbumItems("DVDs");
+			long originalAlbumItemCount = DatabaseOperations.getNumberOfItemsInAlbum("DVDs");
 
 			assertTrue("Title text column should be at the beginning", 
 					metaDataItems.get(0).getName().equals("Title"));
@@ -143,23 +149,21 @@ public class AlterAlbumTests {
 
 			metaDataItems = DatabaseOperations.getAlbumItemFieldNamesAndTypes("DVDs");
 
-			assertTrue("Title text column should be at the end", 
-					metaDataItems.get(5).getName().equals("Title"));
-			assertTrue("The album item count incorrectly changed", originalAlbumItemCount == numberOfAlbumItems("DVDs"));
-		} catch (DatabaseWrapperOperationException e ) {
-			e.printStackTrace();
+			assertTrue("Title text column should be at the end", metaDataItems.get(5).getName().equals("Title"));
+			assertTrue("The album item count incorrectly changed", 
+					originalAlbumItemCount == DatabaseOperations.getNumberOfItemsInAlbum("DVDs"));
+		} catch (DatabaseWrapperOperationException e) {
 			fail(e.getMessage());
-			
 		}
 	}
 
 	@Test
-	public void testRenameColumnName_NonQuicksearchableField() {
+	public void testRenameNonQuicksearchableField() {
 		try {
 			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
 
 			List<MetaItemField> metaDataItems = DatabaseOperations.getAlbumItemFieldNamesAndTypes("Books");
-			int originalAlbumItemCount = numberOfAlbumItems("Books");
+			long originalAlbumItemCount = DatabaseOperations.getNumberOfItemsInAlbum("Books");
 
 			assertTrue("The first column name should be 'Book Title'", metaDataItems.get(0).getName().equals("Book Title"));
 
@@ -171,19 +175,21 @@ public class AlterAlbumTests {
 			metaDataItems = DatabaseOperations.getAlbumItemFieldNamesAndTypes("Books");
 
 			assertTrue("The first column name should now be 'Title'", metaDataItems.get(0).getName().equals("Title"));
-			assertTrue("The album item count incorrectly changed", originalAlbumItemCount == numberOfAlbumItems("Books"));
+			assertTrue("The album item count incorrectly changed", 
+					originalAlbumItemCount == DatabaseOperations.getNumberOfItemsInAlbum("Books"));
 		} catch (DatabaseWrapperOperationException e ) {
 			fail(e.getMessage());
 		}
 	}
 
 	@Test
-	public void testRenameColumnName_QuicksearchableField() {
+	public void testRenameQuicksearchableField() {
 		try {
 			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
 
 			List<MetaItemField> metaDataItems = DatabaseOperations.getAlbumItemFieldNamesAndTypes("DVDs");
-			int originalAlbumItemCount = numberOfAlbumItems("DVDs");
+			long originalAlbumItemCount = DatabaseOperations.getNumberOfItemsInAlbum("DVDs");
+			
 			if (!metaDataItems.get(0).getName().equals("Title")) {
 				fail("The second column name should be 'Title'" );
 			}
@@ -195,14 +201,14 @@ public class AlterAlbumTests {
 			metaDataItems = DatabaseOperations.getAlbumItemFieldNamesAndTypes("DVDs");
 
 			assertTrue("The first column name should now be 'DVD Title'", metaDataItems.get(0).getName().equals("DVD Title"));
-			assertTrue("The album item count incorrectly changed", originalAlbumItemCount == numberOfAlbumItems("DVDs"));
+			assertTrue("The album item count incorrectly changed", originalAlbumItemCount == DatabaseOperations.getNumberOfItemsInAlbum("DVDs"));
 		} catch (DatabaseWrapperOperationException e ) {
 			fail(e.getMessage());
 		}
 	}
 
 	@Test
-	public void testRenameTableName() {
+	public void testRenameAlbum() {
 		try {
 			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
 
@@ -231,7 +237,7 @@ public class AlterAlbumTests {
 		try {
 			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
 			List<MetaItemField> metaDataItems = DatabaseOperations.getAlbumItemFieldNamesAndTypes("Books");
-			int originalAlbumItemCount = numberOfAlbumItems("Books");
+			long originalAlbumItemCount = DatabaseOperations.getNumberOfItemsInAlbum("Books");
 
 			assertTrue("The second column name should be 'Author'", metaDataItems.get(1).getName().equals("Author"));
 
@@ -243,30 +249,92 @@ public class AlterAlbumTests {
 				assertTrue("The 'Author' field should no longer be present", metaItemField.getName().equals("Books") == false);
 			}
 
-			assertTrue("The album item count incorrectly changed", originalAlbumItemCount == numberOfAlbumItems("Books"));
-		} catch (DatabaseWrapperOperationException e ) {			
+			assertTrue("The album item count incorrectly changed", 
+					originalAlbumItemCount == DatabaseOperations.getNumberOfItemsInAlbum("Books"));
+		} catch (DatabaseWrapperOperationException e) {			
 			fail(e.getMessage());
 		}
 	}
-
-	/**
-	 * Counts the number of items in an album. Expensive function to use. Not recommended to overuse.
-	 * @param albumName The name of the album to be queried.
-	 * @return The number of item in the specified album.
-	 */
-	public static int numberOfAlbumItems(String albumName) {
+	
+	@Test
+	public void testReplaceSinglePictureWithTwoOtherPictures() {
 		try {
-			AlbumItemResultSet resultSet = DatabaseOperations.executeSQLQuery("SELECT * FROM " + albumName);
-			int counter = 0;
+			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
+			AlbumItem albumItem = DatabaseOperations.getAlbumItem("DVDs", 1);
 			
-			while (resultSet.moveToNext()) {
-				counter++;
-			}
+			assertTrue("The first DVD item should contain only one picture", albumItem.getPictures().size() == 1);
 			
-			return counter;
+			List<AlbumItemPicture> pictures = new ArrayList<>();
+			pictures.add(new AlbumItemPicture(
+					CollectorTestExecuter.PATH_TO_TEST_PICTURE_1, CollectorTestExecuter.PATH_TO_TEST_PICTURE_1, "DVDs", 1));
+			pictures.add(new AlbumItemPicture(
+					CollectorTestExecuter.PATH_TO_TEST_PICTURE_2, CollectorTestExecuter.PATH_TO_TEST_PICTURE_2, "DVDs", 1));
+			
+			albumItem.setPictures(pictures);
+			
+			assertTrue("The *non* persisted DVD item should now contain two pictures", albumItem.getPictures().size() == 2);
+			
+			DatabaseOperations.updateAlbumItem(albumItem);
+			
+			AlbumItem newAlbumItem = DatabaseOperations.getAlbumItem("DVDs", 1);
+			
+			assertTrue("The *persisted* DVD item should now contain two pictures", newAlbumItem.getPictures().size() == 2);
 		} catch (DatabaseWrapperOperationException e) {
-			return -1;
+			fail(e.getMessage());
 		}
 	}
-
+	
+	@Test
+	public void testRenameAlbumShouldRenameInternalTables() {
+		try {
+			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
+			DatabaseOperations.renameAlbum("DVDs", "My DVD Collection");
+			
+			if (!TestQueries.isDatabaseTableAvailable("my_dvd_collection_typeinfo")) {
+				fail("The typeinfo table should always be present");
+			}
+			
+			if (!TestQueries.isDatabaseTableAvailable("my_dvd_collection_pictures")) {
+				fail("The picture table should always be present");
+			}
+		} catch (DatabaseWrapperOperationException e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	@Test
+	public void testPictureTableShouldAlwaysBePresent() {
+		try {
+			List<MetaItemField> fields = new ArrayList<>();
+			
+			fields.add(new MetaItemField("field1", FieldType.Text));
+			fields.add(new MetaItemField("field2", FieldType.Text));
+			
+			DatabaseOperations.createNewAlbum("TestAlbum", fields, false);
+			
+			if (!TestQueries.isDatabaseTableAvailable("TestAlbum_pictures")) {
+				fail("The picture table should always be present");
+			}
+		} catch (DatabaseWrapperOperationException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void testTableNameTranslation() {
+		try {
+			List<MetaItemField> fields = new ArrayList<>();
+			
+			fields.add(new MetaItemField("field1", FieldType.Text));
+			fields.add(new MetaItemField("field2", FieldType.Text));
+			
+			DatabaseOperations.createNewAlbum("Test Album 1", fields, false);
+			
+			if (!TestQueries.isDatabaseTableAvailable("test_album_1_pictures")) {
+				fail("The table name should be lower case and spaces should be replaced by underscores");
+			}
+		} catch (DatabaseWrapperOperationException e) {
+			e.printStackTrace();
+		}
+	}
 }

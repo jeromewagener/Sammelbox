@@ -243,11 +243,10 @@ public class FileSystemAccessWrapper {
 	 * Recursively copies a directory and its content from the source to the target location.
 	 * @param sourceLocation The file handle to the source directory.
 	 * @param targetLocation The file handle to the target directory.
-	 * @param excludeFileRegex Excludes files from being copies that match this regex. Null or empty string will match no file.
+	 * @param excludeFileRegex Excludes files from being copied which match this regex. Null or empty string will match no file.
 	 * @throws IOException Exception raised if a problem is encountered during the copy process.
 	 */
-	public static void copyDirectory(File sourceLocation , File targetLocation, String excludeFileRegex)
-			throws IOException {
+	public static void copyDirectory(File sourceLocation , File targetLocation, String excludeFileRegex) throws IOException {
 
 		if (sourceLocation.isDirectory()) {
 			if (!targetLocation.exists()) {
@@ -256,12 +255,10 @@ public class FileSystemAccessWrapper {
 
 			String[] children = sourceLocation.list();
 			for (int i=0; i<children.length; i++) {
-				copyDirectory(	new File(sourceLocation, children[i]),
-						new File(targetLocation, children[i]),
-						excludeFileRegex);
+				copyDirectory(	new File(sourceLocation, children[i]), new File(targetLocation, children[i]), excludeFileRegex);
 			}
 		} else {
-			if ( excludeFileRegex != null && !excludeFileRegex.isEmpty() && sourceLocation.getCanonicalFile().getName().matches(excludeFileRegex)) {
+			if (excludeFileRegex != null && !excludeFileRegex.isEmpty() && sourceLocation.getCanonicalFile().getName().matches(excludeFileRegex)) {
 				return;
 			}
 			copyFile(sourceLocation, targetLocation);
@@ -467,7 +464,7 @@ public class FileSystemAccessWrapper {
 		for (int i=0; i<files.length; i++) {
 			if (files[i].isDirectory()) {
 				deleteDirectoryRecursively(files[i]);
-			} else if (!files[i].getName().equals(DATABASE_NAME)){
+			} else if (!files[i].getName().equals(DATABASE_NAME)) {
 				files[i].delete();
 			}
 		}

@@ -25,6 +25,7 @@ import collector.desktop.model.database.exceptions.DatabaseWrapperOperationExcep
 import collector.desktop.model.database.operations.DatabaseOperations;
 import collector.desktop.model.database.utilities.ConnectionManager;
 import collector.desktop.model.database.utilities.DatabaseIntegrityManager;
+import collector.desktop.model.database.utilities.DatabaseStringUtilities;
 import collector.desktop.tests.CollectorTestExecuter;
 
 public class BackupRestoreTests {
@@ -227,7 +228,8 @@ public class BackupRestoreTests {
 			}
 
 			assertTrue("Resultset should contain 3 items", counter == 3);
-			allAlbumItems = DatabaseOperations.executeSQLQuery("SELECT * FROM 'DVD Album'");
+			allAlbumItems = DatabaseOperations.executeSQLQuery("SELECT * FROM" + 
+					DatabaseStringUtilities.encloseNameWithQuotes(DatabaseStringUtilities.generateTableName("DVD Album")));
 			assertTrue("Resultset should not be null", allAlbumItems != null);
 
 			counter = 0;
@@ -236,7 +238,8 @@ public class BackupRestoreTests {
 			}
 
 			assertTrue("Resultset should contain 2 items", counter == 2);		
-			allAlbumItems = DatabaseOperations.executeSQLQuery("SELECT * FROM 'Music Album'");
+			allAlbumItems = DatabaseOperations.executeSQLQuery("SELECT * FROM" + 
+					DatabaseStringUtilities.encloseNameWithQuotes(DatabaseStringUtilities.generateTableName("Music Album")));
 			assertTrue("Resultset should not be null", allAlbumItems != null);
 
 			counter = 0;
@@ -281,7 +284,9 @@ public class BackupRestoreTests {
 			DatabaseIntegrityManager.restoreFromFile(FileSystemAccessWrapper.TEMP_DIR + 
 					File.separatorChar + "testBackupRestoreOfMultipleAlbums.cbk");
 
-			AlbumItemResultSet allAlbumItems = DatabaseOperations.executeSQLQuery("SELECT * FROM Books");
+			AlbumItemResultSet allAlbumItems = DatabaseOperations.executeSQLQuery("SELECT * FROM " + 
+					DatabaseStringUtilities.encloseNameWithQuotes(DatabaseStringUtilities.generateTableName("Books")));
+			
 			assertTrue("Resultset should not be null", allAlbumItems != null);
 
 			int counter = 0;
@@ -290,7 +295,8 @@ public class BackupRestoreTests {
 			}
 
 			assertTrue("Resultset should contain 3 items", counter == 3);
-			allAlbumItems = DatabaseOperations.executeSQLQuery("SELECT * FROM 'DVD Album'");
+			allAlbumItems = DatabaseOperations.executeSQLQuery("SELECT * FROM " +
+					DatabaseStringUtilities.encloseNameWithQuotes(DatabaseStringUtilities.generateTableName("DVD Album")));
 			assertTrue("Resultset should not be null", allAlbumItems != null);
 
 			counter = 0;
@@ -299,7 +305,8 @@ public class BackupRestoreTests {
 			}
 
 			assertTrue("Resultset should contain 2 items", counter == 2);		
-			allAlbumItems = DatabaseOperations.executeSQLQuery("SELECT * FROM 'Music Album'");
+			allAlbumItems = DatabaseOperations.executeSQLQuery("SELECT * FROM " +
+					DatabaseStringUtilities.encloseNameWithQuotes(DatabaseStringUtilities.generateTableName("Music Album")));
 			assertTrue("Resultset should not be null", allAlbumItems != null);
 
 			counter = 0;
@@ -309,7 +316,7 @@ public class BackupRestoreTests {
 
 			assertTrue("Resultset should contain 0 items", counter == 0);
 		} catch (DatabaseWrapperOperationException e) {
-			fail("Failed on internal db error");
+			fail("Failed on internal database error");
 		}
 	}
 

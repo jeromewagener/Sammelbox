@@ -31,15 +31,17 @@ import collector.desktop.model.database.utilities.QueryBuilder.QueryComponent;
 import collector.desktop.model.database.utilities.QueryBuilder.QueryOperator;
 
 public class QueryOperations {
+	private static final String SQLITE_INDEX_COLUMN_NAME = "COLUMN_NAME";
 	private static final Logger LOGGER = LoggerFactory.getLogger(QueryOperations.class);
 	
-	static AlbumItemResultSet executeSQLQuery(String sqlStatement, String albumName) throws DatabaseWrapperOperationException {
-		AlbumItemResultSet albumItemRS = null;
-	
+	static AlbumItemResultSet executeSQLQuery(String sqlStatement, String albumName) throws DatabaseWrapperOperationException {	
 		Map<Integer, MetaItemField> metaInfoMap = QueryOperations.getAlbumItemMetaMap(albumName);
-		
-		albumItemRS = new AlbumItemResultSet(ConnectionManager.getConnection(), sqlStatement, metaInfoMap);
-		return albumItemRS;
+		return new AlbumItemResultSet(ConnectionManager.getConnection(), sqlStatement, metaInfoMap);
+	}
+	
+	static AlbumItemResultSet executeQuickSearchQuery(String sqlStatement, String albumName) throws DatabaseWrapperOperationException {	
+		Map<Integer, MetaItemField> metaInfoMap = QueryOperations.getAlbumItemMetaMap(albumName);
+		return new AlbumItemResultSet(ConnectionManager.getConnection(), albumName, sqlStatement, metaInfoMap);
 	}
 
 	static AlbumItemResultSet executeSQLQuery(String sqlStatement) throws DatabaseWrapperOperationException {
@@ -57,7 +59,7 @@ public class QueryOperations {
 		List<MetaItemField> albumFields = getAllAlbumItemMetaItemFields(albumName);
 		String query = "";
 		ArrayList<QueryComponent> queryFields = null;
-		List<String> quicksearchFieldNames = getIndexedColumnNames(albumName);
+		List<String> quicksearchFieldNames = getIndexedColumnNames(DatabaseStringUtilities.generateTableName(albumName));
 
 		// If no field is quicksearchable return select * from albumName or no terms have been entered
 		if (quicksearchFieldNames == null || quicksearchFieldNames.isEmpty() || quickSearchTerms == null || quickSearchTerms.isEmpty() ) {
@@ -92,7 +94,7 @@ public class QueryOperations {
 
 		}// end of for - terms
 
-		return executeSQLQuery(query, albumName);
+		return executeQuickSearchQuery(query, albumName);
 	}
 
 	static long getNumberOfItemsInAlbum(String albumName) throws DatabaseWrapperOperationException {
@@ -103,7 +105,8 @@ public class QueryOperations {
 				return resultSet.getLong("numberOfItems");
 			}
 			LOGGER.error("The number of items could not be fetch for album {}", albumName);
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, "The number of items could not be fetch for album " + albumName);
+			throw new DatabaseWrapperOperationException(
+					DBErrorState.ErrorWithCleanState, "The number of items could not be fetch for album " + albumName);
 		} catch (SQLException e) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
 		}
@@ -111,43 +114,17 @@ public class QueryOperations {
 	
 	static List<String> getListOfAllAlbums() throws DatabaseWrapperOperationException {
 		List<String> albumList = new ArrayList<String>();
-		String queryAllAlbumsSQL = QueryBuilder.createSelectColumnQuery(DatabaseConstants.ALBUM_MASTER_TABLE_NAME, DatabaseConstants.ALBUM_TABLENAME_IN_ALBUM_MASTER_TABLE);
+		String queryAllAlbumsSQL = QueryBuilder.createSelectColumnQuery(
+				DatabaseConstants.ALBUM_MASTER_TABLE_NAME, DatabaseConstants.ALBUMNAME_IN_ALBUM_MASTER_TABLE);
 
-		try (	Statement statement = ConnectionManager.getConnection().createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
-				ResultSet rs = statement.executeQuery(queryAllAlbumsSQL);) {			
-			
+		try (Statement statement = ConnectionManager.getConnection().createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
+			 ResultSet rs = statement.executeQuery(queryAllAlbumsSQL);) {
 
 			while(rs.next()) {
 				albumList.add(rs.getString(1));
 			}
 			return albumList;
 			
-		} catch (SQLException e) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
-		}		
-	}
-	
-	/** 
-	 * Retrieves the name of the table containing the type information about it.
-	 * @param mainTableName The name of the table of which the type information belongs to.
-	 * @return The name of the related typeInfo table.
-	 * @throws DatabaseWrapperOperationException 
-	 */
-	static String getTypeInfoTableName(String mainTableName) throws DatabaseWrapperOperationException  {
-		DatabaseMetaData dbmetadata = null;
-		try {
-			dbmetadata = ConnectionManager.getConnection().getMetaData();
-		} catch (SQLException e) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
-		}
-		
-		try (ResultSet dbmetars = dbmetadata.getImportedKeys(null, null, mainTableName)){			
-			if (dbmetars.next()) {
-				String typeInfoTable = dbmetars.getString("PKTABLE_NAME");
-
-				return typeInfoTable;
-			}
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, "No type info table found for " + mainTableName);
 		} catch (SQLException e) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
 		}		
@@ -164,8 +141,8 @@ public class QueryOperations {
 				
 		try (ResultSet indexRS = dbmetadata.getIndexInfo(null, null, tableName, false, true)) {	
 			while (indexRS.next()) {
-				if (indexRS.getString("COLUMN_NAME") != null) {
-					indexedColumns.add(indexRS.getString("COLUMN_NAME")); // TODO extract
+				if (indexRS.getString(SQLITE_INDEX_COLUMN_NAME) != null) {
+					indexedColumns.add(indexRS.getString(SQLITE_INDEX_COLUMN_NAME));
 				}
 			}
 			return indexedColumns;
@@ -194,20 +171,20 @@ public class QueryOperations {
 	}
 
 	static List<MetaItemField> getAlbumItemFieldNamesAndTypes(String albumName) throws DatabaseWrapperOperationException {
+		String tableName = DatabaseStringUtilities.encloseNameWithQuotes(DatabaseStringUtilities.generateTableName(albumName));
 		List<MetaItemField> itemMetadata = new ArrayList<MetaItemField>();
-
+		
 		// Is available means that it does not exist in the db, hence its fields cannot be retrieved
 		if (QueryOperations.isAlbumNameAvailable(albumName)) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState);
 		}
 
-		List<String> quickSearchableColumnNames = getIndexedColumnNames(albumName);
+		List<String> quickSearchableColumnNames = getIndexedColumnNames(DatabaseStringUtilities.generateTableName(albumName));
 		List<String> internalColumnNames = Arrays.asList("id", DatabaseConstants.TYPE_INFO_COLUMN_NAME, DatabaseConstants.CONTENT_VERSION_COLUMN_NAME);
-		String dbAlbumName = DatabaseStringUtilities.encloseNameWithQuotes(albumName);
 		
 		try (
 			Statement statement = ConnectionManager.getConnection().createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
-			ResultSet rs = statement.executeQuery(QueryBuilder.createSelectStarQuery(dbAlbumName));)
+			ResultSet rs = statement.executeQuery(QueryBuilder.createSelectStarQuery(tableName));)
 		{
 			// Retrieve table metadata
 			ResultSetMetaData metaData = rs.getMetaData();
@@ -238,10 +215,12 @@ public class QueryOperations {
 	 * @throws DatabaseWrapperOperationException 
 	 */
 	static List<MetaItemField> getAllAlbumItemMetaItemFields(String albumName) throws DatabaseWrapperOperationException{
+		String tableName = DatabaseStringUtilities.encloseNameWithQuotes(DatabaseStringUtilities.generateTableName(albumName));
+		
 		List<MetaItemField> itemMetadata = new ArrayList<MetaItemField>();
-		List<String> quickSearchableColumnNames = getIndexedColumnNames(albumName);
+		List<String> quickSearchableColumnNames = getIndexedColumnNames(DatabaseStringUtilities.generateTableName(albumName));
 		try (
-			Statement statement = ConnectionManager.getConnection().createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
+			Statement statement = ConnectionManager.getConnection().createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			ResultSet rs = statement.executeQuery(QueryBuilder.createSelectStarQuery(albumName));) {					
 
 			// Retrieve table metadata
@@ -250,9 +229,8 @@ public class QueryOperations {
 			int columnCount = metaData.getColumnCount();
 			// Each ItemField
 			for (int columnIndex = 1; columnIndex <= columnCount; columnIndex++) {
-
 				String columnName = metaData.getColumnName(columnIndex);
-				FieldType type = HelperOperations.detectDataType(albumName, columnName);
+				FieldType type = HelperOperations.detectDataType(tableName, columnName);
 				MetaItemField metaItem = new MetaItemField(columnName, type, quickSearchableColumnNames.contains(columnName));
 				itemMetadata.add(metaItem);
 			}
@@ -263,11 +241,11 @@ public class QueryOperations {
 	}
 
 	static Map<Integer, MetaItemField> getAlbumItemMetaMap(String albumName) throws DatabaseWrapperOperationException {
-		List<String> quickSearchableColumns = getIndexedColumnNames(albumName);
+		List<String> quickSearchableColumns = getIndexedColumnNames(DatabaseStringUtilities.generateTableName(albumName));
 
-		Map<Integer, MetaItemField> itemMetadata = new HashMap<Integer, MetaItemField>();
+		Map<Integer, MetaItemField> itemMetaData = new HashMap<Integer, MetaItemField>();
 		
-		try (Statement statement = ConnectionManager.getConnection().createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
+		try (Statement statement = ConnectionManager.getConnection().createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			 ResultSet set = statement.executeQuery(QueryBuilder.createSelectStarQuery(albumName))) {			
 			
 			// Retrieve table metadata	
@@ -278,12 +256,12 @@ public class QueryOperations {
 			for (int columnIndex = 1; columnIndex <= columnCount; columnIndex++) {
 				String name = metaData.getColumnName(columnIndex);
 				
-				FieldType type = HelperOperations.detectDataType(albumName, name);	
+				FieldType type = HelperOperations.detectDataType(DatabaseStringUtilities.generateTableName(albumName), name);	
 				
-				MetaItemField metaItemField = new MetaItemField(name, type,quickSearchableColumns.contains(name));
-				itemMetadata.put(columnIndex, metaItemField);
+				MetaItemField metaItemField = new MetaItemField(name, type, quickSearchableColumns.contains(name));
+				itemMetaData.put(columnIndex, metaItemField);
 			}
-			return itemMetadata;
+			return itemMetaData;
 		} catch (SQLException e) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
 		}
@@ -295,12 +273,12 @@ public class QueryOperations {
 		if (isPictureAlbum(albumName)) {
 			String picturesQuery = 
 				   " SELECT " +
-						DatabaseConstants.ID_COLUMN_NAME + ", " +
-						DatabaseConstants.THUMBNAIL_PICTURE_FILE_NAME_IN_PICTURE_TABLE + ", " +
-						DatabaseConstants.ORIGINAL_PICTURE_FILE_NAME_IN_PICTURE_TABLE + ", " +
-						DatabaseConstants.ALBUM_ITEM_ID_REFERENCE_IN_PICTURE_TABLE +
-				   " FROM " + DatabaseStringUtilities.encloseNameWithQuotes(albumName + DatabaseConstants.PICTURE_TABLE_SUFFIX) +
-				   " WHERE " + DatabaseConstants.ALBUM_ITEM_ID_REFERENCE_IN_PICTURE_TABLE + " = " + String.valueOf(albumItemID);
+						DatabaseStringUtilities.transformColumnNameToSelectQueryName(DatabaseConstants.ID_COLUMN_NAME) + ", " +
+						DatabaseStringUtilities.transformColumnNameToSelectQueryName(DatabaseConstants.THUMBNAIL_PICTURE_FILE_NAME_IN_PICTURE_TABLE) + ", " +
+						DatabaseStringUtilities.transformColumnNameToSelectQueryName(DatabaseConstants.ORIGINAL_PICTURE_FILE_NAME_IN_PICTURE_TABLE) + ", " +
+						DatabaseStringUtilities.transformColumnNameToSelectQueryName(DatabaseConstants.ALBUM_ITEM_ID_REFERENCE_IN_PICTURE_TABLE) +
+				   " FROM " + DatabaseStringUtilities.encloseNameWithQuotes(DatabaseStringUtilities.generatePictureTableName(albumName)) +
+				   " WHERE " + DatabaseStringUtilities.transformColumnNameToSelectQueryName(DatabaseConstants.ALBUM_ITEM_ID_REFERENCE_IN_PICTURE_TABLE) + " = " + String.valueOf(albumItemID);
 			
 			try (Statement statement = ConnectionManager.getConnection().createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
 				 ResultSet rs = statement.executeQuery(picturesQuery);) {			
@@ -317,7 +295,9 @@ public class QueryOperations {
 	}
 	
 	static AlbumItem getAlbumItem(String albumName, long albumItemId) throws DatabaseWrapperOperationException {
-		String queryString =  QueryBuilder.createSelectStarQuery(albumName)+ " WHERE id=" + albumItemId;
+		String queryString = QueryBuilder.createSelectStarQuery(
+				DatabaseStringUtilities.encloseNameWithQuotes(DatabaseStringUtilities.generateTableName(albumName))) + 
+				" WHERE id = " + albumItemId;
 		List<AlbumItem> items = getAlbumItems(queryString);
 
 		AlbumItem requestedItem = null;
@@ -331,7 +311,7 @@ public class QueryOperations {
 
 	static List<AlbumItem> getAlbumItems(String queryString) throws DatabaseWrapperOperationException {
 
-		LinkedList<AlbumItem> list = new LinkedList<AlbumItem>();		
+ 		LinkedList<AlbumItem> list = new LinkedList<AlbumItem>();		
 		
 		try (
 			Statement statement = ConnectionManager.getConnection().createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
@@ -350,9 +330,12 @@ public class QueryOperations {
 
 					// Add new field
 					String fieldName = metaData.getColumnName(columnIndex);
-					String albumName = metaData.getTableName(1);
+					String tableName = metaData.getTableName(1);
+					String albumName = DatabaseOperations.getAlbumName(tableName);
+					
 					albumItem.setAlbumName(albumName);
-					FieldType type = HelperOperations.detectDataType(albumName, fieldName);
+					
+					FieldType type = HelperOperations.detectDataType(tableName, fieldName);
 					Object value = HelperOperations.fetchFieldItemValue(rs, columnIndex, type, albumName);
 					boolean quicksearchable = isAlbumFieldQuicksearchable(albumName, fieldName);
 					// omit the typeinfo field and set the contentVersion separately
@@ -411,7 +394,7 @@ public class QueryOperations {
 	}
 	
 	static boolean isAlbumFieldQuicksearchable(String albumName, String fieldName) throws DatabaseWrapperOperationException {
-		List<String> quicksearchableFieldNames = getIndexedColumnNames(albumName);
+		List<String> quicksearchableFieldNames = getIndexedColumnNames(DatabaseStringUtilities.generateTableName(albumName));
 
 		if (quicksearchableFieldNames != null) {
 			return quicksearchableFieldNames.contains(fieldName);
@@ -420,32 +403,50 @@ public class QueryOperations {
 	}
 
 	static boolean isAlbumQuicksearchable(String albumName) throws DatabaseWrapperOperationException {
-		List<String> quicksearchableFieldNames = getIndexedColumnNames(albumName);
+		List<String> quicksearchableFieldNames = getIndexedColumnNames(DatabaseStringUtilities.generateTableName(albumName));
 
-		if (quicksearchableFieldNames.size()>=1){
+		if (quicksearchableFieldNames.size() >= 1) {
 			return true;
-		}else {
+		} else {
 			return false;
 		}	
 	}
 	
-	// TODO remove last line from query, check resultset for value
 	static boolean isPictureAlbum(String albumName) throws DatabaseWrapperOperationException {		
-		String query = " SELECT count(*) AS numberOfItems" +
-					   "   FROM " + DatabaseConstants.ALBUM_MASTER_TABLE_NAME +
-					   "  WHERE " + DatabaseConstants.ALBUM_TABLENAME_IN_ALBUM_MASTER_TABLE + "=" + DatabaseStringUtilities.encloseNameWithQuotes(albumName) +
-					   "    AND " + DatabaseConstants.PICTURE_COLUMN_NAME_IN_ALBUM_MASTER_TABLE + "=" + DatabaseStringUtilities.encloseNameWithQuotes(OptionType.YES.toString());
+		String query = " SELECT " + DatabaseStringUtilities.transformColumnNameToSelectQueryName(DatabaseConstants.HAS_PICTURES_COLUMN_IN_ALBUM_MASTER_TABLE) +
+ 					   "   FROM " + DatabaseStringUtilities.encloseNameWithQuotes(DatabaseConstants.ALBUM_MASTER_TABLE_NAME) +
+					   "  WHERE " + DatabaseStringUtilities.transformColumnNameToSelectQueryName(DatabaseConstants.ALBUMNAME_IN_ALBUM_MASTER_TABLE) + 
+					   					"=" + DatabaseStringUtilities.encloseNameWithQuotes(albumName);
 		
 		try (Statement statement = ConnectionManager.getConnection().createStatement();
 			 ResultSet resultSet = statement.executeQuery(query)) {		
 			
 			if (resultSet.next()) {
-				return resultSet.getLong("numberOfItems") == 1;
+				return OptionType.valueOf(resultSet.getString(1)) == OptionType.YES;
 			}
 		} catch (SQLException e) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState, e);
 		}
 		
 		return false;
+	}
+	
+	static String getAlbumName(String tableName) throws DatabaseWrapperOperationException {
+		String query = " SELECT " + DatabaseStringUtilities.transformColumnNameToSelectQueryName(DatabaseConstants.ALBUMNAME_IN_ALBUM_MASTER_TABLE) +
+				   	   "   FROM " + DatabaseStringUtilities.encloseNameWithQuotes(DatabaseConstants.ALBUM_MASTER_TABLE_NAME) +
+				       "  WHERE " + DatabaseStringUtilities.transformColumnNameToSelectQueryName(DatabaseConstants.ALBUM_TABLENAME_IN_ALBUM_MASTER_TABLE) + 
+				   						"=" + DatabaseStringUtilities.encloseNameWithQuotes(tableName);
+	
+		try (Statement statement = ConnectionManager.getConnection().createStatement();
+			 ResultSet resultSet = statement.executeQuery(query)) {		
+			
+			if (resultSet.next()) {
+				return resultSet.getString(1);
+			}
+		} catch (SQLException e) {
+			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState, e);
+		}
+		
+		return null;
 	}
 }

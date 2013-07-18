@@ -48,7 +48,7 @@ public class RemoveAlbumTests {
 
 		try {
 			DatabaseOperations.createNewAlbum(albumName, columns, true);
-		}catch (DatabaseWrapperOperationException e) {
+		} catch (DatabaseWrapperOperationException e) {
 			fail("Creation of album" + albumName + " failed");
 		}	
 	}
@@ -63,7 +63,7 @@ public class RemoveAlbumTests {
 		final String albumName = "Books";
 		
 		try {
-			DatabaseOperations.removeAlbum(albumName);		
+			DatabaseOperations.removeAlbumAndAlbumPictures(albumName);		
 		} catch (DatabaseWrapperOperationException e) {
 			fail ("Could not remove album: " + albumName);
 		}

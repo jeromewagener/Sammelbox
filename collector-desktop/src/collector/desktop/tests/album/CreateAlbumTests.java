@@ -18,6 +18,7 @@ import collector.desktop.model.album.MetaItemField;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.model.database.operations.DatabaseOperations;
 import collector.desktop.model.database.utilities.ConnectionManager;
+import collector.desktop.model.database.utilities.DatabaseStringUtilities;
 import collector.desktop.tests.CollectorTestExecuter;
 
 public class CreateAlbumTests {
@@ -65,16 +66,15 @@ public class CreateAlbumTests {
 		}
 		
 		try {
-		List<MetaItemField> albumMetaFields = DatabaseOperations.getAlbumItemFieldNamesAndTypes(albumName);
-		
-		Assert.assertTrue(albumMetaFields.containsAll(columns));
+			List<MetaItemField> albumMetaFields = DatabaseOperations.getAlbumItemFieldNamesAndTypes(albumName);
+			Assert.assertTrue(albumMetaFields.containsAll(columns));
 		} catch (DatabaseWrapperOperationException e) {
-			fail("Creation of album"+ albumName + "failed");
+			fail("Creation of album" + albumName + "failed");
 		}				
 	}
 	
 	@Test
-	public void testAlbumCreation_TitleWithSpaces() {		
+	public void testAlbumCreationWithFieldNameWithSpaces() {		
 		final String albumName = "My Books";
 		MetaItemField titleField = new MetaItemField("Book Title", FieldType.Text, true);
 		MetaItemField authorField = new MetaItemField("Author", FieldType.Text, true);
@@ -92,19 +92,54 @@ public class CreateAlbumTests {
 		try {
 			DatabaseOperations.createNewAlbum(albumName, columns, true);
 		} catch (DatabaseWrapperOperationException e) {
-			fail("Creation of album"+ albumName + "failed");
-		}		
-		try {
-		List<MetaItemField> albumMetaFields = DatabaseOperations.getAlbumItemFieldNamesAndTypes(albumName);
+			fail("Creation of album " + albumName + " failed");
+		}
 		
-		Assert.assertTrue(albumMetaFields.containsAll(columns));
-		}catch (DatabaseWrapperOperationException e) {
+		try {
+			List<MetaItemField> albumMetaFields = DatabaseOperations.getAlbumItemFieldNamesAndTypes(albumName);
+			
+			boolean isTitleOk = false;
+			boolean isAuthorOk = false;
+			boolean isPurchasedOk = false;
+			boolean isPriceOk = false;
+			boolean isLentToOk = false;
+			
+			for (MetaItemField metaItemField : albumMetaFields) {
+				if (metaItemField.getName().equals(titleField.getName())
+					&& metaItemField.isQuickSearchable() == titleField.isQuickSearchable()) {
+					isTitleOk = true;
+				}
+				
+				if (metaItemField.getName().equals(authorField.getName())
+					&& metaItemField.isQuickSearchable() == authorField.isQuickSearchable()) {
+					isAuthorOk = true;
+				}
+				
+				if (metaItemField.getName().equals(purchaseField.getName())
+					&& metaItemField.isQuickSearchable() == purchaseField.isQuickSearchable()) {
+					isPurchasedOk = true;
+				}
+				
+				if (metaItemField.getName().equals(priceField.getName())
+					&& metaItemField.isQuickSearchable() == priceField.isQuickSearchable()) {
+					isPriceOk = true;
+				}
+				
+				if (metaItemField.getName().equals(lenttoField.getName())
+					&& metaItemField.isQuickSearchable() == lenttoField.isQuickSearchable()) {
+					isLentToOk = true;
+				}
+			}
+			
+			Assert.assertTrue("All fields should have been successfully added", 
+					isTitleOk && isAuthorOk && isPurchasedOk && isPriceOk && isLentToOk);
+		} catch (DatabaseWrapperOperationException e) {
 			fail(e.getMessage());
 		}	
 	}
 	
 	@Test
-	public void testAlbumCreation_EmptyFieldList() {		
+	public void testAlbumCreationWithEmptyFieldList() {		
 		final String albumName = "Books";
 		List<MetaItemField> columns = new ArrayList<MetaItemField>();
 
@@ -115,10 +150,9 @@ public class CreateAlbumTests {
 		}
 
 		try {
-		AlbumItemResultSet resultSet =  DatabaseOperations.executeSQLQuery("SELECT * FROM "+albumName);
-				
-		Assert.assertTrue(resultSet != null && resultSet.getAlbumName().equals(albumName));
-		}catch (DatabaseWrapperOperationException e) {
+			AlbumItemResultSet resultSet = DatabaseOperations.executeSQLQuery("SELECT * FROM " + DatabaseStringUtilities.generateTableName(albumName));		
+			Assert.assertTrue(resultSet != null && resultSet.getAlbumName().equals(albumName));
+		} catch (DatabaseWrapperOperationException e) {
 			fail("Creation of album"+ albumName + "failed");
 		}	
 	}

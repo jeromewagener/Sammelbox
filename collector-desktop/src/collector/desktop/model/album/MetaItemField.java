@@ -106,7 +106,7 @@ public class MetaItemField {
 
 	@Override
 	public String toString() {
-		return getName()+ ":" + getType();
+		return getName() + ":" + getType();
 	}
 	
 	/**

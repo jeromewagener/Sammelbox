@@ -35,7 +35,7 @@ public class AlbumItemResultSet {
 			Statement statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
 			this.items = statement.executeQuery(sqlStatement);
 			this.metaData = items.getMetaData();
-			this.albumName = metaData.getTableName(1);			
+			this.albumName = DatabaseOperations.getAlbumName(metaData.getTableName(1));			
 			this.metaInfoMap = DatabaseOperations.getAlbumItemMetaMap(albumName);
 		} catch (SQLException sqlException) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState);
@@ -43,23 +43,44 @@ public class AlbumItemResultSet {
 	}	
 	
 	/**
-	 * Constructor. Convenience method which allows to specify the album name explicitly.
+	 * Constructor. Convenience method which allows to specify meta data explicitly.
+	 * @param connection The jdbc connection used to access the actual database.
+	 * @param sqlStatement The SQL statement to yield the result set. Must be formatted properly.
+	 * @param metaInfoMap A map containing all the metadata of the fields.
+	 * @throws DatabaseWrapperOperationException Exception which will be thrown in case anything went wrong while creating the result set.
+	 */
+	public AlbumItemResultSet(Connection connection, String sqlStatement, Map<Integer, MetaItemField> metaInfoMap) throws DatabaseWrapperOperationException {
+		this.metaInfoMap = metaInfoMap;
+		try {
+			Statement statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			this.items = statement.executeQuery(sqlStatement);
+			this.metaData = items.getMetaData();
+			this.albumName = DatabaseOperations.getAlbumName(metaData.getTableName(1));	
+		} catch (SQLException e) {
+			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
+		}
+	}
+	
+	/**
+	 * Constructor. Convenience method which allows to specify the album name and meta data explicitly. 
+	 * Use this method if the album name cannot be determined from the resultset's meta data
+	 * @param albumName The name of the album for which a resultset should be created
 	 * @param connection The jdbc connection used to access the actual database.
 	 * @param sqlStatement The SQL statement to yield the result set. Must be formatted properly.
 	 * @param metaInfoMap A map containing all the metadata of the fields.
 	 * @throws SQLException Exception which will be thrown in case anything went wrong while creating the result set.
 	 */
-	public AlbumItemResultSet(Connection connection, String sqlStatement, Map<Integer, MetaItemField> metaInfoMap) throws DatabaseWrapperOperationException {
+	public AlbumItemResultSet(Connection connection, String albumName, String sqlStatement, Map<Integer, MetaItemField> metaInfoMap) throws DatabaseWrapperOperationException {
 		this.metaInfoMap = metaInfoMap;
 		try {
-			Statement statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
+			Statement statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			this.items = statement.executeQuery(sqlStatement);
 			this.metaData = items.getMetaData();
-			this.albumName = metaData.getTableName(1);
+			this.albumName = albumName;
 		} catch (SQLException e) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
 		}
-	}	
+	}
 
 	/**
 	 * Getter for the album name to which this result set refers to.

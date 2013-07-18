@@ -31,7 +31,7 @@ public class Sammelbox {
 		
 		try {
 			ConnectionManager.openConnection();
-		} catch (DatabaseWrapperOperationException ex){
+		} catch (DatabaseWrapperOperationException ex) {
 			try {
 				LOGGER.warn("Couldn't open a database connection. Will try to open a clean connection instead.");
 				ConnectionManager.openCleanConnection();				

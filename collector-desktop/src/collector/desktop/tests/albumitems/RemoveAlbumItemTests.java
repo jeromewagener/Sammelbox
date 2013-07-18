@@ -29,8 +29,8 @@ public class RemoveAlbumItemTests {
 	/** Item field value to identify the item to be deleted.*/
 	private final String DVD_TITLE_FIELD_VALUE = "dvd title 1";
 	/** Name of the album where an item will be deleted */
-	private final String DVD_ALBUM_NAME = "DVD Album";
-
+	private final String DVD_ALBUM_NAME = "dvd_album";
+	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 	}
@@ -88,6 +88,7 @@ public class RemoveAlbumItemTests {
 		List<MetaItemField> columns = new ArrayList<MetaItemField>();
 		columns.add(DVDTitleField);
 		columns.add(actorField);
+		
 		try {
 			DatabaseOperations.createNewAlbum(albumName, columns, false);
 		} catch (DatabaseWrapperOperationException e) {
@@ -106,14 +107,14 @@ public class RemoveAlbumItemTests {
 		
 		try {
 			DatabaseOperations.addAlbumItem(item, true);
-		}catch (DatabaseWrapperOperationException e) {
+		} catch (DatabaseWrapperOperationException e) {
 			fail("Album Item could not be inserted into album");
 		}
 
 		item = new AlbumItem(albumName);
 		fields = new ArrayList<ItemField>();
-		fields.add( new ItemField(DVD_TITLE_FIELD_NAME, FieldType.Text, "dvd title 2"));
-		fields.add( new ItemField("Actors", FieldType.Text, "actor 2"));
+		fields.add(new ItemField(DVD_TITLE_FIELD_NAME, FieldType.Text, "dvd title 2"));
+		fields.add(new ItemField("Actors", FieldType.Text, "actor 2"));
 		item.setFields(fields);
 		
 		try {

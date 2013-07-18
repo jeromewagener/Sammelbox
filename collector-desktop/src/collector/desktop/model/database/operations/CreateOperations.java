@@ -26,15 +26,14 @@ import collector.desktop.model.database.utilities.DatabaseStringUtilities;
 public class CreateOperations {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CreateOperations.class);
 	
-	/** See {@link DatabaseOperations#createNewAlbum(String, List, boolean)} for the JavaDoc documentation */
 	static void createNewAlbum(String albumName, List<MetaItemField> fields, boolean hasAlbumPictures) throws DatabaseWrapperOperationException {
 		if (fields == null || !DatabaseOperations.isAlbumNameAvailable(albumName)) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, "The chosen album name is already in use");
 		}
 		
-		//String savepointName = DatabaseIntegrityManager.createSavepoint(); //TODO
-		createNewAlbumTable(fields, albumName, hasAlbumPictures);
-		// Indicate which fields are quicksearchable
+		createNewAlbumTable(fields, albumName, DatabaseStringUtilities.encloseNameWithQuotes(
+				DatabaseStringUtilities.generateTableName(albumName)), hasAlbumPictures);
+		// Indicate which fields are quick-searchable
 		List<String> quickSearchableColumnNames = new ArrayList<String>();
 		for (MetaItemField metaItemField : fields) {
 			if (metaItemField.isQuickSearchable()){
@@ -43,28 +42,29 @@ public class CreateOperations {
 		}
 		
 		// Create picture table
-		createPictureTable(albumName);
+		createPictureTable(DatabaseStringUtilities.generateTableName(albumName));
 		
 		// Create picture directory
 		FileSystemAccessWrapper.updateAlbumFileStructure(ConnectionManager.getConnection());
 		
-		// Make columns quick searchable
-		createIndex(albumName, quickSearchableColumnNames);
+		// Make columns quick-searchable
+		createIndex(DatabaseStringUtilities.generateTableName(albumName), quickSearchableColumnNames);
 	}
 	
 	/**
 	 * Creates a new table with the specified fields. See fields parameter for temporary table creation.
 	 * Beware a temporary table does not show up in the list of all albums.
 	 * @param fields The fields making up the new album content. Null if a temporary copy of the specified existing table should be made.
-	 * @param tableName The name of the table to be created.
+	 * @param albumName The name of the album which is currently created
+	 * @param tableName The database name of the table to be created
 	 * @param albumHasPictures True indicates that this table may contain pictures and the related flag in the master table is set.   
 	 * @throws DatabaseWrapperOperationException 
 	 */
-	static void createNewAlbumTable(List<MetaItemField> fields, String tableName, boolean albumHasPictures) throws DatabaseWrapperOperationException {
+	static void createNewAlbumTable(List<MetaItemField> fields, String albumName, String tableName, boolean albumHasPictures) throws DatabaseWrapperOperationException {
 		String typeInfoTableName = "";
 		String createTempTableSQL = "";
 		List<MetaItemField> columns =  new ArrayList<MetaItemField>(fields);
-		boolean temporary = (columns == null);
+		boolean temporary = (columns == null); // TODO comment. Whats up with this temporary table?
 
 		if (temporary) {
 			// Retrieve the typeInfo of the old Album before creating a new temp table
@@ -73,11 +73,12 @@ public class CreateOperations {
 			columns.remove(new MetaItemField("id", FieldType.ID));
 			// Remove the type info  field from the old table
 			columns.remove(new MetaItemField(DatabaseConstants.TYPE_INFO_COLUMN_NAME, FieldType.ID));
-			tableName =  tableName + DatabaseConstants.TEMP_TABLE_SUFFIX;
-			typeInfoTableName =  tableName + DatabaseConstants.TYPE_INFO_SUFFIX;
+			tableName = DatabaseStringUtilities.encloseNameWithQuotes(DatabaseStringUtilities.generateTempTableName(albumName));
+			typeInfoTableName = DatabaseStringUtilities.encloseNameWithQuotes(
+					DatabaseStringUtilities.generateTypeInfoTableName(albumName));
 			createTempTableSQL = "TEMPORARY";
 		} else {
-			typeInfoTableName =  tableName + DatabaseConstants.TYPE_INFO_SUFFIX;
+			typeInfoTableName = DatabaseStringUtilities.generateTypeInfoTableName(albumName);
 		}
 
 		// Ensures that the table has a contentVersion column
@@ -94,7 +95,6 @@ public class CreateOperations {
 		sb.append(createTempTableSQL);
 		
 		sb.append(" TABLE ");
-		tableName = DatabaseStringUtilities.encloseNameWithQuotes(tableName);
 		sb.append(tableName);
 		sb.append(" ( id INTEGER PRIMARY KEY");
 
@@ -113,7 +113,7 @@ public class CreateOperations {
 		sb.append(" INTEGER, FOREIGN KEY(");
 		sb.append(DatabaseConstants.TYPE_INFO_COLUMN_NAME);
 		sb.append(") REFERENCES ");
-		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(typeInfoTableName));
+		sb.append(typeInfoTableName);
 		sb.append("(id))");
 		createMainTableString = sb.toString();
 
@@ -121,7 +121,7 @@ public class CreateOperations {
 		createTypeInfoTable(typeInfoTableName, columns, temporary);
 		
 		// Add the album back to the album master table
-		UpdateOperations.addNewAlbumToAlbumMasterTable(tableName, typeInfoTableName, albumHasPictures);
+		UpdateOperations.addNewAlbumToAlbumMasterTable(albumName, albumHasPictures);
 		
 		try (Statement statement = ConnectionManager.getConnection().createStatement()) {
 			// Create the Album table			
@@ -189,13 +189,14 @@ public class CreateOperations {
 	 * are quoted.  
 	 * @throws DatabaseWrapperOperationException 
 	 */
-	static void createIndex(String albumName, List<String> columnNames) throws DatabaseWrapperOperationException{
+	static void createIndex(String albumName, List<String> columnNames) throws DatabaseWrapperOperationException {
 		if (columnNames.isEmpty()) {
 			return;
 		}
 		
 		StringBuilder sqlStringbuiler = new StringBuilder("CREATE INDEX ");
-		sqlStringbuiler.append(DatabaseStringUtilities.encloseNameWithQuotes(albumName + DatabaseConstants.INDEX_NAME_SUFFIX));
+		sqlStringbuiler.append(DatabaseStringUtilities.encloseNameWithQuotes(
+				DatabaseStringUtilities.generateIndexTableName(albumName)));
 		sqlStringbuiler.append(" ON ");
 		sqlStringbuiler.append(DatabaseStringUtilities.encloseNameWithQuotes(albumName));
 		sqlStringbuiler.append(" (");
@@ -218,19 +219,20 @@ public class CreateOperations {
 	static void createAlbumMasterTableIfItDoesNotExist() throws DatabaseWrapperOperationException {
 		List<MetaItemField> fields = new ArrayList<MetaItemField>();
 		
+		// Add the natural album name
+		fields.add(new MetaItemField(DatabaseConstants.ALBUMNAME_IN_ALBUM_MASTER_TABLE, FieldType.Text));
 		// Add the table name column
 		fields.add(new MetaItemField(DatabaseConstants.ALBUM_TABLENAME_IN_ALBUM_MASTER_TABLE, FieldType.Text));
-		// Add the table's type info table name column
-		fields.add(new MetaItemField(DatabaseConstants.TYPE_TABLENAME_ALBUM_MASTER_TABLE, FieldType.Text));
 		// Add the table's picture state column indicating if the album structure has pictures or not
-		fields.add(new MetaItemField(DatabaseConstants.PICTURE_COLUMN_NAME_IN_ALBUM_MASTER_TABLE, FieldType.Option));		
+		fields.add(new MetaItemField(DatabaseConstants.HAS_PICTURES_COLUMN_IN_ALBUM_MASTER_TABLE, FieldType.Option));		
+		
 		// Create the album master table.
 		createTableWithIdAsPrimaryKey(DatabaseConstants.ALBUM_MASTER_TABLE_NAME, fields , false, true);
 	}
 	
 	/**
 	 * Helper function to create a new table in the database. Only if ALL of the foreign key parameters are valid, a foreign key column will be created.
-	 * @param tableName The name of the table to be created. It is not necessary for it to be enclosed by quotes.
+	 * @param tableName The name of the table to be created
 	 * @param columns The columns making up the new table. No column constraints will be applied here.
 	 * @param temporaryTable True indicates a table for temporary use only. This table will be created in the temporary database.
 	 * @param ifNotExistsClause True adds the 'IF NOT EXISTS' to the create table command.
@@ -264,7 +266,7 @@ public class CreateOperations {
 		String createTableString = sb.toString();
 
 		// Create the table.		
-		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(createTableString);){			
+		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(createTableString);) {			
 			preparedStatement.executeUpdate();
 		} catch (Exception e) {			
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState, e);
@@ -274,35 +276,31 @@ public class CreateOperations {
 	static void createPictureTable(String albumName) throws DatabaseWrapperOperationException {		
 		List<MetaItemField> columns = new ArrayList<MetaItemField>();
 		// The filename of the original picture 
-		columns.add(new MetaItemField(DatabaseStringUtilities.encloseNameWithQuotes(
-				DatabaseConstants.ORIGINAL_PICTURE_FILE_NAME_IN_PICTURE_TABLE), FieldType.Text));
+		columns.add(new MetaItemField(DatabaseConstants.ORIGINAL_PICTURE_FILE_NAME_IN_PICTURE_TABLE, FieldType.Text));
 		// The filename of the generated thumbnail picture
-		columns.add(new MetaItemField(DatabaseStringUtilities.encloseNameWithQuotes(
-				DatabaseConstants.THUMBNAIL_PICTURE_FILE_NAME_IN_PICTURE_TABLE), FieldType.Text));
+		columns.add(new MetaItemField(DatabaseConstants.THUMBNAIL_PICTURE_FILE_NAME_IN_PICTURE_TABLE, FieldType.Text));
 		// The id of the album item the picture belongs to
-		columns.add(new MetaItemField(DatabaseStringUtilities.encloseNameWithQuotes(
-				DatabaseConstants.ALBUM_ITEM_ID_REFERENCE_IN_PICTURE_TABLE), FieldType.ID));
+		columns.add(new MetaItemField(DatabaseConstants.ALBUM_ITEM_ID_REFERENCE_IN_PICTURE_TABLE, FieldType.ID));
 	
-		
 		createTableWithIdAsPrimaryKey(DatabaseStringUtilities.encloseNameWithQuotes(
-				albumName + DatabaseConstants.PICTURE_TABLE_SUFFIX), columns , false, true);
+				DatabaseStringUtilities.generatePictureTableName(albumName)), columns , false, true);
 	}
 	
-	static long addAlbumItem(AlbumItem item, boolean updateContentVersion) throws DatabaseWrapperOperationException {
+	static long addAlbumItem(AlbumItem albumItem, boolean updateContentVersion) throws DatabaseWrapperOperationException {
 		// Check if the item contains a albumName
-		if (item.getAlbumName().isEmpty()) {
-			LOGGER.error("Item {} has no albumName", item);
+		if (albumItem.getAlbumName().isEmpty()) {
+			LOGGER.error("Item {} has no albumName", albumItem);
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState);
 		}
 		
 		// Check if specified album Item is valid
-		if (!item.isValid()) {
-			LOGGER.error("Item {} is invalid", item);
+		if (!albumItem.isValid()) {
+			LOGGER.error("Item {} is invalid", albumItem);
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState);
 		}
 
 		// Check if content version should be carried over if yes ensure a content version is present
-		if (updateContentVersion == false && item.getContentVersion() == null) {
+		if (updateContentVersion == false && albumItem.getContentVersion() == null) {
 			LOGGER.error("The option for carrying over the old content version " +
 					"is checked but no content version is found in the item!");
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState);
@@ -310,10 +308,10 @@ public class CreateOperations {
 
 		// Build the SQL string with place-holders '?'
 		StringBuilder sb = new StringBuilder("INSERT INTO ");
-		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(item.getAlbumName()));
+		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(DatabaseStringUtilities.generateTableName(albumItem.getAlbumName())));
 		sb.append(" ( ");
 
-		for (ItemField itemField : item.getFields()) {
+		for (ItemField itemField : albumItem.getFields()) {
 			String name = itemField.getName();
 			// Ensure that no field with the name of typeInfoColumnName
 			if (!name.equalsIgnoreCase(DatabaseConstants.TYPE_INFO_COLUMN_NAME)) {
@@ -326,7 +324,7 @@ public class CreateOperations {
 		sb.append(DatabaseConstants.TYPE_INFO_COLUMN_NAME);
 		sb.append(" ) VALUES ( ");
 
-		for (ItemField itemField : item.getFields()) {
+		for (ItemField itemField : albumItem.getFields()) {
 			String name = itemField.getName();
 			if (!name.equalsIgnoreCase(DatabaseConstants.TYPE_INFO_COLUMN_NAME)) {
 				sb.append("?, ");
@@ -342,10 +340,10 @@ public class CreateOperations {
 
 			// Replace the wildcard character '?' by the real type values
 			int parameterIndex = 1;
-			for (ItemField itemField : item.getFields()) {	
+			for (ItemField itemField : albumItem.getFields()) {	
 				String name = itemField.getName();
 				if (!name.equalsIgnoreCase(DatabaseConstants.TYPE_INFO_COLUMN_NAME)) {					
-					HelperOperations.setValueToPreparedStatement(preparedStatement, parameterIndex, itemField, item.getAlbumName());
+					HelperOperations.setValueToPreparedStatement(preparedStatement, parameterIndex, itemField, albumItem.getAlbumName());
 					parameterIndex++;
 				}
 			}
@@ -363,10 +361,10 @@ public class CreateOperations {
 			}
 			
 			// Store picture links
-			if (item.getPictures() != null) {
-				for (AlbumItemPicture picture : item.getPictures()) {
+			if (albumItem.getPictures() != null) {
+				for (AlbumItemPicture picture : albumItem.getPictures()) {
 					picture.setAlbumItemID(idOfAddedItem);
-					picture.setAlbumName(item.getAlbumName());
+					picture.setAlbumName(albumItem.getAlbumName());
 					addAlbumItemPicture(picture);
 				}
 			}
@@ -375,10 +373,10 @@ public class CreateOperations {
 			UUID newUUID = UUID.randomUUID();
 			if (!updateContentVersion) {
 				// Carry over old content version
-				newUUID = item.getContentVersion();
+				newUUID = albumItem.getContentVersion();
 
 			}
-			UpdateOperations.updateContentVersion(item.getAlbumName(), idOfAddedItem, newUUID);
+			UpdateOperations.updateContentVersion(albumItem.getAlbumName(), idOfAddedItem, newUUID);
 			DatabaseIntegrityManager.updateLastDatabaseChangeTimeStamp();
 			return idOfAddedItem;
 		} catch (SQLException e) {
@@ -391,7 +389,8 @@ public class CreateOperations {
 	
 	static void addAlbumItemPicture(AlbumItemPicture albumItemPicture) throws DatabaseWrapperOperationException {
 		StringBuilder sb = new StringBuilder("INSERT INTO ");
-		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(albumItemPicture.getAlbumName() + DatabaseConstants.PICTURE_TABLE_SUFFIX));
+		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(
+				DatabaseStringUtilities.generatePictureTableName(albumItemPicture.getAlbumName())));
 		sb.append(" ( ");
 
 		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(DatabaseConstants.ORIGINAL_PICTURE_FILE_NAME_IN_PICTURE_TABLE) + ", ");

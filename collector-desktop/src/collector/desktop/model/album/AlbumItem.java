@@ -285,8 +285,8 @@ public class AlbumItem {
 	 * Getter for the album name formatted for low level db interaction.
 	 * @return The string representing the properly formatted album name.
 	 */
-	public String getDBAlbumName() {
-		return DatabaseStringUtilities.encloseNameWithQuotes(albumName);
+	public String getDatabaseAlbumName() {
+		return DatabaseStringUtilities.encloseNameWithQuotes(DatabaseStringUtilities.generateTableName(albumName));
 	}
 	
 	/**
@@ -294,7 +294,7 @@ public class AlbumItem {
 	 * @param FieldName The field name.
 	 * @return The string representing the properly formatted field name.
 	 */
-	public static String getDBFieldName(String FieldName) {
+	public static String getDatabaseFieldName(String FieldName) {
 		return DatabaseStringUtilities.encloseNameWithQuotes(FieldName);
 	}
 

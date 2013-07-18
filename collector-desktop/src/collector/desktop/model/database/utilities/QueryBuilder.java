@@ -202,13 +202,13 @@ public class QueryBuilder {
 	 * @param queryComponents a list of query components. Escapes all appearing quotes in the album fields.
 	 * @param connectByAnd a boolean specifying whether the query components are connected by AND (connectedByAnd == true) 
 	 * 						or by OR (connectedByAnd == false). 
-	 * @param album the name of the album which should be queried.
+	 * @param albumName the name of the album which should be queried.
 	 * @param sortField the field upon which the results should be sorted. Can be null or empty if not needed
 	 * @param sortAscending only if a sortField is specified. In this case, true means that the results are sorted ascending, false means descending
 	 * @return a valid SQL query as a string. By default a 'SELECT *' is performed on the field/column names. */
-	public static String buildQuery(ArrayList<QueryComponent> queryComponents, boolean connectByAnd, String album, String sortField, boolean sortAscending) {
+	public static String buildQuery(ArrayList<QueryComponent> queryComponents, boolean connectByAnd, String albumName, String sortField, boolean sortAscending) {
 		StringBuilder query = new StringBuilder();
-		query.append("SELECT * FROM '" + album + "'");
+		query.append("SELECT * FROM " + DatabaseStringUtilities.encloseNameWithQuotes(DatabaseStringUtilities.generateTableName(albumName)));
 		
 		if (!queryComponents.isEmpty()) {
 			query.append(" WHERE ");
@@ -289,32 +289,31 @@ public class QueryBuilder {
 	 * @return A string containing the proper SQL string.
 	 */
 	public static String createSelectStarQuery(String albumName) {
-		return "SELECT * FROM " + DatabaseStringUtilities.encloseNameWithQuotes(albumName);
+		return "SELECT * FROM " + DatabaseStringUtilities.encloseNameWithQuotes(DatabaseStringUtilities.generateTableName(albumName));
 	}
 	
 	/**
 	 * Creates a simple select * from albumName with a properly formatted albumName and columnName
-	 * @param albumName The name of the album to which this query refers to.
-	 * @param columnName The name of the column to be queried.
-	 * @param whereColumn The name of the column which is referenced in the where clause.
-	 * @return The properly formatted select query containing a wildcard as the value for in th where clause.
+	 * @param albumName The name of the album to which this query refers to
+	 * @param columnName The name of the column to be queried
+	 * @param whereColumn The name of the column which is referenced in the where clause
+	 * @return The properly formatted select query containing a wildcard as the value for in the where clause
 	 */
 	public static String createSelectColumnQuery(String albumName, String columnName) {
 
-		return  "SELECT " +  DatabaseStringUtilities.transformColumnNameToSelectQueryName(columnName)+ 
-				" FROM "+  DatabaseStringUtilities.encloseNameWithQuotes(albumName); 
+		return " SELECT " + DatabaseStringUtilities.transformColumnNameToSelectQueryName(columnName)+ 
+			   " FROM " + DatabaseStringUtilities.encloseNameWithQuotes(DatabaseStringUtilities.generateTableName(albumName)); 
 	}
 	
 	/**
 	 *  Creates a query in the form of "SELECT COUNT(*) AS alias FROM albumName
-	 * @param albumName
-	 * @param alias
-	 * @return The string containing the query.
+	 * @param albumName the album to be counted
+	 * @param alias the alias of the count field
+	 * @return a string of the corresponding SQL query
 	 */
 	public static String createCountAsAliasStarWhere(String albumName, String alias) {
-
-		return 	"SELECT COUNT(*) AS " + alias + 
-				" FROM "+  DatabaseStringUtilities.encloseNameWithQuotes(albumName);
+		return " SELECT COUNT(*) AS " + alias + 
+			   " FROM " +  DatabaseStringUtilities.encloseNameWithQuotes(DatabaseStringUtilities.generateTableName(albumName));
 		
 	}
 }

@@ -194,16 +194,6 @@ public class ApplicationUI implements Observer {
 		AutosaveController.createAutosaveOverlay();		
 		
 		shell.open();
-		
-		// TODO Although a message makes sense, the normalStartup variable was always initialized to true
-		/*
-		if (!normalStartup) {
-			ComponentFactory.getMessageBox(shell, 
-					Translator.toBeTranslated("Fatal error occured during startup"), 
-					Translator.toBeTranslated("The database is corrupt and was removed. A snapshot can be found in the program folder"),
-					SWT.ICON_INFORMATION)
-				.open();
-		}*/
 
 		selectDefaultAndShowWelcomePage();		
 
@@ -388,6 +378,7 @@ public class ApplicationUI implements Observer {
 	/** After adding/removing albums, this method should be used to refresh the SWT album list with the current album names thus leaving no album selected.*/
 	public static void refreshSWTAlbumList() {
 		EventObservable.addEventToQueue(SammelboxEvent.ALBUM_LIST_UPDATED);
+		EventObservable.addEventToQueue(SammelboxEvent.ALBUM_VIEW_LIST_UPDATED);
 		ApplicationUI.getQuickSearchTextField().setEnabled(false);
 	}
 
@@ -458,7 +449,7 @@ public class ApplicationUI implements Observer {
 			for (String album : AlbumManager.getAlbums()) {
 				albumList.add(album);
 			}
-		} else if (event.equals(SammelboxEvent.ALBUM_LIST_UPDATED)) {
+		} else if (event.equals(SammelboxEvent.ALBUM_VIEW_LIST_UPDATED)) {
 			viewList.removeAll();
 
 			for (AlbumView albumView : AlbumViewManager.getAlbumViews(selectedAlbum)) {

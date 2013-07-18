@@ -24,12 +24,12 @@ public class DatabaseIntegrityManager {
 	private static final String AUTO_SAVE_EXTENSION = "autosave";
 	/** Regular expression describing the file name format including the extension of auto saves */
 	private  static final String AUTO_SAVE_FILE_REGEX = "(\\w)+(\\u005F([0-9]+)+\\." + AUTO_SAVE_EXTENSION + ")$";
-	// comment
-	static final String CORRUPT_DATABASE_SNAPSHOT_PREFIX = ".corruptDatabaseSnapshot_";
+	/** A prefix for those databases that have been corrupted */
+	static final String CORRUPT_DATABASE_SNAPSHOT_PREFIX = "corruptDatabaseSnapshot_";
 	/** The maximum amount of autosaves that can be stored until the existing autosaves are overwritten */
 	private static int autoSaveLimit = 5;
-	// TODO comment
-	private static long lastChangeTimeStamp = -1;
+	/** The last change time in milliseconds */
+	private static long lastChangeTimeStampInMS = -1;
 	
 	/**
 	 * Creates a savepoint to which the database state can be rolled back to. A new transaction is started.
@@ -98,7 +98,6 @@ public class DatabaseIntegrityManager {
 	 * @param filePath The path ending with the file name under which the backup will be stored.
 	 * @throws DatabaseWrapperOperationException 
 	 */
-	// TODO why do we create a temporary file? why not zip directly?
 	public static void backupToFile(String filePath) throws DatabaseWrapperOperationException {
 		// create temporary directory which includes backup files
 		String tempDirName = java.util.UUID.randomUUID().toString();
@@ -111,15 +110,15 @@ public class DatabaseIntegrityManager {
 		File tempAppDataDir = new File(tempDir.getPath());
 		File sourceAppDataDir = new File(FileSystemAccessWrapper.COLLECTOR_HOME);
 		try {
-			String lockFileRegex = "^\\.lock$"; 
-			FileSystemAccessWrapper.copyDirectory(sourceAppDataDir, tempAppDataDir, lockFileRegex);
+			String excludeRegex = "^\\.lock$|^" + FileSystemAccessWrapper.DATABASE_NAME + "$"; 
+			FileSystemAccessWrapper.copyDirectory(sourceAppDataDir, tempAppDataDir, excludeRegex);
 		} catch (IOException e) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState,e);
 		}
 	
 		// backup database to file
 		try (Statement statement = ConnectionManager.getConnection().createStatement()){				
-			statement.executeUpdate("backup to '" + tempDir.getPath() + File.separatorChar + FileSystemAccessWrapper.DATABASE_TO_RESTORE_NAME+"'");
+			statement.executeUpdate("backup to '" + tempDir.getPath() + File.separatorChar + FileSystemAccessWrapper.DATABASE_TO_RESTORE_NAME + "'");
 		} catch (SQLException e) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState,e);
 		}
@@ -144,9 +143,9 @@ public class DatabaseIntegrityManager {
 		try (Statement statement = ConnectionManager.getConnection().createStatement()) {			
 			statement.executeUpdate("restore from '" + FileSystemAccessWrapper.DATABASE_TO_RESTORE + "'");
 			try {
-				DatabaseIntegrityManager.lastChangeTimeStamp =  DatabaseIntegrityManager.extractTimeStamp(new File(filePath));
+				DatabaseIntegrityManager.lastChangeTimeStampInMS =  DatabaseIntegrityManager.extractTimeStamp(new File(filePath));
 			} catch (DatabaseWrapperOperationException e) {
-				DatabaseIntegrityManager.lastChangeTimeStamp = System.currentTimeMillis();
+				DatabaseIntegrityManager.lastChangeTimeStampInMS = System.currentTimeMillis();
 			}
 		} catch (SQLException e) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState,e);
@@ -173,11 +172,11 @@ public class DatabaseIntegrityManager {
 	 * @return The time in milliseconds when the last change to the database occured. -1 If not initialized.
 	 */
 	public static long getLastDatabaseChangeTimeStamp() {
-		return DatabaseIntegrityManager.lastChangeTimeStamp;
+		return DatabaseIntegrityManager.lastChangeTimeStampInMS;
 	}
 	
 	public static void updateLastDatabaseChangeTimeStamp() {
-		DatabaseIntegrityManager.lastChangeTimeStamp = System.currentTimeMillis();
+		DatabaseIntegrityManager.lastChangeTimeStampInMS = System.currentTimeMillis();
 	}
 	
 	/**

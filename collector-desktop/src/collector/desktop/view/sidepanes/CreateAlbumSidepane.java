@@ -287,7 +287,7 @@ public class CreateAlbumSidepane {
 						return;
 					}
 				} catch (DatabaseWrapperOperationException ex) {
-					LOGGER.error("A database error occured while checking whether '" + albumName + "' is avialable as album name" +
+					LOGGER.error("A database error occured while checking whether '" + albumName + "' is available as album name" +
 							" \n Stacktrace: " + ExceptionHelper.toString(ex));
 				}
 
@@ -319,13 +319,11 @@ public class CreateAlbumSidepane {
 				try {
 					DatabaseOperations.createNewAlbum(albumName, metaItemFields, willContainImages);
 				} catch (DatabaseWrapperOperationException failedDatabaseWrapperOperationException) {
-					ComponentFactory.getMessageBox(
-							parentComposite, 
+					ComponentFactory.getMessageBox(parentComposite,
 							Translator.get(DictKeys.DIALOG_TITLE_ALBUM_CREATE_ERROR), 
 							Translator.get(DictKeys.DIALOG_CONTENT_ALBUM_CREATE_ERROR, 
 							albumName), 
-							SWT.ICON_ERROR)
-						.open();
+							SWT.ICON_ERROR).open();
 					return;
 				}
 

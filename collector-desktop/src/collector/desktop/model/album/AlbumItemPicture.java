@@ -4,7 +4,6 @@ import java.io.File;
 
 import collector.desktop.controller.filesystem.FileSystemAccessWrapper;
 
-// TODO create own class file
 public class AlbumItemPicture {
 	public static final Long PICTURE_ID_UNDEFINED = Long.MAX_VALUE;
 	public static final String ALBUM_ITEM_PICTURE = "ALBUM_ITEM_PICTURE";

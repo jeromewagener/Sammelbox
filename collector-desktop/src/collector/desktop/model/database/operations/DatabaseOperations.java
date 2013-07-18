@@ -145,6 +145,15 @@ public class DatabaseOperations {
 	}
 	
 	/**
+	 * Returns the matching album name for a given table name
+	 * @param tableName the table name for which the album name is requested
+	 * @return the album name
+	 */
+	public static String getAlbumName(String tableName) throws DatabaseWrapperOperationException {
+		return QueryOperations.getAlbumName(tableName);
+	}
+	
+	/**
 	 * Indicates whether the album contains pictures or not
 	 * @param albumName The name of the album to be queried
 	 * @return true if the album contains a picture field, false otherwise
@@ -154,7 +163,12 @@ public class DatabaseOperations {
 		return QueryOperations.isPictureAlbum(albumName);
 	}
 	
-	// TODO comment
+	/**
+	 * Get the number of album items in the given album
+	 * @param albumName the album name for which the items should be counted
+	 * @return the number of items in the given album
+	 * @throws DatabaseWrapperOperationException
+	 */
 	public static long getNumberOfItemsInAlbum(String albumName) throws DatabaseWrapperOperationException {
 		return QueryOperations.getNumberOfItemsInAlbum(albumName);
 	}
@@ -284,43 +298,46 @@ public class DatabaseOperations {
 		return QueryOperations.getAlbumItems(queryString);
 	}
 	
-	// TODO comment
+	/**
+	 * Returns true if the given field in the given album is a date field, false otherwise
+	 * @throws DatabaseWrapperOperationException
+	 */
 	public static boolean isDateField(String albumName, String fieldName) throws DatabaseWrapperOperationException {
 		return QueryOperations.isDateField(albumName, fieldName);
 	}
 	
-	// TODO comment
+	/**
+	 * Returns true if the given field in the given album is a option field, false otherwise
+	 * @throws DatabaseWrapperOperationException
+	 */
 	public static boolean isOptionField(String albumName, String fieldName) throws DatabaseWrapperOperationException {
 		return QueryOperations.isOptionField(albumName, fieldName);
 	}
 	
-	// TODO comment
-	public static void createPictureTable(String albumName) throws DatabaseWrapperOperationException {	
-		CreateOperations.createPictureTable(albumName);
-	}
-	
-	// TODO comment
+	/**
+	 * Returns the list of pictures attached to a specified album item
+	 * @param albumName the album which contains the relevant album item
+	 * @param albumItemID the id of the album item for which the pictures are requested
+	 * @return a list of album item pictures
+	 * @throws DatabaseWrapperOperationException
+	 */
 	public static List<AlbumItemPicture> getAlbumItemPictures(String albumName, long albumItemID) throws DatabaseWrapperOperationException {
 		return QueryOperations.getAlbumItemPictures(albumName, albumItemID);
 	}
 	
-	/** Removes all picture records from the picture table for the given album item
-	 * ATTENTION: this method does no delete the physical files!
-	 * @param albumItem the album item for which all picture records should be deleted */
-	public static void removeAllPicturesForAlbumItemFromPictureTable(AlbumItem albumItem) throws DatabaseWrapperOperationException {	
-		DeleteOperations.removeAllPicturesForAlbumItemFromPictureTable(albumItem);
-	}
-	
-	// TODO comment
+	/**
+	 * Creates the album master table if it does not already exist
+	 * @throws DatabaseWrapperOperationException
+	 */
 	public static void createAlbumMasterTableIfItDoesNotExist() throws DatabaseWrapperOperationException {
 		CreateOperations.createAlbumMasterTableIfItDoesNotExist();
 	}
 	
 	/**
-	 * Permanently deletes the albumItem with the specified id from the database.
-	 * @param albumName The name of the album to which the item belongs.
-	 * @param albumItemId The id of the item to be deleted.
-	 * @return  True if the operation was successful. False otherwise.
+	 * Permanently deletes the albumItem with the specified id from the database
+	 * @param albumName The name of the album to which the item belongs
+	 * @param albumItemId The id of the item to be deleted
+	 * @return true if the operation was successful, false otherwise
 	 * @throws DatabaseWrapperOperationException 
 	 */
 	public static void deleteAlbumItem(AlbumItem albumItem) throws DatabaseWrapperOperationException {
@@ -340,22 +357,12 @@ public class DatabaseOperations {
 		DeleteOperations.removeAlbumItemField(albumName, metaItemField);
 	}
 	
-	// TODO comment
+	/**
+	 * Remove the album and everything related
+	 * @param albumName the album to be removed
+	 * @throws DatabaseWrapperOperationException
+	 */
 	public static void removeAlbumAndAlbumPictures(String albumName) throws DatabaseWrapperOperationException {
 		DeleteOperations.removeAlbumAndAlbumPictures(albumName);
-	}
-	
-	/**
-	 * Permanently removes an album along with its typeInfo metadata.
-	 * @param albumName The name of the album which is to be removed.
-	 * @throws DatabaseWrapperOperationException 
-	 */
-	public static void removeAlbum(String albumName) throws DatabaseWrapperOperationException {
-		DeleteOperations.removeAlbum(albumName);
-	}
-	
-	// TODO comment
-	public static void removeAlbumPictures(String albumName) throws DatabaseWrapperOperationException {
-		DeleteOperations.removeAlbumPictures(albumName);
 	}
 }

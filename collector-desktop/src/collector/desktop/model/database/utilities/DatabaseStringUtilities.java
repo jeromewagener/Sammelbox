@@ -1,7 +1,34 @@
 package collector.desktop.model.database.utilities;
 
+import collector.desktop.model.database.operations.DatabaseConstants;
+
 public class DatabaseStringUtilities {
 
+	/** Creates a database safe album table name for a given album name. The according suffix is used! */
+	public static String generateTableName(String albumName) {
+		return (albumName.toLowerCase()).replace(" ", "_");
+	}
+	
+	/** Creates a database safe picture table name for a given album name The according suffix is used! */
+	public static String generatePictureTableName(String albumName) {
+		return (albumName.toLowerCase()).replace(" ", "_") + DatabaseConstants.PICTURE_TABLE_SUFFIX;
+	}
+	
+	/** Creates a database type info table name for a given album name The according suffix is used! */
+	public static String generateTypeInfoTableName(String albumName) {
+		return (albumName.toLowerCase()).replace(" ", "_") + DatabaseConstants.TYPE_INFO_SUFFIX;
+	}
+	
+	/** Creates a database safe index table name for a given album name The according suffix is used! */
+	public static String generateIndexTableName(String albumName) {
+		return (albumName.toLowerCase()).replace(" ", "_") + DatabaseConstants.INDEX_NAME_SUFFIX;
+	}
+	
+	/** Creates a database safe temporary table name for a given album name The according suffix is used! */
+	public static String generateTempTableName(String albumName) {
+		return (albumName.toLowerCase()).replace(" ", "_") + DatabaseConstants.TEMP_TABLE_SUFFIX;
+	}
+	
 	/**
 	 * Transforms a value of an album Item and escapes single quotes.
 	 * @param value The value which must not be enclosed in single quotes.

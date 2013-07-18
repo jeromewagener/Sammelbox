@@ -14,6 +14,7 @@ import collector.desktop.view.ApplicationUI;
 import collector.desktop.view.internationalization.Translator;
 import collector.desktop.view.various.LoadingOverlayShell;
 
+// TODO remove or adapt
 public class AutosaveController {
 	private final static Logger LOGGER = LoggerFactory.getLogger(AutosaveController.class);
 	

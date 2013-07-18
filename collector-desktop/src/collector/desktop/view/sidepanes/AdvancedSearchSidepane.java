@@ -26,6 +26,7 @@ import org.eclipse.swt.widgets.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import collector.desktop.controller.MetaItemFieldFilter;
 import collector.desktop.model.album.FieldType;
 import collector.desktop.model.album.MetaItemField;
 import collector.desktop.model.album.OptionType;
@@ -39,7 +40,6 @@ import collector.desktop.view.ApplicationUI;
 import collector.desktop.view.internationalization.DictKeys;
 import collector.desktop.view.internationalization.Translator;
 import collector.desktop.view.managers.AlbumViewManager;
-import collector.desktop.view.tobemoved.MetaItemFieldFilter;
 import collector.desktop.view.various.ComponentFactory;
 import collector.desktop.view.various.TextInputDialog;
 

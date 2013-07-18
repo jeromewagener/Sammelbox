@@ -16,6 +16,7 @@ import collector.desktop.model.database.exceptions.DatabaseWrapperOperationExcep
 import collector.desktop.model.database.operations.DatabaseOperations;
 import collector.desktop.model.database.utilities.ConnectionManager;
 import collector.desktop.model.database.utilities.DatabaseIntegrityManager;
+import collector.desktop.model.database.utilities.DatabaseStringUtilities;
 import collector.desktop.model.database.utilities.QueryBuilder;
 import collector.desktop.model.database.utilities.QueryBuilder.QueryComponent;
 import collector.desktop.model.database.utilities.QueryBuilder.QueryOperator;
@@ -294,7 +295,8 @@ public class AdvancedSearchTests {
 			ArrayList<QueryComponent> queryComponents = new ArrayList<QueryComponent>();
 			queryComponents.add(QueryBuilder.getQueryComponent("Artist", QueryOperator.equals, "Rick Astley"));
 			AlbumItemResultSet searchResults = DatabaseOperations.executeSQLQuery(
-					QueryBuilder.buildQuery(queryComponents, true, "Music CDs"));
+					QueryBuilder.buildQuery(queryComponents, true, DatabaseStringUtilities.encloseNameWithQuotes(
+							DatabaseStringUtilities.generateTableName("Music CDs"))));
 
 			assertTrue("Resultset should not be null", searchResults != null);
 
