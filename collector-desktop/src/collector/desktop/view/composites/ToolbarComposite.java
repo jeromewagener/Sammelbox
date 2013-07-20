@@ -288,11 +288,11 @@ public class ToolbarComposite extends Composite implements Observer {
 			public void mouseUp(MouseEvent arg0) {
 				if (GuiController.getGuiState().isViewDetailed()) {
 					viewBtn.setImage(pictureView);
-					viewBtn.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_TOGGLE_TO_GALLERY));
-					GuiController.getGuiState().setViewDetailed(true);
+					viewBtn.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_TOGGLE_TO_DETAILS));
+					GuiController.getGuiState().setViewDetailed(false);
 				} else {
 					viewBtn.setImage(detailedView);
-					viewBtn.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_TOGGLE_TO_DETAILS));
+					viewBtn.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_TOGGLE_TO_GALLERY));
 					GuiController.getGuiState().setViewDetailed(true);
 				}
 				

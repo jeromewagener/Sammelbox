@@ -14,7 +14,7 @@
 		</File>
 	</appenders>	
 	<loggers>		
-		<root level="trace">
+		<root level="warn">
 			<appender-ref ref="Console"/>
 			<appender-ref ref="error-log"/>
 			<appender-ref ref="debug-log"/>
