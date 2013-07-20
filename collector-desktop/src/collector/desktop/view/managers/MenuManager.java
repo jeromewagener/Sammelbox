@@ -142,7 +142,7 @@ public class MenuManager {
 						LOGGER.error("An error occured while trying to restore albums from a backup file \n Stacktrace: " + ExceptionHelper.toString(ex));
 					}
 					// No default album is selected on restore
-					ApplicationUI.refreshSWTAlbumList();
+					ApplicationUI.refreshAlbumList();
 					BrowserFacade.loadHtmlFromInputStream(ApplicationUI.getShell().getClass().getClassLoader().getResourceAsStream("htmlfiles/albums_restored.html"));
 				}
 			}
@@ -214,7 +214,7 @@ public class MenuManager {
 					if (messageBox.open() == SWT.YES) {
 						try {
 							DatabaseOperations.removeAlbumAndAlbumPictures(ApplicationUI.getSelectedAlbum());
-							ApplicationUI.refreshSWTAlbumList();
+							ApplicationUI.refreshAlbumList();
 							BrowserFacade.loadHtmlFromInputStream(ApplicationUI.getShell().getClass().getClassLoader().getResourceAsStream("htmlfiles/album_deleted.html"));
 						} catch (DatabaseWrapperOperationException ex) {
 							LOGGER.error("A database related error occured \n Stacktrace: " + ExceptionHelper.toString(ex));
@@ -266,7 +266,7 @@ public class MenuManager {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				// No default album is selected on help
-				ApplicationUI.refreshSWTAlbumList();
+				ApplicationUI.refreshAlbumList();
 				BrowserFacade.loadHtmlFromInputStream(
 						ApplicationUI.getShell().getClass().getClassLoader().getResourceAsStream("helpfiles/index.html"));
 				ApplicationUI.changeRightCompositeTo(PanelType.Help, EmptySidepane.build(ApplicationUI.getThreePanelComposite()));
@@ -279,7 +279,7 @@ public class MenuManager {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				// No default album is selected on help
-				ApplicationUI.refreshSWTAlbumList();
+				ApplicationUI.refreshAlbumList();
 				BrowserFacade.loadHtmlFromInputStream(
 						ApplicationUI.getShell().getClass().getClassLoader().getResourceAsStream("helpfiles/about.html"));
 				ApplicationUI.changeRightCompositeTo(PanelType.Help, EmptySidepane.build(ApplicationUI.getThreePanelComposite()));

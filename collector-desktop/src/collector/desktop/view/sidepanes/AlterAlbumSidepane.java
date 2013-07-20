@@ -189,7 +189,7 @@ public class AlterAlbumSidepane {
 				try {
 					DatabaseOperations.renameAlbum(oldAlbumName, newAlbumName);
 					albumNameText.setData(newAlbumName);
-					ApplicationUI.refreshSWTAlbumList();
+					ApplicationUI.refreshAlbumList();
 					ApplicationUI.setSelectedAlbum(newAlbumName);
 
 					BrowserFacade.addModificationToAlterationList(Translator.toBeTranslated("Album renamed from '" + oldAlbumName + "' to '" + newAlbumName + "'"));

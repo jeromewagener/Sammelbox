@@ -2,6 +2,7 @@ package collector.desktop.view.managers;
 
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,18 +17,14 @@ import collector.desktop.model.database.operations.DatabaseOperations;
 public class AlbumViewManager {
 	private final static Logger LOGGER = LoggerFactory.getLogger(AlbumViewManager.class);
 	private static Collection<AlbumView> albumViews = new LinkedList<AlbumView>();
-	
-	private AlbumViewManager() {
-		initialize();
-	}
-	
+		
 	/** Initializes album views without notifying any attached observers */
 	public static void initialize() {
 		AlbumViewManager.loadViews();
 	}
 	
-	public static Collection<AlbumView> getAlbumViews(String albumName) {
-		Collection<AlbumView> filteredAlbumViews = new LinkedList<AlbumView>();
+	public static List<AlbumView> getAlbumViews(String albumName) {
+		List<AlbumView> filteredAlbumViews = new LinkedList<AlbumView>();
 		
 		for (AlbumView albumView : albumViews) {
 			if (albumView.getAlbum().equals(albumName)) {
@@ -37,7 +34,19 @@ public class AlbumViewManager {
 		
 		return filteredAlbumViews;
 	}
-
+	
+	public static String[] getAlbumViewNamesArray(String albumName) {
+		List<AlbumView> albumViews = getAlbumViews(albumName);
+		
+		String[] albumViewNames = new String[albumViews.size()];
+		
+		for (int i=0; i<albumViews.size(); i++) {
+			albumViewNames[i] = albumViews.get(i).getName();
+		}
+		
+		return albumViewNames;
+	}
+	
 	private static void setAlbumViews(Collection<AlbumView> albumViews) {
 		AlbumViewManager.albumViews = albumViews;
 	}
@@ -72,7 +81,7 @@ public class AlbumViewManager {
 		FileSystemAccessWrapper.storeViews(albumViews);
 	}
 	
-	public static void loadViews() {
+	private static void loadViews() {
 		Collection<AlbumView> validAlbumViews = new LinkedList<AlbumView>();
 		
 		for (AlbumView albumView : FileSystemAccessWrapper.loadViews()) {

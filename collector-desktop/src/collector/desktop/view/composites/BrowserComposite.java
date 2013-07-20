@@ -29,7 +29,7 @@ public class BrowserComposite {
 		browser.setLayoutData(gridData);
 
 		// store browser reference in the main shell & register location listener with the browser
-		ApplicationUI.setAlbumItemSWTBrowser(browser);
+		ApplicationUI.setAlbumItemBrowser(browser);
 		browser.addLocationListener(browserListener);
 		browser.addProgressListener(browserListener);
 		browser.addMenuDetectListener(browserListener);

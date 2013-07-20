@@ -79,12 +79,12 @@ public class Utilities {
 	 * must be used. By using this method the browser progress listener will execute the
 	 * jump as soon as the document is completely loaded */
 	static void jumpToAnchor(String anchor) {
-		ApplicationUI.getAlbumItemSWTBrowser().execute("window.location.hash=\"" + anchor + "\"");
+		ApplicationUI.getAlbumItemBrowser().execute("window.location.hash=\"" + anchor + "\"");
 	}
 
 	static void goBackToLastPage() {
 		if (lastPageAsHtml != null) {
-			ApplicationUI.getAlbumItemSWTBrowser().setText(lastPageAsHtml);
+			ApplicationUI.getAlbumItemBrowser().setText(lastPageAsHtml);
 		}
 	}
 
@@ -102,7 +102,7 @@ public class Utilities {
 	
 	static void loadHelpPage() {
 		loadHtmlPage(
-				ApplicationUI.getAlbumItemSWTBrowser(),
+				ApplicationUI.getAlbumItemBrowser(),
 				ApplicationUI.class.getClassLoader().getResourceAsStream("helpfiles/index.html"));
 	}
 	
@@ -162,7 +162,7 @@ public class Utilities {
 				// In JavaScript (as in Java), a backslash will escape the following character. 
 				// However, Windows uses the backslash also as the file separator character. For this reason 
 				// we have to escape possible backslashes by using the backslash character itself
-				ApplicationUI.getAlbumItemSWTBrowser().execute(javascript.replace("\\", "\\\\"));
+				ApplicationUI.getAlbumItemBrowser().execute(javascript.replace("\\", "\\\\"));
 			}
 		} else {
 			if (!AlbumItemStore.isStopIndexAtEnd()) {
@@ -181,7 +181,7 @@ public class Utilities {
 				// In JavaScript (as in Java), a backslash will escape the following character. 
 				// However, Windows uses the backslash also as the file separator character. For this reason 
 				// we have to escape possible backslashes by using the backslash character itself
-				ApplicationUI.getAlbumItemSWTBrowser().execute(javascript.replace("\\", "\\\\"));
+				ApplicationUI.getAlbumItemBrowser().execute(javascript.replace("\\", "\\\\"));
 			}
 		}
 	}

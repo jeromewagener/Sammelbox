@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import collector.desktop.controller.AutosaveController;
+import collector.desktop.controller.GuiController;
 import collector.desktop.controller.events.EventObservable;
 import collector.desktop.controller.events.Observer;
 import collector.desktop.controller.events.SammelboxEvent;
@@ -52,14 +53,14 @@ public class ApplicationUI implements Observer {
 	private final static Display display = new Display();
 	/** A reference to the main shell */
 	private final static Shell shell = new Shell(display);
-	/** The currently selected album. The selected album changes via selections within the album list */
-	private static String selectedAlbum = "";
+	
 	/** A reference to the SWT list containing all available albums */
 	private static List albumList;
 	/** A reference to the SWT Text representing the quickSearch field*/
 	private static Text quickSearchTextField;
 	/** A reference to the SWT list containing all available views */
 	private static List viewList;
+	
 	/** A reference to a composite being part of the general user interface */
 	private static Composite threePanelComposite = null, upperLeftSubComposite = null, lowerLeftSubComposite = null, 
 			leftComposite = null, rightComposite = null, centerComposite = null, statusComposite = null, toolbarComposite = null;
@@ -181,6 +182,15 @@ public class ApplicationUI implements Observer {
 
 		// Create the menu bar
 		MenuManager.createAndInitializeMenuBar(shell);
+		
+		// Create the album manager
+		AlbumManager.initialize();
+		for (String albumName : AlbumManager.getAlbums()) {
+			albumList.add(albumName);
+		}
+		
+		// Create the album view manager
+		AlbumViewManager.initialize();
 		
 		// SWT display management
 		shell.pack();
@@ -311,15 +321,16 @@ public class ApplicationUI implements Observer {
 	/** Returns the currently selected/active album or view
 	 * @return the currently selected/active album or view */
 	public static String getSelectedAlbum() {
-		return selectedAlbum;
+		return GuiController.getGuiState().getSelectedAlbum();
 	}
 
 	/**
-	 * Determines is an album has been selected.
+	 * Determines if an album has been selected.
 	 * @return True if the selectedAlbumName is not null and not empty. True if an album is selected.
 	 */
 	public static boolean hasSelectedAlbum() {
-		if (selectedAlbum != null && !selectedAlbum.isEmpty()) {
+		if (GuiController.getGuiState().getSelectedAlbum() != null && 
+				!GuiController.getGuiState().getSelectedAlbum().isEmpty()) {
 			return true;
 		}
 		return false;
@@ -339,7 +350,7 @@ public class ApplicationUI implements Observer {
 	 * False otherwise.*/
 	public static boolean setSelectedAlbum(String albumName) {
 		// Set the album name and verify that it is in the list
-		ApplicationUI.selectedAlbum = albumName;
+		GuiController.getGuiState().setSelectedAlbum(albumName);
 		if (albumName== null || albumName.isEmpty()) {
 			ApplicationUI.albumList.deselectAll();
 			return true;
@@ -368,53 +379,47 @@ public class ApplicationUI implements Observer {
 
 		BrowserFacade.performBrowserQueryAndShow(QueryBuilder.createSelectStarQuery(albumName));
 		
-		ApplicationUI.getViewSWTList().setEnabled(AlbumViewManager.hasAlbumViewsAttached(albumName));
+		ApplicationUI.getViewList().setEnabled(AlbumViewManager.hasAlbumViewsAttached(albumName));
 		EventObservable.addEventToQueue(SammelboxEvent.ALBUM_SELECTED);
 		ToolbarComposite.enableAlbumButtons(albumName);
 		
 		return true;
 	}
 	
-	/** After adding/removing albums, this method should be used to refresh the SWT album list with the current album names thus leaving no album selected.*/
-	public static void refreshSWTAlbumList() {
+	/** After adding/removing albums, this method should be used to refresh the album list with the current album names thus leaving no album selected.*/
+	public static void refreshAlbumList() {
 		EventObservable.addEventToQueue(SammelboxEvent.ALBUM_LIST_UPDATED);
 		EventObservable.addEventToQueue(SammelboxEvent.ALBUM_VIEW_LIST_UPDATED);
 		ApplicationUI.getQuickSearchTextField().setEnabled(false);
 	}
 
 	/** Sets the the list of albums
-	 * @param albumSWTList the list of albums */ 
-	public static void setAlbumSWTList(List albumSWTList) {
-		ApplicationUI.albumList = albumSWTList;
-	}
-
-	/** Returns the list of albums 
-	 * @return the album SWT list */
-	public static List getAlbumSWTList() {
-		return albumList;
+	 * @param albumList the list of albums */ 
+	public static void setAlbumList(List albumList) {
+		ApplicationUI.albumList = albumList;
 	}
 
 	/** Sets the the list of views
 	 * @param albumList the list of albums */ 
-	public static void setViewSWTList(List viewSWTList) {
-		ApplicationUI.viewList = viewSWTList;
+	public static void setViewList(List viewList) {
+		ApplicationUI.viewList = viewList;
 	}
 
 	/** Returns the list of views 
-	 * @return the album SWT list */
-	public static List getViewSWTList() {
+	 * @return the album list */
+	public static List getViewList() {
 		return viewList;
 	}
 
-	/** Sets the album item SWT browser
-	 * @param browser the reference to the albumItemSWTBrowser */
-	public static void setAlbumItemSWTBrowser(Browser browser) {
+	/** Sets the album item browser
+	 * @param browser the reference to the albumItemBrowser */
+	public static void setAlbumItemBrowser(Browser browser) {
 		ApplicationUI.albumItemBrowser = browser;
 	}
 
-	/** Returns the album item SWT browser
-	 * @return the album item SWT browser */
-	public static Browser getAlbumItemSWTBrowser() {
+	/** Returns the album item browser
+	 * @return the album item browser */
+	public static Browser getAlbumItemBrowser() {
 		return albumItemBrowser;
 	}
 	
@@ -449,10 +454,13 @@ public class ApplicationUI implements Observer {
 			for (String album : AlbumManager.getAlbums()) {
 				albumList.add(album);
 			}
+		} else if (event.equals(SammelboxEvent.ALBUM_SELECTED)) {
+			
+			viewList.setItems(AlbumViewManager.getAlbumViewNamesArray(GuiController.getGuiState().getSelectedAlbum()));
 		} else if (event.equals(SammelboxEvent.ALBUM_VIEW_LIST_UPDATED)) {
 			viewList.removeAll();
 
-			for (AlbumView albumView : AlbumViewManager.getAlbumViews(selectedAlbum)) {
+			for (AlbumView albumView : AlbumViewManager.getAlbumViews(GuiController.getGuiState().getSelectedAlbum())) {
 				viewList.add(albumView.getName());				
 			}
 			

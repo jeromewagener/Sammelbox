@@ -12,7 +12,7 @@ public class WelcomePageCreator {
 	private static final int NUMBER_OF_FAVORITES_SHOWN = 5;
 
 	static void loadWelcomePage() {
-		ApplicationUI.getAlbumItemSWTBrowser().setText(
+		ApplicationUI.getAlbumItemBrowser().setText(
 				"<!DOCTYPE HTML>" +
 				"<html>" +
 				"  <head>" +

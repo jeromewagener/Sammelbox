@@ -73,7 +73,7 @@ public class QuickControlSidepane {
 		albumList.setLayoutData(gridData);
 
 		// Set the currently active album
-		ApplicationUI.setAlbumSWTList(albumList);
+		ApplicationUI.setAlbumList(albumList);
 
 		// separator
 		new Label(quickControlComposite, SWT.SEPARATOR | SWT.HORIZONTAL).setLayoutData(seperatorGridData);
@@ -85,14 +85,12 @@ public class QuickControlSidepane {
 
 		// the list of albums (listener is added later)
 		final List viewList = new List(quickControlComposite, SWT.SINGLE | SWT.BORDER | SWT.V_SCROLL);
-		// initialize view list
-		AlbumViewManager.initialize();
 
 		GridData gridData2 = new GridData(GridData.FILL_BOTH);
 		gridData2.heightHint = 200;
 		gridData2.widthHint = 125;
 		viewList.setLayoutData(gridData2);		
-		ApplicationUI.setViewSWTList(viewList);
+		ApplicationUI.setViewList(viewList);
 
 		albumList.addSelectionListener(new SelectionListener() {
 			@Override
@@ -178,7 +176,7 @@ public class QuickControlSidepane {
 						LOGGER.error("A database error occured while removing the following album: '" + ApplicationUI.getSelectedAlbum() + "'" +
 								" \n Stacktrace: " + ExceptionHelper.toString(ex));
 					}
-					ApplicationUI.refreshSWTAlbumList();
+					ApplicationUI.refreshAlbumList();
 					BrowserFacade.loadHtmlFromInputStream(ApplicationUI.getShell().getClass().getClassLoader().getResourceAsStream("htmlfiles/album_deleted.html"));
 				}
 			}
@@ -200,11 +198,6 @@ public class QuickControlSidepane {
 		});
 
 		quickSearchText.setEnabled(false);
-
-		// Add all albums to album list
-		for (String album : AlbumManager.getAlbums()) {
-			albumList.add(album);
-		}		
 
 		Menu popupMenu = new Menu(viewList);
 

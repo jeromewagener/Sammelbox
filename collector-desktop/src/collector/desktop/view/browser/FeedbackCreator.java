@@ -28,7 +28,7 @@ public class FeedbackCreator {
 
 
 			if (updatedAlbumItem != null) {
-				ApplicationUI.getAlbumItemSWTBrowser().setText(
+				ApplicationUI.getAlbumItemBrowser().setText(
 						generateItemAddedOrUpdatedFeedbackConstruct(
 								Translator.get(DictKeys.BROWSER_ITEM_UPDATED),
 								ItemCreator.getAlbumItemTableRowHtml(updatedAlbumItem)));
@@ -45,7 +45,7 @@ public class FeedbackCreator {
 			addedAlbumItem = DatabaseOperations.getAlbumItem(ApplicationUI.getSelectedAlbum(), albumItemId);
 
 			if (addedAlbumItem != null) {
-				ApplicationUI.getAlbumItemSWTBrowser().setText(
+				ApplicationUI.getAlbumItemBrowser().setText(
 						generateItemAddedOrUpdatedFeedbackConstruct(
 								Translator.get(DictKeys.BROWSER_ITEM_ADDED),
 								ItemCreator.getAlbumItemTableRowHtml(addedAlbumItem)));

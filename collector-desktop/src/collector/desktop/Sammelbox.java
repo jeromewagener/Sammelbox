@@ -23,7 +23,7 @@ public class Sammelbox {
 	
 	/**
 	 * This method initializes the file structure and opens the database connections.
-	 * @throws Exception Either a class not found exception if the jdbc driver could not be initialized or
+	 * @throws Exception Either a class not found exception if the JDBC driver could not be initialized or
 	 * an exception if the database connection could not be established.
 	 */
 	private static void setupConnectionAndFilesystem() throws Exception {		

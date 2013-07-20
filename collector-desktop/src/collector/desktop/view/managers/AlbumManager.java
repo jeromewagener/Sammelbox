@@ -17,11 +17,7 @@ public class AlbumManager {
 	private final static Logger LOGGER = LoggerFactory.getLogger(AlbumManager.class);
 	private static List<String> albums = new LinkedList<String>();
 	
-	private AlbumManager() {
-		initialize();
-	}
-	
-	public static void mergeDatabaseAndXmlAlbums() {
+	private static void mergeDatabaseAndXmlAlbums() {
 		albums = FileSystemAccessWrapper.loadAlbums();
 		
 		try {

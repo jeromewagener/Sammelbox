@@ -80,7 +80,7 @@ public class PictureViewCreator {
 			        "  </body>" +
 			        "</html>");
 	
-			ApplicationUI.getAlbumItemSWTBrowser().setText(picturePage.toString());
+			ApplicationUI.getAlbumItemBrowser().setText(picturePage.toString());
 		} catch (DatabaseWrapperOperationException ex) {
 			LOGGER.error("An error occured while fetching the album item #" + albumItemId + " in the album: " + 
 					ApplicationUI.getSelectedAlbum() + " \n Stacktrace:" + ExceptionHelper.toString(ex));
