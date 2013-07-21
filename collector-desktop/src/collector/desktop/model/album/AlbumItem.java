@@ -38,7 +38,7 @@ public class AlbumItem {
 	 * @param itemFields The item fields with which this album item should be initialized
 	 * @throws DatabaseWrapperOperationException 
 	 */
-	public AlbumItem(String albumName, List<ItemField> itemFields) throws DatabaseWrapperOperationException {
+	public AlbumItem(String albumName, List<ItemField> itemFields) {
 		this.albumName = albumName;
 		fields = itemFields;
 		

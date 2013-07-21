@@ -1,22 +1,15 @@
 package collector.desktop.model.album;
 
-import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import collector.desktop.controller.filesystem.FileSystemAccessWrapper;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
-import collector.desktop.model.database.exceptions.ExceptionHelper;
 import collector.desktop.view.internationalization.DictKeys;
 import collector.desktop.view.internationalization.Translator;
 
 public class AlbumItemStore {
-	private static final Logger LOGGER = LoggerFactory.getLogger(AlbumItemStore.class);
-	
 	private static final String SAMPLE = "Sample";
 	private static final int DEFAULT_STOP_INDEX_INCREASE_AMOUNT = 10;
 	private static final int DEFAULT_STOP_INDEX = 40;
@@ -109,26 +102,18 @@ public class AlbumItemStore {
 	public static AlbumItem getSamplePictureAlbumItemWithoutFields() {
 		List<AlbumItemPicture> pictures = new ArrayList<AlbumItemPicture>();
 		
-		pictures.add(new AlbumItemPicture(
-				FileSystemAccessWrapper.PLACEHOLDERIMAGE, FileSystemAccessWrapper.PLACEHOLDERIMAGE, SAMPLE, Long.MAX_VALUE));
-		pictures.add(new AlbumItemPicture(
-				FileSystemAccessWrapper.PLACEHOLDERIMAGE2, FileSystemAccessWrapper.PLACEHOLDERIMAGE2, SAMPLE, Long.MAX_VALUE));
+		pictures.add(new SampleAlbumItemPicture(FileSystemAccessWrapper.PLACEHOLDERIMAGE2));
+		pictures.add(new SampleAlbumItemPicture(FileSystemAccessWrapper.PLACEHOLDERIMAGE3));
 		
 		List<ItemField> itemFields = new ArrayList<ItemField>();
 		
 		itemFields.add(new ItemField(Translator.get(
 				DictKeys.BROWSER_NO_FIELDS_ADDED_YET), FieldType.Text, Translator.get(DictKeys.BROWSER_PLEASE_USE_NEW_ALBUM_SIDEPANE)));		
 		
-		try {
-			AlbumItem albumItem = new AlbumItem("DummyItem", itemFields);
-			albumItem.setPictures(pictures);
-			
-			return albumItem;
-		} catch (DatabaseWrapperOperationException ex) {
-			LOGGER.error("An error occured while creating a sample album item \n " + ExceptionHelper.toString(ex));
-		}
+		AlbumItem albumItem = new AlbumItem(SAMPLE, itemFields);
+		albumItem.setPictures(pictures);
 		
-		return null;
+		return albumItem;
 	}
 	
 	public static AlbumItem getSampleAlbumItem(boolean containsPictures, List<MetaItemField> metaItemFields) {
@@ -136,10 +121,8 @@ public class AlbumItemStore {
 		List<AlbumItemPicture> pictures = new ArrayList<AlbumItemPicture>();		
 		
 		if (containsPictures) {
-			pictures.add(new AlbumItemPicture(
-					FileSystemAccessWrapper.PLACEHOLDERIMAGE, FileSystemAccessWrapper.PLACEHOLDERIMAGE, SAMPLE, Long.MAX_VALUE));
-			pictures.add(new AlbumItemPicture(
-					FileSystemAccessWrapper.PLACEHOLDERIMAGE2, FileSystemAccessWrapper.PLACEHOLDERIMAGE2, SAMPLE, Long.MAX_VALUE));
+			pictures.add(new SampleAlbumItemPicture(FileSystemAccessWrapper.PLACEHOLDERIMAGE2));
+			pictures.add(new SampleAlbumItemPicture(FileSystemAccessWrapper.PLACEHOLDERIMAGE3));
 		}
 		
 		if (metaItemFields.isEmpty()) {
@@ -155,8 +138,8 @@ public class AlbumItemStore {
 				} else if (metaItemField.getType().equals(FieldType.Integer)) {
 					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), 10 + (int)(Math.random() * ((90) + 1)), false));
 				} else if (metaItemField.getType().equals(FieldType.Number)) {
-					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), 
-							new BigDecimal(String.valueOf(10 + (90) * new Random().nextDouble())).setScale(2, BigDecimal.ROUND_HALF_UP), false));
+					DecimalFormat twoDecimalsFormat = new DecimalFormat("#.##");
+					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), Double.valueOf(twoDecimalsFormat.format(Math.random() * (100)))));
 				} else if (metaItemField.getType().equals(FieldType.Option)) {
 					int option = (int)(Math.random() * ((2) + 1));
 					
@@ -169,7 +152,7 @@ public class AlbumItemStore {
 					}
 					
 				} else if (metaItemField.getType().equals(FieldType.StarRating)) {
-					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), 0 + (int)(Math.random() * ((5) + 1)), false));
+					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), StarRating.valueOf(StarRating.toArray()[0 + (int)(Math.random() * ((5) + 1))]), false));
 				} else if (metaItemField.getType().equals(FieldType.Time)) {
 					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), System.currentTimeMillis(), false));
 				} else if (metaItemField.getType().equals(FieldType.URL)) {
@@ -178,15 +161,9 @@ public class AlbumItemStore {
 			}
 		}
 		
-		try {
-			AlbumItem albumItem = new AlbumItem("DummyItem", itemFields);
-			albumItem.setPictures(pictures);
-			
-			return albumItem;
-		} catch (DatabaseWrapperOperationException ex) {
-			LOGGER.error("An error occured while creating a sample album item \n " + ExceptionHelper.toString(ex));
-		}
+		AlbumItem albumItem = new AlbumItem(SAMPLE, itemFields);
+		albumItem.setPictures(pictures);
 		
-		return null;
+		return albumItem;
 	}
 }

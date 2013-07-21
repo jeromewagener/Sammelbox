@@ -14,6 +14,7 @@ import collector.desktop.model.album.AlbumItemPicture;
 import collector.desktop.model.album.FieldType;
 import collector.desktop.model.album.ItemField;
 import collector.desktop.model.album.OptionType;
+import collector.desktop.model.album.StarRating;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.model.database.exceptions.ExceptionHelper;
 import collector.desktop.model.database.operations.DatabaseConstants;
@@ -95,12 +96,21 @@ public class ItemCreator {
 				htmlDataColumnContent.append(getFieldNameAndValueLine(fieldItem.getName(), dateFormater.format(utilDate)));
 			} else  if (fieldItem.getType().equals(FieldType.Text)) {
 				htmlDataColumnContent.append(getFieldNameAndValueLine(fieldItem.getName(), Utilities.escapeHtmlString((String) fieldItem.getValue())));
+			} else if (fieldItem.getType().equals(FieldType.Integer)) {
+				htmlDataColumnContent.append(getFieldNameAndValueLine(fieldItem.getName(), ((Integer) fieldItem.getValue()).toString()));
+			} else if (fieldItem.getType().equals(FieldType.Number)) {
+				htmlDataColumnContent.append(getFieldNameAndValueLine(fieldItem.getName(), ((Double) fieldItem.getValue()).toString()));
+			} else if (fieldItem.getType().equals(FieldType.StarRating)) {
+				htmlDataColumnContent.append(getFieldNameAndValueLine(fieldItem.getName(), ((StarRating) fieldItem.getValue()).toString()));
+			} else if (fieldItem.getType().equals(FieldType.URL)) {
+				htmlDataColumnContent.append(getFieldNameAndValueLine(fieldItem.getName(), ((String) fieldItem.getValue())));
 			}
 		}
 				
 		try {
-			if (!albumItem.getPictures().isEmpty() || DatabaseOperations.isPictureAlbum(ApplicationUI.getSelectedAlbum())) {
-				List<AlbumItemPicture> pictures = DatabaseOperations.getAlbumItemPictures(ApplicationUI.getSelectedAlbum(), id);
+			List<AlbumItemPicture> pictures = albumItem.getPictures();
+			if (DatabaseOperations.isPictureAlbum(ApplicationUI.getSelectedAlbum()) || !pictures.isEmpty()) {
+				
 				htmlPictureColumnContent.append(
 						"<table border=0>" +
 						"  <tr>" +

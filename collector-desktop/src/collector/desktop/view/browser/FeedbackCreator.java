@@ -80,10 +80,14 @@ public class FeedbackCreator {
 	}
 	
 	static void showCreateNewAlbumPage(Browser browser, AlbumItem albumItem) {
-		browser.setText(generateAlbumAddedOrUpdatedFeedbackConstruct(
+		String test = generateAlbumAddedOrUpdatedFeedbackConstruct(
 				albumItem,
 				Translator.get(DictKeys.BROWSER_CREATING_NEW_ALBUM),
-				Translator.get(DictKeys.BROWSER_ALBUM_WILL_HANDLE_FOLLOWING_FORMAT)));
+				Translator.get(DictKeys.BROWSER_ALBUM_WILL_HANDLE_FOLLOWING_FORMAT));
+		
+		System.out.println(test);
+		
+		browser.setText(test);
 	}
 	
 	static void showCreateAlterAlbumPage(Browser browser, AlbumItem albumItem) {		

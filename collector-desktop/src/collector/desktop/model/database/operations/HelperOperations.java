@@ -79,7 +79,7 @@ public class HelperOperations {
 	
 	/**
 	 * A helper method to detect the collector FieldType using the type information in the separate typeInfo table.
-	 * @param tableName The name of the table to which the column belongs to.
+	 * @param tableName The name of the table to which the column belongs to. Do NOT escape!
 	 * @param columnName The name of the column whose type should be determined.
 	 * @return A FieldType expressing the type of the specified column in the resultSet.
 	 * @throws DatabaseWrapperOperationException 
@@ -101,6 +101,7 @@ public class HelperOperations {
 			}
 			
 		} catch (SQLException sqlException) {
+			LOGGER.error("Could not detect fieldtype for column [" + columnName + "] in table [" + tableName + "]", sqlException);
 			return FieldType.Text;
 		}	
 
@@ -111,8 +112,10 @@ public class HelperOperations {
 			return FieldType.valueOf(typeResultSet.getString(1));
 			
 		} catch (SQLException e) {
+			LOGGER.error("Could not detect fieldtype for column [" + columnName + "] in table [" + tableName + "]", e);
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
 		} catch (IllegalArgumentException e) {
+			LOGGER.error("Could not detect fieldtype for column [" + columnName + "] in table [" + tableName + "]", e);
 			return FieldType.Text;
 		}	
 		

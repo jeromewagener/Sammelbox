@@ -171,7 +171,7 @@ public class QueryOperations {
 	}
 
 	static List<MetaItemField> getAlbumItemFieldNamesAndTypes(String albumName) throws DatabaseWrapperOperationException {
-		String tableName = DatabaseStringUtilities.encloseNameWithQuotes(DatabaseStringUtilities.generateTableName(albumName));
+		String tableName = DatabaseStringUtilities.generateTableName(albumName);
 		List<MetaItemField> itemMetadata = new ArrayList<MetaItemField>();
 		
 		// Is available means that it does not exist in the db, hence its fields cannot be retrieved
@@ -196,7 +196,7 @@ public class QueryOperations {
 				// Excludes all columns that are for internal use only.
 				String columnName = metaData.getColumnName(columnIndex);
 				if (!internalColumnNames.contains(columnName)) {
-					FieldType type = HelperOperations.detectDataType(albumName, columnName);
+					FieldType type = HelperOperations.detectDataType(tableName, columnName);
 					MetaItemField metaItem = new MetaItemField(columnName, type, quickSearchableColumnNames.contains(columnName));
 					itemMetadata.add(metaItem);
 				}
@@ -215,7 +215,7 @@ public class QueryOperations {
 	 * @throws DatabaseWrapperOperationException 
 	 */
 	static List<MetaItemField> getAllAlbumItemMetaItemFields(String albumName) throws DatabaseWrapperOperationException{
-		String tableName = DatabaseStringUtilities.encloseNameWithQuotes(DatabaseStringUtilities.generateTableName(albumName));
+		String tableName = DatabaseStringUtilities.generateTableName(albumName);
 		
 		List<MetaItemField> itemMetadata = new ArrayList<MetaItemField>();
 		List<String> quickSearchableColumnNames = getIndexedColumnNames(DatabaseStringUtilities.generateTableName(albumName));

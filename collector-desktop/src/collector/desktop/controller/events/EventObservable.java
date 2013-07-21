@@ -44,9 +44,7 @@ public class EventObservable {
 		observers.clear();
 	}
 
-	public static void notifyObservers() {
-		System.out.println(sammelboxEvents);
-		
+	public static void notifyObservers() {		
 		SammelboxEvent event = sammelboxEvents.poll();
 		
 		for (Observer observer : observers) {
