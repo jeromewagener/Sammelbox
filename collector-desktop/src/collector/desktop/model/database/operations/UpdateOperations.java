@@ -107,7 +107,8 @@ public class UpdateOperations {
 			newFields = renameFieldInMetaItemList(oldMetaItemField, newMetaItemField, newFields);// [rename column]
 		
 			// Drop the old table + typeTable
-			DeleteOperations.removeAlbum(albumName);
+			DeleteOperations.dropTable(albumName);
+			DeleteOperations.dropTable(DatabaseStringUtilities.generateTypeInfoTableName(albumName));
 
 			// the following three columns are automatically created by createNewAlbumTable
 			newFields = removeFieldFromMetaItemList(new MetaItemField("id", FieldType.ID), newFields);
@@ -152,7 +153,8 @@ public class UpdateOperations {
 			newFields = reorderFieldInMetaItemList(metaItemField, preceedingField, newFields);
 
 			// Drop the old table + typeTable
-			DeleteOperations.removeAlbum(albumName);
+			DeleteOperations.dropTable(albumName);
+			DeleteOperations.dropTable(DatabaseStringUtilities.generateTypeInfoTableName(albumName));
 
 			// the following three columns are automatically created by createNewAlbumTable
 			newFields = removeFieldFromMetaItemList(new MetaItemField("id", FieldType.ID), newFields);

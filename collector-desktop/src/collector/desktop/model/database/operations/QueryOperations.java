@@ -286,7 +286,7 @@ public class QueryOperations {
 				while (rs.next()) {
 					pictures.add(new AlbumItemPicture(rs.getLong(1), rs.getString(2), rs.getString(3), albumName, rs.getLong(4)));
 				}			
-			} catch (SQLException e) {
+			} catch (SQLException e) {			
 				throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
 			}
 		}
