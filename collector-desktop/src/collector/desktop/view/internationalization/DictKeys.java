@@ -120,6 +120,7 @@ public class DictKeys {
 	public static final String BUTTON_SORT_ASCENDING = "collector.button.caption.BUTTON_SORT_ASCENDING";
 	public static final String BUTTON_SORT_DESCENDING = "collector.button.caption.BUTTON_SORT_DESCENDING";
 	public static final String BUTTON_SAVE_SETTINGS = "collector.button.caption.BUTTON_SAVE_SETTINGS";
+	public static final String BUTTON_TOOLTIP_CLOSE = "collector.button.tooltip.CLOSE";
 	
 	/*   Labels   */
 	public static final String LABEL_ADD_ENTRY = "collector.label.caption.ADD_ENTRY";
@@ -148,6 +149,9 @@ public class DictKeys {
 	public static final String LABEL_FIELD_TO_SORT = "collector.label.caption.FIELD_TO_SORT";
 	public static final String LABEL_SETTINGS = "collector.label.caption.SETTINGS";
 	public static final String LABEL_LANGUAGE = "collector.label.caption.LANGUAGE";
+	public static final String LABEL_NEW_ALBUM_NAME = "collector.label.caption.NEW_ALBUM_NAME";
+	public static final String LABEL_AUTOSAVE_DATABASE = "collector.label.caption.AUTOSAVE_DATABASE";
+	public static final String LABEL_LOADING = "collector.label.caption.LOADING";
 	
 	/*   Textbox   */
 	public static final String TEXTBOX_MY_NEW_ALBUM = "collector.textbox.content.MY_NEW_ALBUM";
@@ -180,6 +184,15 @@ public class DictKeys {
 	public static final String BROWSER_ALBUM_WILL_HANDLE_FOLLOWING_FORMAT = "collector.browser.text.ALBUM_WILL_HANDLE_FOLLOWING_FORMAT";
 	public static final String BROWSER_MODIFYING_ALBUM = "collector.browser.text.MODIFYING_ALBUM";
 	public static final String BROWSER_MODIFY_WARNING = "collector.browser.text.MODIFY_WARNING";
+	public static final String BROWSER_ALBUM_PICTURES_ENABLED = "collector.browser.text.ALBUM_PICTURES_ENABLED";
+	public static final String BROWSER_ALBUM_PICTURES_DISABLED = "collector.browser.text.ALBUM_PICTURES_DISABLED";
+	public static final String BROWSER_ALBUM_RENAMED = "collector.browser.text.ALBUM_RENAMED";
+	public static final String BROWSER_ALBUMFIELD_ADDED = "collector.browser.text.ALBUMFIELD_ADDED";
+	public static final String BROWSER_ALBUMFIELD_NOW_QUICKSEARCHABLE = "collector.browser.text.ALBUMFIELD_NOW_QUICKSEARCHABLE";
+	public static final String BROWSER_ALBUMFIELD_REMOVED = "collector.browser.text.ALBUMFIELD_REMOVED";
+	public static final String BROWSER_ALBUMFIELD_RENAMED = "collector.browser.text.ALBUMFIELD_RENAMED";
+	public static final String BROWSER_ALBUMFIELD_MOVED_DOWN = "collector.browser.text.ALBUMFIELD_MOVED_DOWN";
+	public static final String BROWSER_ALBUMFIELD_MOVED_UP = "collector.browser.text.ALBUMFIELD_MOVED_UP";	
 	
 	/*   Status Bar   */
 	public static final String STATUSBAR_PROGRAM_STARTED = "collector.statusbar.PROGRAM_STARTED";

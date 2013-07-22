@@ -11,6 +11,7 @@ import collector.desktop.model.database.exceptions.DatabaseWrapperOperationExcep
 import collector.desktop.model.database.exceptions.ExceptionHelper;
 import collector.desktop.model.database.utilities.DatabaseIntegrityManager;
 import collector.desktop.view.ApplicationUI;
+import collector.desktop.view.internationalization.DictKeys;
 import collector.desktop.view.internationalization.Translator;
 import collector.desktop.view.various.LoadingOverlayShell;
 
@@ -21,7 +22,7 @@ public class AutosaveController {
 	public static LoadingOverlayShell createAutosaveOverlay () {
 		final Shell shell = ApplicationUI.getShell();
 		
-		final LoadingOverlayShell loadingOverlayShell = new LoadingOverlayShell(shell, Translator.toBeTranslated("Autosaving the database"));
+		final LoadingOverlayShell loadingOverlayShell = new LoadingOverlayShell(shell, Translator.get(DictKeys.LABEL_AUTOSAVE_DATABASE));
 		loadingOverlayShell.setCloseParentWhenDone(true);
 		shell.addListener(SWT.Close, new Listener() {			
 			@Override

@@ -11,6 +11,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Shell;
 
+import collector.desktop.view.internationalization.DictKeys;
 import collector.desktop.view.internationalization.Translator;
 
 
@@ -21,7 +22,7 @@ public class LoadingOverlayShell {
 	private Shell parent = null;
 	private Font textFont = null;
 	private Color textColor = null;
-	private String displayedText = Translator.toBeTranslated("Loading ...");
+	private String displayedText = Translator.get(DictKeys.LABEL_LOADING);
 	private boolean done = false;
 	private boolean closeParentWhenDone = false;
 	

@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Tracker;
 
 import collector.desktop.view.ApplicationUI;
+import collector.desktop.view.internationalization.DictKeys;
 import collector.desktop.view.internationalization.Translator;
 import collector.desktop.view.sidepanes.EmptySidepane;
 
@@ -218,7 +219,7 @@ public class ComponentFactory {
 		Image closeImage = new Image(Display.getCurrent(), istream);
 		Button closeButton = new Button(headerComposite, SWT.PUSH);  
 		closeButton.setImage(closeImage);
-		closeButton.setToolTipText(Translator.toBeTranslated("Close"));
+		closeButton.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_CLOSE));
 		closeButton.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true));
 		closeButton.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 		closeButton.addMouseListener(new MouseListener() {
