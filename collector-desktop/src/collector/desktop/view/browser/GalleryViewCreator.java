@@ -66,16 +66,15 @@ public class GalleryViewCreator {
 		String finalPageAsHtml = "<!DOCTYPE HTML>" +
 								 "  <html>" +
 								 "    <head>" +
+								 "      <title>sammelbox.org</title>" +
 								 "      <meta " + Constants.META_PARAMS + ">" + 
 								 "      <link rel=stylesheet href=\"" + Constants.STYLE_CSS + "\" />" +
 								 "      <script src=\"" + Constants.EFFECTS_JS + "\"></script>" +
 								 "    </head>" +
-								 "    <body>" +
-								 "      <font face=\"" + Utilities.getDefaultSystemFont() + "\"><div id=\"albumItems\">" +
-								          galleryItemHtmlBuilder.toString() +
-								 "      </font>" +
+								 "    <body style=\"background-color:#ffffff;font-family:" +  Utilities.getDefaultSystemFont() + "\">" +
+								        galleryItemHtmlBuilder.toString() +
 								 "    </body>";
-
+				
 		browser.setText(finalPageAsHtml);
 		Utilities.setLastPageAsHtml(finalPageAsHtml);
 	}

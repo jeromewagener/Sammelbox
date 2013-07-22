@@ -45,14 +45,13 @@ public class DetailedViewCreator {
 				"<!DOCTYPE HTML>" +
 				"  <html>" +
 				"    <head>" +
+				"      <title>sammelbox.org</title>" +
 				"      <meta " + Constants.META_PARAMS + ">" + 
 				"      <link rel=stylesheet href=\"" + Constants.STYLE_CSS + "\" />" +
 				"      <script src=\"" + Constants.EFFECTS_JS + "\"></script>" +
 				"    </head>" +
-				"    <body bgcolor=white>" +
-				"      <font face=\"" + Utilities.getDefaultSystemFont() + "\">" + 
-				"        <table id=\"albumItems\" border=0>" + albumItemTableRowHtml + "</table>" +
-				"	   </font>" +
+				"    <body style=\"background-color:#ffffff;font-family:" +  Utilities.getDefaultSystemFont() + "\">" +
+				"      <table id=\"albumItems\" border=0>" + albumItemTableRowHtml + "</table>" +
 				"    </body>" +
 				"  </html>";
 		
