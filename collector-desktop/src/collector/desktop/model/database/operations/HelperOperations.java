@@ -175,20 +175,4 @@ public class HelperOperations {
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
 		}
 	}
-	
-	static String buildTypeInfoTableName(String albumTableName) {
-		if (albumTableName == null || albumTableName.isEmpty()) {
-			return "";
-		}
-		
-		return albumTableName + DatabaseConstants.TYPE_INFO_SUFFIX;
-	}
-
-	static String buildPictureTableName(String albumTableName) {
-		if (albumTableName == null || albumTableName.isEmpty()) {
-			return "";
-		}
-		
-		return albumTableName + DatabaseConstants.PICTURE_TABLE_SUFFIX;
-	}
 }

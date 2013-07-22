@@ -1,6 +1,6 @@
 package collector.desktop.tests.album;
 
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +20,7 @@ import collector.desktop.model.database.operations.DatabaseOperations;
 import collector.desktop.model.database.utilities.ConnectionManager;
 import collector.desktop.model.database.utilities.DatabaseStringUtilities;
 import collector.desktop.tests.CollectorTestExecuter;
+import collector.desktop.tests.utilities.TestQueries;
 
 public class CreateAlbumTests {
 
@@ -60,7 +61,7 @@ public class CreateAlbumTests {
 		columns.add(lenttoField);
 		
 		try {
-			DatabaseOperations.createNewAlbum(albumName, columns, true);
+			DatabaseOperations.createNewAlbum(albumName, columns, false);
 		} catch (DatabaseWrapperOperationException e) {
 			fail("Creation of album"+ albumName + "failed");
 		}
@@ -71,6 +72,9 @@ public class CreateAlbumTests {
 		} catch (DatabaseWrapperOperationException e) {
 			fail("Creation of album" + albumName + "failed");
 		}				
+		
+		assertTrue("Picture table should always be present", 
+				TestQueries.isDatabaseTableAvailable(DatabaseStringUtilities.generatePictureTableName("Books")));
 	}
 	
 	@Test

@@ -349,8 +349,8 @@ public class UpdateOperations {
 	static void setAlbumPictureFunctionality(String albumName, boolean albumPicturesEnabled) throws DatabaseWrapperOperationException {
 		String savepointName = DatabaseIntegrityManager.createSavepoint();
 		
-		if (QueryOperations.isPictureAlbum(albumName)) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, "Album "+ albumName +" already contains pictures");
+		if (albumPicturesEnabled && QueryOperations.isPictureAlbum(albumName)) {
+			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, "Album " + albumName + " already contains pictures");
 		}
 
 		try {
@@ -358,6 +358,7 @@ public class UpdateOperations {
 				updateAlbumInAlbumMasterTable(albumName, albumName, OptionType.YES);
 			} else {
 				updateAlbumInAlbumMasterTable(albumName, albumName, OptionType.NO);
+				DeleteOperations.clearPictureTable(albumName);
 			}
 		} catch ( DatabaseWrapperOperationException e) {
 			if (e.ErrorState.equals(DBErrorState.ErrorWithDirtyState)) {

@@ -4,7 +4,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
+import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException.DBErrorState;
 import collector.desktop.model.database.utilities.ConnectionManager;
+import collector.desktop.model.database.utilities.DatabaseStringUtilities;
 
 public class TestQueries {
 	public static boolean isDatabaseTableAvailable(String tableName) {
@@ -17,5 +20,22 @@ public class TestQueries {
 		}
 		
 		return true;
+	}
+	
+	public static long getNumberOfRecordsInTable(String tableName) throws DatabaseWrapperOperationException {
+		String countQuery = " SELECT COUNT(*) AS 'numberOfItems' FROM " + DatabaseStringUtilities.encloseNameWithQuotes(tableName); 
+	
+		try (Statement statement = ConnectionManager.getConnection().createStatement();
+			 ResultSet resultSet = statement.executeQuery(countQuery);){			
+			
+			if (resultSet.next()) {
+				return resultSet.getLong("numberOfItems");
+			}
+
+			throw new DatabaseWrapperOperationException(
+					DBErrorState.ErrorWithCleanState, "The number of items could not be fetched for the table " + tableName);
+		} catch (SQLException e) {
+			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
+		}
 	}
 }

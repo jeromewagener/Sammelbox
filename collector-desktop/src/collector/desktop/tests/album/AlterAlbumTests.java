@@ -20,6 +20,7 @@ import collector.desktop.model.database.exceptions.DatabaseWrapperOperationExcep
 import collector.desktop.model.database.operations.DatabaseOperations;
 import collector.desktop.model.database.utilities.ConnectionManager;
 import collector.desktop.model.database.utilities.DatabaseIntegrityManager;
+import collector.desktop.model.database.utilities.DatabaseStringUtilities;
 import collector.desktop.tests.CollectorTestExecuter;
 import collector.desktop.tests.utilities.TestQueries;
 
@@ -118,7 +119,6 @@ public class AlterAlbumTests {
 					originalAlbumItemCount == DatabaseOperations.getNumberOfItemsInAlbum("Books"));
 		} catch (DatabaseWrapperOperationException e ) {
 			fail(e.getMessage());
-			e.printStackTrace();
 		}
 	}
 
@@ -316,7 +316,7 @@ public class AlterAlbumTests {
 				fail("The picture table should always be present");
 			}
 		} catch (DatabaseWrapperOperationException e) {
-			e.printStackTrace();
+			fail(e.getMessage());
 		}
 	}
 	
@@ -334,7 +334,55 @@ public class AlterAlbumTests {
 				fail("The table name should be lower case and spaces should be replaced by underscores");
 			}
 		} catch (DatabaseWrapperOperationException e) {
-			e.printStackTrace();
+			fail(e.getMessage());
+		}
+	}
+	
+	@Test
+	public void testPictureDisableEnable() {
+		try {
+			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
+			
+			assertTrue("DVDs must have pictures within the test album", DatabaseOperations.isPictureAlbum("DVDs"));
+			assertTrue("There must be picture records in the picture table", 
+					TestQueries.getNumberOfRecordsInTable(DatabaseStringUtilities.generatePictureTableName("DVDs")) != 0);
+			
+			// disable pictures
+			DatabaseOperations.setAlbumPictureFunctionality("DVDs", false);
+			
+			// picture records should be removed while picture table should remain
+			assertTrue("Picture table should still exist", 
+					TestQueries.isDatabaseTableAvailable(DatabaseStringUtilities.generatePictureTableName("DVDs")));
+			assertTrue("DVDs no longer have pictures associated", !DatabaseOperations.isPictureAlbum("DVDs"));
+			assertTrue("There must be NO picture records since the picture functionality has been disabled", 
+					TestQueries.getNumberOfRecordsInTable(DatabaseStringUtilities.generatePictureTableName("DVDs")) == 0);
+			
+			// enable pictures
+			DatabaseOperations.setAlbumPictureFunctionality("DVDs", true);
+			
+			assertTrue("Picture table should still exist", 
+					TestQueries.isDatabaseTableAvailable(DatabaseStringUtilities.generatePictureTableName("DVDs")));
+			assertTrue("DVDs must have pictures again", DatabaseOperations.isPictureAlbum("DVDs"));
+			
+			// add new pictures pictures to existing item
+			AlbumItem albumItem = DatabaseOperations.getAlbumItem("DVDs", 1);
+			
+			List<AlbumItemPicture> albumItemPictures = new ArrayList<AlbumItemPicture>();
+			albumItemPictures.add(new AlbumItemPicture(CollectorTestExecuter.PATH_TO_TEST_PICTURE_1, 
+					CollectorTestExecuter.PATH_TO_TEST_PICTURE_1, "DVDs", AlbumItemPicture.PICTURE_ID_UNDEFINED));
+			albumItemPictures.add(new AlbumItemPicture(CollectorTestExecuter.PATH_TO_TEST_PICTURE_2, 
+					CollectorTestExecuter.PATH_TO_TEST_PICTURE_2, "DVDs", AlbumItemPicture.PICTURE_ID_UNDEFINED));
+			albumItemPictures.add(new AlbumItemPicture(CollectorTestExecuter.PATH_TO_TEST_PICTURE_3, 
+					CollectorTestExecuter.PATH_TO_TEST_PICTURE_3, "DVDs", AlbumItemPicture.PICTURE_ID_UNDEFINED));
+			
+			albumItem.setPictures(albumItemPictures);
+			DatabaseOperations.updateAlbumItem(albumItem);
+			
+			assertTrue("DVDs must have pictures once again", DatabaseOperations.isPictureAlbum("DVDs"));
+			assertTrue("There should now be three pictures in the picture table", 
+					TestQueries.getNumberOfRecordsInTable(DatabaseStringUtilities.generatePictureTableName("DVDs")) == 3);
+		} catch (DatabaseWrapperOperationException e) {
+			fail(e.getMessage());
 		}
 	}
 }

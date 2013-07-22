@@ -106,7 +106,7 @@ public class QueryOperations {
 			}
 			LOGGER.error("The number of items could not be fetch for album {}", albumName);
 			throw new DatabaseWrapperOperationException(
-					DBErrorState.ErrorWithCleanState, "The number of items could not be fetch for album " + albumName);
+					DBErrorState.ErrorWithCleanState, "The number of items could not be fetched for album " + albumName);
 		} catch (SQLException e) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
 		}

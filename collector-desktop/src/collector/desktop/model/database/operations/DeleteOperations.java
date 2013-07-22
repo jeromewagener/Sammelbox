@@ -231,4 +231,24 @@ public class DeleteOperations {
 			DatabaseIntegrityManager.releaseSavepoint(savepointName);
 		}
 	}
+	
+
+	// TODO comment also clears picture folder
+	static void clearPictureTable(String albumName) throws DatabaseWrapperOperationException {
+		String clearPictureTableQuery = "DELETE FROM " + 
+				DatabaseStringUtilities.encloseNameWithQuotes(DatabaseStringUtilities.generatePictureTableName(albumName));
+		String savepointName = DatabaseIntegrityManager.createSavepoint();
+		
+		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(clearPictureTableQuery)) {		
+			preparedStatement.executeUpdate();
+			DatabaseIntegrityManager.updateLastDatabaseChangeTimeStamp();
+			
+			FileSystemAccessWrapper.deleteDirectoryRecursively(new File(FileSystemAccessWrapper.getFilePathForAlbum(albumName)));			
+		} catch (SQLException e) {
+			DatabaseIntegrityManager.rollbackToSavepoint(savepointName);
+			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
+		} finally {
+			DatabaseIntegrityManager.releaseSavepoint(savepointName);
+		}
+	}
 }
