@@ -286,7 +286,8 @@ public class CreateOperations {
 				DatabaseStringUtilities.generatePictureTableName(albumName)), columns , false, true);
 	}
 	
-	static long addAlbumItem(AlbumItem albumItem, boolean updateContentVersion) throws DatabaseWrapperOperationException {
+	// TODO explain addPictures flag
+	static long addAlbumItem(AlbumItem albumItem, boolean addPictures, boolean updateContentVersion) throws DatabaseWrapperOperationException {
 		// Check if the item contains a albumName
 		if (albumItem.getAlbumName().isEmpty()) {
 			LOGGER.error("Item {} has no albumName", albumItem);
@@ -360,8 +361,8 @@ public class CreateOperations {
 				throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, sqlEx);
 			}
 			
-			// Store picture links
-			if (albumItem.getPictures() != null) {
+			// If possible (and demanded) store picture links
+			if (addPictures && albumItem.getPictures() != null) {
 				for (AlbumItemPicture picture : albumItem.getPictures()) {
 					picture.setAlbumItemID(idOfAddedItem);
 					picture.setAlbumName(albumItem.getAlbumName());
@@ -385,6 +386,10 @@ public class CreateOperations {
 		} finally {
 			DatabaseIntegrityManager.releaseSavepoint(savepointName);
 		}
+	}
+	
+	static long addAlbumItem(AlbumItem albumItem, boolean updateContentVersion) throws DatabaseWrapperOperationException {
+		return addAlbumItem(albumItem, true, updateContentVersion);
 	}
 	
 	static void addAlbumItemPicture(AlbumItemPicture albumItemPicture) throws DatabaseWrapperOperationException {

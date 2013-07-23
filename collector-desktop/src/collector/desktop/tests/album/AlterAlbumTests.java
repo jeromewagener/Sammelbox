@@ -5,6 +5,7 @@ import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -241,6 +242,11 @@ public class AlterAlbumTests {
 
 			assertTrue("The second column name should be 'Author'", metaDataItems.get(1).getName().equals("Author"));
 
+			assertTrue("Picture table for Books should exist", 
+					TestQueries.isDatabaseTableAvailable(DatabaseStringUtilities.generatePictureTableName("Books")));
+			assertTrue("Typeinfo table for Books should exist", 
+					TestQueries.isDatabaseTableAvailable(DatabaseStringUtilities.generateTypeInfoTableName("Books")));
+			
 			MetaItemField authorMetaItemField = new MetaItemField("Author", FieldType.Text, false);
 			DatabaseOperations.removeAlbumItemField("Books", authorMetaItemField);
 			metaDataItems = DatabaseOperations.getAlbumItemFieldNamesAndTypes("Books");
@@ -249,6 +255,11 @@ public class AlterAlbumTests {
 				assertTrue("The 'Author' field should no longer be present", metaItemField.getName().equals("Books") == false);
 			}
 
+			assertTrue("Picture table for Books should still exist", 
+					TestQueries.isDatabaseTableAvailable(DatabaseStringUtilities.generatePictureTableName("Books")));
+			assertTrue("Typeinfo table for Books should still exist", 
+					TestQueries.isDatabaseTableAvailable(DatabaseStringUtilities.generateTypeInfoTableName("Books")));
+			
 			assertTrue("The album item count incorrectly changed", 
 					originalAlbumItemCount == DatabaseOperations.getNumberOfItemsInAlbum("Books"));
 		} catch (DatabaseWrapperOperationException e) {			
@@ -381,6 +392,51 @@ public class AlterAlbumTests {
 			assertTrue("DVDs must have pictures once again", DatabaseOperations.isPictureAlbum("DVDs"));
 			assertTrue("There should now be three pictures in the picture table", 
 					TestQueries.getNumberOfRecordsInTable(DatabaseStringUtilities.generatePictureTableName("DVDs")) == 3);
+		} catch (DatabaseWrapperOperationException e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	@Test
+	public void testAlterationsLeaveNumberOfItemsAndPicturesUnaffected() {
+		try {
+			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
+			
+			final long numberOfItems = TestQueries.getNumberOfRecordsInTable(DatabaseStringUtilities.generateTableName("DVDs"));
+			final long numberOfPictures = TestQueries.getNumberOfRecordsInTable(DatabaseStringUtilities.generatePictureTableName("DVDs"));
+			
+			Map<Integer, MetaItemField> metaItemFields = DatabaseOperations.getAlbumItemMetaMap("DVDs");
+			MetaItemField oldField = metaItemFields.get(3);
+			MetaItemField newField = new MetaItemField("Test A", FieldType.Number, false);
+			DatabaseOperations.renameAlbumItemField("DVDs", oldField, newField);
+			
+			assertTrue("The number of items should not have changed after a field rename", 
+					numberOfItems == TestQueries.getNumberOfRecordsInTable(DatabaseStringUtilities.generateTableName("DVDs")));
+			assertTrue("The number of pictures should not have changed after a field rename", 
+					numberOfPictures == TestQueries.getNumberOfRecordsInTable(DatabaseStringUtilities.generatePictureTableName("DVDs")));
+						
+			MetaItemField oscarWinningField = new MetaItemField("Oscar winning movie", FieldType.Option, false);
+			DatabaseOperations.appendNewAlbumField("DVDs", oscarWinningField);
+			
+			assertTrue("The number of items should not have changed after a field has been added", 
+					numberOfItems == TestQueries.getNumberOfRecordsInTable(DatabaseStringUtilities.generateTableName("DVDs")));
+			assertTrue("The number of pictures should not have changed after a field has been added", 
+					numberOfPictures == TestQueries.getNumberOfRecordsInTable(DatabaseStringUtilities.generatePictureTableName("DVDs")));
+			
+			DatabaseOperations.reorderAlbumItemField("DVDs", oscarWinningField, DatabaseOperations.getAlbumItemMetaMap("DVDs").get(1));
+			
+			assertTrue("The number of items should not have changed after reordering album items", 
+					numberOfItems == TestQueries.getNumberOfRecordsInTable(DatabaseStringUtilities.generateTableName("DVDs")));
+			assertTrue("The number of pictures should not have changed after reordering album items", 
+					numberOfPictures == TestQueries.getNumberOfRecordsInTable(DatabaseStringUtilities.generatePictureTableName("DVDs")));
+			
+			metaItemFields = DatabaseOperations.getAlbumItemMetaMap("DVDs");			
+			DatabaseOperations.removeAlbumItemField("DVDs", metaItemFields.get(1));
+			
+			assertTrue("The number of items should still be the same after removing a field", 
+					numberOfItems == TestQueries.getNumberOfRecordsInTable(DatabaseStringUtilities.generateTableName("DVDs")));
+			assertTrue("The number of pictures should still be the same after removing a field", 
+					numberOfPictures == TestQueries.getNumberOfRecordsInTable(DatabaseStringUtilities.generatePictureTableName("DVDs")));
 		} catch (DatabaseWrapperOperationException e) {
 			fail(e.getMessage());
 		}

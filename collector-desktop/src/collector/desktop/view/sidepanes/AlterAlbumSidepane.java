@@ -302,11 +302,11 @@ public class AlterAlbumSidepane {
 					String albumName = albumNameText.getData().toString();
 					try {
 					    DatabaseOperations.renameAlbumItemField( albumName, oldMetaItemField, newMetaItemField);
+					    item.setText(1, newFieldName);
 						BrowserFacade.addModificationToAlterationList(Translator.get(DictKeys.BROWSER_ALBUMFIELD_RENAMED, oldMetaItemField.getName(), newMetaItemField.getName()));
 						AlterAlbumSidepane.updateAlterAlbumPage(yesButtonForIncludingImages, albumFieldNamesAndTypesTable);
-						item.setText(1, newFieldName);
 					} catch (DatabaseWrapperOperationException ex) {
-						LOGGER.error("An error occured while renaming the database \n Stacktrace: " + ExceptionHelper.toString(ex));
+						LOGGER.error("An error occured while renaming the album field \n Stacktrace: " + ExceptionHelper.toString(ex));
 					}
 				}
 			}

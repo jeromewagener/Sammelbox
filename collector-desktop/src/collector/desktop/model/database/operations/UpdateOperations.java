@@ -120,8 +120,9 @@ public class UpdateOperations {
 			// Restore the old data from the java objects in the new tables [rename column]
 			renameFieldInAlbumItemList(oldMetaItemField, newMetaItemField, albumItems);
 		
+			// Re-add all album items
 			for (AlbumItem albumItem : albumItems) {
-				CreateOperations.addAlbumItem(albumItem, false);
+				CreateOperations.addAlbumItem(albumItem, false, false);
 			}
 			
 			rebuildIndexForTable(albumName, newFields);
@@ -169,7 +170,7 @@ public class UpdateOperations {
 			// replace the empty picField with the saved raw PicField 
 			for (AlbumItem albumItem : newAlbumItems) {
 				albumItem.setAlbumName(albumName);
-				CreateOperations.addAlbumItem(albumItem, false);				
+				CreateOperations.addAlbumItem(albumItem, false, false);				
 			}
 
 			rebuildIndexForTable(albumName, newFields);

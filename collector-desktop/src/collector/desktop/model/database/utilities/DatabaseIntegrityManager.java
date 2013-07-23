@@ -23,7 +23,7 @@ public class DatabaseIntegrityManager {
 	/** The extension used on file names for autosaves */
 	private static final String AUTO_SAVE_EXTENSION = "autosave";
 	/** Regular expression describing the file name format including the extension of auto saves */
-	private  static final String AUTO_SAVE_FILE_REGEX = "(\\w)+(\\u005F([0-9]+)+\\." + AUTO_SAVE_EXTENSION + ")$";
+	private static final String AUTO_SAVE_FILE_REGEX = "(\\w)+(\\u005F([0-9]+)+\\." + AUTO_SAVE_EXTENSION + ")$";
 	/** A prefix for those databases that have been corrupted */
 	static final String CORRUPT_DATABASE_SNAPSHOT_PREFIX = "corruptDatabaseSnapshot_";
 	/** The maximum amount of autosaves that can be stored until the existing autosaves are overwritten */
@@ -37,10 +37,11 @@ public class DatabaseIntegrityManager {
 	 * with nested savepoints. 
 	 * @throws DatabaseWrapperOperationException 
 	 */
-	public static String createSavepoint() throws DatabaseWrapperOperationException  {
+	public static String createSavepoint() throws DatabaseWrapperOperationException {
 		String savepointName = UUID.randomUUID().toString();
 	
-		try (PreparedStatement createSavepointStatement = ConnectionManager.getConnection().prepareStatement("SAVEPOINT " + DatabaseStringUtilities.encloseNameWithQuotes(savepointName));){			
+		try (PreparedStatement createSavepointStatement = ConnectionManager.getConnection().prepareStatement(
+				"SAVEPOINT " + DatabaseStringUtilities.encloseNameWithQuotes(savepointName));) {			
 			createSavepointStatement.execute();
 			return savepointName;
 		} catch (SQLException e) {
@@ -74,9 +75,9 @@ public class DatabaseIntegrityManager {
 	}
 	
 	/**
-	 * The rollback should only be used in public methods to avoid ovehead with nested savepoints. 
+	 * The rollback should only be used in public methods to avoid overhead with nested savepoints. 
 	 * @param savepointName
-	 * * @throws DatabaseWrapperOperationException If the errorstate within is ErrorWithDirtyState that means the release was not possible
+	 * * @throws DatabaseWrapperOperationException If the error state within is ErrorWithDirtyState that means the release was not possible
 	 */
 	public static void rollbackToSavepoint(String savepointName) throws DatabaseWrapperOperationException {
 	
@@ -85,7 +86,8 @@ public class DatabaseIntegrityManager {
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState);
 		}	
 	
-		try (PreparedStatement rollbackToSavepointStatement = ConnectionManager.getConnection().prepareStatement("ROLLBACK TO SAVEPOINT " + DatabaseStringUtilities.encloseNameWithQuotes(savepointName))){
+		try (PreparedStatement rollbackToSavepointStatement = ConnectionManager.getConnection().prepareStatement(
+				"ROLLBACK TO SAVEPOINT " + DatabaseStringUtilities.encloseNameWithQuotes(savepointName))){
 			rollbackToSavepointStatement.execute();
 		} catch (SQLException e) {
 			LOGGER.error("Rolling back the savepoint {} failed", savepointName);

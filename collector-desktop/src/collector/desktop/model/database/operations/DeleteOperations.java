@@ -40,8 +40,8 @@ public class DeleteOperations {
 		List<AlbumItem> albumItems = QueryOperations.getAlbumItems(QueryBuilder.createSelectStarQuery(albumName));
 		// Create the new table pointing to new typeinfo
 		boolean keepPictureField = QueryOperations.isPictureAlbum(albumName);
-		List<MetaItemField> newFields =  QueryOperations.getAlbumItemFieldNamesAndTypes(albumName);
-		newFields = UpdateOperations.removeFieldFromMetaItemList(metaItemField, newFields);// [delete column]
+		List<MetaItemField> newFields = QueryOperations.getAlbumItemFieldNamesAndTypes(albumName);
+		newFields = UpdateOperations.removeFieldFromMetaItemList(metaItemField, newFields);
 
 		String savepointName = DatabaseIntegrityManager.createSavepoint();
 		// Drop the old table + typeTable
@@ -58,7 +58,7 @@ public class DeleteOperations {
 			List<AlbumItem> newAlbumItems = removeFieldFromAlbumItemList(metaItemField, albumItems);
 			for (AlbumItem albumItem : newAlbumItems) {
 				albumItem.setAlbumName(albumName);
-				CreateOperations.addAlbumItem(albumItem, false);
+				CreateOperations.addAlbumItem(albumItem, false, false);
 			}
 	
 			UpdateOperations.rebuildIndexForTable(albumName, newFields);
@@ -102,11 +102,9 @@ public class DeleteOperations {
 		String savepointName = DatabaseIntegrityManager.createSavepoint();
 		try {	
 			String typeInfoTableName = DatabaseStringUtilities.generateTypeInfoTableName(albumName);
-			String pictureTableName = DatabaseStringUtilities.generatePictureTableName(albumName);
 			
 			dropTable(albumName);
 			dropTable(typeInfoTableName);
-			dropTable(pictureTableName);
 			
 			UpdateOperations.removeAlbumFromAlbumMasterTable(albumName); 
 			
@@ -129,7 +127,7 @@ public class DeleteOperations {
 	static void removeAlbumPictures(String albumName) throws DatabaseWrapperOperationException {
 		String savepointName = DatabaseIntegrityManager.createSavepoint();
 		try {
-			dropTable(albumName + DatabaseConstants.PICTURE_TABLE_SUFFIX);
+			dropTable(DatabaseStringUtilities.generatePictureTableName(albumName));
 			
 			FileSystemAccessWrapper.deleteDirectoryRecursively(
 					new File(FileSystemAccessWrapper.getFilePathForAlbum(albumName)));
