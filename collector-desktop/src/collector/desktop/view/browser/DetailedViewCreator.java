@@ -2,6 +2,7 @@ package collector.desktop.view.browser;
 
 import org.eclipse.swt.browser.Browser;
 
+import collector.desktop.controller.GuiController;
 import collector.desktop.model.album.AlbumItem;
 import collector.desktop.model.album.AlbumItemStore;
 import collector.desktop.view.ApplicationUI;
@@ -37,7 +38,13 @@ public class DetailedViewCreator {
 		// If no album items have been found
 		if (htmlDataColumnContent.length() == 0 && htmlPictureColumnContent.length() == 0) {
 			albumItemTableRowHtml.delete(0, albumItemTableRowHtml.length());
-			albumItemTableRowHtml.append("<tr><td>" + Constants.NO_ITEMS_FOUND + "</tr></td>");
+			albumItemTableRowHtml.append(
+	          "<tr><td><div>" + 
+	            "<h3>" + 
+	              Translator.get(DictKeys.BROWSER_NO_ITEMS_FOUND, GuiController.getGuiState().getSelectedAlbum()) + 
+	            "</h3>" + 
+	             Translator.get(DictKeys.BROWSER_NO_ITEMS_FOUND_EXPLANATION) + 
+	          "</div></td></tr>"); 
 		}
 
 		// Create final page html

@@ -19,7 +19,7 @@ import collector.desktop.model.database.exceptions.DatabaseWrapperOperationExcep
 import collector.desktop.model.database.operations.DatabaseOperations;
 import collector.desktop.model.database.utilities.ConnectionManager;
 import collector.desktop.model.database.utilities.DatabaseStringUtilities;
-import collector.desktop.tests.CollectorTestExecuter;
+import collector.desktop.tests.TestExecuter;
 import collector.desktop.tests.utilities.TestQueries;
 
 public class CreateAlbumTests {
@@ -31,12 +31,12 @@ public class CreateAlbumTests {
 
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		CollectorTestExecuter.resetEverything();
+		TestExecuter.resetEverything();
 	}
 
 	@Before
 	public void setUp() {
-		CollectorTestExecuter.resetEverything();
+		TestExecuter.resetEverything();
 	}
 
 	@After

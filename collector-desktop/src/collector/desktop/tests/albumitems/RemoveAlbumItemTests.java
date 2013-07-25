@@ -21,7 +21,7 @@ import collector.desktop.model.album.ItemField;
 import collector.desktop.model.album.MetaItemField;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.model.database.operations.DatabaseOperations;
-import collector.desktop.tests.CollectorTestExecuter;
+import collector.desktop.tests.TestExecuter;
 
 public class RemoveAlbumItemTests {
 	/** Item field name to identify the item to be deleted.*/
@@ -41,14 +41,14 @@ public class RemoveAlbumItemTests {
 
 	@Before
 	public void setUp() throws Exception {
-		CollectorTestExecuter.resetEverything();
+		TestExecuter.resetEverything();
 		createDVDAlbum();
 		fillDVDAlbum();
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		CollectorTestExecuter.resetEverything();
+		TestExecuter.resetEverything();
 	}
 
 	@Test

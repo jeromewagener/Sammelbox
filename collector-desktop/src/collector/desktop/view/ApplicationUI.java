@@ -454,8 +454,7 @@ public class ApplicationUI implements Observer {
 			for (String album : AlbumManager.getAlbums()) {
 				albumList.add(album);
 			}
-		} else if (event.equals(SammelboxEvent.ALBUM_SELECTED)) {
-			
+		} else if (event.equals(SammelboxEvent.ALBUM_SELECTED)) {			
 			viewList.setItems(AlbumViewManager.getAlbumViewNamesArray(GuiController.getGuiState().getSelectedAlbum()));
 		} else if (event.equals(SammelboxEvent.ALBUM_VIEW_LIST_UPDATED)) {
 			viewList.removeAll();

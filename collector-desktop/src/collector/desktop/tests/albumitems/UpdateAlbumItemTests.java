@@ -23,7 +23,7 @@ import collector.desktop.model.album.MetaItemField;
 import collector.desktop.model.album.OptionType;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.model.database.operations.DatabaseOperations;
-import collector.desktop.tests.CollectorTestExecuter;
+import collector.desktop.tests.TestExecuter;
 
 public class UpdateAlbumItemTests {
 	final String albumName = "Books";
@@ -38,14 +38,14 @@ public class UpdateAlbumItemTests {
 
 	@Before
 	public void setUp() throws Exception {
-		CollectorTestExecuter.resetEverything();
+		TestExecuter.resetEverything();
 		createBooksAlbum();
 		fillBooksAlbum();
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		CollectorTestExecuter.resetEverything();
+		TestExecuter.resetEverything();
 	}
 
 	@Test
@@ -129,7 +129,7 @@ public class UpdateAlbumItemTests {
 		try {
 			AlbumItem originalAlbumItem = DatabaseOperations.getAlbumItem("Books", 1);
 			List<AlbumItemPicture> pictureList = originalAlbumItem.getPictures();
-			pictureList.add(new AlbumItemPicture(CollectorTestExecuter.PATH_TO_TEST_PICTURE_3, CollectorTestExecuter.PATH_TO_TEST_PICTURE_3, "Books", 1));
+			pictureList.add(new AlbumItemPicture(TestExecuter.PATH_TO_TEST_PICTURE_3, TestExecuter.PATH_TO_TEST_PICTURE_3, "Books", 1));
 			originalAlbumItem.setPictures(pictureList);
 		
 			DatabaseOperations.updateAlbumItem(originalAlbumItem);
@@ -186,12 +186,12 @@ public class UpdateAlbumItemTests {
 		fields.add(new ItemField("Lent out", FieldType.Option, OptionType.YES));
 
 		List<AlbumItemPicture> albumItemPictures = new ArrayList<AlbumItemPicture>();
-		albumItemPictures.add(new AlbumItemPicture(CollectorTestExecuter.PATH_TO_TEST_PICTURE_1, 
-				CollectorTestExecuter.PATH_TO_TEST_PICTURE_1, albumName, AlbumItemPicture.PICTURE_ID_UNDEFINED));
-		albumItemPictures.add(new AlbumItemPicture(CollectorTestExecuter.PATH_TO_TEST_PICTURE_2, 
-				CollectorTestExecuter.PATH_TO_TEST_PICTURE_2, albumName, AlbumItemPicture.PICTURE_ID_UNDEFINED));
-		albumItemPictures.add(new AlbumItemPicture(CollectorTestExecuter.PATH_TO_TEST_PICTURE_3, 
-				CollectorTestExecuter.PATH_TO_TEST_PICTURE_3, albumName, AlbumItemPicture.PICTURE_ID_UNDEFINED));
+		albumItemPictures.add(new AlbumItemPicture(TestExecuter.PATH_TO_TEST_PICTURE_1, 
+				TestExecuter.PATH_TO_TEST_PICTURE_1, albumName, AlbumItemPicture.PICTURE_ID_UNDEFINED));
+		albumItemPictures.add(new AlbumItemPicture(TestExecuter.PATH_TO_TEST_PICTURE_2, 
+				TestExecuter.PATH_TO_TEST_PICTURE_2, albumName, AlbumItemPicture.PICTURE_ID_UNDEFINED));
+		albumItemPictures.add(new AlbumItemPicture(TestExecuter.PATH_TO_TEST_PICTURE_3, 
+				TestExecuter.PATH_TO_TEST_PICTURE_3, albumName, AlbumItemPicture.PICTURE_ID_UNDEFINED));
 		
 		item.setFields(fields);
 		item.setContentVersion(UUID.randomUUID());

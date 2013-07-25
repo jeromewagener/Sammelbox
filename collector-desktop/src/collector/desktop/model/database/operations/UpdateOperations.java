@@ -185,17 +185,19 @@ public class UpdateOperations {
 		}
 	}
 
-	static void setQuickSearchable(String albumName, MetaItemField metaItemField) throws DatabaseWrapperOperationException {
+	static void updateQuickSearchable(String albumName, MetaItemField metaItemField) throws DatabaseWrapperOperationException {
 		String savepointName = DatabaseIntegrityManager.createSavepoint();
 		try {
-			List<String> quickSearchableColumnNames = QueryOperations.getIndexedColumnNames(DatabaseStringUtilities.generateTableName(albumName));			
-			// Enable for quicksearch feature
+			List<String> quickSearchableColumnNames = 
+					QueryOperations.getIndexedColumnNames(DatabaseStringUtilities.generateTableName(albumName));
+			
 			if (metaItemField.isQuickSearchable() && !quickSearchableColumnNames.contains(metaItemField.getName())) {
+				// Enable for quicksearch feature
 				quickSearchableColumnNames.add(metaItemField.getName());
 	
 				DeleteOperations.dropIndex(albumName);
  				CreateOperations.createIndex(albumName, quickSearchableColumnNames);			
-			}else if (!metaItemField.isQuickSearchable()){	
+			} else if (!metaItemField.isQuickSearchable()){	
 				// Disable for quicksearch feature
 				quickSearchableColumnNames.remove(metaItemField.getName());
 				CreateOperations.createIndex(albumName, quickSearchableColumnNames);
@@ -297,7 +299,8 @@ public class UpdateOperations {
 	}
 	
 	static void appendNewAlbumField(String albumName, MetaItemField metaItemField) throws DatabaseWrapperOperationException {
-		if (metaItemField.getType().equals(FieldType.ID) || metaItemField == null || !QueryOperations.isItemFieldNameAvailable(albumName, metaItemField.getName())) {
+		if (metaItemField.getType().equals(FieldType.ID) || metaItemField == null 
+				|| !QueryOperations.isItemFieldNameAvailable(albumName, metaItemField.getName())) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState);
 		}
 

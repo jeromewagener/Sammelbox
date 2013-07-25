@@ -36,7 +36,7 @@ import collector.desktop.tests.searching.QuickSearchTests;
 	QuickSearchTests.class
 	})
 
-public class CollectorTestExecuter {
+public class TestExecuter {
 	public static final String PATH_TO_TEST_CBK = 
 			System.getProperty("user.dir") + File.separatorChar + "testdata" + 
 					File.separatorChar + "test-albums-version-2.6.cbk";

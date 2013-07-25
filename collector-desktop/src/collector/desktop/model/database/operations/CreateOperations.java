@@ -198,7 +198,7 @@ public class CreateOperations {
 		sqlStringbuiler.append(DatabaseStringUtilities.encloseNameWithQuotes(
 				DatabaseStringUtilities.generateIndexTableName(albumName)));
 		sqlStringbuiler.append(" ON ");
-		sqlStringbuiler.append(DatabaseStringUtilities.encloseNameWithQuotes(albumName));
+		sqlStringbuiler.append(DatabaseStringUtilities.encloseNameWithQuotes(DatabaseStringUtilities.generateTableName(albumName)));
 		sqlStringbuiler.append(" (");
 		sqlStringbuiler.append(DatabaseStringUtilities.encloseNameWithQuotes(columnNames.get(0)));		
 		if (columnNames.size()>=2) {

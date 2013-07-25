@@ -22,7 +22,7 @@ import collector.desktop.model.database.operations.DatabaseOperations;
 import collector.desktop.model.database.utilities.ConnectionManager;
 import collector.desktop.model.database.utilities.DatabaseIntegrityManager;
 import collector.desktop.model.database.utilities.DatabaseStringUtilities;
-import collector.desktop.tests.CollectorTestExecuter;
+import collector.desktop.tests.TestExecuter;
 import collector.desktop.tests.utilities.TestQueries;
 
 public class AlterAlbumTests {
@@ -32,12 +32,12 @@ public class AlterAlbumTests {
 
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		CollectorTestExecuter.resetEverything();
+		TestExecuter.resetEverything();
 	}
 
 	@Before
 	public void setUp() {
-		CollectorTestExecuter.resetEverything();
+		TestExecuter.resetEverything();
 	}
 
 	@After
@@ -48,7 +48,7 @@ public class AlterAlbumTests {
 	@Test
 	public void testAddPublisherFieldToBookAlbum() {
 		try {
-			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
+			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
 
 			MetaItemField metaItemField = new MetaItemField("Publisher", FieldType.Text, false);
 			long originalAlbumItemCount = DatabaseOperations.getNumberOfItemsInAlbum("Books");
@@ -69,7 +69,7 @@ public class AlterAlbumTests {
 	@Test
 	public void testAddQuickSearchablePublisherFieldToBookAlbum() {
 		try {
-			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
+			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
 
 			MetaItemField metaItemField = new MetaItemField("Publisher", FieldType.Text, true);
 			long originalAlbumItemCount = DatabaseOperations.getNumberOfItemsInAlbum("Books");
@@ -90,7 +90,7 @@ public class AlterAlbumTests {
 	@Test
 	public void testAddPublisherFieldAndMoveFourUp() {
 		try {
-			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
+			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
 			long originalAlbumItemCount = DatabaseOperations.getNumberOfItemsInAlbum("Books");
 
 			MetaItemField metaItemField = new MetaItemField("Publisher", FieldType.Text, false);
@@ -126,7 +126,7 @@ public class AlterAlbumTests {
 	@Test
 	public void testMoveDvdTitleToEnd() {
 		try {
-			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
+			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
 
 			List<MetaItemField> metaDataItems = DatabaseOperations.getAlbumItemFieldNamesAndTypes("DVDs");
 			long originalAlbumItemCount = DatabaseOperations.getNumberOfItemsInAlbum("DVDs");
@@ -161,7 +161,7 @@ public class AlterAlbumTests {
 	@Test
 	public void testRenameNonQuicksearchableField() {
 		try {
-			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
+			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
 
 			List<MetaItemField> metaDataItems = DatabaseOperations.getAlbumItemFieldNamesAndTypes("Books");
 			long originalAlbumItemCount = DatabaseOperations.getNumberOfItemsInAlbum("Books");
@@ -186,7 +186,7 @@ public class AlterAlbumTests {
 	@Test
 	public void testRenameQuicksearchableField() {
 		try {
-			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
+			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
 
 			List<MetaItemField> metaDataItems = DatabaseOperations.getAlbumItemFieldNamesAndTypes("DVDs");
 			long originalAlbumItemCount = DatabaseOperations.getNumberOfItemsInAlbum("DVDs");
@@ -211,7 +211,7 @@ public class AlterAlbumTests {
 	@Test
 	public void testRenameAlbum() {
 		try {
-			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
+			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
 
 			List<String> albumList = DatabaseOperations.getListOfAllAlbums();
 
@@ -236,7 +236,7 @@ public class AlterAlbumTests {
 	@Test
 	public void testDeleteAuthorField() {
 		try {
-			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
+			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
 			List<MetaItemField> metaDataItems = DatabaseOperations.getAlbumItemFieldNamesAndTypes("Books");
 			long originalAlbumItemCount = DatabaseOperations.getNumberOfItemsInAlbum("Books");
 
@@ -270,16 +270,16 @@ public class AlterAlbumTests {
 	@Test
 	public void testReplaceSinglePictureWithTwoOtherPictures() {
 		try {
-			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
+			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
 			AlbumItem albumItem = DatabaseOperations.getAlbumItem("DVDs", 1);
 			
 			assertTrue("The first DVD item should contain only one picture", albumItem.getPictures().size() == 1);
 			
 			List<AlbumItemPicture> pictures = new ArrayList<>();
 			pictures.add(new AlbumItemPicture(
-					CollectorTestExecuter.PATH_TO_TEST_PICTURE_1, CollectorTestExecuter.PATH_TO_TEST_PICTURE_1, "DVDs", 1));
+					TestExecuter.PATH_TO_TEST_PICTURE_1, TestExecuter.PATH_TO_TEST_PICTURE_1, "DVDs", 1));
 			pictures.add(new AlbumItemPicture(
-					CollectorTestExecuter.PATH_TO_TEST_PICTURE_2, CollectorTestExecuter.PATH_TO_TEST_PICTURE_2, "DVDs", 1));
+					TestExecuter.PATH_TO_TEST_PICTURE_2, TestExecuter.PATH_TO_TEST_PICTURE_2, "DVDs", 1));
 			
 			albumItem.setPictures(pictures);
 			
@@ -298,7 +298,7 @@ public class AlterAlbumTests {
 	@Test
 	public void testRenameAlbumShouldRenameInternalTables() {
 		try {
-			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
+			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
 			DatabaseOperations.renameAlbum("DVDs", "My DVD Collection");
 			
 			if (!TestQueries.isDatabaseTableAvailable("my_dvd_collection_typeinfo")) {
@@ -352,7 +352,7 @@ public class AlterAlbumTests {
 	@Test
 	public void testPictureDisableEnable() {
 		try {
-			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
+			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
 			
 			assertTrue("DVDs must have pictures within the test album", DatabaseOperations.isPictureAlbum("DVDs"));
 			assertTrue("There must be picture records in the picture table", 
@@ -379,12 +379,12 @@ public class AlterAlbumTests {
 			AlbumItem albumItem = DatabaseOperations.getAlbumItem("DVDs", 1);
 			
 			List<AlbumItemPicture> albumItemPictures = new ArrayList<AlbumItemPicture>();
-			albumItemPictures.add(new AlbumItemPicture(CollectorTestExecuter.PATH_TO_TEST_PICTURE_1, 
-					CollectorTestExecuter.PATH_TO_TEST_PICTURE_1, "DVDs", AlbumItemPicture.PICTURE_ID_UNDEFINED));
-			albumItemPictures.add(new AlbumItemPicture(CollectorTestExecuter.PATH_TO_TEST_PICTURE_2, 
-					CollectorTestExecuter.PATH_TO_TEST_PICTURE_2, "DVDs", AlbumItemPicture.PICTURE_ID_UNDEFINED));
-			albumItemPictures.add(new AlbumItemPicture(CollectorTestExecuter.PATH_TO_TEST_PICTURE_3, 
-					CollectorTestExecuter.PATH_TO_TEST_PICTURE_3, "DVDs", AlbumItemPicture.PICTURE_ID_UNDEFINED));
+			albumItemPictures.add(new AlbumItemPicture(TestExecuter.PATH_TO_TEST_PICTURE_1, 
+					TestExecuter.PATH_TO_TEST_PICTURE_1, "DVDs", AlbumItemPicture.PICTURE_ID_UNDEFINED));
+			albumItemPictures.add(new AlbumItemPicture(TestExecuter.PATH_TO_TEST_PICTURE_2, 
+					TestExecuter.PATH_TO_TEST_PICTURE_2, "DVDs", AlbumItemPicture.PICTURE_ID_UNDEFINED));
+			albumItemPictures.add(new AlbumItemPicture(TestExecuter.PATH_TO_TEST_PICTURE_3, 
+					TestExecuter.PATH_TO_TEST_PICTURE_3, "DVDs", AlbumItemPicture.PICTURE_ID_UNDEFINED));
 			
 			albumItem.setPictures(albumItemPictures);
 			DatabaseOperations.updateAlbumItem(albumItem);
@@ -400,7 +400,7 @@ public class AlterAlbumTests {
 	@Test
 	public void testAlterationsLeaveNumberOfItemsAndPicturesUnaffected() {
 		try {
-			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
+			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
 			
 			final long numberOfItems = TestQueries.getNumberOfRecordsInTable(DatabaseStringUtilities.generateTableName("DVDs"));
 			final long numberOfPictures = TestQueries.getNumberOfRecordsInTable(DatabaseStringUtilities.generatePictureTableName("DVDs"));
@@ -438,6 +438,22 @@ public class AlterAlbumTests {
 			assertTrue("The number of pictures should still be the same after removing a field", 
 					numberOfPictures == TestQueries.getNumberOfRecordsInTable(DatabaseStringUtilities.generatePictureTableName("DVDs")));
 		} catch (DatabaseWrapperOperationException e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	@Test
+	public void testSetQuicksearableOnAlbumWithSpace() {
+		try {
+			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
+
+			Map<Integer, MetaItemField> metaItemFields = DatabaseOperations.getAlbumItemMetaMap("Music CDs");
+			metaItemFields.get(2).setQuickSearchable(true);
+			DatabaseOperations.updateQuickSearchable("Music CDs", metaItemFields.get(2));
+
+			metaItemFields = DatabaseOperations.getAlbumItemMetaMap("Music CDs");
+			assertTrue("The first field of the 'Music CDs' album should now be quick searchable!", metaItemFields.get(2).isQuickSearchable());
+		} catch (Exception e) {
 			fail(e.getMessage());
 		}
 	}

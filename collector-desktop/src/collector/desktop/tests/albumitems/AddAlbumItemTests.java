@@ -25,7 +25,7 @@ import collector.desktop.model.album.OptionType;
 import collector.desktop.model.album.StarRating;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.model.database.operations.DatabaseOperations;
-import collector.desktop.tests.CollectorTestExecuter;
+import collector.desktop.tests.TestExecuter;
 
 public class AddAlbumItemTests {
 	@BeforeClass
@@ -38,7 +38,7 @@ public class AddAlbumItemTests {
 
 	@Before
 	public void setUp() throws Exception {
-		CollectorTestExecuter.resetEverything();
+		TestExecuter.resetEverything();
 		createBooksAlbum();
 	}
 

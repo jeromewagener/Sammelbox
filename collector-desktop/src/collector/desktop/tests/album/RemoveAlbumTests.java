@@ -16,7 +16,7 @@ import collector.desktop.model.album.FieldType;
 import collector.desktop.model.album.MetaItemField;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.model.database.operations.DatabaseOperations;
-import collector.desktop.tests.CollectorTestExecuter;
+import collector.desktop.tests.TestExecuter;
 
 public class RemoveAlbumTests {
 	@BeforeClass
@@ -29,7 +29,7 @@ public class RemoveAlbumTests {
 
 	@Before
 	public void setUp() throws Exception {
-		CollectorTestExecuter.resetEverything();
+		TestExecuter.resetEverything();
 
 		// Create Album to delete
 		final String albumName = "Books";
@@ -55,7 +55,7 @@ public class RemoveAlbumTests {
 
 	@After
 	public void tearDown() throws Exception {
-		CollectorTestExecuter.resetEverything();
+		TestExecuter.resetEverything();
 	}
 
 	@Test

@@ -78,8 +78,8 @@ public class DatabaseOperations {
 	 * @param metaItemField The field (column) to be set quicksearchable.
 	 * @throws DatabaseWrapperOperationException 
 	 */
-	public static void setQuickSearchable(String albumName, MetaItemField metaItemField) throws DatabaseWrapperOperationException {
-		UpdateOperations.setQuickSearchable(albumName, metaItemField);
+	public static void updateQuickSearchable(String albumName, MetaItemField metaItemField) throws DatabaseWrapperOperationException {
+		UpdateOperations.updateQuickSearchable(albumName, metaItemField);
 	}
 	
 	/**

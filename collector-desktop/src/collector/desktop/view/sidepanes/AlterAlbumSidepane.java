@@ -392,7 +392,7 @@ public class AlterAlbumSidepane {
 
 					String albumName = albumNameText.getData().toString();
 					try {
-						DatabaseOperations.setQuickSearchable(albumName, metaItemField);
+						DatabaseOperations.updateQuickSearchable(albumName, metaItemField);
 						BrowserFacade.addModificationToAlterationList(Translator.get(DictKeys.BROWSER_ALBUMFIELD_NOW_QUICKSEARCHABLE, metaItemField.getName()));
 						AlterAlbumSidepane.updateAlterAlbumPage(yesButtonForIncludingImages, albumFieldNamesAndTypesTable);
 					} catch (DatabaseWrapperOperationException ex) {

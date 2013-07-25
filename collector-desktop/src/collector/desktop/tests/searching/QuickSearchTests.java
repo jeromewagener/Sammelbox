@@ -16,7 +16,7 @@ import collector.desktop.model.database.exceptions.DatabaseWrapperOperationExcep
 import collector.desktop.model.database.operations.DatabaseOperations;
 import collector.desktop.model.database.utilities.ConnectionManager;
 import collector.desktop.model.database.utilities.DatabaseIntegrityManager;
-import collector.desktop.tests.CollectorTestExecuter;
+import collector.desktop.tests.TestExecuter;
 
 public class QuickSearchTests {
 	@BeforeClass
@@ -25,12 +25,12 @@ public class QuickSearchTests {
 
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		CollectorTestExecuter.resetEverything();
+		TestExecuter.resetEverything();
 	}
 
 	@Before
 	public void setUp() {
-		CollectorTestExecuter.resetEverything();
+		TestExecuter.resetEverything();
 	}
 
 	@After
@@ -41,7 +41,7 @@ public class QuickSearchTests {
 	@Test
 	public void testQuickSearchActorInDVDs() {
 		try {
-			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
+			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
 			ArrayList<String> quickSearchTerms = new ArrayList<String>();
 			quickSearchTerms.add("Smith");
 			AlbumItemResultSet searchResults = DatabaseOperations.executeQuickSearch("DVDs", quickSearchTerms);
@@ -69,7 +69,7 @@ public class QuickSearchTests {
 	@Test
 	public void testQuickSearchActorsInDVDs() {
 		try {
-			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
+			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
 			ArrayList<String> quickSearchTerms = new ArrayList<String>();
 			quickSearchTerms.add("Cooper");
 			quickSearchTerms.add("Wilson");
@@ -98,7 +98,7 @@ public class QuickSearchTests {
 	@Test
 	public void testQuickSearchTitleInDVDs() {
 		try {
-			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
+			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
 			ArrayList<String> quickSearchTerms = new ArrayList<String>();
 			quickSearchTerms.add("Me");
 			AlbumItemResultSet searchResults = DatabaseOperations.executeQuickSearch("DVDs", quickSearchTerms);

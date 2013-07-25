@@ -3,9 +3,6 @@ package collector.desktop.view.various;
 import java.io.File;
 
 import collector.desktop.controller.filesystem.FileSystemAccessWrapper;
-import collector.desktop.view.ApplicationUI;
-import collector.desktop.view.internationalization.DictKeys;
-import collector.desktop.view.internationalization.Translator;
 
 public class Constants {
 	// ------------------ GUI Constants ------------------
@@ -25,11 +22,6 @@ public class Constants {
 	public static final String STYLE_CSS = "file://"+ FileSystemAccessWrapper.COLLECTOR_HOME_APPDATA + File.separatorChar + "style.css";
 	public static final String EFFECTS_JS = "file://" + FileSystemAccessWrapper.COLLECTOR_HOME_APPDATA + File.separatorChar + "effects.js";
 	public static final String META_PARAMS = "http-equiv=\"X-UA-Compatible\" content=\"IE=9\" charset=\"utf-8\"";
-	public static final String NO_ITEMS_FOUND = 
-			"<div>" +
-			"  <h3>" + Translator.get(DictKeys.BROWSER_NO_ITEMS_FOUND, ApplicationUI.getSelectedAlbum()) + "</h3>" + 
-			   Translator.get(DictKeys.BROWSER_NO_ITEMS_FOUND_EXPLANATION) + 
-			"</div>";
 	
 	// ------------------ Browser Listener Constants ------------------
 	public static final String SHOW_UPDATE_COMPOSITE = "show:///updateComposite=";

@@ -26,7 +26,7 @@ import collector.desktop.model.database.operations.DatabaseOperations;
 import collector.desktop.model.database.utilities.ConnectionManager;
 import collector.desktop.model.database.utilities.DatabaseIntegrityManager;
 import collector.desktop.model.database.utilities.DatabaseStringUtilities;
-import collector.desktop.tests.CollectorTestExecuter;
+import collector.desktop.tests.TestExecuter;
 
 public class BackupRestoreTests {
 	@BeforeClass
@@ -35,12 +35,12 @@ public class BackupRestoreTests {
 
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		CollectorTestExecuter.resetEverything();
+		TestExecuter.resetEverything();
 	}
 
 	@Before
 	public void setUp() {
-		CollectorTestExecuter.resetEverything();
+		TestExecuter.resetEverything();
 	}
 
 	@After
@@ -323,8 +323,8 @@ public class BackupRestoreTests {
 	@Test
 	public void testRestoreOfTestDataAlbums() {
 		try {
-			assertTrue(new File(CollectorTestExecuter.PATH_TO_TEST_CBK).exists());
-			DatabaseIntegrityManager.restoreFromFile(CollectorTestExecuter.PATH_TO_TEST_CBK);
+			assertTrue(new File(TestExecuter.PATH_TO_TEST_CBK).exists());
+			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
 
 			AlbumItemResultSet allAlbumItems = DatabaseOperations.executeSQLQuery("SELECT * FROM Books");
 			assertTrue("Resultset should not be null", allAlbumItems != null);
