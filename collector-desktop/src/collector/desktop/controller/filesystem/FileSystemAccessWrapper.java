@@ -532,17 +532,19 @@ public class FileSystemAccessWrapper {
 		}
 	}
 
-	public static void storeViews(Collection<AlbumView> albumViews) {
+	public static void storeViews(Map<String, List<AlbumView>> albumNamesToAlbumViews) {
 		StringBuilder xmlOutput = new StringBuilder();
 		
 		xmlOutput.append("<views>\n");
 		
-		for (AlbumView albumView : albumViews) {
-			xmlOutput.append("\t<view>\n");
-			xmlOutput.append("\t\t<name><![CDATA[" + albumView.getName() + "]]></name>\n");
-			xmlOutput.append("\t\t<album><![CDATA[" + albumView.getAlbum() + "]]></album>\n");
-			xmlOutput.append("\t\t<sqlQuery><![CDATA[" + albumView.getSqlQuery() + "]]></sqlQuery>\n");
-			xmlOutput.append("\t</view>\n");
+		for (String albumName : albumNamesToAlbumViews.keySet()) {
+			for (AlbumView albumView : albumNamesToAlbumViews.get(albumName)) {
+				xmlOutput.append("\t<view>\n");
+				xmlOutput.append("\t\t<name><![CDATA[" + albumView.getName() + "]]></name>\n");
+				xmlOutput.append("\t\t<album><![CDATA[" + albumView.getAlbum() + "]]></album>\n");
+				xmlOutput.append("\t\t<sqlQuery><![CDATA[" + albumView.getSqlQuery() + "]]></sqlQuery>\n");
+				xmlOutput.append("\t</view>\n");
+			}
 		}
 		
 		xmlOutput.append("</views>\n");
@@ -550,13 +552,13 @@ public class FileSystemAccessWrapper {
 		writeToFile(xmlOutput.toString(), VIEW_FILE);
 	}
 
-	public static Collection<AlbumView> loadViews() {
+	public static Map<String, List<AlbumView>> loadViews() {
 		String albumViewsAsXml = readFileAsString(VIEW_FILE);
 		
-		Collection<AlbumView> albumViews = new LinkedList<AlbumView>();
+		Map<String, List<AlbumView>> albumNamesToAlbumViews = new HashMap<String, List<AlbumView>>();
 		
 		if (albumViewsAsXml.isEmpty()) {
-			return albumViews;
+			return albumNamesToAlbumViews;
 		}
 		
 		try {
@@ -587,7 +589,15 @@ public class FileSystemAccessWrapper {
 						album = getValue("album", element);
 						sqlQuery = getValue("sqlQuery", element);
 						
-						albumViews.add(new AlbumView(name, album, sqlQuery));
+						if (albumNamesToAlbumViews.get(album) == null) {
+							List<AlbumView> albumViews = new LinkedList<>();
+							albumViews.add(new AlbumView(name, album, sqlQuery));
+							albumNamesToAlbumViews.put(album, albumViews);
+						} else {
+							List<AlbumView> albumViews = albumNamesToAlbumViews.get(album);
+							albumViews.add(new AlbumView(name, album, sqlQuery));
+							albumNamesToAlbumViews.put(album, albumViews);
+						}
 					}
 				}
 			}
@@ -595,7 +605,7 @@ public class FileSystemAccessWrapper {
 			ex.printStackTrace();
 		}
 		
-		return albumViews;
+		return albumNamesToAlbumViews;
 	}
 
 	private static String getValue(String tag, Element element) {

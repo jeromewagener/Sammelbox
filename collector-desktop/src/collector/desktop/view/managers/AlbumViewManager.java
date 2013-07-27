@@ -1,8 +1,9 @@
 package collector.desktop.view.managers;
 
-import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,12 +12,11 @@ import collector.desktop.controller.events.EventObservable;
 import collector.desktop.controller.events.SammelboxEvent;
 import collector.desktop.controller.filesystem.FileSystemAccessWrapper;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
-import collector.desktop.model.database.exceptions.ExceptionHelper;
 import collector.desktop.model.database.operations.DatabaseOperations;
 
 public class AlbumViewManager {
 	private final static Logger LOGGER = LoggerFactory.getLogger(AlbumViewManager.class);
-	private static Collection<AlbumView> albumViews = new LinkedList<AlbumView>();
+	private static Map<String, List<AlbumView>> albumNamesToAlbumViews = new HashMap<String, List<AlbumView>>();
 		
 	/** Initializes album views without notifying any attached observers */
 	public static void initialize() {
@@ -24,15 +24,13 @@ public class AlbumViewManager {
 	}
 	
 	public static List<AlbumView> getAlbumViews(String albumName) {
-		List<AlbumView> filteredAlbumViews = new LinkedList<AlbumView>();
+		List<AlbumView> albumViews = albumNamesToAlbumViews.get(albumName);
 		
-		for (AlbumView albumView : albumViews) {
-			if (albumView.getAlbum().equals(albumName)) {
-				filteredAlbumViews.add(albumView);
-			}
+		if (albumViews != null) {
+			return albumViews;
 		}
 		
-		return filteredAlbumViews;
+		return new LinkedList<AlbumView>();
 	}
 	
 	public static String[] getAlbumViewNamesArray(String albumName) {
@@ -47,27 +45,36 @@ public class AlbumViewManager {
 		return albumViewNames;
 	}
 	
-	private static void setAlbumViews(Collection<AlbumView> albumViews) {
-		AlbumViewManager.albumViews = albumViews;
-	}
-	
 	public static void addAlbumView(String name, String album, String sqlQuery) {
-		albumViews.add(new AlbumView(name, album, sqlQuery));
+		if (albumNamesToAlbumViews.get(album) == null) {
+			List<AlbumView> albumViews = new LinkedList<>();
+			albumViews.add(new AlbumView(name, album, sqlQuery));
+			albumNamesToAlbumViews.put(album, albumViews);
+		} else {
+			List<AlbumView> albumViews = albumNamesToAlbumViews.get(album);
+			albumViews.add(new AlbumView(name, album, sqlQuery));
+			albumNamesToAlbumViews.put(album, albumViews);
+		}
 		
 		storeViewAndAddAlbumViewListUpdatedEvent();
 	}
 	
-	public static void removeAlbumView(String name) {
+	public static void removeAlbumView(String albumName, String viewName) {
+		List<AlbumView> albumViews = albumNamesToAlbumViews.get(albumName);
+		
 		for (AlbumView albumView : albumViews) {
-			if (albumView.getName().equals(name)) {
+			if (albumView.getName().equals(viewName)) {
 				albumViews.remove(albumView);
+				break;
 			}
 		}
 		
 		storeViewAndAddAlbumViewListUpdatedEvent();
 	}
 	
-	public static boolean hasViewWithName(String viewName) {
+	public static boolean hasViewWithName(String albumName, String viewName) {
+		List<AlbumView> albumViews = albumNamesToAlbumViews.get(albumName);
+		
 		for (AlbumView albumView : albumViews) {
 			if (albumView.name.equals(viewName)) {
 				return true;
@@ -78,23 +85,22 @@ public class AlbumViewManager {
 	}
 	
 	private static void storeViews() {
-		FileSystemAccessWrapper.storeViews(albumViews);
+		FileSystemAccessWrapper.storeViews(albumNamesToAlbumViews);
 	}
 	
 	private static void loadViews() {
-		Collection<AlbumView> validAlbumViews = new LinkedList<AlbumView>();
+		albumNamesToAlbumViews = FileSystemAccessWrapper.loadViews();
 		
-		for (AlbumView albumView : FileSystemAccessWrapper.loadViews()) {
+		for (String albumName : albumNamesToAlbumViews.keySet()) {
 			try {
-				if (DatabaseOperations.getListOfAllAlbums().contains(albumView.getAlbum())) {
-					validAlbumViews.add(albumView);
+				if (!DatabaseOperations.getListOfAllAlbums().contains(albumName)) {
+					albumNamesToAlbumViews.remove(albumName);
 				}
 			} catch (DatabaseWrapperOperationException ex) {
-				LOGGER.error("An error occured while retrieving the list of albums from the database \n Stacktrace: " + ExceptionHelper.toString(ex));
+				LOGGER.error("An error occured while retrieving the list of albums from the database \n Stacktrace: ", ex);
 			}
 		}
 		
-		AlbumViewManager.setAlbumViews(validAlbumViews);
 		AlbumViewManager.storeViews();
 	}
 	
@@ -134,9 +140,11 @@ public class AlbumViewManager {
 		}
 	}
 
-	public static String getSqlQueryByName(String queryName) {
+	public static String getSqlQueryByViewName(String albumName, String viewName) {
+		List<AlbumView> albumViews = albumNamesToAlbumViews.get(albumName);
+		
 		for (AlbumView albumView : albumViews) {
-			if (albumView.getName().equals(queryName)) {
+			if (albumView.getName().equals(viewName)) {
 				return albumView.getSqlQuery();
 			}
 		}
@@ -145,16 +153,22 @@ public class AlbumViewManager {
 	}
 
 	public static boolean hasAlbumViewsAttached(String albumName) {
-		for (AlbumView albumView : albumViews) {
-			if (albumView.getAlbum().equals(albumName)) {
-				return true;
+		List<AlbumView> albumViews = albumNamesToAlbumViews.get(albumName);
+		
+		if (albumViews != null) {
+			for (AlbumView albumView : albumViews) {
+				if (albumView.getAlbum().equals(albumName)) {
+					return true;
+				}
 			}
 		}
 		
 		return false;
 	}
 
-	public static void moveToFront(int selectionIndex) {
+	public static void moveToFront(String albumName, int selectionIndex) {
+		List<AlbumView> albumViews = albumNamesToAlbumViews.get(albumName);
+		
 		AlbumView tmp = ((LinkedList<AlbumView>) albumViews).get(selectionIndex);
 		((LinkedList<AlbumView>) albumViews).remove(selectionIndex);
 		((LinkedList<AlbumView>) albumViews).addFirst(tmp);
@@ -162,7 +176,9 @@ public class AlbumViewManager {
 		storeViewAndAddAlbumViewListUpdatedEvent();
 	}
 
-	public static void moveOneUp(int selectionIndex) {
+	public static void moveOneUp(String albumName, int selectionIndex) {
+		List<AlbumView> albumViews = albumNamesToAlbumViews.get(albumName);
+		
 		if (selectionIndex-1 >= 0) {
 			AlbumView tmp = ((LinkedList<AlbumView>) albumViews).get(selectionIndex-1);
 			
@@ -173,7 +189,9 @@ public class AlbumViewManager {
 		}
 	}
 
-	public static void moveOneDown(int selectionIndex) {
+	public static void moveOneDown(String albumName, int selectionIndex) {
+		List<AlbumView> albumViews = albumNamesToAlbumViews.get(albumName);
+		
 		if (selectionIndex+1 <= albumViews.size()-1) {
 			AlbumView tmp = ((LinkedList<AlbumView>) albumViews).get(selectionIndex+1);
 			
@@ -184,7 +202,9 @@ public class AlbumViewManager {
 		}
 	}
 
-	public static void moveToBottom(int selectionIndex) {
+	public static void moveToBottom(String albumName, int selectionIndex) {
+		List<AlbumView> albumViews = albumNamesToAlbumViews.get(albumName);
+		
 		AlbumView tmp = ((LinkedList<AlbumView>) albumViews).get(selectionIndex);
 		((LinkedList<AlbumView>) albumViews).remove(selectionIndex);
 		((LinkedList<AlbumView>) albumViews).addLast(tmp);
@@ -192,12 +212,8 @@ public class AlbumViewManager {
 		storeViewAndAddAlbumViewListUpdatedEvent();
 	}
 
-	public static void removeAlbumViews(String selectedAlbum) {
-		for (AlbumView albumView : albumViews) {
-			if (albumView.getAlbum().equals(selectedAlbum)) {
-				albumViews.remove(albumView);
-			}
-		}
+	public static void removeAlbumViewsFromAlbum(String albumName) {
+		albumNamesToAlbumViews.remove(albumName);
 		
 		storeViewAndAddAlbumViewListUpdatedEvent();
 	}

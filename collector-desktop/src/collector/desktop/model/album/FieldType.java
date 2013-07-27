@@ -28,9 +28,8 @@ public enum FieldType {
 				FieldType.StarRating.toString(),
 				FieldType.Option.toString(),
 				FieldType.Date.toString(),
-				//FieldType.Time.toString(),
 				FieldType.URL.toString()
-				//FieldType.Time.toString(),// In the current iteration the time is not needed as explicit field type. 
+				//FieldType.Time.toString(),//TODO In the current iteration the time is not needed as explicit field type. 
 		};
 	}
 
@@ -59,7 +58,7 @@ public enum FieldType {
 			res= "TEXT";
 			break;
 		case StarRating:
-			res = "TEXT";
+			res = "INTEGER";
 			break;
 		case URL:
 			res = "TEXT";
@@ -81,7 +80,7 @@ public enum FieldType {
 	 * @return The default value of the given field type. Empty string if no field type could be determined, which case is
 	 * never reachable under normal circumstances.
 	 */
-	public Object getDefaultValue(){
+	public Object getDefaultValue() {
 		switch (this){
 		case Text: 
 			return  "";
@@ -98,7 +97,7 @@ public enum FieldType {
 		case Option:
 			return OptionType.UNKNOWN;
 		case StarRating :
-			return collector.desktop.model.album.StarRating.ZeroStars.toString();
+			return collector.desktop.model.album.StarRating.ZeroStars;
 		// Default value is never reached, it would result in a null pointer exception.
 		// However method must return something.
 		default:

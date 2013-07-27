@@ -65,7 +65,7 @@ public class AdvancedSearchSidepane {
 
 		Label fieldToSearchLabel = new Label(innerComposite, SWT.NONE);
 		fieldToSearchLabel.setText(Translator.get(DictKeys.LABEL_FIELD_TO_SEARCH));
-		final Combo fieldToSearchCombo = new Combo(innerComposite, SWT.DROP_DOWN);
+		final Combo fieldToSearchCombo = new Combo(innerComposite, SWT.DROP_DOWN | SWT.READ_ONLY);
 		fieldToSearchCombo.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		try {
@@ -77,7 +77,7 @@ public class AdvancedSearchSidepane {
 		}
 		Label searchOperatorLabel = new Label(innerComposite, SWT.NONE);
 		searchOperatorLabel.setText(Translator.get(DictKeys.LABEL_SEARCH_OPERATOR));
-		final Combo searchOperatorCombo = new Combo(innerComposite, SWT.DROP_DOWN);	
+		final Combo searchOperatorCombo = new Combo(innerComposite, SWT.DROP_DOWN | SWT.READ_ONLY);	
 		searchOperatorCombo.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		Label valueToSearchLabel = new Label(innerComposite, SWT.NONE);
@@ -95,7 +95,13 @@ public class AdvancedSearchSidepane {
 							if (metaItemField.getType() == FieldType.Text) {
 								searchOperatorCombo.setItems(QueryOperator.toTextOperatorStringArray());
 								valueToSearchText.setText("");
+							} else if (metaItemField.getType() == FieldType.StarRating) {
+								searchOperatorCombo.setItems(QueryOperator.toNumberOperatorStringArray());
+								valueToSearchText.setText("[0..5]");
 							} else if (metaItemField.getType() == FieldType.Number) {
+								searchOperatorCombo.setItems(QueryOperator.toNumberOperatorStringArray());
+								valueToSearchText.setText("");
+							} else if (metaItemField.getType() == FieldType.Integer) {
 								searchOperatorCombo.setItems(QueryOperator.toNumberOperatorStringArray());
 								valueToSearchText.setText("");
 							} else if (metaItemField.getType() == FieldType.Date) {
@@ -112,14 +118,20 @@ public class AdvancedSearchSidepane {
 								searchOperatorCombo.setItems(QueryOperator.toYesNoOperatorStringArray());
 
 								searchOperatorCombo.select(0);
-								valueToSearchText.setText(Translator.get(DictKeys.BROWSER_YES) + " | " + Translator.get(DictKeys.BROWSER_NO) + " | " + Translator.get(DictKeys.BROWSER_UNKNOWN));
-							}							
+								valueToSearchText.setText(
+										Translator.get(DictKeys.BROWSER_YES) + " | " + 
+										Translator.get(DictKeys.BROWSER_NO) + " | " + 
+										Translator.get(DictKeys.BROWSER_UNKNOWN));
+							}
+							
+							// Auto select first operator
+							searchOperatorCombo.select(0);
 						}
 					}
 				}
 			}
-		});		
-
+		});	
+		
 		Button addToSearchButton = new Button(innerComposite, SWT.PUSH);
 		addToSearchButton.setText(Translator.get(DictKeys.BUTTON_ADD_TO_SEARCH));
 		GridData gridData = new GridData(GridData.FILL_BOTH);
@@ -283,7 +295,7 @@ public class AdvancedSearchSidepane {
 						Translator.get(DictKeys.DIALOG_TEXTBOX_ENTER_VIEW_NAME),
 						Translator.get(DictKeys.DIALOG_BUTTON_ENTER_VIEW_NAME));
 
-				if (viewName != null && !AlbumViewManager.hasViewWithName(viewName)) {				
+				if (viewName != null && !AlbumViewManager.hasViewWithName(album, viewName)) {				
 					if (fieldToSortCombo.getSelectionIndex() != -1) {
 						AlbumViewManager.addAlbumView(
 								viewName, ApplicationUI.getSelectedAlbum(), 
@@ -310,7 +322,7 @@ public class AdvancedSearchSidepane {
 	private static ArrayList<QueryComponent> getQueryComponentsForAdvancedSearch(Composite parentComposite, Table searchQueryTable) {
 		ArrayList<QueryComponent> queryComponents = new ArrayList<QueryComponent>();
 		try {
-			for ( int i=0 ; i < searchQueryTable.getItemCount() ; i++ ) {					
+			for (int i=0; i < searchQueryTable.getItemCount(); i++) {					
 				// In case of a date
 				if (DatabaseOperations.isDateField(ApplicationUI.getSelectedAlbum(), searchQueryTable.getItem(i).getText(0))) {
 					// Convert string to milliseconds
@@ -333,7 +345,7 @@ public class AdvancedSearchSidepane {
 						messageBox.open();
 					}
 
-					// In case of an option
+				// In case of an option
 				} else if (DatabaseOperations.isOptionField(ApplicationUI.getSelectedAlbum(), searchQueryTable.getItem(i).getText(0))) {
 					String value = searchQueryTable.getItem(i).getText(2);
 
@@ -359,8 +371,7 @@ public class AdvancedSearchSidepane {
 								Translator.get(DictKeys.DIALOG_CONTENT_ENTER_OPTION, searchQueryTable.getItem(i).getText(0)),
 								SWT.ICON_WARNING | SWT.OK).open();
 					}
-
-					// All other cases
+				// All other cases
 				} else {
 					queryComponents.add(QueryBuilder.getQueryComponent(
 							searchQueryTable.getItem(i).getText(0),

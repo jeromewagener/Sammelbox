@@ -293,18 +293,20 @@ public class BasicAlbumItemSidepane {
 			case StarRating:
 				ComponentFactory.getSmallBoldItalicLabel(basicAlbumItemComposite, fieldName + ":");
 
-				final Combo ratingCombo = new Combo(basicAlbumItemComposite, SWT.DROP_DOWN);
+				final Combo ratingCombo = new Combo(basicAlbumItemComposite, SWT.DROP_DOWN | SWT.READ_ONLY);
 				ratingCombo.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 
 				// Fill the comboBox
 				ratingCombo.setData("FieldType", FieldType.StarRating);
 				ratingCombo.setData("FieldName", fieldName);
 				ratingCombo.setItems(StarRating.toArray());
-
+				
 				if (loadDataIntoFields) {
 					ratingCombo.setText(albumItem.getField(fieldName).getValue().toString());
 				}
 
+				ratingCombo.select(0);
+				
 				break;
 
 			case Option:
@@ -461,7 +463,7 @@ public class BasicAlbumItemSidepane {
 									new Date(calendar.getTimeInMillis()));
 						} else if (fieldType.equals(FieldType.StarRating)) {							
 							Combo combo = (Combo) control;
-
+							
 							albumItem.addField(
 									(String) combo.getData("FieldName"),
 									(FieldType) combo.getData("FieldType"),

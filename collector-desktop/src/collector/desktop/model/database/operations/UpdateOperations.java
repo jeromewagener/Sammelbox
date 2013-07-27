@@ -342,7 +342,7 @@ public class UpdateOperations {
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState, e);
 		}
 
-		updateTableColumnWithDefaultValue(albumName, metaItemField);
+		updateTableColumnWithDefaultValue(DatabaseStringUtilities.generateTableName(albumName), metaItemField);
 
 		// Append and update column for type table.
 		appendNewTypeInfoTableColumn(albumName, metaItemField);
@@ -380,8 +380,8 @@ public class UpdateOperations {
 	 * @throws SQLException Exception thrown if any part of the operation fails.
 	 * @throws DatabaseWrapperOperationException 
 	 */
-	private static void appendNewTypeInfoTableColumn(String tableName, MetaItemField metaItemField) throws DatabaseWrapperOperationException {
-		String typeInfoTableName = DatabaseStringUtilities.generateTypeInfoTableName(tableName);
+	private static void appendNewTypeInfoTableColumn(String albumName, MetaItemField metaItemField) throws DatabaseWrapperOperationException {
+		String typeInfoTableName = DatabaseStringUtilities.generateTypeInfoTableName(albumName);
 		String columnName = DatabaseStringUtilities.encloseNameWithQuotes(metaItemField.getName());
 		// Prepare the append column string for the type table.
 		StringBuilder sb = new StringBuilder("ALTER TABLE ");
@@ -410,7 +410,7 @@ public class UpdateOperations {
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState);
 		}		
 
-		updateSchemaVersion(tableName);
+		updateSchemaVersion(albumName);
 	}
 
 	/**
@@ -645,7 +645,8 @@ public class UpdateOperations {
 	 * @throws DatabaseWrapperOperationException 
 	 */
 	private static void updateTableColumnWithDefaultValue(String tableName, MetaItemField columnMetaInfo) throws DatabaseWrapperOperationException {		
-		String sqlString = "UPDATE " + tableName + " SET " +DatabaseStringUtilities.encloseNameWithQuotes(columnMetaInfo.getName()) + "=?";
+		String sqlString = " UPDATE " + tableName + 
+						   " SET " + DatabaseStringUtilities.encloseNameWithQuotes(columnMetaInfo.getName()) + "=?";
 		
 		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(sqlString)) {						
 			

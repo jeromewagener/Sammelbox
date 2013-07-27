@@ -1,10 +1,20 @@
 package collector.desktop.model.database.utilities;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import collector.desktop.model.album.FieldType;
+import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
+import collector.desktop.model.database.operations.DatabaseOperations;
 import collector.desktop.view.browser.BrowserFacade;
 
 public class QueryBuilder {
+	private static final Logger LOGGER = LoggerFactory.getLogger(QueryBuilder.class);
+	
 	/** A singleton instance of the QueryBuilder class */
 	private static QueryBuilder instance = null;
 	
@@ -74,7 +84,7 @@ public class QueryBuilder {
 			return new String[] { 	
 					"="
 			};
-		} 
+		}
 		
 		/** Transform a QueryOperator to the corresponding SQL operator
 		 * @param queryOperator the QueryOperator to be transformed
@@ -112,52 +122,52 @@ public class QueryBuilder {
 			} 
 			else if (queryOperator.equals(QueryOperator.dateAfterEquals)) {
 				return ">";
-			} 
-			else if (queryOperator.equals(QueryOperator.dateAfter)) {
-				return ">=";
 			}
 
 			return null;
 		}
 
 		/** Transform a SQL operator string into a QueryOperator
-		 * @param sqlOperator a string containing a SQL operator
-		 * @return a QueryOperator transformation of the SQL operator */
-		public static QueryOperator toQueryOperator(String sqlOperator) {
-			if (sqlOperator.equals("=")) {
+		 * @param fieldOperator a string containing a field operator
+		 * @return a QueryOperator transformation of the field operator */
+		public static QueryOperator toQueryOperator(String fieldOperator) {
+			if (fieldOperator.equals("=")) {
 				return QueryOperator.equals;
 			}
-			else if (sqlOperator.equals("!=")) {
+			else if (fieldOperator.equals("!=")) {
 				return QueryOperator.notEquals;
 			}
-			else if (sqlOperator.equals("like")) {
+			else if (fieldOperator.equals("like")) {
 				return QueryOperator.like;
 			}
-			else if (sqlOperator.equals("<")) {
+			else if (fieldOperator.equals("<")) {
 				return QueryOperator.smallerThan;
 			}
-			else if (sqlOperator.equals("<=")) {
+			else if (fieldOperator.equals("<=")) {
 				return QueryOperator.smallerOrEqualThan;
 			}
-			else if (sqlOperator.equals(">")) {
+			else if (fieldOperator.equals(">")) {
 				return QueryOperator.biggerThan;
 			}
-			else if (sqlOperator.equals(">=")) {
+			else if (fieldOperator.equals(">=")) {
 				return QueryOperator.biggerOrEqualThan;
 			}
-			else if (sqlOperator.equals("equals")) {
+			else if (fieldOperator.equals("equals")) {
 				return QueryOperator.dateEquals;
 			}
-			else if (sqlOperator.equals("before")) {
+			else if (fieldOperator.equals("before")) {
 				return QueryOperator.dateBefore;
 			}
-			else if (sqlOperator.equals("before or equals")) {
+			else if (fieldOperator.equals("before or equals")) {
 				return QueryOperator.dateBeforeEquals;
 			}
-			else if (sqlOperator.equals("after or equals")) {
+			else if (fieldOperator.equals("after or equals")) {
 				return QueryOperator.dateAfterEquals;
 			}
-			else if (sqlOperator.equals("after")) {
+			else if (fieldOperator.equals("after")) {
+				return QueryOperator.dateAfter;
+			}
+			else if (fieldOperator.equals("after")) {
 				return QueryOperator.dateAfter;
 			}
 			else {
@@ -214,17 +224,34 @@ public class QueryBuilder {
 			query.append(" WHERE ");
 		}
 
-		for (int i=0; i<queryComponents.size(); i++) {			
-			if (queryComponents.get(i).operator == QueryOperator.like) {
-				query.append( "(" +
-						"[" + queryComponents.get(i).fieldName + "] " + 
-						QueryOperator.toSQLOperator(queryComponents.get(i).operator) + " " + 
-						"'%" + DatabaseStringUtilities.sanitizeSingleQuotesInAlbumItemValues(queryComponents.get(i).value) + "%')");
+		Map<String, FieldType> fieldNameToFieldTypeMap = new HashMap<String, FieldType>();
+		try {
+			fieldNameToFieldTypeMap = DatabaseOperations.getAlbumItemFieldNameToTypeMap(albumName);
+		} catch (DatabaseWrapperOperationException ex) {
+			LOGGER.error("Couldn't determine field types for album " + albumName, ex);
+		}
+			
+		for (int i=0; i<queryComponents.size(); i++) {	
+			
+			if (fieldNameToFieldTypeMap.get(queryComponents.get(i).fieldName).equals(FieldType.Option) ||
+					fieldNameToFieldTypeMap.get(queryComponents.get(i).fieldName).equals(FieldType.URL) ||
+					fieldNameToFieldTypeMap.get(queryComponents.get(i).fieldName).equals(FieldType.Text)) {
+				if (queryComponents.get(i).operator == QueryOperator.like) {
+					query.append( "(" +
+							"[" + queryComponents.get(i).fieldName + "] " + 
+							QueryOperator.toSQLOperator(queryComponents.get(i).operator) + " " + 
+							"'%" + DatabaseStringUtilities.sanitizeSingleQuotesInAlbumItemValues(queryComponents.get(i).value) + "%')");
+				} else {
+					query.append( "(" +
+							"[" + queryComponents.get(i).fieldName + "] " + 
+							QueryOperator.toSQLOperator(queryComponents.get(i).operator) + " " + 
+							"'" + DatabaseStringUtilities.sanitizeSingleQuotesInAlbumItemValues(queryComponents.get(i).value) + "')");
+				}
 			} else {
 				query.append( "(" +
 						"[" + queryComponents.get(i).fieldName + "] " + 
 						QueryOperator.toSQLOperator(queryComponents.get(i).operator) + " " + 
-						"'" + DatabaseStringUtilities.sanitizeSingleQuotesInAlbumItemValues(queryComponents.get(i).value) + "')");
+						queryComponents.get(i).value + ")");
 			}
 
 			if (i+1 != queryComponents.size()) {
@@ -257,6 +284,9 @@ public class QueryBuilder {
 	 * @param album the name of the album which should be queried */
 	public static void buildQueryAndExecute(ArrayList<QueryComponent> queryComponents, boolean connectByAnd, String album) {
 		String query = buildQuery(queryComponents, connectByAnd, album, null, false);
+		
+		System.out.println(query);
+		
 		BrowserFacade.performBrowserQueryAndShow(query);
 	}
 
@@ -270,6 +300,9 @@ public class QueryBuilder {
 	 * @param album the name of the album which should be queried */
 	public static void buildQueryAndExecute(ArrayList<QueryComponent> queryComponents, boolean connectByAnd, String album, String sortField, boolean sortAscending) {
 		String query = buildQuery(queryComponents, connectByAnd, album, sortField, sortAscending);
+		
+		System.out.println(query);
+		
 		BrowserFacade.performBrowserQueryAndShow(query);
 	}
 	

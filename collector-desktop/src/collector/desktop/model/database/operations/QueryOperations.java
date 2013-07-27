@@ -375,6 +375,15 @@ public class QueryOperations {
 		return false;
 	}
 	
+	static boolean isStarRatingField(String albumName, String fieldName) throws DatabaseWrapperOperationException {
+		for (MetaItemField metaItemField : getAllAlbumItemMetaItemFields(albumName)) {
+			if (metaItemField.getName().equals(fieldName) && metaItemField.getType().equals(FieldType.StarRating)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	static boolean isAlbumNameAvailable(String requestedAlbumName) throws DatabaseWrapperOperationException {
 		for (String albumName : getListOfAllAlbums()) {
 			if (albumName.equalsIgnoreCase(requestedAlbumName)) {
@@ -448,5 +457,16 @@ public class QueryOperations {
 		}
 		
 		return null;
+	}
+	
+	static Map<String, FieldType> getAlbumItemFieldNameToTypeMap(String albumName) throws DatabaseWrapperOperationException {
+		Map<String, FieldType> fieldNameToType = new HashMap<String, FieldType>();
+		Map<Integer, MetaItemField> metaItemFields = getAlbumItemMetaMap(albumName);
+		
+		for (MetaItemField metaItemField : metaItemFields.values()) {
+			fieldNameToType.put(metaItemField.getName(), metaItemField.getType());
+		}
+		
+		return fieldNameToType;
 	}
 }

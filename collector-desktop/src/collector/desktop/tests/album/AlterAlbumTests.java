@@ -457,4 +457,25 @@ public class AlterAlbumTests {
 			fail(e.getMessage());
 		}
 	}
+	
+	@Test
+	public void testAppendColumnsToAlbum() {
+		try {
+			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
+
+			final int initialColumnCount = DatabaseOperations.getAlbumItemMetaMap("Music CDs").size();
+			
+			MetaItemField price = new MetaItemField("Price", FieldType.Number);
+			DatabaseOperations.appendNewAlbumField("Music CDs", price);
+			
+			MetaItemField releaseDate = new MetaItemField("Release Date", FieldType.Date);
+			DatabaseOperations.appendNewAlbumField("Music CDs", releaseDate);
+			
+			assertTrue("Music CDs should now have two additional columns", 
+					DatabaseOperations.getAlbumItemMetaMap("Music CDs").size() == initialColumnCount + 2);
+			
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+	}
 }

@@ -14,7 +14,6 @@ import org.junit.Test;
 import collector.desktop.model.album.AlbumItemResultSet;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.model.database.operations.DatabaseOperations;
-import collector.desktop.model.database.utilities.ConnectionManager;
 import collector.desktop.model.database.utilities.DatabaseIntegrityManager;
 import collector.desktop.tests.TestExecuter;
 
@@ -35,7 +34,7 @@ public class QuickSearchTests {
 
 	@After
 	public void tearDown() throws Exception {
-		ConnectionManager.closeConnection();
+		TestExecuter.resetEverything();
 	}
 
 	@Test

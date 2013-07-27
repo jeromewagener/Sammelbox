@@ -217,11 +217,19 @@ public class DatabaseOperations {
 	/**
 	 * Fetches a map of metaItemFields keyed by their field (column) index. 
 	 * @param albumName The name of the album to which this map belongs.
-	 * @return True if the query was successful. False otherwise.
 	 * @throws DatabaseWrapperOperationException 
 	 */
 	public static Map<Integer, MetaItemField> getAlbumItemMetaMap(String albumName) throws DatabaseWrapperOperationException {
 		return QueryOperations.getAlbumItemMetaMap(albumName);
+	}
+	
+	/**
+	 * Fetches a map of field types keyed by their field name
+	 * @param albumName The name of the album to which this map belongs.
+	 * @throws DatabaseWrapperOperationException 
+	 */
+	public static Map<String, FieldType> getAlbumItemFieldNameToTypeMap(String albumName) throws DatabaseWrapperOperationException {
+		return QueryOperations.getAlbumItemFieldNameToTypeMap(albumName);
 	}
 	
 	/**
@@ -312,6 +320,14 @@ public class DatabaseOperations {
 	 */
 	public static boolean isOptionField(String albumName, String fieldName) throws DatabaseWrapperOperationException {
 		return QueryOperations.isOptionField(albumName, fieldName);
+	}
+	
+	/**
+	 * Returns true if the given field in the given album is a star-rating field, false otherwise
+	 * @throws DatabaseWrapperOperationException
+	 */
+	public static boolean isStarRatingField(String albumName, String fieldName) throws DatabaseWrapperOperationException {
+		return QueryOperations.isStarRatingField(albumName, fieldName);
 	}
 	
 	/**

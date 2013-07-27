@@ -152,7 +152,7 @@ public class AlbumItemStore {
 					}
 					
 				} else if (metaItemField.getType().equals(FieldType.StarRating)) {
-					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), StarRating.valueOf(StarRating.toArray()[0 + (int)(Math.random() * ((5) + 1))]), false));
+					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), (int)(Math.random() * ((5) + 1)), false));
 				} else if (metaItemField.getType().equals(FieldType.Time)) {
 					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), System.currentTimeMillis(), false));
 				} else if (metaItemField.getType().equals(FieldType.URL)) {

@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import collector.desktop.controller.GuiController;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.model.database.exceptions.ExceptionHelper;
 import collector.desktop.model.database.operations.DatabaseOperations;
@@ -169,7 +170,7 @@ public class QuickControlSidepane {
 				messageBox.setText(Translator.get(DictKeys.DIALOG_TITLE_DELETE_ALBUM));
 				messageBox.setMessage(Translator.get(DictKeys.DIALOG_CONTENT_DELETE_ALBUM, ApplicationUI.getSelectedAlbum()));
 				if (messageBox.open() == SWT.YES) {
-					AlbumViewManager.removeAlbumViews(ApplicationUI.getSelectedAlbum());
+					AlbumViewManager.removeAlbumViewsFromAlbum(ApplicationUI.getSelectedAlbum());
 					try {
 						DatabaseOperations.removeAlbumAndAlbumPictures(ApplicationUI.getSelectedAlbum());
 					} catch (DatabaseWrapperOperationException ex) {
@@ -190,8 +191,8 @@ public class QuickControlSidepane {
 
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {				
-				BrowserFacade.performBrowserQueryAndShow(					
-						AlbumViewManager.getSqlQueryByName(viewList.getItem(viewList.getSelectionIndex())));
+				BrowserFacade.performBrowserQueryAndShow(AlbumViewManager.getSqlQueryByViewName(
+						GuiController.getGuiState().getSelectedAlbum(), viewList.getItem(viewList.getSelectionIndex())));
 
 				WelcomePageManager.increaseClickCountForAlbumOrView(viewList.getItem(viewList.getSelectionIndex()));
 			}
@@ -206,7 +207,8 @@ public class QuickControlSidepane {
 		moveTop.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (viewList.getSelectionIndex() > 0) {
-					AlbumViewManager.moveToFront(viewList.getSelectionIndex());
+					AlbumViewManager.moveToFront(
+							GuiController.getGuiState().getSelectedAlbum(), viewList.getSelectionIndex());
 				}
 			}
 		});
@@ -216,7 +218,8 @@ public class QuickControlSidepane {
 		moveOneUp.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (viewList.getSelectionIndex() > 0) {
-					AlbumViewManager.moveOneUp(viewList.getSelectionIndex());
+					AlbumViewManager.moveOneUp(
+							GuiController.getGuiState().getSelectedAlbum(), viewList.getSelectionIndex());
 				}
 			}
 		});
@@ -226,7 +229,8 @@ public class QuickControlSidepane {
 		moveOneDown.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (viewList.getSelectionIndex() > 0) {
-					AlbumViewManager.moveOneDown(viewList.getSelectionIndex());
+					AlbumViewManager.moveOneDown(
+							GuiController.getGuiState().getSelectedAlbum(), viewList.getSelectionIndex());
 				}
 			}
 		});
@@ -236,7 +240,8 @@ public class QuickControlSidepane {
 		moveBottom.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (viewList.getSelectionIndex() < viewList.getItemCount()-1) {
-					AlbumViewManager.moveToBottom(viewList.getSelectionIndex());
+					AlbumViewManager.moveToBottom(
+							GuiController.getGuiState().getSelectedAlbum(), viewList.getSelectionIndex());
 				}
 			}
 		});
@@ -252,7 +257,8 @@ public class QuickControlSidepane {
 					messageBox.setText(Translator.get(DictKeys.DIALOG_TITLE_DELETE_SAVED_SEARCH));
 					messageBox.setMessage(Translator.get(DictKeys.DIALOG_TITLE_DELETE_SAVED_SEARCH, viewList.getItem(viewList.getSelectionIndex())));
 					if (messageBox.open() == SWT.YES) {
-						AlbumViewManager.removeAlbumView(viewList.getItem(viewList.getSelectionIndex()));
+						AlbumViewManager.removeAlbumView(
+								GuiController.getGuiState().getSelectedAlbum(), viewList.getItem(viewList.getSelectionIndex()));
 					}
 				}
 			}

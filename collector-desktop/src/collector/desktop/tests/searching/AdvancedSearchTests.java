@@ -14,9 +14,7 @@ import org.junit.Test;
 import collector.desktop.model.album.AlbumItemResultSet;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.model.database.operations.DatabaseOperations;
-import collector.desktop.model.database.utilities.ConnectionManager;
 import collector.desktop.model.database.utilities.DatabaseIntegrityManager;
-import collector.desktop.model.database.utilities.DatabaseStringUtilities;
 import collector.desktop.model.database.utilities.QueryBuilder;
 import collector.desktop.model.database.utilities.QueryBuilder.QueryComponent;
 import collector.desktop.model.database.utilities.QueryBuilder.QueryOperator;
@@ -39,7 +37,6 @@ public class AdvancedSearchTests {
 
 	@After
 	public void tearDown() throws Exception {
-		ConnectionManager.closeConnection();
 		TestExecuter.resetEverything();
 	}
 
@@ -160,7 +157,8 @@ public class AdvancedSearchTests {
 			queryComponents.add(QueryBuilder.getQueryComponent("Title", QueryOperator.equals, "Short Circuit 2"));
 			queryComponents.add(QueryBuilder.getQueryComponent("Title", QueryOperator.equals, "One Flew Over The Cuckoo's Nest"));
 			queryComponents.add(QueryBuilder.getQueryComponent("Title", QueryOperator.equals, "RED"));
-			AlbumItemResultSet searchResults = DatabaseOperations.executeSQLQuery(QueryBuilder.buildQuery(queryComponents, false, "DVDs"));
+			AlbumItemResultSet searchResults = DatabaseOperations.executeSQLQuery(
+					QueryBuilder.buildQuery(queryComponents, false, "DVDs"));
 
 			assertTrue("Resultset should not be null", searchResults != null);
 
@@ -295,8 +293,7 @@ public class AdvancedSearchTests {
 			ArrayList<QueryComponent> queryComponents = new ArrayList<QueryComponent>();
 			queryComponents.add(QueryBuilder.getQueryComponent("Artist", QueryOperator.equals, "Rick Astley"));
 			AlbumItemResultSet searchResults = DatabaseOperations.executeSQLQuery(
-					QueryBuilder.buildQuery(queryComponents, true, DatabaseStringUtilities.encloseNameWithQuotes(
-							DatabaseStringUtilities.generateTableName("Music CDs"))));
+					QueryBuilder.buildQuery(queryComponents, true, "Music CDs"));
 
 			assertTrue("Resultset should not be null", searchResults != null);
 

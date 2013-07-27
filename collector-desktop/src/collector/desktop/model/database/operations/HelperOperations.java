@@ -62,8 +62,8 @@ public class HelperOperations {
 				preparedStatement.setString(parameterIndex, url);		
 				break;
 			case StarRating: 
-				StarRating	starRating = field.getValue();
-				preparedStatement.setString(parameterIndex, starRating.toString());		
+				StarRating starRating = field.getValue();
+				preparedStatement.setInt(parameterIndex, starRating.getIntegerValue());		
 				break;
 			case Integer: 
 				Integer	integer = field.getValue();
@@ -86,11 +86,13 @@ public class HelperOperations {
 	 */
 	static FieldType detectDataType(String tableName, String columnName) throws DatabaseWrapperOperationException {
 		DatabaseMetaData dbmetadata = null;
+		
 		try {
 			dbmetadata = ConnectionManager.getConnection().getMetaData();
 		} catch (SQLException e1) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState);
 		}
+		
 		try (ResultSet dbmetars = dbmetadata.getImportedKeys(null, null, tableName)) {
 			// Get the primary and foreign keys
 			String primaryKey = dbmetars.getString(4);
@@ -156,12 +158,7 @@ public class HelperOperations {
 				value =  urlString;
 				break;
 			case StarRating:
-				String rating = results.getString(columnIndex);
-				if (rating != null && !rating.isEmpty()) {
-					value =  StarRating.valueOf(rating);
-				} else {
-					LOGGER.error("Fetching star rating for item field failed. Star rating string is unexpectantly null or empty");
-				}
+				value = StarRating.getByIntegerValue(results.getInt(columnIndex));
 				break;
 			case UUID:
 				value  = UUID.fromString(results.getString(columnIndex));

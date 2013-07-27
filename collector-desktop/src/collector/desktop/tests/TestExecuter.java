@@ -16,6 +16,9 @@ import collector.desktop.tests.album.RemoveAlbumTests;
 import collector.desktop.tests.albumitems.AddAlbumItemTests;
 import collector.desktop.tests.albumitems.RemoveAlbumItemTests;
 import collector.desktop.tests.albumitems.UpdateAlbumItemTests;
+import collector.desktop.tests.albumviews.CreateAndRenameAlbumViewTests;
+import collector.desktop.tests.albumviews.ModifyAlbumViewTests;
+import collector.desktop.tests.albumviews.RunAlbumViewTests;
 import collector.desktop.tests.searching.AdvancedSearchTests;
 import collector.desktop.tests.searching.QuickSearchTests;
 
@@ -27,11 +30,15 @@ import collector.desktop.tests.searching.QuickSearchTests;
 	CreateAlbumTests.class,
 	AddAlbumItemTests.class,
 	RemoveAlbumTests.class,
-
+	
 	AddAlbumItemTests.class,
 	RemoveAlbumItemTests.class,
 	UpdateAlbumItemTests.class,
 
+	CreateAndRenameAlbumViewTests.class,
+	ModifyAlbumViewTests.class,
+	RunAlbumViewTests.class,
+	
 	AdvancedSearchTests.class,
 	QuickSearchTests.class
 	})
@@ -39,7 +46,7 @@ import collector.desktop.tests.searching.QuickSearchTests;
 public class TestExecuter {
 	public static final String PATH_TO_TEST_CBK = 
 			System.getProperty("user.dir") + File.separatorChar + "testdata" + 
-					File.separatorChar + "test-albums-version-2.6.cbk";
+					File.separatorChar + "test-albums-version-2.8.cbk";
 	
 	public static final String PATH_TO_TEST_PICTURE_1 = 
 			System.getProperty("user.dir") + File.separatorChar + "res" + 
