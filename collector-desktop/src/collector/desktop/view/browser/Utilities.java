@@ -100,10 +100,14 @@ public class Utilities {
 		browser.setText(FileSystemAccessWrapper.readInputStreamIntoString(fileInputStream));
 	}
 	
+	static void loadHtmlPage(Browser browser, String htmlString) {
+		browser.setText(htmlString);
+	}
+	
 	static void loadHelpPage() {
 		loadHtmlPage(
 				ApplicationUI.getAlbumItemBrowser(),
-				ApplicationUI.class.getClassLoader().getResourceAsStream("helpfiles/index.html"));
+				ApplicationUI.class.getClassLoader().getResourceAsStream("htmlfiles/help.html"));
 	}
 	
 	static String getBackgroundColorOfWidgetInHex() {

@@ -143,7 +143,7 @@ public class MenuManager {
 					}
 					// No default album is selected on restore
 					ApplicationUI.refreshAlbumList();
-					BrowserFacade.loadHtmlFromInputStream(ApplicationUI.getShell().getClass().getClassLoader().getResourceAsStream("htmlfiles/albums_restored.html"));
+					BrowserFacade.showAlbumRestoredPage();
 				}
 			}
 		});
@@ -214,10 +214,10 @@ public class MenuManager {
 					if (messageBox.open() == SWT.YES) {
 						try {
 							DatabaseOperations.removeAlbumAndAlbumPictures(ApplicationUI.getSelectedAlbum());
+							BrowserFacade.showAlbumDeletedPage(ApplicationUI.getSelectedAlbum());
 							ApplicationUI.refreshAlbumList();
-							BrowserFacade.loadHtmlFromInputStream(ApplicationUI.getShell().getClass().getClassLoader().getResourceAsStream("htmlfiles/album_deleted.html"));
 						} catch (DatabaseWrapperOperationException ex) {
-							LOGGER.error("A database related error occured \n Stacktrace: " + ExceptionHelper.toString(ex));
+							LOGGER.error("A database related error occured", ex);
 						}
 					}
 				}
@@ -268,7 +268,7 @@ public class MenuManager {
 				// No default album is selected on help
 				ApplicationUI.refreshAlbumList();
 				BrowserFacade.loadHtmlFromInputStream(
-						ApplicationUI.getShell().getClass().getClassLoader().getResourceAsStream("helpfiles/index.html"));
+						ApplicationUI.getShell().getClass().getClassLoader().getResourceAsStream("htmlfiles/help.html"));
 				ApplicationUI.changeRightCompositeTo(PanelType.Help, EmptySidepane.build(ApplicationUI.getThreePanelComposite()));
 			}
 		});
@@ -281,7 +281,7 @@ public class MenuManager {
 				// No default album is selected on help
 				ApplicationUI.refreshAlbumList();
 				BrowserFacade.loadHtmlFromInputStream(
-						ApplicationUI.getShell().getClass().getClassLoader().getResourceAsStream("helpfiles/about.html"));
+						ApplicationUI.getShell().getClass().getClassLoader().getResourceAsStream("htmlfiles/about.html"));
 				ApplicationUI.changeRightCompositeTo(PanelType.Help, EmptySidepane.build(ApplicationUI.getThreePanelComposite()));
 			}
 		});

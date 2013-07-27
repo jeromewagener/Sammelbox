@@ -103,7 +103,7 @@ public class DeleteOperations {
 		try {	
 			String typeInfoTableName = DatabaseStringUtilities.generateTypeInfoTableName(albumName);
 			
-			dropTable(albumName);
+			dropTable(DatabaseStringUtilities.generateTableName(albumName));
 			dropTable(typeInfoTableName);
 			
 			UpdateOperations.removeAlbumFromAlbumMasterTable(albumName); 

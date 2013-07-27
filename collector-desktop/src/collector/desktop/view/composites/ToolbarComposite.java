@@ -358,25 +358,22 @@ public class ToolbarComposite extends Composite implements Observer {
 		syncBtn.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseUp(MouseEvent arg0) {
-				BrowserFacade.rerunLastQuery();				
+				BrowserFacade.showSynchronizePage();
 				
 				if (ApplicationUI.getCurrentRightPanelType() != PanelType.Synchronization) {
 					ApplicationUI.changeRightCompositeTo(PanelType.Synchronization,
-							SynchronizeSidepane.build(ApplicationUI
-									.getThreePanelComposite()));
+							SynchronizeSidepane.build(ApplicationUI.getThreePanelComposite()));
 					StatusBarComposite
 							.getInstance(parentComposite.getShell())
 							.writeStatus(Translator.get(DictKeys.STATUSBAR_SYNCHRONIZE_OPENED));
 
 					disableActiveButtons();
 					syncBtn.setImage(syncActive);
-					ApplicationUI
-							.setCurrentRightPanelType(PanelType.Synchronization);
+					ApplicationUI.setCurrentRightPanelType(PanelType.Synchronization);
 					lastSelectedPanelType = PanelType.Synchronization;
 				} else {
 					ApplicationUI.changeRightCompositeTo(PanelType.Empty,
-							EmptySidepane.build(ApplicationUI
-									.getThreePanelComposite()));
+							EmptySidepane.build(ApplicationUI.getThreePanelComposite()));
 					StatusBarComposite.getInstance(parentComposite.getShell())
 							.writeStatus(Translator.get(DictKeys.STATUSBAR_PROGRAM_STARTED));
 

@@ -135,10 +135,17 @@ public class ItemCreator {
 			htmlDataColumnContent.append(getUpdateRemoveButtonsHtml(id));
 		}	
 
+		
+		// set the picture column with only if there is also a picture
+		String widthParameter = "";
+		if (htmlPictureColumnContent.length() != 0) {
+			widthParameter = "width=200px";
+		}
+		
 		albumItemTableRowHtml.append("<tr id=\"albumId" + id + "\">" +
-				                     "  <td>" + htmlPictureColumnContent + "</td>" +
-				                     "    <td width=90% bgcolor=" + Utilities.getBackgroundColorOfWidgetInHex() + ">" + 
-				                     	    htmlDataColumnContent + 
+				                     "  <td " + widthParameter + ">" + htmlPictureColumnContent + "</td>" +
+				                     "    <td bgcolor=" + Utilities.getBackgroundColorOfWidgetInHex() + ">" + 
+				                     "       <div style=\"margin:20px\">" + htmlDataColumnContent + "</div>" + 
 				                     "    </td>" +
 				                     "  </tr>" +
 				                     "  <tr>" +
@@ -148,7 +155,7 @@ public class ItemCreator {
 	}
 	
 	private static String getUpdateRemoveButtonsHtml(long id) {
-		return "<form>" +
+		return "<form style=\"margin-top:10px\">" +
 		       "  <input type=\"button\" " +
 			   "         onclick=parent.location.href=\"show:///updateComposite=" + id + "\" " +
 			   "         value=\"" + Translator.get(DictKeys.BROWSER_UPDATE) + "\">" +
@@ -165,8 +172,8 @@ public class ItemCreator {
 	private static String getAlternativePicturesHtml(long id, List<AlbumItemPicture> pictures) {
 		StringBuilder htmlBuilder = new StringBuilder();
 		
-		if (pictures.size() > 1) {	
-			for(AlbumItemPicture picture : pictures) {				
+		if (pictures.size() > 1) {
+			for(AlbumItemPicture picture : pictures) {
 				htmlBuilder.append(
 					"<div align=center style=\"display:inline; min-width:40px; width:auto; width:40px\">" +
 					"  <a onClick=showBigPicture(\"imageId" + id + "\") " +

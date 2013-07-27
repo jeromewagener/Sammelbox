@@ -26,4 +26,7 @@ public class BrowserFacade {
 	public static void generateAlbumItemAddedPage(long idOfNewAlbumItem) { FeedbackCreator.generateAlbumItemAddedPage(idOfNewAlbumItem); }
 	public static void addModificationToAlterationList(String modification) { FeedbackCreator.addModificationToAlterationList(modification); }
 	public static void clearAlterationList() { FeedbackCreator.clearAlterationList(); }
+	public static void showAlbumDeletedPage(String deletedAlbum) { Utilities.loadHtmlPage(ApplicationUI.getAlbumItemBrowser(), FeedbackCreator.generateAlbumDeletedPage(deletedAlbum));	}
+	public static void showAlbumRestoredPage() { Utilities.loadHtmlPage(ApplicationUI.getAlbumItemBrowser(), FeedbackCreator.generateAlbumsRestoredPage()); }
+	public static void showSynchronizePage() { Utilities.loadHtmlPage(ApplicationUI.getAlbumItemBrowser(), FeedbackCreator.generateSynchronizationPage()); }
 }

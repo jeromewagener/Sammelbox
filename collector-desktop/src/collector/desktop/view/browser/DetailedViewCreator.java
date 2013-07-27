@@ -57,12 +57,15 @@ public class DetailedViewCreator {
 				"      <link rel=stylesheet href=\"" + Constants.STYLE_CSS + "\" />" +
 				"      <script src=\"" + Constants.EFFECTS_JS + "\"></script>" +
 				"    </head>" +
-				"    <body style=\"background-color:#ffffff;font-family:" +  Utilities.getDefaultSystemFont() + "\">" +
-				"      <table id=\"albumItems\" border=0>" + albumItemTableRowHtml + "</table>" +
+				"    <body style=\"background-color:#ffffff;font-family:" +  Utilities.getDefaultSystemFont() + ";margin:0\">" +
+				"      <table width=95% style=\"margin:15px;\" id=\"albumItems\" border=0>" + albumItemTableRowHtml + "</table>" +
 				"    </body>" +
 				"  </html>";
 		
 		browser.setText(finalPageAsHtml);
+		
+		System.out.println(finalPageAsHtml);
+		
 		Utilities.setLastPageAsHtml(finalPageAsHtml);		
 	}
 }

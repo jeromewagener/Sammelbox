@@ -66,7 +66,7 @@ public class FeedbackCreator {
 				"    </head>" +
 				"    <body bgcolor=white>" +
 				"      <font face=\"" + Utilities.getDefaultSystemFont() + "\">" +
-				"        <h1>" + title + "</h1>" +
+				"        <h3>" + title + "</h3>" +
 				"          <table id=\"albumItems\" border=0>" + addedOrUpdatedItemAsHtmlTableRowItem + "</table>" +
 				"      </font>" +
 				"      <br>" +
@@ -106,7 +106,7 @@ public class FeedbackCreator {
 			   "      <script src=\"" + Constants.EFFECTS_JS + "\"></script>" +
 			   "    </head>" +
 			   "    <body>" +
-		       "      <h1>" + title + "</h1>" +
+		       "      <h3>" + title + "</h3>" +
 		       "      <h4>" + subTitle + "</h4>" +
 		       "      <hr noshade size=\"1\">" +
 		       "      <table>" + ItemCreator.getAlbumItemTableRowHtml(albumItem, false) + "</table>" +
@@ -132,5 +132,51 @@ public class FeedbackCreator {
 	
 	static void addModificationToAlterationList(String modification) {
 		alterations.addFirst(modification);
+	}
+	
+	static String generateAlbumDeletedPage(String deletedAlbum) {
+		return "<!DOCTYPE HTML>" +
+			   "  <html>" +
+			   "    <head>" +
+			   "      <meta " + Constants.META_PARAMS + ">" + 
+			   "      <link rel=stylesheet href=\"" + Constants.STYLE_CSS + "\" />" +
+			   "      <script src=\"" + Constants.EFFECTS_JS + "\"></script>" +
+			   "    </head>" +
+			   "    <body>" +
+		       "      <h3>" + Translator.toBeTranslated("The " + deletedAlbum + " album has been successfully deleted") + "</h3>" +
+		       "      <div>" + Translator.toBeTranslated("The album has been successfully deleted. If this album has been previously backuped, " +
+		       "												then it can be restored from such a backup at a later point in time.") + "</div>" +
+		       "    </body>" +
+		       "  </html>";
+	}
+	
+	static String generateAlbumsRestoredPage() {
+		return "<!DOCTYPE HTML>" +
+			   "  <html>" +
+			   "    <head>" +
+			   "      <meta " + Constants.META_PARAMS + ">" + 
+			   "      <link rel=stylesheet href=\"" + Constants.STYLE_CSS + "\" />" +
+			   "      <script src=\"" + Constants.EFFECTS_JS + "\"></script>" +
+			   "    </head>" +
+			   "    <body>" +
+		       "      <h3>" + Translator.toBeTranslated("The program state has been succesfully restored") + "</h3>" +
+		       "      <div>" + Translator.toBeTranslated("The albums and according pictures from the selected backup have been successfully restored") + "</div>" +
+		       "    </body>" +
+		       "  </html>";
+	}
+	
+	static String generateSynchronizationPage() {
+		return "<!DOCTYPE HTML>" +
+			   "  <html>" +
+			   "    <head>" +
+			   "      <meta " + Constants.META_PARAMS + ">" + 
+			   "      <link rel=stylesheet href=\"" + Constants.STYLE_CSS + "\" />" +
+			   "      <script src=\"" + Constants.EFFECTS_JS + "\"></script>" +
+			   "    </head>" +
+			   "    <body>" +
+		       "      <h3>" + Translator.toBeTranslated("Synchronization not working") + "</h3>" +
+		       "      <div>" + Translator.toBeTranslated("Unfortunately, the ability to synchronize with a mobile device is not yet supported") + "</div>" +
+		       "    </body>" +
+		       "  </html>";
 	}
 }

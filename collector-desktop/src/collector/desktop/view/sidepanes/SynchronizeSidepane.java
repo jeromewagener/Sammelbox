@@ -34,6 +34,7 @@ public class SynchronizeSidepane {
 		final Button startButton = new Button(synchronizeComposite, SWT.PUSH);
 		startButton.setText(Translator.get(DictKeys.BUTTON_START_SYNCHRONIZATION));
 		startButton.setLayoutData(new GridData(GridData.FILL_BOTH));
+		startButton.setEnabled(false); // TODO implement the synchronization with mobile devices
 		// listener after cancel button since this button reference is needed
 
 		// separator

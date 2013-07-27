@@ -177,8 +177,8 @@ public class QuickControlSidepane {
 						LOGGER.error("A database error occured while removing the following album: '" + ApplicationUI.getSelectedAlbum() + "'" +
 								" \n Stacktrace: " + ExceptionHelper.toString(ex));
 					}
+					BrowserFacade.showAlbumDeletedPage(ApplicationUI.getSelectedAlbum());
 					ApplicationUI.refreshAlbumList();
-					BrowserFacade.loadHtmlFromInputStream(ApplicationUI.getShell().getClass().getClassLoader().getResourceAsStream("htmlfiles/album_deleted.html"));
 				}
 			}
 		});
