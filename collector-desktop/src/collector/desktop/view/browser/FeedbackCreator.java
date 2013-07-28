@@ -174,7 +174,7 @@ public class FeedbackCreator {
 			   "      <script src=\"" + Constants.EFFECTS_JS + "\"></script>" +
 			   "    </head>" +
 			   "    <body>" +
-		       "      <h3>" + Translator.toBeTranslated("Synchronization not working") + "</h3>" +
+		       "      <h3>" + Translator.toBeTranslated("Synchronization not yet supported") + "</h3>" +
 		       "      <div>" + Translator.toBeTranslated("Unfortunately, the ability to synchronize with a mobile device is not yet supported") + "</div>" +
 		       "    </body>" +
 		       "  </html>";

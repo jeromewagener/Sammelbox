@@ -67,6 +67,7 @@ public class ToolbarComposite extends Composite implements Observer {
 		GridLayout gridLayout = new GridLayout(1, false);
 		gridLayout.marginHeight = 0;
 		gridLayout.marginWidth = 0;
+		gridLayout.marginLeft = 15;
 
 		toolbarComposite.setLayout(gridLayout);
 
@@ -78,53 +79,39 @@ public class ToolbarComposite extends Composite implements Observer {
 
 		innerComposite.setLayout(gridLayout);
 
-		InputStream istream = this.getClass().getClassLoader()
-				.getResourceAsStream("graphics/home.png");
+		InputStream istream = this.getClass().getClassLoader().getResourceAsStream("graphics/home.png");
 		home = new Image(Display.getCurrent(), istream);
-		istream = this.getClass().getClassLoader()
-				.getResourceAsStream("graphics/home-active.png");
+		istream = this.getClass().getClassLoader().getResourceAsStream("graphics/home-active.png");
 		homeActive = new Image(Display.getCurrent(), istream);
 
-		istream = this.getClass().getClassLoader()
-				.getResourceAsStream("graphics/add.png");
+		istream = this.getClass().getClassLoader().getResourceAsStream("graphics/add.png");
 		addAlbum = new Image(Display.getCurrent(), istream);
-		istream = this.getClass().getClassLoader()
-				.getResourceAsStream("graphics/add-active.png");
+		istream = this.getClass().getClassLoader().getResourceAsStream("graphics/add-active.png");
 		addAlbumActive = new Image(Display.getCurrent(), istream);
 
-		istream = this.getClass().getClassLoader()
-				.getResourceAsStream("graphics/additem.png");
+		istream = this.getClass().getClassLoader().getResourceAsStream("graphics/additem.png");
 		addEntry = new Image(Display.getCurrent(), istream);
-		istream = this.getClass().getClassLoader()
-				.getResourceAsStream("graphics/additem-active.png");
+		istream = this.getClass().getClassLoader().getResourceAsStream("graphics/additem-active.png");
 		addEntryActive = new Image(Display.getCurrent(), istream);
 
-		istream = this.getClass().getClassLoader()
-				.getResourceAsStream("graphics/detailedview.png");
+		istream = this.getClass().getClassLoader().getResourceAsStream("graphics/detailedview.png");
 		detailedView = new Image(Display.getCurrent(), istream);
-		istream = this.getClass().getClassLoader()
-				.getResourceAsStream("graphics/pictureview.png");
+		istream = this.getClass().getClassLoader().getResourceAsStream("graphics/pictureview.png");
 		pictureView = new Image(Display.getCurrent(), istream);
 
-		istream = this.getClass().getClassLoader()
-				.getResourceAsStream("graphics/search.png");
+		istream = this.getClass().getClassLoader().getResourceAsStream("graphics/search.png");
 		search = new Image(Display.getCurrent(), istream);
-		istream = this.getClass().getClassLoader()
-				.getResourceAsStream("graphics/search-active.png");
+		istream = this.getClass().getClassLoader().getResourceAsStream("graphics/search-active.png");
 		searchActive = new Image(Display.getCurrent(), istream);
 
-		istream = this.getClass().getClassLoader()
-				.getResourceAsStream("graphics/sync.png");
+		istream = this.getClass().getClassLoader().getResourceAsStream("graphics/sync.png");
 		sync = new Image(Display.getCurrent(), istream);
-		istream = this.getClass().getClassLoader()
-				.getResourceAsStream("graphics/sync-active.png");
+		istream = this.getClass().getClassLoader().getResourceAsStream("graphics/sync-active.png");
 		syncActive = new Image(Display.getCurrent(), istream);
 
-		istream = this.getClass().getClassLoader()
-				.getResourceAsStream("graphics/help.png");
+		istream = this.getClass().getClassLoader().getResourceAsStream("graphics/help.png");
 		help = new Image(Display.getCurrent(), istream);
-		istream = this.getClass().getClassLoader()
-				.getResourceAsStream("graphics/help-active.png");
+		istream = this.getClass().getClassLoader().getResourceAsStream("graphics/help-active.png");
 		helpActive = new Image(Display.getCurrent(), istream);
 
 		homeBtn = new Button(innerComposite, SWT.PUSH);

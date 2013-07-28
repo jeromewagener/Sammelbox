@@ -3,6 +3,8 @@ package collector.desktop.tests.albumviews;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.List;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -15,10 +17,11 @@ import collector.desktop.model.database.exceptions.DatabaseWrapperOperationExcep
 import collector.desktop.model.database.utilities.ConnectionManager;
 import collector.desktop.model.database.utilities.DatabaseIntegrityManager;
 import collector.desktop.tests.TestExecuter;
+import collector.desktop.view.ApplicationUI;
 import collector.desktop.view.managers.AlbumViewManager;
 import collector.desktop.view.managers.AlbumViewManager.AlbumView;
 
-public class CreateAndRenameAlbumViewTests {
+public class GeneralAlbumViewTests {
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 	}
@@ -31,6 +34,9 @@ public class CreateAndRenameAlbumViewTests {
 	@Before
 	public void setUp() {
 		TestExecuter.resetEverything();
+		
+		// Although the list is wrongly assigned to the shell itself, this allows to test the view behavior
+		ApplicationUI.setViewList(new List(ApplicationUI.getShell(), SWT.SINGLE | SWT.BORDER | SWT.V_SCROLL));
 	}
 
 	@After
@@ -91,6 +97,7 @@ public class CreateAndRenameAlbumViewTests {
 					AlbumViewManager.getAlbumViews("DVDs").get(0).getName().equals("My favorite DVDs"));
 			assertTrue("The second view should be: Unwatched", 
 					AlbumViewManager.getAlbumViews("DVDs").get(1).getName().equals("Unwatched"));
+
 
 			AlbumViewManager.removeAlbumView("DVDs", "My favorite DVDs");
 			

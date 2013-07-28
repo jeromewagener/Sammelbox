@@ -6,6 +6,8 @@ import java.util.List;
 
 import collector.desktop.controller.filesystem.FileSystemAccessWrapper;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
+import collector.desktop.view.ApplicationUI;
+import collector.desktop.view.composites.StatusBarComposite;
 import collector.desktop.view.internationalization.DictKeys;
 import collector.desktop.view.internationalization.Translator;
 
@@ -36,6 +38,9 @@ public class AlbumItemStore {
 		}
 		
 		albumItemResultSet.close();
+		
+		StatusBarComposite.getInstance(ApplicationUI.getShell()).writeStatus(
+				Translator.toBeTranslated("Number of album items: " + albumItems.size()), false);
 	}
 	
 	public static List<AlbumItem> getAllAlbumItems() {
@@ -152,7 +157,7 @@ public class AlbumItemStore {
 					}
 					
 				} else if (metaItemField.getType().equals(FieldType.StarRating)) {
-					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), (int)(Math.random() * ((5) + 1)), false));
+					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), StarRating.values()[(int)(Math.random() * ((5) + 1))], false));
 				} else if (metaItemField.getType().equals(FieldType.Time)) {
 					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), System.currentTimeMillis(), false));
 				} else if (metaItemField.getType().equals(FieldType.URL)) {

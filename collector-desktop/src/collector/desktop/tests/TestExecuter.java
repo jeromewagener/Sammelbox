@@ -16,7 +16,7 @@ import collector.desktop.tests.album.RemoveAlbumTests;
 import collector.desktop.tests.albumitems.AddAlbumItemTests;
 import collector.desktop.tests.albumitems.RemoveAlbumItemTests;
 import collector.desktop.tests.albumitems.UpdateAlbumItemTests;
-import collector.desktop.tests.albumviews.CreateAndRenameAlbumViewTests;
+import collector.desktop.tests.albumviews.GeneralAlbumViewTests;
 import collector.desktop.tests.albumviews.ModifyAlbumViewTests;
 import collector.desktop.tests.albumviews.RunAlbumViewTests;
 import collector.desktop.tests.searching.AdvancedSearchTests;
@@ -35,7 +35,7 @@ import collector.desktop.tests.searching.QuickSearchTests;
 	RemoveAlbumItemTests.class,
 	UpdateAlbumItemTests.class,
 
-	CreateAndRenameAlbumViewTests.class,
+	GeneralAlbumViewTests.class,
 	ModifyAlbumViewTests.class,
 	RunAlbumViewTests.class,
 	

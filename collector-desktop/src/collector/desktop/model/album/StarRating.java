@@ -21,14 +21,14 @@ public enum StarRating {
 		return numericValue;
 	} 
 
-	public static String[] toArray() {
+	public static String[] toComboBoxArray() {
 		return new String[] {
-				StarRating.ZeroStars.toString(),
-				StarRating.OneStar.toString(),
-				StarRating.TwoStars.toString(),
-				StarRating.ThreeStars.toString(),
-				StarRating.FourStars.toString(),
-				StarRating.FiveStars.toString()};
+				StarRating.ZeroStars.getIntegerValue() + " Stars", // TODO translate
+				StarRating.OneStar.getIntegerValue() + " Star",
+				StarRating.TwoStars.getIntegerValue() + " Stars",
+				StarRating.ThreeStars.getIntegerValue() + " Stars",
+				StarRating.FourStars.getIntegerValue() + " Stars",
+				StarRating.FiveStars.getIntegerValue() + " Stars"};
 	}
 
 	public static Object getByIntegerValue(int integerValue) {

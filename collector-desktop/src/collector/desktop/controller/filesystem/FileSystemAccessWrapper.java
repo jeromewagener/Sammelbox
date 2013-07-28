@@ -54,6 +54,12 @@ public class FileSystemAccessWrapper {
 	public static final String PLACEHOLDERIMAGE 				= COLLECTOR_HOME_APPDATA + File.separatorChar + "placeholder.png";
 	public static final String PLACEHOLDERIMAGE2 				= COLLECTOR_HOME_APPDATA + File.separatorChar + "placeholder2.png";
 	public static final String PLACEHOLDERIMAGE3 				= COLLECTOR_HOME_APPDATA + File.separatorChar + "placeholder3.png";
+	public static final String ZERO_STARS_IMAGE 				= COLLECTOR_HOME_APPDATA + File.separatorChar + "zerostars.png";
+	public static final String ONE_STAR_IMAGE 					= COLLECTOR_HOME_APPDATA + File.separatorChar + "onestar.png";
+	public static final String TWO_STARS_IMAGE 					= COLLECTOR_HOME_APPDATA + File.separatorChar + "twostars.png";
+	public static final String THREE_STARS_IMAGE 				= COLLECTOR_HOME_APPDATA + File.separatorChar + "threestars.png";
+	public static final String FOUR_STARS_IMAGE 				= COLLECTOR_HOME_APPDATA + File.separatorChar + "fourstars.png";
+	public static final String FIVE_STARS_IMAGE 				= COLLECTOR_HOME_APPDATA + File.separatorChar + "fivestars.png";
 	public static final String LOGO 							= COLLECTOR_HOME_APPDATA + File.separatorChar + "logo.png";
 	public static final String LOGO_SMALL 						= COLLECTOR_HOME_APPDATA + File.separatorChar + "logo-small.png";
 	public static final String DATABASE 						= COLLECTOR_HOME + File.separatorChar + DATABASE_NAME;
@@ -152,6 +158,36 @@ public class FileSystemAccessWrapper {
 			copyResourceToFile("graphics/placeholder3.png", placeholder3PNG);
 		}
 
+		File zeroStarsImage = new File(ZERO_STARS_IMAGE);
+		if (!zeroStarsImage.exists() || OVERWRITE_EXISITING_FILES) {		
+			copyResourceToFile("graphics/zerostars.png", zeroStarsImage);
+		}
+		
+		File oneStarImage = new File(ONE_STAR_IMAGE);
+		if (!oneStarImage.exists() || OVERWRITE_EXISITING_FILES) {		
+			copyResourceToFile("graphics/onestar.png", oneStarImage);
+		}
+		
+		File twoStarsImage = new File(TWO_STARS_IMAGE);
+		if (!twoStarsImage.exists() || OVERWRITE_EXISITING_FILES) {		
+			copyResourceToFile("graphics/twostars.png", twoStarsImage);
+		}
+		
+		File threeStarsImage = new File(THREE_STARS_IMAGE);
+		if (!threeStarsImage.exists() || OVERWRITE_EXISITING_FILES) {		
+			copyResourceToFile("graphics/threestars.png", threeStarsImage);
+		}
+		
+		File fourStarsImage = new File(FOUR_STARS_IMAGE);
+		if (!fourStarsImage.exists() || OVERWRITE_EXISITING_FILES) {		
+			copyResourceToFile("graphics/fourstars.png", fourStarsImage);
+		}
+		
+		File fiveStarsImage = new File(FIVE_STARS_IMAGE);
+		if (!fiveStarsImage.exists() || OVERWRITE_EXISITING_FILES) {		
+			copyResourceToFile("graphics/fivestars.png", fiveStarsImage);
+		}
+		
 		File logoPNG = new File(LOGO);
 		if (!logoPNG.exists() || OVERWRITE_EXISITING_FILES) {		
 			copyResourceToFile("graphics/logo.png", logoPNG);

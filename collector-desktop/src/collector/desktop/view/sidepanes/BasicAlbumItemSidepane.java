@@ -299,13 +299,13 @@ public class BasicAlbumItemSidepane {
 				// Fill the comboBox
 				ratingCombo.setData("FieldType", FieldType.StarRating);
 				ratingCombo.setData("FieldName", fieldName);
-				ratingCombo.setItems(StarRating.toArray());
+				ratingCombo.setItems(StarRating.toComboBoxArray());
 				
 				if (loadDataIntoFields) {
-					ratingCombo.setText(albumItem.getField(fieldName).getValue().toString());
+					ratingCombo.select(((StarRating) albumItem.getField(fieldName).getValue()).getIntegerValue());
+				} else {
+					ratingCombo.select(0);
 				}
-
-				ratingCombo.select(0);
 				
 				break;
 
@@ -467,7 +467,7 @@ public class BasicAlbumItemSidepane {
 							albumItem.addField(
 									(String) combo.getData("FieldName"),
 									(FieldType) combo.getData("FieldType"),
-									StarRating.valueOf(combo.getText()));
+									StarRating.values()[combo.getSelectionIndex()]);
 						} else if (fieldType.equals(FieldType.Option)) {
 							Composite yesNoComposite = (Composite) control;
 

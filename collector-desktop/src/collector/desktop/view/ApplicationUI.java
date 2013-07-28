@@ -102,13 +102,13 @@ public class ApplicationUI implements Observer {
 		// setup the Layout for the shell
 		GridLayout shellGridLayout = new GridLayout(1, false);
 		shellGridLayout.marginHeight = 0;
-		shellGridLayout.marginWidth = 0;		
+		shellGridLayout.marginWidth = 0;
 		shell.setMinimumSize(Constants.MIN_SHELL_WIDTH, Constants.MIN_SHELL_HEIGHT);
 
 		// setup the Shell
 		shell.setText(Translator.get(DictKeys.TITLE_MAIN_WINDOW));				
 		shell.setLayout(shellGridLayout);
-
+		
 		// center the shell to primary screen
 		Monitor primaryMonitor = display.getPrimaryMonitor();
 		Rectangle primaryMonitorBounds = primaryMonitor.getClientArea();
@@ -122,7 +122,7 @@ public class ApplicationUI implements Observer {
 		GridData gridDataForToolbarComposite = new GridData(GridData.FILL_BOTH);
 		gridDataForToolbarComposite.grabExcessHorizontalSpace = true;
 		gridDataForToolbarComposite.grabExcessVerticalSpace = false;
-
+		
 		// define three panel composite layout data
 		GridData gridDataForThreePanelComposite = new GridData(GridData.FILL_BOTH);
 		gridDataForThreePanelComposite.grabExcessHorizontalSpace = true;
@@ -154,7 +154,9 @@ public class ApplicationUI implements Observer {
 
 		// Setup composites using layout definitions from before
 		toolbarComposite = new ToolbarComposite(shell);
-		toolbarComposite.setLayout(new GridLayout(1, false));
+		GridLayout toolbarGridLayout = new GridLayout(1, false);
+		toolbarGridLayout.marginHeight = 0;
+		toolbarComposite.setLayout(toolbarGridLayout);
 		toolbarComposite.setLayoutData(gridDataForToolbarComposite);
 		
 		threePanelComposite = new Composite(shell, SWT.NONE);

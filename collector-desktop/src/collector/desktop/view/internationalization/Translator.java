@@ -80,7 +80,7 @@ public class Translator {
 	 * */
 	public static String get(String key, Object... parameters) {
 		if (languageBundle == null) {
-			throw new RuntimeException("In order to use the translator, a language must be set first!");
+			setLanguageFromSettingsOrSystem();
 		}
 		
 		try {

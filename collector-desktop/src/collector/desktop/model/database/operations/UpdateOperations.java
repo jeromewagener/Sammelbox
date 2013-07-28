@@ -154,7 +154,7 @@ public class UpdateOperations {
 			newFields = reorderFieldInMetaItemList(metaItemField, preceedingField, newFields);
 
 			// Drop the old table + typeTable
-			DeleteOperations.dropTable(albumName);
+			DeleteOperations.dropTable(DatabaseStringUtilities.generateTableName(albumName));
 			DeleteOperations.dropTable(DatabaseStringUtilities.generateTypeInfoTableName(albumName));
 
 			// the following three columns are automatically created by createNewAlbumTable

@@ -101,7 +101,7 @@ public class ItemCreator {
 			} else if (fieldItem.getType().equals(FieldType.Number)) {
 				htmlDataColumnContent.append(getFieldNameAndValueLine(fieldItem.getName(), ((Double) fieldItem.getValue()).toString()));
 			} else if (fieldItem.getType().equals(FieldType.StarRating)) {
-				htmlDataColumnContent.append(getFieldNameAndValueLine(fieldItem.getName(), ((StarRating) fieldItem.getValue()).toString()));
+				htmlDataColumnContent.append(getFieldNameAndStars(fieldItem.getName(), (StarRating) fieldItem.getValue()));
 			} else if (fieldItem.getType().equals(FieldType.URL)) {
 				htmlDataColumnContent.append(getFieldNameAndValueLine(fieldItem.getName(), ((String) fieldItem.getValue())));
 			}
@@ -167,6 +167,22 @@ public class ItemCreator {
 	
 	private static String getFieldNameAndValueLine(String fieldName, String value) {
 		return "<span class=\"boldy\"> " + Utilities.escapeHtmlString(fieldName) + "</span> : " + value + "<br>"; 
+	}
+	
+	private static String getFieldNameAndStars(String fieldName, StarRating rating) {
+		if (rating.equals(StarRating.OneStar)) {
+			return "<span class=\"boldy\"> " + Utilities.escapeHtmlString(fieldName) + "</span><img height=20 src=" + FileSystemAccessWrapper.ONE_STAR_IMAGE + "><br>";
+		} else if (rating.equals(StarRating.TwoStars)) {
+			return "<span class=\"boldy\"> " + Utilities.escapeHtmlString(fieldName) + "</span><img height=20 src=" + FileSystemAccessWrapper.TWO_STARS_IMAGE + "><br>";
+		} else if (rating.equals(StarRating.ThreeStars)) {
+			return "<span class=\"boldy\"> " + Utilities.escapeHtmlString(fieldName) + "</span><img height=20 src=" + FileSystemAccessWrapper.THREE_STARS_IMAGE + "><br>";
+		} else if (rating.equals(StarRating.FourStars)) {
+			return "<span class=\"boldy\"> " + Utilities.escapeHtmlString(fieldName) + "</span><img height=20 src=" + FileSystemAccessWrapper.FOUR_STARS_IMAGE + "><br>";
+		} else if (rating.equals(StarRating.FiveStars)) {
+			return "<span class=\"boldy\"> " + Utilities.escapeHtmlString(fieldName) + "</span><img height=20 src=" + FileSystemAccessWrapper.FIVE_STARS_IMAGE + "><br>";
+		}
+		
+		return "<span class=\"boldy\"> " + Utilities.escapeHtmlString(fieldName) + "</span><img height=20 src=" + FileSystemAccessWrapper.ZERO_STARS_IMAGE + "><br>";
 	}
 	
 	private static String getAlternativePicturesHtml(long id, List<AlbumItemPicture> pictures) {

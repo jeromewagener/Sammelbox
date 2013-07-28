@@ -397,7 +397,7 @@ public class AlterAlbumSidepane {
 						AlterAlbumSidepane.updateAlterAlbumPage(yesButtonForIncludingImages, albumFieldNamesAndTypesTable);
 					} catch (DatabaseWrapperOperationException ex) {
 						LOGGER.error("A database error occured while trying to make the '" + metaItemField + "' " +
-								"in the '" + albumName + "' album quicksearchable \n Stacktrace: " + ExceptionHelper.toString(ex));
+								"in the '" + albumName + "' album quicksearchable", ex);
 					}
 				}
 			}
