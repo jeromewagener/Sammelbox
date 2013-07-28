@@ -1,14 +1,10 @@
-Collector-Desktop
+Sammelbox
 =================
 
-Collector-Desktop is the desktop client of a collection manager suite originally 
-developed by Jérôme Wagener and Paul Bicheler. This repository is currently in
-private mode until most bugs are fixed and the code is cleaned up!
-
-The project was imported from a local SVN repository. Thus no prior revision history
-is available. This also means that the original commit is a collaboration by Paul and Jérôme.
-
-Have fun ;)
+Sammelbox is the name of a collection manager suite (desktop & mobile versions) where currently only the
+desktop client is open-sourced. The project itself was originally started by Jérôme Wagener 
+and Paul Bicheler and is licensed under the GPLv3. Since the project was imported from a private 
+local SVN repository, no prior revision history before the 20th April 2013 is available.
 
 ## Features
 
