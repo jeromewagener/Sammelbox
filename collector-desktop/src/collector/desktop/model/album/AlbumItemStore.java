@@ -40,7 +40,7 @@ public class AlbumItemStore {
 		albumItemResultSet.close();
 		
 		StatusBarComposite.getInstance(ApplicationUI.getShell()).writeStatus(
-				Translator.toBeTranslated("Number of album items: " + albumItems.size()), false);
+				Translator.get(DictKeys.STATUSBAR_NUMBER_OF_ITEMS, albumItems.size()), false);
 	}
 	
 	public static List<AlbumItem> getAllAlbumItems() {

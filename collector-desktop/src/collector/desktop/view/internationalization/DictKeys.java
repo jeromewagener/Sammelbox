@@ -193,6 +193,12 @@ public class DictKeys {
 	public static final String BROWSER_ALBUMFIELD_RENAMED = "collector.browser.text.ALBUMFIELD_RENAMED";
 	public static final String BROWSER_ALBUMFIELD_MOVED_DOWN = "collector.browser.text.ALBUMFIELD_MOVED_DOWN";
 	public static final String BROWSER_ALBUMFIELD_MOVED_UP = "collector.browser.text.ALBUMFIELD_MOVED_UP";	
+	public static final String BROWSER_ALBUM_DELETED_HEADER = "collector.browser.text.ALBUM_DELETED_HEADER";
+	public static final String BROWSER_ALBUM_DELETED = "collector.browser.text.ALBUM_DELETED";
+	public static final String BROWSER_ALBUMS_RESTORED_HEADER = "collector.browser.text.ALBUMS_RESTORED_HEADER";
+	public static final String BROWSER_ALBUMS_RESTORED = "collector.browser.text.ALBUMS_RESTORED";
+	public static final String BROWSER_SYNCRONIZATION_HEADER = "collector.browser.text.SYNCRONIZATION_HEADER";
+	public static final String BROWSER_SYNCRONIZATION = "collector.browser.text.SYNCRONIZATION";
 	
 	/*   Status Bar   */
 	public static final String STATUSBAR_PROGRAM_STARTED = "collector.statusbar.PROGRAM_STARTED";
@@ -202,7 +208,8 @@ public class DictKeys {
 	public static final String STATUSBAR_ADD_ITEM_OPENED = "collector.statusbar.ADD_ITEM_OPENED";
 	public static final String STATUSBAR_ADD_ALBUM_OPENED = "collector.statusbar.ADD_ALBUM_OPENED";
 	public static final String STATUSBAR_CLICK_TO_RETURN = "collector.statusbar.CLICK_TO_RETURN";
-
+	public static final String STATUSBAR_NUMBER_OF_ITEMS = "collector.statusbar.NUMBER_OF_ITEMS";
+	
 	/*   Tables   */
 	public static final String TABLE_COLUMN_QUICKSEARCH = "collector.table.colum.caption.QUICKSEARCH";
 	public static final String TABLE_COLUMN_FIELD_NAME = "collector.table.colum.caption.FIELD_NAME";

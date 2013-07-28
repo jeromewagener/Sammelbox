@@ -80,14 +80,10 @@ public class FeedbackCreator {
 	}
 	
 	static void showCreateNewAlbumPage(Browser browser, AlbumItem albumItem) {
-		String test = generateAlbumAddedOrUpdatedFeedbackConstruct(
+		browser.setText(generateAlbumAddedOrUpdatedFeedbackConstruct(
 				albumItem,
 				Translator.get(DictKeys.BROWSER_CREATING_NEW_ALBUM),
-				Translator.get(DictKeys.BROWSER_ALBUM_WILL_HANDLE_FOLLOWING_FORMAT));
-		
-		System.out.println(test);
-		
-		browser.setText(test);
+				Translator.get(DictKeys.BROWSER_ALBUM_WILL_HANDLE_FOLLOWING_FORMAT)));
 	}
 	
 	static void showCreateAlterAlbumPage(Browser browser, AlbumItem albumItem) {		
@@ -143,9 +139,8 @@ public class FeedbackCreator {
 			   "      <script src=\"" + Constants.EFFECTS_JS + "\"></script>" +
 			   "    </head>" +
 			   "    <body>" +
-		       "      <h3>" + Translator.toBeTranslated("The " + deletedAlbum + " album has been successfully deleted") + "</h3>" +
-		       "      <div>" + Translator.toBeTranslated("The album has been successfully deleted. If this album has been previously backuped, " +
-		       "												then it can be restored from such a backup at a later point in time.") + "</div>" +
+		       "      <h3>" + Translator.get(DictKeys.BROWSER_ALBUM_DELETED_HEADER, deletedAlbum) + "</h3>" +
+		       "      <div>" + Translator.get(DictKeys.BROWSER_ALBUM_DELETED) + "</div>" +
 		       "    </body>" +
 		       "  </html>";
 	}
@@ -159,8 +154,8 @@ public class FeedbackCreator {
 			   "      <script src=\"" + Constants.EFFECTS_JS + "\"></script>" +
 			   "    </head>" +
 			   "    <body>" +
-		       "      <h3>" + Translator.toBeTranslated("The program state has been succesfully restored") + "</h3>" +
-		       "      <div>" + Translator.toBeTranslated("The albums and according pictures from the selected backup have been successfully restored") + "</div>" +
+		       "      <h3>" + Translator.get(DictKeys.BROWSER_ALBUMS_RESTORED_HEADER) + "</h3>" +
+		       "      <div>" + Translator.get(DictKeys.BROWSER_ALBUM_DELETED) + "</div>" +
 		       "    </body>" +
 		       "  </html>";
 	}
@@ -174,8 +169,8 @@ public class FeedbackCreator {
 			   "      <script src=\"" + Constants.EFFECTS_JS + "\"></script>" +
 			   "    </head>" +
 			   "    <body>" +
-		       "      <h3>" + Translator.toBeTranslated("Synchronization not yet supported") + "</h3>" +
-		       "      <div>" + Translator.toBeTranslated("Unfortunately, the ability to synchronize with a mobile device is not yet supported") + "</div>" +
+		       "      <h3>" + Translator.get(DictKeys.BROWSER_SYNCRONIZATION_HEADER) + "</h3>" +
+		       "      <div>" + Translator.get(DictKeys.BROWSER_SYNCRONIZATION) + "</div>" +
 		       "    </body>" +
 		       "  </html>";
 	}

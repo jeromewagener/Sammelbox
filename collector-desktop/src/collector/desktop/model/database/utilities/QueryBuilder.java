@@ -283,10 +283,7 @@ public class QueryBuilder {
 	 * 						or by OR (connectedByAnd == false) 
 	 * @param album the name of the album which should be queried */
 	public static void buildQueryAndExecute(ArrayList<QueryComponent> queryComponents, boolean connectByAnd, String album) {
-		String query = buildQuery(queryComponents, connectByAnd, album, null, false);
-		
-		System.out.println(query);
-		
+		String query = buildQuery(queryComponents, connectByAnd, album, null, false);		
 		BrowserFacade.performBrowserQueryAndShow(query);
 	}
 
@@ -300,9 +297,6 @@ public class QueryBuilder {
 	 * @param album the name of the album which should be queried */
 	public static void buildQueryAndExecute(ArrayList<QueryComponent> queryComponents, boolean connectByAnd, String album, String sortField, boolean sortAscending) {
 		String query = buildQuery(queryComponents, connectByAnd, album, sortField, sortAscending);
-		
-		System.out.println(query);
-		
 		BrowserFacade.performBrowserQueryAndShow(query);
 	}
 	

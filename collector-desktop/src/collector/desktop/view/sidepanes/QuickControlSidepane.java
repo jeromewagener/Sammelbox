@@ -270,7 +270,7 @@ public class QuickControlSidepane {
 		addSavedSearch.setText(Translator.get(DictKeys.DROPDOWN_ADD_ANOTHER_SAVED_SEARCH));
 		addSavedSearch.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				if (viewList.getSelectionIndex() > 0) {
+				if (viewList.getSelectionIndex() >= 0) {
 					ApplicationUI.changeRightCompositeTo(PanelType.AdvancedSearch, 
 							AdvancedSearchSidepane.build(ApplicationUI.getThreePanelComposite(), ApplicationUI.getSelectedAlbum()));
 				}

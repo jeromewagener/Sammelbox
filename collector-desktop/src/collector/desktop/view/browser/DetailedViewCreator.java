@@ -62,10 +62,7 @@ public class DetailedViewCreator {
 				"    </body>" +
 				"  </html>";
 		
-		browser.setText(finalPageAsHtml);
-		
-		System.out.println(finalPageAsHtml);
-		
+		browser.setText(finalPageAsHtml);		
 		Utilities.setLastPageAsHtml(finalPageAsHtml);		
 	}
 }
