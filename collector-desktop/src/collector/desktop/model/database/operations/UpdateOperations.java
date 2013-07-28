@@ -654,7 +654,7 @@ public class UpdateOperations {
 			case Text: 
 				preparedStatement.setString(1, (String) columnMetaInfo.getType().getDefaultValue());
 				break;
-			case Number: 
+			case Decimal: 
 				preparedStatement.setDouble(1, (Double) columnMetaInfo.getType().getDefaultValue());
 				break;
 			case Integer: 

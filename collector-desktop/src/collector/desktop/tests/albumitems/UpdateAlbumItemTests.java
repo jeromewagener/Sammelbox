@@ -147,7 +147,7 @@ public class UpdateAlbumItemTests {
 		MetaItemField titleField = new MetaItemField("Book Title", FieldType.Text, true);
 		MetaItemField authorField = new MetaItemField("Author", FieldType.Text, true);
 		MetaItemField purchaseField = new MetaItemField("Purchased", FieldType.Date, false);
-		MetaItemField priceField = new MetaItemField("Price", FieldType.Number, false);
+		MetaItemField priceField = new MetaItemField("Price", FieldType.Decimal, false);
 		MetaItemField lenttoField = new MetaItemField("Lent out", FieldType.Option, true);
 
 		List<MetaItemField> columns = new ArrayList<MetaItemField>();
@@ -182,7 +182,7 @@ public class UpdateAlbumItemTests {
 		fields.add(new ItemField("Book Title", FieldType.Text, "book title"));
 		fields.add(new ItemField("Author", FieldType.Text, "the author"));
 		fields.add(new ItemField("Purchased", FieldType.Date, new Date(System.currentTimeMillis())));
-		fields.add(new ItemField("Price", FieldType.Number, 4.2d)); 
+		fields.add(new ItemField("Price", FieldType.Decimal, 4.2d)); 
 		fields.add(new ItemField("Lent out", FieldType.Option, OptionType.YES));
 
 		List<AlbumItemPicture> albumItemPictures = new ArrayList<AlbumItemPicture>();

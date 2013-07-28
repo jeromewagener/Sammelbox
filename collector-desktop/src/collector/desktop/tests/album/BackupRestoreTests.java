@@ -54,7 +54,7 @@ public class BackupRestoreTests {
 		MetaItemField titleField = new MetaItemField("Book Title", FieldType.Text, true);
 		MetaItemField authorField = new MetaItemField("Author", FieldType.Text, true);
 		MetaItemField purchaseField = new MetaItemField("Purchased", FieldType.Date, false);
-		MetaItemField priceField = new MetaItemField("Price", FieldType.Number, false);
+		MetaItemField priceField = new MetaItemField("Price", FieldType.Decimal, false);
 		MetaItemField lenttoField = new MetaItemField("Lent to", FieldType.Text, false);
 
 		List<MetaItemField> columns = new ArrayList<MetaItemField>();
@@ -114,7 +114,7 @@ public class BackupRestoreTests {
 		fields.add( new ItemField("Book Title", FieldType.Text, "book title 1"));
 		fields.add( new ItemField("Author", FieldType.Text, "the author 1"));
 		fields.add( new ItemField("Purchased", FieldType.Date, new Date(System.currentTimeMillis())));
-		fields.add( new ItemField("Price", FieldType.Number, 4.2d));
+		fields.add( new ItemField("Price", FieldType.Decimal, 4.2d));
 		fields.add( new ItemField("Lent to", FieldType.Text, "some random name 1"));
 
 		item.setFields(fields);
@@ -131,7 +131,7 @@ public class BackupRestoreTests {
 		fields.add( new ItemField("Book Title", FieldType.Text, "book title 2"));
 		fields.add( new ItemField("Author", FieldType.Text, "the author 2"));
 		fields.add( new ItemField("Purchased", FieldType.Date, new Date(System.currentTimeMillis())));
-		fields.add( new ItemField("Price", FieldType.Number, 4.22d));
+		fields.add( new ItemField("Price", FieldType.Decimal, 4.22d));
 		fields.add( new ItemField("Lent to", FieldType.Text, "some random name 2"));
 
 		item.setFields(fields);
@@ -148,7 +148,7 @@ public class BackupRestoreTests {
 		fields.add( new ItemField("Book Title", FieldType.Text, "book title 3"));
 		fields.add( new ItemField("Author", FieldType.Text, "the author 3"));
 		fields.add( new ItemField("Purchased", FieldType.Date, new Date(System.currentTimeMillis())));
-		fields.add( new ItemField("Price", FieldType.Number, 4.23d));
+		fields.add( new ItemField("Price", FieldType.Decimal, 4.23d));
 		fields.add( new ItemField("Lent to", FieldType.Text, "some random name 3"));
 
 		item.setFields(fields);

@@ -407,7 +407,7 @@ public class AlterAlbumTests {
 			
 			Map<Integer, MetaItemField> metaItemFields = DatabaseOperations.getAlbumItemMetaMap("DVDs");
 			MetaItemField oldField = metaItemFields.get(3);
-			MetaItemField newField = new MetaItemField("Test A", FieldType.Number, false);
+			MetaItemField newField = new MetaItemField("Test A", FieldType.Decimal, false);
 			DatabaseOperations.renameAlbumItemField("DVDs", oldField, newField);
 			
 			assertTrue("The number of items should not have changed after a field rename", 
@@ -465,7 +465,7 @@ public class AlterAlbumTests {
 
 			final int initialColumnCount = DatabaseOperations.getAlbumItemMetaMap("Music CDs").size();
 			
-			MetaItemField price = new MetaItemField("Price", FieldType.Number);
+			MetaItemField price = new MetaItemField("Price", FieldType.Decimal);
 			DatabaseOperations.appendNewAlbumField("Music CDs", price);
 			
 			MetaItemField releaseDate = new MetaItemField("Release Date", FieldType.Date);

@@ -6,7 +6,7 @@ import java.sql.Time;
 public enum FieldType {
 	ID,
 	Text,
-	Number, 
+	Decimal, 
 	Date, 
 	Time,
 	UUID,
@@ -24,7 +24,7 @@ public enum FieldType {
 		return new String[] { 	
 				FieldType.Text.toString(), 
 				FieldType.Integer.toString(),
-				FieldType.Number.toString(),
+				FieldType.Decimal.toString(),
 				FieldType.StarRating.toString(),
 				FieldType.Option.toString(),
 				FieldType.Date.toString(),
@@ -45,7 +45,7 @@ public enum FieldType {
 		case Text:
 			res = "TEXT";
 			break;
-		case Number:
+		case Decimal:
 			res = "REAL";
 			break;
 		case Date:
@@ -84,7 +84,7 @@ public enum FieldType {
 		switch (this){
 		case Text: 
 			return  "";
-		case Number: 
+		case Decimal: 
 			return 0.0d;
 		case Integer: 
 			return 0;

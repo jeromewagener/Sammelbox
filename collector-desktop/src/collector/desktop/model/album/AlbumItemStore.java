@@ -142,7 +142,7 @@ public class AlbumItemStore {
 					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), new java.sql.Date(System.currentTimeMillis()), false));
 				} else if (metaItemField.getType().equals(FieldType.Integer)) {
 					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), 10 + (int)(Math.random() * ((90) + 1)), false));
-				} else if (metaItemField.getType().equals(FieldType.Number)) {
+				} else if (metaItemField.getType().equals(FieldType.Decimal)) {
 					DecimalFormat twoDecimalsFormat = new DecimalFormat("#.##");
 					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), Double.valueOf(twoDecimalsFormat.format(Math.random() * (100)))));
 				} else if (metaItemField.getType().equals(FieldType.Option)) {

@@ -98,7 +98,7 @@ public class ItemCreator {
 				htmlDataColumnContent.append(getFieldNameAndValueLine(fieldItem.getName(), Utilities.escapeHtmlString((String) fieldItem.getValue())));
 			} else if (fieldItem.getType().equals(FieldType.Integer)) {
 				htmlDataColumnContent.append(getFieldNameAndValueLine(fieldItem.getName(), ((Integer) fieldItem.getValue()).toString()));
-			} else if (fieldItem.getType().equals(FieldType.Number)) {
+			} else if (fieldItem.getType().equals(FieldType.Decimal)) {
 				htmlDataColumnContent.append(getFieldNameAndValueLine(fieldItem.getName(), ((Double) fieldItem.getValue()).toString()));
 			} else if (fieldItem.getType().equals(FieldType.StarRating)) {
 				htmlDataColumnContent.append(getFieldNameAndStars(fieldItem.getName(), (StarRating) fieldItem.getValue()));

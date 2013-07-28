@@ -98,7 +98,7 @@ public class AdvancedSearchSidepane {
 							} else if (metaItemField.getType() == FieldType.StarRating) {
 								searchOperatorCombo.setItems(QueryOperator.toNumberOperatorStringArray());
 								valueToSearchText.setText("[0..5]");
-							} else if (metaItemField.getType() == FieldType.Number) {
+							} else if (metaItemField.getType() == FieldType.Decimal) {
 								searchOperatorCombo.setItems(QueryOperator.toNumberOperatorStringArray());
 								valueToSearchText.setText("");
 							} else if (metaItemField.getType() == FieldType.Integer) {

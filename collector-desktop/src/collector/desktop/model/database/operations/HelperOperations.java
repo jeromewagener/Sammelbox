@@ -40,7 +40,7 @@ public class HelperOperations {
 				String text = field.getValue();
 				preparedStatement.setString(parameterIndex, text);		
 				break;
-			case Number: 
+			case Decimal: 
 				Double real = field.getValue();
 				preparedStatement.setDouble(parameterIndex, real);		
 				break;
@@ -133,7 +133,7 @@ public class HelperOperations {
 			case Text:
 				value = results.getString(columnIndex);
 				break;
-			case Number:
+			case Decimal:
 				value = results.getDouble(columnIndex);
 				break;
 			case Integer:

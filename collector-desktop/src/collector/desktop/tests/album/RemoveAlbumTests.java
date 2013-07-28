@@ -36,7 +36,7 @@ public class RemoveAlbumTests {
 		MetaItemField titleField = new MetaItemField("Book Title", FieldType.Text, true);
 		MetaItemField authorField = new MetaItemField("Author", FieldType.Text, true);
 		MetaItemField purchaseField = new MetaItemField("Purchased", FieldType.Date, false);
-		MetaItemField priceField = new MetaItemField("Price", FieldType.Number, false);
+		MetaItemField priceField = new MetaItemField("Price", FieldType.Decimal, false);
 		MetaItemField lenttoField = new MetaItemField("Lent to", FieldType.Text, false);
 
 		List<MetaItemField> columns = new ArrayList<MetaItemField>();

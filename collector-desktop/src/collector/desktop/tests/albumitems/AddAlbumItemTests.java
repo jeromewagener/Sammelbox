@@ -56,7 +56,7 @@ public class AddAlbumItemTests {
 		fields.add( new ItemField("Book Title", FieldType.Text, "book title"));
 		fields.add( new ItemField("Author", FieldType.Text, "the author"));
 		fields.add( new ItemField("Purchased", FieldType.Date, new Date(System.currentTimeMillis())));
-		fields.add( new ItemField("Price", FieldType.Number, 4.2d));
+		fields.add( new ItemField("Price", FieldType.Decimal, 4.2d));
 		fields.add( new ItemField("Lent to", FieldType.Text, "some random name"));
 		fields.add( new ItemField("In Stock", FieldType.Option, OptionType.NO));
 		fields.add( new ItemField("Rating", FieldType.StarRating, StarRating.FiveStars));
@@ -104,7 +104,7 @@ public class AddAlbumItemTests {
 		fields.add( new ItemField("Book Title", FieldType.Text, "book title"));
 		fields.add( new ItemField("Author", FieldType.Text, "the author"));
 		fields.add( new ItemField("Purchased", FieldType.Date, new Date(System.currentTimeMillis())));
-		fields.add( new ItemField("Price", FieldType.Number, 4.2d));
+		fields.add( new ItemField("Price", FieldType.Decimal, 4.2d));
 		fields.add( new ItemField("Lent to", FieldType.Text, "some random name"));
 		fields.add( new ItemField("In Stock", FieldType.Option, OptionType.NO));
 		fields.add( new ItemField("Rating", FieldType.StarRating, StarRating.FiveStars));
@@ -152,7 +152,7 @@ public class AddAlbumItemTests {
 		fields.add( new ItemField("Book Title", FieldType.Text, "book's title"));
 		fields.add( new ItemField("Author", FieldType.Text, "the author"));
 		fields.add( new ItemField("Purchased", FieldType.Date, new Date(System.currentTimeMillis())));
-		fields.add( new ItemField("Price", FieldType.Number, 4.2d));
+		fields.add( new ItemField("Price", FieldType.Decimal, 4.2d));
 		fields.add( new ItemField("Lent to", FieldType.Text, "some random name"));
 		fields.add( new ItemField("In Stock", FieldType.Option, OptionType.NO));
 		fields.add( new ItemField("Rating", FieldType.StarRating, StarRating.FiveStars));
@@ -195,7 +195,7 @@ public class AddAlbumItemTests {
 		MetaItemField titleField = new MetaItemField("Book Title", FieldType.Text, true);
 		MetaItemField authorField = new MetaItemField("Author", FieldType.Text, true);
 		MetaItemField purchaseField = new MetaItemField("Purchased", FieldType.Date, false);
-		MetaItemField priceField = new MetaItemField("Price", FieldType.Number, false);
+		MetaItemField priceField = new MetaItemField("Price", FieldType.Decimal, false);
 		MetaItemField lenttoField = new MetaItemField("Lent to", FieldType.Text, false);
 		MetaItemField inStock = new MetaItemField("In Stock", FieldType.Option, false);
 		MetaItemField rating = new MetaItemField("Rating", FieldType.StarRating, false);

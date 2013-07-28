@@ -101,7 +101,7 @@ public class ItemField extends MetaItemField {
 		case Text:
 			return (value instanceof String);
 
-		case Number:
+		case Decimal:
 			return (value instanceof Double);
 
 		case Date:

@@ -175,7 +175,7 @@ public class BasicAlbumItemSidepane {
 
 				break;	
 
-			case Number:
+			case Decimal:
 				ComponentFactory.getSmallBoldItalicLabel(basicAlbumItemComposite, fieldName + ":");
 
 				final Text numberText = new Text(basicAlbumItemComposite, SWT.BORDER);
@@ -209,7 +209,7 @@ public class BasicAlbumItemSidepane {
 					}
 				});
 
-				numberText.setData("FieldType", FieldType.Number);
+				numberText.setData("FieldType", FieldType.Decimal);
 				numberText.setData("FieldName", fieldName);
 
 				break;
@@ -427,7 +427,7 @@ public class BasicAlbumItemSidepane {
 									(String) url.getData("FieldName"),
 									(FieldType) url.getData("FieldType"),
 									url.getText());
-						} else if (fieldType.equals(FieldType.Number)) {
+						} else if (fieldType.equals(FieldType.Decimal)) {
 							Text text = (Text) control;
 							double number = 0.0;
 
