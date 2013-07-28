@@ -163,7 +163,7 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 
 			// Do not change the page
 			event.doit = false;
-		}else if (event.location.equals(Constants.SHOW_DETAILS_VIEW_OF_ALBUM)) {
+		} else if (event.location.equals(Constants.SHOW_DETAILS_VIEW_OF_ALBUM)) {
 			BrowserFacade.performBrowserQueryAndShow(QueryBuilder.createSelectStarQuery(ApplicationUI.getSelectedAlbum()));
 			
 			ApplicationUI.changeRightCompositeTo(PanelType.Empty, EmptySidepane.build(ApplicationUI.getThreePanelComposite()));
