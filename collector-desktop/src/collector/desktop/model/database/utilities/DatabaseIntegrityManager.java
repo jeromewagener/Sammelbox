@@ -141,11 +141,10 @@ public class DatabaseIntegrityManager {
 		FileSystemAccessWrapper.clearCollectorHome();
 		FileSystemAccessWrapper.unzipFileToFolder(filePath, FileSystemAccessWrapper.COLLECTOR_HOME);
 	
-	
 		try (Statement statement = ConnectionManager.getConnection().createStatement()) {			
 			statement.executeUpdate("restore from '" + FileSystemAccessWrapper.DATABASE_TO_RESTORE + "'");
 			try {
-				DatabaseIntegrityManager.lastChangeTimeStampInMS =  DatabaseIntegrityManager.extractTimeStamp(new File(filePath));
+				DatabaseIntegrityManager.lastChangeTimeStampInMS = DatabaseIntegrityManager.extractTimeStamp(new File(filePath));
 			} catch (DatabaseWrapperOperationException e) {
 				DatabaseIntegrityManager.lastChangeTimeStampInMS = System.currentTimeMillis();
 			}

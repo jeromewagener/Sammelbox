@@ -138,6 +138,7 @@ public class MenuManager {
 				if (path != null) {
 					try {
 						DatabaseIntegrityManager.restoreFromFile(path);
+						AlbumViewManager.initialize();
 					} catch (DatabaseWrapperOperationException ex) {
 						LOGGER.error("An error occured while trying to restore albums from a backup file \n Stacktrace: " + ExceptionHelper.toString(ex));
 					}
