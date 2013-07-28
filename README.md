@@ -1,13 +1,10 @@
 Sammelbox
 =================
 
-Sammelbox is the name of a collection manager (Desktop & Mobile versions) where currently only the
-desktop client is open-sourced. The project itself was originally developed by Jérôme Wagener 
-and Paul Bicheler and is licensed under the GPLv3.
-
-Since the project was imported from a private local SVN repository, no prior revision history
-before the 20th April 2013 is available. This also means that the original commit is a 
-collaboration by Paul and Jérôme.
+Sammelbox is the name of a collection manager suite (desktop & mobile versions) where currently only the
+desktop client is open-sourced. The project itself was originally started by Jérôme Wagener 
+and Paul Bicheler and is licensed under the GPLv3. Since the project was imported from a private 
+local SVN repository, no prior revision history before the 20th April 2013 is available.
 
 ## Features
 
