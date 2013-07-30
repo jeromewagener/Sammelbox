@@ -27,19 +27,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import collector.desktop.controller.MetaItemFieldFilter;
+import collector.desktop.controller.i18n.DictKeys;
+import collector.desktop.controller.i18n.Translator;
+import collector.desktop.controller.managers.AlbumViewManager;
 import collector.desktop.model.album.FieldType;
 import collector.desktop.model.album.MetaItemField;
 import collector.desktop.model.album.OptionType;
+import collector.desktop.model.database.QueryBuilder;
+import collector.desktop.model.database.QueryBuilder.QueryComponent;
+import collector.desktop.model.database.QueryBuilder.QueryOperator;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
-import collector.desktop.model.database.exceptions.ExceptionHelper;
 import collector.desktop.model.database.operations.DatabaseOperations;
-import collector.desktop.model.database.utilities.QueryBuilder;
-import collector.desktop.model.database.utilities.QueryBuilder.QueryComponent;
-import collector.desktop.model.database.utilities.QueryBuilder.QueryOperator;
 import collector.desktop.view.ApplicationUI;
-import collector.desktop.view.internationalization.DictKeys;
-import collector.desktop.view.internationalization.Translator;
-import collector.desktop.view.managers.AlbumViewManager;
 import collector.desktop.view.various.ComponentFactory;
 import collector.desktop.view.various.TextInputDialog;
 
@@ -73,7 +72,7 @@ public class AdvancedSearchSidepane {
 			fieldToSearchCombo.setData("validMetaItemFields", MetaItemFieldFilter.getValidMetaItemFields(DatabaseOperations.getAlbumItemFieldNamesAndTypes(album)));
 			fieldToSearchCombo.setItems(MetaItemFieldFilter.getValidFieldNamesAsStringArray(DatabaseOperations.getAlbumItemFieldNamesAndTypes(album)));	
 		} catch (DatabaseWrapperOperationException ex) {
-			LOGGER.error("A database related error occured \n Stacktrace: " + ExceptionHelper.toString(ex));
+			LOGGER.error("A database related error occured", ex);
 		}
 		Label searchOperatorLabel = new Label(innerComposite, SWT.NONE);
 		searchOperatorLabel.setText(Translator.get(DictKeys.LABEL_SEARCH_OPERATOR));
@@ -236,7 +235,7 @@ public class AdvancedSearchSidepane {
 			fieldToSortCombo.setData("validMetaItemFields", MetaItemFieldFilter.getValidMetaItemFields(DatabaseOperations.getAlbumItemFieldNamesAndTypes(album)));
 			fieldToSortCombo.setItems(MetaItemFieldFilter.getValidFieldNamesAsStringArray(DatabaseOperations.getAlbumItemFieldNamesAndTypes(album)));
 		} catch (DatabaseWrapperOperationException ex) {
-			LOGGER.error("A database related error occured \n Stacktrace: " + ExceptionHelper.toString(ex));
+			LOGGER.error("A database related error occured", ex);
 		}
 		
 		final Button sortAscendingButton = new Button(composite, SWT.RADIO);
@@ -380,7 +379,7 @@ public class AdvancedSearchSidepane {
 				}
 			}			
 		} catch (Exception ex) {
-			LOGGER.error("A database related error occured \n Stacktrace: " + ExceptionHelper.toString(ex));
+			LOGGER.error("A database related error occured", ex);
 		}
 		
 		return queryComponents;	

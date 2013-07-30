@@ -5,15 +5,14 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import collector.desktop.controller.i18n.DictKeys;
+import collector.desktop.controller.i18n.Translator;
 import collector.desktop.model.album.AlbumItemPicture;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
-import collector.desktop.model.database.exceptions.ExceptionHelper;
 import collector.desktop.model.database.operations.DatabaseOperations;
 import collector.desktop.view.ApplicationUI;
+import collector.desktop.view.UIConstants;
 import collector.desktop.view.composites.StatusBarComposite;
-import collector.desktop.view.internationalization.DictKeys;
-import collector.desktop.view.internationalization.Translator;
-import collector.desktop.view.various.Constants;
 
 public class PictureViewCreator {
 	private static final Logger LOGGER = LoggerFactory.getLogger(PictureViewCreator.class);
@@ -59,9 +58,9 @@ public class PictureViewCreator {
 			picturePage.append(
 					"<html>" +
 	                "  <head>" +
-					"      <meta " + Constants.META_PARAMS + ">" + 
-					"      <link rel=stylesheet href=\"" + Constants.STYLE_CSS + "\" />" +
-					"      <script src=\"" + Constants.EFFECTS_JS + "\"></script>" +
+					"      <meta " + UIConstants.META_PARAMS + ">" + 
+					"      <link rel=stylesheet href=\"" + UIConstants.STYLE_CSS + "\" />" +
+					"      <script src=\"" + UIConstants.EFFECTS_JS + "\"></script>" +
 			        "  </head>" +
 			        "  <body>" +
 			        "    <table>" +
@@ -83,7 +82,7 @@ public class PictureViewCreator {
 			ApplicationUI.getAlbumItemBrowser().setText(picturePage.toString());
 		} catch (DatabaseWrapperOperationException ex) {
 			LOGGER.error("An error occured while fetching the album item #" + albumItemId + " in the album: " + 
-					ApplicationUI.getSelectedAlbum() + " \n Stacktrace:" + ExceptionHelper.toString(ex));
+					ApplicationUI.getSelectedAlbum(), ex);
 		}
 	}
 }

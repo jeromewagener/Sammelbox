@@ -8,7 +8,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 import collector.desktop.controller.filesystem.FileSystemAccessWrapper;
-import collector.desktop.model.database.utilities.ConnectionManager;
+import collector.desktop.controller.managers.ConnectionManager;
 import collector.desktop.tests.album.AlterAlbumTests;
 import collector.desktop.tests.album.BackupRestoreTests;
 import collector.desktop.tests.album.CreateAlbumTests;

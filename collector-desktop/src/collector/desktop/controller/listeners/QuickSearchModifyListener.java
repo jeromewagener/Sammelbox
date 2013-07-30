@@ -1,4 +1,4 @@
-package collector.desktop.view.listeners;
+package collector.desktop.controller.listeners;
 
 import java.util.Arrays;
 
@@ -8,13 +8,12 @@ import org.eclipse.swt.widgets.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import collector.desktop.controller.i18n.DictKeys;
+import collector.desktop.controller.i18n.Translator;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
-import collector.desktop.model.database.exceptions.ExceptionHelper;
 import collector.desktop.model.database.operations.DatabaseOperations;
 import collector.desktop.view.ApplicationUI;
 import collector.desktop.view.browser.BrowserFacade;
-import collector.desktop.view.internationalization.DictKeys;
-import collector.desktop.view.internationalization.Translator;
 import collector.desktop.view.various.ComponentFactory;
 
 public class QuickSearchModifyListener implements ModifyListener {
@@ -39,8 +38,7 @@ public class QuickSearchModifyListener implements ModifyListener {
 						Arrays.asList(((Text) e.widget).getText().split(" "))));
 			}
 		} catch (DatabaseWrapperOperationException ex) {
-			LOGGER.error("An error occured while performing a quick search on the following string '" + ((Text) e.widget).getText() + "'" + 
-					" \n Stacktrace:" + ExceptionHelper.toString(ex));
+			LOGGER.error("An error occured while performing a quick search on the following string '" + ((Text) e.widget).getText() + "'", ex);
 		}
 	}
 }

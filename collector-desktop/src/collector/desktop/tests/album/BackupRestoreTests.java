@@ -15,17 +15,17 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import collector.desktop.controller.filesystem.FileSystemAccessWrapper;
+import collector.desktop.controller.managers.ConnectionManager;
+import collector.desktop.controller.managers.DatabaseIntegrityManager;
 import collector.desktop.model.album.AlbumItem;
 import collector.desktop.model.album.AlbumItemResultSet;
 import collector.desktop.model.album.FieldType;
 import collector.desktop.model.album.ItemField;
 import collector.desktop.model.album.MetaItemField;
 import collector.desktop.model.album.OptionType;
+import collector.desktop.model.database.DatabaseStringUtilities;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.model.database.operations.DatabaseOperations;
-import collector.desktop.model.database.utilities.ConnectionManager;
-import collector.desktop.model.database.utilities.DatabaseIntegrityManager;
-import collector.desktop.model.database.utilities.DatabaseStringUtilities;
 import collector.desktop.tests.TestExecuter;
 
 public class BackupRestoreTests {

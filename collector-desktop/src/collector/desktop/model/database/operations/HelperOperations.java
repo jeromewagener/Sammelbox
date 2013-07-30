@@ -12,15 +12,15 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import collector.desktop.controller.managers.ConnectionManager;
 import collector.desktop.model.album.FieldType;
 import collector.desktop.model.album.ItemField;
 import collector.desktop.model.album.OptionType;
 import collector.desktop.model.album.StarRating;
+import collector.desktop.model.database.DatabaseStringUtilities;
+import collector.desktop.model.database.QueryBuilder;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException.DBErrorState;
-import collector.desktop.model.database.utilities.ConnectionManager;
-import collector.desktop.model.database.utilities.DatabaseStringUtilities;
-import collector.desktop.model.database.utilities.QueryBuilder;
 
 public class HelperOperations {
 	private static final Logger LOGGER = LoggerFactory.getLogger(HelperOperations.class);

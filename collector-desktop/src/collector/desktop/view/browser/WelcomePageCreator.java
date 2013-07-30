@@ -1,12 +1,12 @@
 package collector.desktop.view.browser;
 
 import collector.desktop.controller.filesystem.FileSystemAccessWrapper;
+import collector.desktop.controller.i18n.DictKeys;
+import collector.desktop.controller.i18n.Translator;
+import collector.desktop.controller.managers.AlbumManager;
+import collector.desktop.controller.managers.WelcomePageManager;
 import collector.desktop.view.ApplicationUI;
-import collector.desktop.view.internationalization.DictKeys;
-import collector.desktop.view.internationalization.Translator;
-import collector.desktop.view.managers.AlbumManager;
-import collector.desktop.view.managers.WelcomePageManager;
-import collector.desktop.view.various.Constants;
+import collector.desktop.view.UIConstants;
 
 public class WelcomePageCreator {
 	private static final int NUMBER_OF_FAVORITES_SHOWN = 5;
@@ -17,9 +17,9 @@ public class WelcomePageCreator {
 				"<html>" +
 				"  <head>" +
 				"    <title>" + Translator.get(DictKeys.TITLE_MAIN_WINDOW) + "</title>" +
-				"    <meta " + Constants.META_PARAMS + ">" + 
-				"    <link rel=stylesheet href=\"" + Constants.STYLE_CSS + "\" />" +
-				"    <script src=\"" + Constants.EFFECTS_JS + "\"></script>" +
+				"    <meta " + UIConstants.META_PARAMS + ">" + 
+				"    <link rel=stylesheet href=\"" + UIConstants.STYLE_CSS + "\" />" +
+				"    <script src=\"" + UIConstants.EFFECTS_JS + "\"></script>" +
 				"  </head>" +
 				"  <body>" +
 				"    <font face=\"" + Utilities.getDefaultSystemFont() + "\">" +

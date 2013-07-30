@@ -3,13 +3,13 @@ package collector.desktop.view.browser;
 import org.eclipse.swt.browser.Browser;
 
 import collector.desktop.controller.GuiController;
+import collector.desktop.controller.i18n.DictKeys;
+import collector.desktop.controller.i18n.Translator;
 import collector.desktop.model.album.AlbumItem;
 import collector.desktop.model.album.AlbumItemStore;
 import collector.desktop.view.ApplicationUI;
-import collector.desktop.view.internationalization.DictKeys;
-import collector.desktop.view.internationalization.Translator;
+import collector.desktop.view.UIConstants;
 import collector.desktop.view.various.ComponentFactory;
-import collector.desktop.view.various.Constants;
 
 public class DetailedViewCreator {	
 	static void showDetailedAlbum(Browser browser) {
@@ -53,9 +53,9 @@ public class DetailedViewCreator {
 				"  <html>" +
 				"    <head>" +
 				"      <title>sammelbox.org</title>" +
-				"      <meta " + Constants.META_PARAMS + ">" + 
-				"      <link rel=stylesheet href=\"" + Constants.STYLE_CSS + "\" />" +
-				"      <script src=\"" + Constants.EFFECTS_JS + "\"></script>" +
+				"      <meta " + UIConstants.META_PARAMS + ">" + 
+				"      <link rel=stylesheet href=\"" + UIConstants.STYLE_CSS + "\" />" +
+				"      <script src=\"" + UIConstants.EFFECTS_JS + "\"></script>" +
 				"    </head>" +
 				"    <body style=\"background-color:#ffffff;font-family:" +  Utilities.getDefaultSystemFont() + ";margin:0\">" +
 				"      <table width=95% style=\"margin:15px;\" id=\"albumItems\" border=0>" + albumItemTableRowHtml + "</table>" +

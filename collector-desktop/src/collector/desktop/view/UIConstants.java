@@ -1,10 +1,10 @@
-package collector.desktop.view.various;
+package collector.desktop.view;
 
 import java.io.File;
 
 import collector.desktop.controller.filesystem.FileSystemAccessWrapper;
 
-public class Constants {
+public class UIConstants {
 	// ------------------ GUI Constants ------------------
 	public static final int SCROLL_SPEED_MULTIPLICATOR = 3;
 	

@@ -11,10 +11,10 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import collector.desktop.controller.managers.DatabaseIntegrityManager;
 import collector.desktop.model.album.AlbumItemResultSet;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.model.database.operations.DatabaseOperations;
-import collector.desktop.model.database.utilities.DatabaseIntegrityManager;
 import collector.desktop.tests.TestExecuter;
 
 public class QuickSearchTests {

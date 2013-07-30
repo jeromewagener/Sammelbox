@@ -11,11 +11,11 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import collector.desktop.controller.managers.AlbumViewManager;
+import collector.desktop.controller.managers.DatabaseIntegrityManager;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
-import collector.desktop.model.database.utilities.DatabaseIntegrityManager;
 import collector.desktop.tests.TestExecuter;
 import collector.desktop.view.ApplicationUI;
-import collector.desktop.view.managers.AlbumViewManager;
 
 public class ModifyAlbumViewTests {
 	@BeforeClass

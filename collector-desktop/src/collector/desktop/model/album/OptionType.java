@@ -1,6 +1,6 @@
 package collector.desktop.model.album;
 
-import collector.desktop.view.internationalization.DictKeys;
+import collector.desktop.controller.i18n.DictKeys;
 
 public enum OptionType {
 	YES,

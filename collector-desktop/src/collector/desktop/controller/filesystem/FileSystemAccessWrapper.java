@@ -34,12 +34,11 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
+import collector.desktop.controller.i18n.Language;
+import collector.desktop.controller.managers.AlbumViewManager.AlbumView;
 import collector.desktop.controller.settings.ApplicationSettingsManager.ApplicationSettings;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
-import collector.desktop.model.database.exceptions.ExceptionHelper;
 import collector.desktop.model.database.operations.DatabaseOperations;
-import collector.desktop.view.internationalization.Language;
-import collector.desktop.view.managers.AlbumViewManager.AlbumView;
 
 public class FileSystemAccessWrapper {
 	public static final String DATABASE_NAME					= "collector.db";
@@ -545,7 +544,7 @@ public class FileSystemAccessWrapper {
 				try {
 					currentFile = files[i].getCanonicalFile();
 				} catch (IOException ex) {
-					LOGGER.error("An error occured while processing files \n Stacktrace: " + ExceptionHelper.toString(ex));
+					LOGGER.error("An error occured while processing files", ex);
 					continue;
 				}
 				if (currentFile.getName().matches(fileNameRegex)){

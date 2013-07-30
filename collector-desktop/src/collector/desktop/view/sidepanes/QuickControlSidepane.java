@@ -18,17 +18,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import collector.desktop.controller.GuiController;
+import collector.desktop.controller.i18n.DictKeys;
+import collector.desktop.controller.i18n.Translator;
+import collector.desktop.controller.listeners.QuickSearchModifyListener;
+import collector.desktop.controller.managers.AlbumManager;
+import collector.desktop.controller.managers.AlbumViewManager;
+import collector.desktop.controller.managers.WelcomePageManager;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
-import collector.desktop.model.database.exceptions.ExceptionHelper;
 import collector.desktop.model.database.operations.DatabaseOperations;
 import collector.desktop.view.ApplicationUI;
 import collector.desktop.view.browser.BrowserFacade;
-import collector.desktop.view.internationalization.DictKeys;
-import collector.desktop.view.internationalization.Translator;
-import collector.desktop.view.listeners.QuickSearchModifyListener;
-import collector.desktop.view.managers.AlbumManager;
-import collector.desktop.view.managers.AlbumViewManager;
-import collector.desktop.view.managers.WelcomePageManager;
 import collector.desktop.view.various.PanelType;
 
 public class QuickControlSidepane {
@@ -174,8 +173,7 @@ public class QuickControlSidepane {
 					try {
 						DatabaseOperations.removeAlbumAndAlbumPictures(ApplicationUI.getSelectedAlbum());
 					} catch (DatabaseWrapperOperationException ex) {
-						LOGGER.error("A database error occured while removing the following album: '" + ApplicationUI.getSelectedAlbum() + "'" +
-								" \n Stacktrace: " + ExceptionHelper.toString(ex));
+						LOGGER.error("A database error occured while removing the following album: '" + ApplicationUI.getSelectedAlbum() + "'", ex);
 					}
 					BrowserFacade.showAlbumDeletedPage(ApplicationUI.getSelectedAlbum());
 					ApplicationUI.refreshAlbumList();

@@ -4,10 +4,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import collector.desktop.controller.managers.ConnectionManager;
+import collector.desktop.model.database.DatabaseStringUtilities;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException.DBErrorState;
-import collector.desktop.model.database.utilities.ConnectionManager;
-import collector.desktop.model.database.utilities.DatabaseStringUtilities;
 
 public class TestQueries {
 	public static boolean isDatabaseTableAvailable(String tableName) {

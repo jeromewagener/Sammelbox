@@ -1,4 +1,4 @@
-package collector.desktop.view.internationalization;
+package collector.desktop.controller.i18n;
 
 public class DictKeys {	
 	/* Special Translation Keys */

@@ -5,11 +5,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import collector.desktop.controller.filesystem.FileSystemAccessWrapper;
+import collector.desktop.controller.i18n.DictKeys;
+import collector.desktop.controller.i18n.Translator;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.view.ApplicationUI;
 import collector.desktop.view.composites.StatusBarComposite;
-import collector.desktop.view.internationalization.DictKeys;
-import collector.desktop.view.internationalization.Translator;
 
 public class AlbumItemStore {
 	private static final String SAMPLE = "Sample";

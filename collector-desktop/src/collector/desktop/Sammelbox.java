@@ -7,15 +7,15 @@ import org.eclipse.swt.SWT;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import collector.desktop.controller.filesystem.BuildInformation;
 import collector.desktop.controller.filesystem.FileSystemAccessWrapper;
+import collector.desktop.controller.i18n.DictKeys;
+import collector.desktop.controller.i18n.Translator;
+import collector.desktop.controller.managers.BuildInformationManager;
+import collector.desktop.controller.managers.ConnectionManager;
+import collector.desktop.controller.managers.WelcomePageManager;
 import collector.desktop.controller.settings.ApplicationSettingsManager;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
-import collector.desktop.model.database.utilities.ConnectionManager;
 import collector.desktop.view.ApplicationUI;
-import collector.desktop.view.internationalization.DictKeys;
-import collector.desktop.view.internationalization.Translator;
-import collector.desktop.view.managers.WelcomePageManager;
 import collector.desktop.view.various.ComponentFactory;
 
 public class Sammelbox {
@@ -38,14 +38,16 @@ public class Sammelbox {
 			} catch (DatabaseWrapperOperationException ex2) {
 				LOGGER.error("The database is corrupt since opening a connection failed. " +
 						"Recent autosaves of the database can be found in: " + FileSystemAccessWrapper.COLLECTOR_HOME_BACKUPS);
+				
+				// TODO indicate error to user
 			}			
 		}
 	}
 	
 	/** The main method initializes the database (using the collector constructor) and establishes the user interface */
 	public static void main(String[] args) throws ClassNotFoundException {
-		LOGGER.trace("Sammelbox (build: " + BuildInformation.instance().getVersion() + 
-				" build on " + BuildInformation.instance().getBuildTimeStamp() + ") started");
+		LOGGER.info("Sammelbox (build: " + BuildInformationManager.instance().getVersion() + 
+				" build on " + BuildInformationManager.instance().getBuildTimeStamp() + ") started");
 		try {
 			ApplicationSettingsManager.initializeFromSettingsFile();
 			WelcomePageManager.initializeFromWelcomeFile();
@@ -79,7 +81,7 @@ public class Sammelbox {
 		} catch (Exception ex) {
 			LOGGER.error("Sammelbox crashed", ex);
 		} finally {
-			LOGGER.trace("Sammelbox stopped");
+			LOGGER.info("Sammelbox stopped");
 		}
 	}
 }

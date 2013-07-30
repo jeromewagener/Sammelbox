@@ -27,24 +27,22 @@ import collector.desktop.controller.events.EventObservable;
 import collector.desktop.controller.events.Observer;
 import collector.desktop.controller.events.SammelboxEvent;
 import collector.desktop.controller.filesystem.FileSystemAccessWrapper;
+import collector.desktop.controller.i18n.DictKeys;
+import collector.desktop.controller.i18n.Translator;
+import collector.desktop.controller.listeners.BrowserListener;
+import collector.desktop.controller.managers.AlbumManager;
+import collector.desktop.controller.managers.AlbumViewManager;
+import collector.desktop.controller.managers.AlbumViewManager.AlbumView;
+import collector.desktop.controller.managers.MenuManager;
+import collector.desktop.model.database.QueryBuilder;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
-import collector.desktop.model.database.exceptions.ExceptionHelper;
 import collector.desktop.model.database.operations.DatabaseOperations;
-import collector.desktop.model.database.utilities.QueryBuilder;
 import collector.desktop.view.browser.BrowserFacade;
 import collector.desktop.view.composites.BrowserComposite;
 import collector.desktop.view.composites.StatusBarComposite;
 import collector.desktop.view.composites.ToolbarComposite;
-import collector.desktop.view.internationalization.DictKeys;
-import collector.desktop.view.internationalization.Translator;
-import collector.desktop.view.listeners.BrowserListener;
-import collector.desktop.view.managers.AlbumManager;
-import collector.desktop.view.managers.AlbumViewManager;
-import collector.desktop.view.managers.AlbumViewManager.AlbumView;
-import collector.desktop.view.managers.MenuManager;
 import collector.desktop.view.sidepanes.EmptySidepane;
 import collector.desktop.view.sidepanes.QuickControlSidepane;
-import collector.desktop.view.various.Constants;
 import collector.desktop.view.various.PanelType;
 
 public class ApplicationUI implements Observer {
@@ -103,7 +101,7 @@ public class ApplicationUI implements Observer {
 		GridLayout shellGridLayout = new GridLayout(1, false);
 		shellGridLayout.marginHeight = 0;
 		shellGridLayout.marginWidth = 0;
-		shell.setMinimumSize(Constants.MIN_SHELL_WIDTH, Constants.MIN_SHELL_HEIGHT);
+		shell.setMinimumSize(UIConstants.MIN_SHELL_WIDTH, UIConstants.MIN_SHELL_HEIGHT);
 
 		// setup the Shell
 		shell.setText(Translator.get(DictKeys.TITLE_MAIN_WINDOW));				
@@ -114,8 +112,8 @@ public class ApplicationUI implements Observer {
 		Rectangle primaryMonitorBounds = primaryMonitor.getClientArea();
 		int totalPrimaryScreenWidth = primaryMonitorBounds.x + (int) (primaryMonitorBounds.width / (float) getNumberOfScreens());
 		int totalPrimaryScreenHeight = primaryMonitorBounds.y + primaryMonitorBounds.height;
-		int xCoordinateForShell = totalPrimaryScreenWidth / 2 - Constants.MIN_SHELL_WIDTH / 2;
-		int yCoordinateForShell = totalPrimaryScreenHeight / 2 - Constants.MIN_SHELL_HEIGHT / 2;
+		int xCoordinateForShell = totalPrimaryScreenWidth / 2 - UIConstants.MIN_SHELL_WIDTH / 2;
+		int yCoordinateForShell = totalPrimaryScreenHeight / 2 - UIConstants.MIN_SHELL_HEIGHT / 2;
 		shell.setLocation(xCoordinateForShell, yCoordinateForShell);
 
 		// define toolbar composite layout data
@@ -262,14 +260,14 @@ public class ApplicationUI implements Observer {
 
 	public static HashMap<PanelType, Integer> panelTypeToPixelSize = new HashMap<PanelType, Integer>() {
 		private static final long serialVersionUID = 1L;	{
-			put(PanelType.Empty, Constants.RIGHT_PANEL_NO_WIDTH);
-			put(PanelType.AddAlbum, Constants.RIGHT_PANEL_LARGE_WIDTH);
-			put(PanelType.AddEntry, Constants.RIGHT_PANEL_LARGE_WIDTH);
-			put(PanelType.AdvancedSearch, Constants.RIGHT_PANEL_LARGE_WIDTH);
-			put(PanelType.AlterAlbum, Constants.RIGHT_PANEL_LARGE_WIDTH);
-			put(PanelType.Synchronization, Constants.RIGHT_PANEL_MEDIUM_WIDTH);
-			put(PanelType.UpdateEntry, Constants.RIGHT_PANEL_LARGE_WIDTH);
-			put(PanelType.Help, Constants.RIGHT_PANEL_SMALL_WIDTH);
+			put(PanelType.Empty, UIConstants.RIGHT_PANEL_NO_WIDTH);
+			put(PanelType.AddAlbum, UIConstants.RIGHT_PANEL_LARGE_WIDTH);
+			put(PanelType.AddEntry, UIConstants.RIGHT_PANEL_LARGE_WIDTH);
+			put(PanelType.AdvancedSearch, UIConstants.RIGHT_PANEL_LARGE_WIDTH);
+			put(PanelType.AlterAlbum, UIConstants.RIGHT_PANEL_LARGE_WIDTH);
+			put(PanelType.Synchronization, UIConstants.RIGHT_PANEL_MEDIUM_WIDTH);
+			put(PanelType.UpdateEntry, UIConstants.RIGHT_PANEL_LARGE_WIDTH);
+			put(PanelType.Help, UIConstants.RIGHT_PANEL_SMALL_WIDTH);
 		}
 	};
 
@@ -304,9 +302,9 @@ public class ApplicationUI implements Observer {
 		} else {
 			if (ScrolledComposite.class.isInstance(newRightComposite)) {
 				ScrolledComposite sc = (ScrolledComposite) newRightComposite;
-				layoutData.widthHint = Constants.RIGHT_PANEL_MEDIUM_WIDTH - sc.getVerticalBar().getSize().x;
+				layoutData.widthHint = UIConstants.RIGHT_PANEL_MEDIUM_WIDTH - sc.getVerticalBar().getSize().x;
 			} else {		
-				layoutData.widthHint = Constants.RIGHT_PANEL_MEDIUM_WIDTH;
+				layoutData.widthHint = UIConstants.RIGHT_PANEL_MEDIUM_WIDTH;
 			}
 		}
 
@@ -376,7 +374,7 @@ public class ApplicationUI implements Observer {
 		try {
 			ApplicationUI.getQuickSearchTextField().setEnabled(DatabaseOperations.isAlbumQuicksearchable(albumName));
 		} catch (DatabaseWrapperOperationException ex) {
-			LOGGER.error("An error occured while enabling the quick search field \n Stacktrace: " + ExceptionHelper.toString(ex));
+			LOGGER.error("An error occured while enabling the quick search field", ex);
 		}
 
 		BrowserFacade.performBrowserQueryAndShow(QueryBuilder.createSelectStarQuery(albumName));
@@ -443,7 +441,7 @@ public class ApplicationUI implements Observer {
 	 * it returns true, False otherwise.
 	 */
 	public static boolean maximizeShellOnStartUp(int screenWidth, int screenHeight) {
-		if (Constants.MIN_SHELL_WIDTH >= screenWidth || Constants.MIN_SHELL_HEIGHT >= screenHeight){
+		if (UIConstants.MIN_SHELL_WIDTH >= screenWidth || UIConstants.MIN_SHELL_HEIGHT >= screenHeight){
 			return true;
 		}
 		return false;

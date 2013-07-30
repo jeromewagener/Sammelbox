@@ -6,14 +6,13 @@ import org.eclipse.swt.browser.Browser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import collector.desktop.controller.i18n.DictKeys;
+import collector.desktop.controller.i18n.Translator;
 import collector.desktop.model.album.AlbumItem;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
-import collector.desktop.model.database.exceptions.ExceptionHelper;
 import collector.desktop.model.database.operations.DatabaseOperations;
 import collector.desktop.view.ApplicationUI;
-import collector.desktop.view.internationalization.DictKeys;
-import collector.desktop.view.internationalization.Translator;
-import collector.desktop.view.various.Constants;
+import collector.desktop.view.UIConstants;
 
 public class FeedbackCreator {
 	private final static Logger LOGGER = LoggerFactory.getLogger(FeedbackCreator.class);
@@ -35,7 +34,7 @@ public class FeedbackCreator {
 			}
 		} catch (DatabaseWrapperOperationException ex) {
 			LOGGER.error("An error occured while fetching the album item #" + albumItemId + " in the album: " + 
-							ApplicationUI.getSelectedAlbum() + " \n Stacktrace:" + ExceptionHelper.toString(ex));
+							ApplicationUI.getSelectedAlbum(), ex);
 		}
 	}
 
@@ -52,7 +51,7 @@ public class FeedbackCreator {
 			}
 		} catch (DatabaseWrapperOperationException ex) {
 			LOGGER.error("An error occured while fetching the album item #" + albumItemId + " in the album: " + 
-					ApplicationUI.getSelectedAlbum() + " \n Stacktrace:" + ExceptionHelper.toString(ex));
+					ApplicationUI.getSelectedAlbum(), ex);
 		}
 	}
 	
@@ -60,9 +59,9 @@ public class FeedbackCreator {
 		return 	"<!DOCTYPE HTML>" +
 				"  <html>" +
 				"    <head>" +
-				"      <meta " + Constants.META_PARAMS + ">" +
-				"      <link rel=stylesheet href=\"" + Constants.STYLE_CSS + "\" />" +
-				"      <script src=\"" + Constants.EFFECTS_JS + "\"></script>" +
+				"      <meta " + UIConstants.META_PARAMS + ">" +
+				"      <link rel=stylesheet href=\"" + UIConstants.STYLE_CSS + "\" />" +
+				"      <script src=\"" + UIConstants.EFFECTS_JS + "\"></script>" +
 				"    </head>" +
 				"    <body bgcolor=white>" +
 				"      <font face=\"" + Utilities.getDefaultSystemFont() + "\">" +
@@ -97,9 +96,9 @@ public class FeedbackCreator {
 		return "<!DOCTYPE HTML>" +
 			   "  <html>" +
 			   "    <head>" +
-			   "      <meta " + Constants.META_PARAMS + ">" + 
-			   "      <link rel=stylesheet href=\"" + Constants.STYLE_CSS + "\" />" +
-			   "      <script src=\"" + Constants.EFFECTS_JS + "\"></script>" +
+			   "      <meta " + UIConstants.META_PARAMS + ">" + 
+			   "      <link rel=stylesheet href=\"" + UIConstants.STYLE_CSS + "\" />" +
+			   "      <script src=\"" + UIConstants.EFFECTS_JS + "\"></script>" +
 			   "    </head>" +
 			   "    <body>" +
 		       "      <h3>" + title + "</h3>" +
@@ -134,9 +133,9 @@ public class FeedbackCreator {
 		return "<!DOCTYPE HTML>" +
 			   "  <html>" +
 			   "    <head>" +
-			   "      <meta " + Constants.META_PARAMS + ">" + 
-			   "      <link rel=stylesheet href=\"" + Constants.STYLE_CSS + "\" />" +
-			   "      <script src=\"" + Constants.EFFECTS_JS + "\"></script>" +
+			   "      <meta " + UIConstants.META_PARAMS + ">" + 
+			   "      <link rel=stylesheet href=\"" + UIConstants.STYLE_CSS + "\" />" +
+			   "      <script src=\"" + UIConstants.EFFECTS_JS + "\"></script>" +
 			   "    </head>" +
 			   "    <body>" +
 		       "      <h3>" + Translator.get(DictKeys.BROWSER_ALBUM_DELETED_HEADER, deletedAlbum) + "</h3>" +
@@ -149,9 +148,9 @@ public class FeedbackCreator {
 		return "<!DOCTYPE HTML>" +
 			   "  <html>" +
 			   "    <head>" +
-			   "      <meta " + Constants.META_PARAMS + ">" + 
-			   "      <link rel=stylesheet href=\"" + Constants.STYLE_CSS + "\" />" +
-			   "      <script src=\"" + Constants.EFFECTS_JS + "\"></script>" +
+			   "      <meta " + UIConstants.META_PARAMS + ">" + 
+			   "      <link rel=stylesheet href=\"" + UIConstants.STYLE_CSS + "\" />" +
+			   "      <script src=\"" + UIConstants.EFFECTS_JS + "\"></script>" +
 			   "    </head>" +
 			   "    <body>" +
 		       "      <h3>" + Translator.get(DictKeys.BROWSER_ALBUMS_RESTORED_HEADER) + "</h3>" +
@@ -164,9 +163,9 @@ public class FeedbackCreator {
 		return "<!DOCTYPE HTML>" +
 			   "  <html>" +
 			   "    <head>" +
-			   "      <meta " + Constants.META_PARAMS + ">" + 
-			   "      <link rel=stylesheet href=\"" + Constants.STYLE_CSS + "\" />" +
-			   "      <script src=\"" + Constants.EFFECTS_JS + "\"></script>" +
+			   "      <meta " + UIConstants.META_PARAMS + ">" + 
+			   "      <link rel=stylesheet href=\"" + UIConstants.STYLE_CSS + "\" />" +
+			   "      <script src=\"" + UIConstants.EFFECTS_JS + "\"></script>" +
 			   "    </head>" +
 			   "    <body>" +
 		       "      <h3>" + Translator.get(DictKeys.BROWSER_SYNCRONIZATION_HEADER) + "</h3>" +

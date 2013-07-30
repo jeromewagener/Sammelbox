@@ -25,17 +25,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import collector.desktop.controller.filesystem.FileSystemAccessWrapper;
+import collector.desktop.controller.i18n.DictKeys;
+import collector.desktop.controller.i18n.Translator;
 import collector.desktop.model.album.AlbumItemStore;
 import collector.desktop.model.album.FieldType;
 import collector.desktop.model.album.MetaItemField;
+import collector.desktop.model.database.QueryBuilder;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
-import collector.desktop.model.database.exceptions.ExceptionHelper;
 import collector.desktop.model.database.operations.DatabaseOperations;
-import collector.desktop.model.database.utilities.QueryBuilder;
 import collector.desktop.view.ApplicationUI;
 import collector.desktop.view.browser.BrowserFacade;
-import collector.desktop.view.internationalization.DictKeys;
-import collector.desktop.view.internationalization.Translator;
 import collector.desktop.view.various.ComponentFactory;
 import collector.desktop.view.various.PanelType;
 import collector.desktop.view.various.TextInputDialog;
@@ -287,8 +286,7 @@ public class CreateAlbumSidepane {
 						return;
 					}
 				} catch (DatabaseWrapperOperationException ex) {
-					LOGGER.error("A database error occured while checking whether '" + albumName + "' is available as album name" +
-							" \n Stacktrace: " + ExceptionHelper.toString(ex));
+					LOGGER.error("A database error occured while checking whether '" + albumName + "' is available as album name", ex);
 				}
 
 				if (!FileSystemAccessWrapper.isNameFileSystemCompliant(albumName)) {

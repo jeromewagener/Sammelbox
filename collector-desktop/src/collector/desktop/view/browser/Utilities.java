@@ -14,7 +14,6 @@ import collector.desktop.model.album.AlbumItem;
 import collector.desktop.model.album.AlbumItemResultSet;
 import collector.desktop.model.album.AlbumItemStore;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
-import collector.desktop.model.database.exceptions.ExceptionHelper;
 import collector.desktop.model.database.operations.DatabaseOperations;
 import collector.desktop.view.ApplicationUI;
 
@@ -41,8 +40,7 @@ public class Utilities {
 		try {
 			AlbumItemStore.reinitializeStore(DatabaseOperations.executeSQLQuery(sqlQuery));
 		} catch (DatabaseWrapperOperationException ex) {
-			LOGGER.error("An error occured while reinitializing the album item store using the following SQL query (" + sqlQuery + ") " +
-					"\n Stacktrace:" + ExceptionHelper.toString(ex));
+			LOGGER.error("An error occured while reinitializing the album item store using the following SQL query (" + sqlQuery + ")", ex);
 		}
 		showAlbum(browser);
 	}
@@ -55,7 +53,7 @@ public class Utilities {
 		try {
 			AlbumItemStore.reinitializeStore(albumItemResultSet);
 		} catch (DatabaseWrapperOperationException ex) {
-			LOGGER.error("Could not reinitialize album item store \n Stacktrace: " + ExceptionHelper.toString(ex));
+			LOGGER.error("Could not reinitialize album item store", ex);
 		}
 		showAlbum(browser);
 	}

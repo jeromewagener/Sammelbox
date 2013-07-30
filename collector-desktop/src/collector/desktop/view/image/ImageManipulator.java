@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 
 import collector.desktop.controller.filesystem.FileSystemAccessWrapper;
 import collector.desktop.model.album.AlbumItemPicture;
-import collector.desktop.model.database.exceptions.ExceptionHelper;
 import collector.desktop.view.ApplicationUI;
 
 public class ImageManipulator {
@@ -71,7 +70,7 @@ public class ImageManipulator {
 			return new AlbumItemPicture(newFileNameForThumbnail, newFileNameForOriginal, album, AlbumItemPicture.PICTURE_ID_UNDEFINED);
 			
 		} catch (Exception ex) {
-			LOGGER.error("An error occured while manipulating an image \n Stacktrace: " + ExceptionHelper.toString(ex));
+			LOGGER.error("An error occured while manipulating an image", ex);
 		}
 		
 		return null;

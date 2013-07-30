@@ -1,4 +1,4 @@
-package collector.desktop.model.database.utilities;
+package collector.desktop.model.database;
 
 import collector.desktop.model.database.operations.DatabaseConstants;
 

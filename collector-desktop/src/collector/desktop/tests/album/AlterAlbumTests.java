@@ -13,15 +13,15 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import collector.desktop.controller.managers.ConnectionManager;
+import collector.desktop.controller.managers.DatabaseIntegrityManager;
 import collector.desktop.model.album.AlbumItem;
 import collector.desktop.model.album.AlbumItemPicture;
 import collector.desktop.model.album.FieldType;
 import collector.desktop.model.album.MetaItemField;
+import collector.desktop.model.database.DatabaseStringUtilities;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.model.database.operations.DatabaseOperations;
-import collector.desktop.model.database.utilities.ConnectionManager;
-import collector.desktop.model.database.utilities.DatabaseIntegrityManager;
-import collector.desktop.model.database.utilities.DatabaseStringUtilities;
 import collector.desktop.tests.TestExecuter;
 import collector.desktop.tests.utilities.TestQueries;
 

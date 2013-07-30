@@ -13,10 +13,9 @@ import collector.desktop.model.album.AlbumItemStore;
 import collector.desktop.model.album.FieldType;
 import collector.desktop.model.album.ItemField;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
-import collector.desktop.model.database.exceptions.ExceptionHelper;
 import collector.desktop.model.database.operations.DatabaseOperations;
 import collector.desktop.view.ApplicationUI;
-import collector.desktop.view.various.Constants;
+import collector.desktop.view.UIConstants;
 
 public class GalleryViewCreator {
 	private final static Logger LOGGER = LoggerFactory.getLogger(GalleryViewCreator.class);
@@ -44,7 +43,7 @@ public class GalleryViewCreator {
 				pictures = DatabaseOperations.getAlbumItemPictures(ApplicationUI.getSelectedAlbum(), id);
 			} catch (DatabaseWrapperOperationException ex) {
 				LOGGER.error("An error occured while retrieving the pictures associated with the album item #'" + 
-					id + "' from the album '" + ApplicationUI.getSelectedAlbum() + "' \n Stacktrace: " + ExceptionHelper.toString(ex));
+					id + "' from the album '" + ApplicationUI.getSelectedAlbum() + "'", ex);
 			}
 			
 			if (pictures == null || pictures.isEmpty()) {
@@ -67,9 +66,9 @@ public class GalleryViewCreator {
 								 "  <html>" +
 								 "    <head>" +
 								 "      <title>sammelbox.org</title>" +
-								 "      <meta " + Constants.META_PARAMS + ">" + 
-								 "      <link rel=stylesheet href=\"" + Constants.STYLE_CSS + "\" />" +
-								 "      <script src=\"" + Constants.EFFECTS_JS + "\"></script>" +
+								 "      <meta " + UIConstants.META_PARAMS + ">" + 
+								 "      <link rel=stylesheet href=\"" + UIConstants.STYLE_CSS + "\" />" +
+								 "      <script src=\"" + UIConstants.EFFECTS_JS + "\"></script>" +
 								 "    </head>" +
 								 "    <body style=\"background-color:#ffffff;font-family:" +  Utilities.getDefaultSystemFont() + "\">" +
 								        galleryItemHtmlBuilder.toString() +

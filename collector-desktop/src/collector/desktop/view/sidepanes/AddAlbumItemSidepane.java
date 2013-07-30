@@ -7,10 +7,10 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
-import collector.desktop.view.internationalization.DictKeys;
-import collector.desktop.view.internationalization.Translator;
+import collector.desktop.controller.i18n.DictKeys;
+import collector.desktop.controller.i18n.Translator;
+import collector.desktop.view.UIConstants;
 import collector.desktop.view.various.ComponentFactory;
-import collector.desktop.view.various.Constants;
 
 public class AddAlbumItemSidepane {
 
@@ -35,7 +35,7 @@ public class AddAlbumItemSidepane {
 		scrolledComposite.setContent(addAlbumItemComposite);
 		scrolledComposite.setExpandHorizontal(true);
 		scrolledComposite.setExpandVertical(true);
-		scrolledComposite.getHorizontalBar().setIncrement(scrolledComposite.getHorizontalBar().getIncrement() * Constants.SCROLL_SPEED_MULTIPLICATOR);
+		scrolledComposite.getHorizontalBar().setIncrement(scrolledComposite.getHorizontalBar().getIncrement() * UIConstants.SCROLL_SPEED_MULTIPLICATOR);
 
 		// Add Button
 		Button addButton = new Button(addAlbumItemComposite, SWT.PUSH);

@@ -1,4 +1,4 @@
-package collector.desktop.controller.filesystem;
+package collector.desktop.controller.managers;
 
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
@@ -6,8 +6,8 @@ import java.util.ResourceBundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BuildInformation {
-	private static final Logger LOGGER = LoggerFactory.getLogger(BuildInformation.class);
+public class BuildInformationManager {
+	private static final Logger LOGGER = LoggerFactory.getLogger(BuildInformationManager.class);
 	
 	public enum BuildType {
 		/** 
@@ -32,9 +32,9 @@ public class BuildInformation {
 	}
 	
 	private static ResourceBundle buildInfoBundle = null;
-	private static BuildInformation instance;
+	private static BuildInformationManager instance;
 	
-	private BuildInformation() {		
+	private BuildInformationManager() {		
 		try {
 			buildInfoBundle = ResourceBundle.getBundle("information/buildinfo");
 		} catch (MissingResourceException mre) {
@@ -42,9 +42,9 @@ public class BuildInformation {
 		}
 	}
 	
-	public static BuildInformation instance() {
+	public static BuildInformationManager instance() {
 		if (instance == null) {
-			instance = new BuildInformation();
+			instance = new BuildInformationManager();
 		}
 		
 		return instance;

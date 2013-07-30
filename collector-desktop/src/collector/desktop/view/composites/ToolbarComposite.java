@@ -19,13 +19,12 @@ import collector.desktop.controller.GuiController;
 import collector.desktop.controller.events.EventObservable;
 import collector.desktop.controller.events.Observer;
 import collector.desktop.controller.events.SammelboxEvent;
+import collector.desktop.controller.i18n.DictKeys;
+import collector.desktop.controller.i18n.Translator;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
-import collector.desktop.model.database.exceptions.ExceptionHelper;
 import collector.desktop.model.database.operations.DatabaseOperations;
 import collector.desktop.view.ApplicationUI;
 import collector.desktop.view.browser.BrowserFacade;
-import collector.desktop.view.internationalization.DictKeys;
-import collector.desktop.view.internationalization.Translator;
 import collector.desktop.view.sidepanes.AddAlbumItemSidepane;
 import collector.desktop.view.sidepanes.AdvancedSearchSidepane;
 import collector.desktop.view.sidepanes.CreateAlbumSidepane;
@@ -445,8 +444,7 @@ public class ToolbarComposite extends Composite implements Observer {
 				viewBtn.setEnabled(false);
 			}
 		} catch (DatabaseWrapperOperationException ex) {
-			LOGGER.error("An error occured while checking whether the following album contains pictures: '" + albumName + "'" + 
-					" \n Stacktrace:" + ExceptionHelper.toString(ex));
+			LOGGER.error("An error occured while checking whether the following album contains pictures: '" + albumName + "'", ex);
 		}
 
 		GuiController.getGuiState().setViewDetailed(true);

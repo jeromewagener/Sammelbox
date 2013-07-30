@@ -1,4 +1,4 @@
-package collector.desktop.view.listeners;
+package collector.desktop.controller.listeners;
 
 import java.util.List;
 
@@ -14,22 +14,21 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import collector.desktop.controller.i18n.DictKeys;
+import collector.desktop.controller.i18n.Translator;
 import collector.desktop.model.album.AlbumItem;
 import collector.desktop.model.album.FieldType;
 import collector.desktop.model.album.ItemField;
+import collector.desktop.model.database.QueryBuilder;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
-import collector.desktop.model.database.exceptions.ExceptionHelper;
 import collector.desktop.model.database.operations.DatabaseOperations;
-import collector.desktop.model.database.utilities.QueryBuilder;
 import collector.desktop.view.ApplicationUI;
+import collector.desktop.view.UIConstants;
 import collector.desktop.view.browser.BrowserFacade;
 import collector.desktop.view.composites.StatusBarComposite;
-import collector.desktop.view.internationalization.DictKeys;
-import collector.desktop.view.internationalization.Translator;
 import collector.desktop.view.sidepanes.EmptySidepane;
 import collector.desktop.view.sidepanes.UpdateAlbumItemSidepane;
 import collector.desktop.view.various.ComponentFactory;
-import collector.desktop.view.various.Constants;
 import collector.desktop.view.various.PanelType;
 
 public class BrowserListener implements LocationListener, ProgressListener, MenuDetectListener {
@@ -61,8 +60,8 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 	 * is executed. (E.g. opening a new composite) 
 	 * @param event the location event used to identify the new location */
 	public void changing(LocationEvent event) {		
-		if (event.location.startsWith(Constants.SHOW_UPDATE_COMPOSITE)) {
-			String id = event.location.substring(Constants.SHOW_UPDATE_COMPOSITE.length());
+		if (event.location.startsWith(UIConstants.SHOW_UPDATE_COMPOSITE)) {
+			String id = event.location.substring(UIConstants.SHOW_UPDATE_COMPOSITE.length());
 			removeQuestionMarkAtTheEndIfPresent(id);
 
 			ApplicationUI.changeRightCompositeTo(PanelType.UpdateEntry,
@@ -72,8 +71,8 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 			// Do not change the page
 			event.doit = false;
 
-		} else if (event.location.startsWith(Constants.SHOW_DELETE_COMPOSITE)) {
-			String id = event.location.substring(Constants.SHOW_DELETE_COMPOSITE.length());
+		} else if (event.location.startsWith(UIConstants.SHOW_DELETE_COMPOSITE)) {
+			String id = event.location.substring(UIConstants.SHOW_DELETE_COMPOSITE.length());
 			removeQuestionMarkAtTheEndIfPresent(id);
 
 			int messageBoxStyle =  SWT.ICON_WARNING | SWT.YES | SWT.NO;			
@@ -87,18 +86,18 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 					AlbumItem albumItemToBeDeleted = DatabaseOperations.getAlbumItem(ApplicationUI.getSelectedAlbum(), Long.parseLong(id));
 					DatabaseOperations.deleteAlbumItem(albumItemToBeDeleted);
 				} catch (NumberFormatException nfe) {
-					LOGGER.error("Couldn't parse the following id: '" + id + "' \n Stacktrace: " + ExceptionHelper.toString(nfe));
+					LOGGER.error("Couldn't parse the following id: '" + id + "'", nfe);
 				} catch (DatabaseWrapperOperationException ex) {
 					LOGGER.error("A database error occured while deleting the album item #" + id + " from the album '" + 
-										ApplicationUI.getSelectedAlbum() + "' \n Stacktrace: " + ExceptionHelper.toString(ex));
+										ApplicationUI.getSelectedAlbum() + "'", ex);
 				}
 				BrowserFacade.performBrowserQueryAndShow(QueryBuilder.createSelectStarQuery(ApplicationUI.getSelectedAlbum()));
 			}
 
 			// Do not change the page
 			event.doit = false;
-		} else if (event.location.startsWith(Constants.SHOW_BIG_PICTURE)) {
-			String pathAndIdString = event.location.substring(Constants.SHOW_BIG_PICTURE.length());
+		} else if (event.location.startsWith(UIConstants.SHOW_BIG_PICTURE)) {
+			String pathAndIdString = event.location.substring(UIConstants.SHOW_BIG_PICTURE.length());
 
 			removeQuestionMarkAtTheEndIfPresent(pathAndIdString);
 
@@ -109,13 +108,13 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 
 			// Do not change the page
 			event.doit = false;
-		} else if (event.location.startsWith(Constants.SHOW_LAST_PAGE)) {
+		} else if (event.location.startsWith(UIConstants.SHOW_LAST_PAGE)) {
 			BrowserFacade.goBackToLastPage();
 
 			// Do not change the page
 			event.doit = false;
-		} else if (event.location.startsWith(Constants.SHOW_DETAILS)) {
-			String id = event.location.substring(Constants.SHOW_DETAILS.length());
+		} else if (event.location.startsWith(UIConstants.SHOW_DETAILS)) {
+			String id = event.location.substring(UIConstants.SHOW_DETAILS.length());
 			removeQuestionMarkAtTheEndIfPresent(id);
 
 			AlbumItem albumItem;
@@ -134,15 +133,15 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 				
 				StatusBarComposite.getInstance(ApplicationUI.getShell()).writeStatus(sb.toString());
 			} catch (NumberFormatException nfe) {
-				LOGGER.error("Couldn't parse the following id: '" + id + "' \n Stacktrace: " + ExceptionHelper.toString(nfe));
+				LOGGER.error("Couldn't parse the following id: '" + id + "'", nfe);
 			} catch (DatabaseWrapperOperationException ex) {
-				LOGGER.error("A database related error occured: \n Stacktrace: " + ExceptionHelper.toString(ex));
+				LOGGER.error("A database related error occured: \n Stacktrace: ", ex);
 			}
 
 			// Do not change the page
 			event.doit = false;
-		} else if (event.location.startsWith(Constants.SHOW_DETAILS_COMPOSITE)) {
-			String id = event.location.substring(Constants.SHOW_DETAILS_COMPOSITE.length());
+		} else if (event.location.startsWith(UIConstants.SHOW_DETAILS_COMPOSITE)) {
+			String id = event.location.substring(UIConstants.SHOW_DETAILS_COMPOSITE.length());
 			removeQuestionMarkAtTheEndIfPresent(id);
 
 			ApplicationUI.changeRightCompositeTo(PanelType.UpdateEntry,
@@ -158,12 +157,12 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 			} else {
 				event.doit = false;
 			}
-		} else if (event.location.equals(Constants.ADD_ADDITIONAL_ALBUM_ITEMS)) {
+		} else if (event.location.equals(UIConstants.ADD_ADDITIONAL_ALBUM_ITEMS)) {
 			BrowserFacade.addAdditionalAlbumItems();
 
 			// Do not change the page
 			event.doit = false;
-		} else if (event.location.equals(Constants.SHOW_DETAILS_VIEW_OF_ALBUM)) {
+		} else if (event.location.equals(UIConstants.SHOW_DETAILS_VIEW_OF_ALBUM)) {
 			BrowserFacade.performBrowserQueryAndShow(QueryBuilder.createSelectStarQuery(ApplicationUI.getSelectedAlbum()));
 			
 			ApplicationUI.changeRightCompositeTo(PanelType.Empty, EmptySidepane.build(ApplicationUI.getThreePanelComposite()));

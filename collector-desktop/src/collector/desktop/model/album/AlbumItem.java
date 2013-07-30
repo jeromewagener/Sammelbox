@@ -7,10 +7,10 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import collector.desktop.model.database.DatabaseStringUtilities;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.model.database.operations.DatabaseConstants;
 import collector.desktop.model.database.operations.DatabaseOperations;
-import collector.desktop.model.database.utilities.DatabaseStringUtilities;
 
 public class AlbumItem {
 	public static Long ITEM_ID_UNDEFINED = Long.MAX_VALUE;

@@ -7,12 +7,11 @@ import org.eclipse.swt.widgets.Shell;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import collector.desktop.controller.i18n.DictKeys;
+import collector.desktop.controller.i18n.Translator;
+import collector.desktop.controller.managers.DatabaseIntegrityManager;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
-import collector.desktop.model.database.exceptions.ExceptionHelper;
-import collector.desktop.model.database.utilities.DatabaseIntegrityManager;
 import collector.desktop.view.ApplicationUI;
-import collector.desktop.view.internationalization.DictKeys;
-import collector.desktop.view.internationalization.Translator;
 import collector.desktop.view.various.LoadingOverlayShell;
 
 // TODO remove or adapt
@@ -58,7 +57,7 @@ public class AutosaveController {
 		try {
 			DatabaseIntegrityManager.backupAutoSave();
 		} catch (DatabaseWrapperOperationException ex) {
-			LOGGER.error("Couldn't backup the auto save \n Stacktrace:" + ExceptionHelper.toString(ex));
+			LOGGER.error("Couldn't backup the auto save", ex);
 		}
 		shell.stop();
 	}

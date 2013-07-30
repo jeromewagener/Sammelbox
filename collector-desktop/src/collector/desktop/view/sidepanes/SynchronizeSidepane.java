@@ -11,8 +11,8 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
-import collector.desktop.view.internationalization.DictKeys;
-import collector.desktop.view.internationalization.Translator;
+import collector.desktop.controller.i18n.DictKeys;
+import collector.desktop.controller.i18n.Translator;
 import collector.desktop.view.various.ComponentFactory;
 import collector.desktop.view.various.SynchronizeCompositeHelper;
 import collector.desktop.view.various.SynchronizeStep;

@@ -6,8 +6,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
+import collector.desktop.controller.listeners.BrowserListener;
 import collector.desktop.view.ApplicationUI;
-import collector.desktop.view.listeners.BrowserListener;
 
 public class BrowserComposite {
 	

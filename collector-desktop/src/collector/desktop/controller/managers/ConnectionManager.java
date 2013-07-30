@@ -1,4 +1,4 @@
-package collector.desktop.model.database.utilities;
+package collector.desktop.controller.managers;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,7 +14,6 @@ import org.slf4j.LoggerFactory;
 import collector.desktop.controller.filesystem.FileSystemAccessWrapper;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException.DBErrorState;
-import collector.desktop.model.database.exceptions.ExceptionHelper;
 import collector.desktop.model.database.operations.DatabaseOperations;
 
 public class ConnectionManager {
@@ -81,7 +80,7 @@ public class ConnectionManager {
 				return false;
 			}
 		} catch (Exception ex) {
-			LOGGER.error("Unable to test the database connection \n Stacktrace: " + ExceptionHelper.toString(ex));
+			LOGGER.error("Unable to test the database connection", ex);
 			return false;			
 		}
 		

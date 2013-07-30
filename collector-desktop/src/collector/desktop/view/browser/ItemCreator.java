@@ -8,6 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import collector.desktop.controller.filesystem.FileSystemAccessWrapper;
+import collector.desktop.controller.i18n.DictKeys;
+import collector.desktop.controller.i18n.Translator;
 import collector.desktop.controller.settings.ApplicationSettingsManager;
 import collector.desktop.model.album.AlbumItem;
 import collector.desktop.model.album.AlbumItemPicture;
@@ -16,12 +18,9 @@ import collector.desktop.model.album.ItemField;
 import collector.desktop.model.album.OptionType;
 import collector.desktop.model.album.StarRating;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
-import collector.desktop.model.database.exceptions.ExceptionHelper;
 import collector.desktop.model.database.operations.DatabaseConstants;
 import collector.desktop.model.database.operations.DatabaseOperations;
 import collector.desktop.view.ApplicationUI;
-import collector.desktop.view.internationalization.DictKeys;
-import collector.desktop.view.internationalization.Translator;
 
 public class ItemCreator {
 	private final static Logger LOGGER = LoggerFactory.getLogger(ItemCreator.class);
@@ -128,7 +127,7 @@ public class ItemCreator {
 						"</table>");
 			}
 		} catch (DatabaseWrapperOperationException ex) {
-			LOGGER.error("An issue regarding the album item picture occured \n Stacktrace: " + ExceptionHelper.toString(ex));
+			LOGGER.error("An issue regarding the album item picture occured", ex);
 		}
 
 		if (showUpdateAndRemoveButtons) {

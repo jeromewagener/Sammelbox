@@ -1,4 +1,4 @@
-package collector.desktop.view.managers;
+package collector.desktop.controller.managers;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -10,7 +10,6 @@ import collector.desktop.controller.events.EventObservable;
 import collector.desktop.controller.events.SammelboxEvent;
 import collector.desktop.controller.filesystem.FileSystemAccessWrapper;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
-import collector.desktop.model.database.exceptions.ExceptionHelper;
 import collector.desktop.model.database.operations.DatabaseOperations;
 
 public class AlbumManager {
@@ -30,7 +29,7 @@ public class AlbumManager {
 			albums.retainAll(DatabaseOperations.getListOfAllAlbums());
 
 		} catch (DatabaseWrapperOperationException ex) {
-			LOGGER.error("A problem occured while retrieving the list of albums from the database \n Stacktrace: " + ExceptionHelper.toString(ex));
+			LOGGER.error("A problem occured while retrieving the list of albums from the database", ex);
 		}
 	}
 	

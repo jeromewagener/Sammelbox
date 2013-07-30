@@ -8,9 +8,9 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
-import collector.desktop.controller.filesystem.BuildInformation;
-import collector.desktop.view.internationalization.DictKeys;
-import collector.desktop.view.internationalization.Translator;
+import collector.desktop.controller.i18n.DictKeys;
+import collector.desktop.controller.i18n.Translator;
+import collector.desktop.controller.managers.BuildInformationManager;
 import collector.desktop.view.various.ComponentFactory;
 
 public class StatusBarComposite {
@@ -87,7 +87,7 @@ public class StatusBarComposite {
 	}
 	
 	private String getDefaultStatus() {
-		return Translator.get(DictKeys.STATUSBAR_PROGRAM_STARTED, BuildInformation.instance().getVersion(), 
-				BuildInformation.instance().getBuildTimeStamp(), BuildInformation.instance().getBuildType());
+		return Translator.get(DictKeys.STATUSBAR_PROGRAM_STARTED, BuildInformationManager.instance().getVersion(), 
+				BuildInformationManager.instance().getBuildTimeStamp(), BuildInformationManager.instance().getBuildType());
 	}
 }

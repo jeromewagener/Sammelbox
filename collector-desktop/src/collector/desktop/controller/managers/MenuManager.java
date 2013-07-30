@@ -1,4 +1,4 @@
-package collector.desktop.view.managers;
+package collector.desktop.controller.managers;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -11,16 +11,14 @@ import org.eclipse.swt.widgets.Shell;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import collector.desktop.controller.filesystem.export.CSVExporter;
-import collector.desktop.controller.filesystem.export.HTMLExporter;
+import collector.desktop.controller.filesystem.exporting.CSVExporter;
+import collector.desktop.controller.filesystem.exporting.HTMLExporter;
+import collector.desktop.controller.i18n.DictKeys;
+import collector.desktop.controller.i18n.Translator;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
-import collector.desktop.model.database.exceptions.ExceptionHelper;
 import collector.desktop.model.database.operations.DatabaseOperations;
-import collector.desktop.model.database.utilities.DatabaseIntegrityManager;
 import collector.desktop.view.ApplicationUI;
 import collector.desktop.view.browser.BrowserFacade;
-import collector.desktop.view.internationalization.DictKeys;
-import collector.desktop.view.internationalization.Translator;
 import collector.desktop.view.sidepanes.AdvancedSearchSidepane;
 import collector.desktop.view.sidepanes.AlterAlbumSidepane;
 import collector.desktop.view.sidepanes.CreateAlbumSidepane;
@@ -114,8 +112,7 @@ public class MenuManager {
 					try {
 						DatabaseIntegrityManager.backupToFile(path);
 					} catch (DatabaseWrapperOperationException ex) {
-						LOGGER.error("An error occured while trying to backup albums to a backup file \n Stacktrace: " + 
-								ExceptionHelper.toString(ex));
+						LOGGER.error("An error occured while trying to backup albums to a backup file", ex);
 					}
 				}
 			}
@@ -140,7 +137,7 @@ public class MenuManager {
 						DatabaseIntegrityManager.restoreFromFile(path);
 						AlbumViewManager.initialize();
 					} catch (DatabaseWrapperOperationException ex) {
-						LOGGER.error("An error occured while trying to restore albums from a backup file \n Stacktrace: " + ExceptionHelper.toString(ex));
+						LOGGER.error("An error occured while trying to restore albums from a backup file", ex);
 					}
 					// No default album is selected on restore
 					ApplicationUI.refreshAlbumList();

@@ -3,7 +3,7 @@ package collector.desktop.controller.settings;
 import java.util.Locale;
 
 import collector.desktop.controller.filesystem.FileSystemAccessWrapper;
-import collector.desktop.view.internationalization.Language;
+import collector.desktop.controller.i18n.Language;
 
 public class ApplicationSettingsManager {
 	private static ApplicationSettings applicationSettings = new ApplicationSettings();

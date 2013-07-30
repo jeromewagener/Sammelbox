@@ -1,4 +1,4 @@
-package collector.desktop.model.database.utilities;
+package collector.desktop.controller.managers;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,8 +13,8 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import collector.desktop.controller.filesystem.BuildInformation;
 import collector.desktop.controller.filesystem.FileSystemAccessWrapper;
+import collector.desktop.model.database.DatabaseStringUtilities;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException.DBErrorState;
 
@@ -234,7 +234,7 @@ public class DatabaseIntegrityManager {
 	 * @throws DatabaseWrapperOperationException 
 	 */
 	public static void backupAutoSave() throws DatabaseWrapperOperationException {		
-		String programVersion = BuildInformation.instance().getBuildType() + "_" + BuildInformation.instance().getVersion();
+		String programVersion = BuildInformationManager.instance().getBuildType() + "_" + BuildInformationManager.instance().getVersion();
 		String timeStamp = Long.toString(getLastDatabaseChangeTimeStamp());		
 	
 		String autoSaveFilePath = FileSystemAccessWrapper.COLLECTOR_HOME_BACKUPS + 

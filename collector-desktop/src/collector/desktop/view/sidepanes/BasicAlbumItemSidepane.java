@@ -26,6 +26,9 @@ import org.eclipse.swt.widgets.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import collector.desktop.controller.i18n.DictKeys;
+import collector.desktop.controller.i18n.Translator;
+import collector.desktop.controller.managers.WelcomePageManager;
 import collector.desktop.model.album.AlbumItem;
 import collector.desktop.model.album.AlbumItemPicture;
 import collector.desktop.model.album.FieldType;
@@ -33,14 +36,10 @@ import collector.desktop.model.album.MetaItemField;
 import collector.desktop.model.album.OptionType;
 import collector.desktop.model.album.StarRating;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
-import collector.desktop.model.database.exceptions.ExceptionHelper;
 import collector.desktop.model.database.operations.DatabaseOperations;
 import collector.desktop.view.ApplicationUI;
 import collector.desktop.view.browser.BrowserFacade;
 import collector.desktop.view.image.ImageDropAndManagementComposite;
-import collector.desktop.view.internationalization.DictKeys;
-import collector.desktop.view.internationalization.Translator;
-import collector.desktop.view.managers.WelcomePageManager;
 import collector.desktop.view.various.ComponentFactory;
 import collector.desktop.view.various.PanelType;
 
@@ -102,7 +101,7 @@ public class BasicAlbumItemSidepane {
 			// if the album contains pictures, show the picture composite
 			addPictureComposite = DatabaseOperations.isPictureAlbum(album);
 		} catch(DatabaseWrapperOperationException ex) {
-			LOGGER.error("A database related error occured \n Stacktrace: " + ExceptionHelper.toString(ex));
+			LOGGER.error("A database related error occured", ex);
 		}
 
 		for (MetaItemField metaItem : metaItemFields) {
@@ -379,7 +378,7 @@ public class BasicAlbumItemSidepane {
 				
 			} catch (DatabaseWrapperOperationException ex) {
 				LOGGER.error("An error occured while fetching the images for the album item #'" + albumItemId + 
-						"' from the album '" + ApplicationUI.getSelectedAlbum() + "' \n Stacktrace: " + ExceptionHelper.toString(ex));
+						"' from the album '" + ApplicationUI.getSelectedAlbum() + "'", ex);
 			}
 		}
 
@@ -526,7 +525,7 @@ public class BasicAlbumItemSidepane {
 					ApplicationUI.changeRightCompositeTo(PanelType.Empty, EmptySidepane.build(ApplicationUI.getThreePanelComposite()));
 					WelcomePageManager.updateLastModifiedWithCurrentDate(ApplicationUI.getSelectedAlbum());
 				} catch (DatabaseWrapperOperationException ex) {
-					LOGGER.error("A database related error occured \n " + ExceptionHelper.toString(ex));
+					LOGGER.error("A database related error occured", ex);
 				}
 			}
 		};

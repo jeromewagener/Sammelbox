@@ -28,11 +28,11 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Widget;
 
 import collector.desktop.controller.GuiController;
+import collector.desktop.controller.i18n.DictKeys;
+import collector.desktop.controller.i18n.Translator;
 import collector.desktop.model.GuiState;
 import collector.desktop.model.album.AlbumItemPicture;
 import collector.desktop.view.ApplicationUI;
-import collector.desktop.view.internationalization.DictKeys;
-import collector.desktop.view.internationalization.Translator;
 import collector.desktop.view.various.ComponentFactory;
 
 public class ImageDropAndManagementComposite extends Composite implements DropTargetListener{

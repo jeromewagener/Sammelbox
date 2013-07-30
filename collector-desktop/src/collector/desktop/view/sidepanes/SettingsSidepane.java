@@ -11,11 +11,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
 
+import collector.desktop.controller.i18n.DictKeys;
+import collector.desktop.controller.i18n.Language;
+import collector.desktop.controller.i18n.Translator;
 import collector.desktop.controller.settings.ApplicationSettingsManager;
 import collector.desktop.view.ApplicationUI;
-import collector.desktop.view.internationalization.DictKeys;
-import collector.desktop.view.internationalization.Language;
-import collector.desktop.view.internationalization.Translator;
 import collector.desktop.view.various.ComponentFactory;
 
 public class SettingsSidepane {

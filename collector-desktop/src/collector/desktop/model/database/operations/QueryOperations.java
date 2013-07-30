@@ -16,19 +16,19 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import collector.desktop.controller.managers.ConnectionManager;
 import collector.desktop.model.album.AlbumItem;
 import collector.desktop.model.album.AlbumItemPicture;
 import collector.desktop.model.album.AlbumItemResultSet;
 import collector.desktop.model.album.FieldType;
 import collector.desktop.model.album.MetaItemField;
 import collector.desktop.model.album.OptionType;
+import collector.desktop.model.database.DatabaseStringUtilities;
+import collector.desktop.model.database.QueryBuilder;
+import collector.desktop.model.database.QueryBuilder.QueryComponent;
+import collector.desktop.model.database.QueryBuilder.QueryOperator;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException.DBErrorState;
-import collector.desktop.model.database.utilities.ConnectionManager;
-import collector.desktop.model.database.utilities.DatabaseStringUtilities;
-import collector.desktop.model.database.utilities.QueryBuilder;
-import collector.desktop.model.database.utilities.QueryBuilder.QueryComponent;
-import collector.desktop.model.database.utilities.QueryBuilder.QueryOperator;
 
 public class QueryOperations {
 	private static final String SQLITE_INDEX_COLUMN_NAME = "COLUMN_NAME";

@@ -1,4 +1,4 @@
-package collector.desktop.view.managers;
+package collector.desktop.controller.managers;
 
 import java.util.HashMap;
 import java.util.LinkedList;

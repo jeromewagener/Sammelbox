@@ -1,4 +1,4 @@
-package collector.desktop.view.managers;
+package collector.desktop.controller.managers;
 
 import java.text.SimpleDateFormat;
 import java.util.Collections;
@@ -13,11 +13,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import collector.desktop.controller.filesystem.FileSystemAccessWrapper;
+import collector.desktop.controller.i18n.DictKeys;
+import collector.desktop.controller.i18n.Translator;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
-import collector.desktop.model.database.exceptions.ExceptionHelper;
 import collector.desktop.model.database.operations.DatabaseOperations;
-import collector.desktop.view.internationalization.DictKeys;
-import collector.desktop.view.internationalization.Translator;
 
 public class WelcomePageManager {
 	private final static Logger LOGGER = LoggerFactory.getLogger(WelcomePageManager.class);
@@ -71,7 +70,7 @@ public class WelcomePageManager {
 		try {
 			return DatabaseOperations.getNumberOfItemsInAlbum(albumName);
 		} catch (DatabaseWrapperOperationException ex) {
-			LOGGER.error("Could not retrieve the number of items in the '" + albumName + "' album \n Stacktrace: " + ExceptionHelper.toString(ex));
+			LOGGER.error("Could not retrieve the number of items in the '" + albumName + "' album", ex);
 			
 			return 0L;
 		}

@@ -27,16 +27,15 @@ import org.slf4j.LoggerFactory;
 
 import collector.desktop.controller.MetaItemFieldFilter;
 import collector.desktop.controller.filesystem.FileSystemAccessWrapper;
+import collector.desktop.controller.i18n.DictKeys;
+import collector.desktop.controller.i18n.Translator;
 import collector.desktop.model.album.AlbumItemStore;
 import collector.desktop.model.album.FieldType;
 import collector.desktop.model.album.MetaItemField;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
-import collector.desktop.model.database.exceptions.ExceptionHelper;
 import collector.desktop.model.database.operations.DatabaseOperations;
 import collector.desktop.view.ApplicationUI;
 import collector.desktop.view.browser.BrowserFacade;
-import collector.desktop.view.internationalization.DictKeys;
-import collector.desktop.view.internationalization.Translator;
 import collector.desktop.view.various.ComponentFactory;
 import collector.desktop.view.various.TextInputDialog;
 
@@ -91,7 +90,7 @@ public class AlterAlbumSidepane {
 			yesButtonForIncludingImages.setSelection(DatabaseOperations.isPictureAlbum(album));
 			noButtonForIncludingImages.setSelection(!DatabaseOperations.isPictureAlbum(album));
 		} catch (DatabaseWrapperOperationException ex) {
-			LOGGER.error("Couldn't determine whether the album contains pictures or not. \n Stacktrace: " + ExceptionHelper.toString(ex));
+			LOGGER.error("Couldn't determine whether the album contains pictures or not.", ex);
 		}
 		
 		Label innerSeperator = new Label(innerComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
@@ -153,7 +152,7 @@ public class AlterAlbumSidepane {
 							AlterAlbumSidepane.updateAlterAlbumPage(yesButtonForIncludingImages, albumFieldNamesAndTypesTable);
 						}
 					} catch (DatabaseWrapperOperationException ex) {
-						LOGGER.error("Couldn't reorder album items \n Stacktrace: " + ExceptionHelper.toString(ex));
+						LOGGER.error("Couldn't reorder album items", ex);
 					}
 				}
 			}
@@ -176,7 +175,7 @@ public class AlterAlbumSidepane {
 						return;
 					}
 				} catch (DatabaseWrapperOperationException ex) {
-					LOGGER.error("Couldn't rename the album \n Stacktrace: " + ExceptionHelper.toString(ex));
+					LOGGER.error("Couldn't rename the album", ex);
 				} 
 
 				if (!FileSystemAccessWrapper.isNameFileSystemCompliant(newAlbumName)) {
@@ -196,7 +195,7 @@ public class AlterAlbumSidepane {
 					
 					AlterAlbumSidepane.updateAlterAlbumPage(yesButtonForIncludingImages, albumFieldNamesAndTypesTable);
 				} catch (DatabaseWrapperOperationException ex) {
-					LOGGER.error("Could rename the album with name '" + oldAlbumName + "' to '" + newAlbumName + "' \n Stacktrace: " + ExceptionHelper.toString(ex));
+					LOGGER.error("Could rename the album with name '" + oldAlbumName + "' to '" + newAlbumName, ex);
 					albumNameText.setText(albumNameText.getData().toString());
 				}
 			}
@@ -218,7 +217,7 @@ public class AlterAlbumSidepane {
 						}
 					}
 				} catch(DatabaseWrapperOperationException ex) {
-					LOGGER.error("A database error occured \n Stacktrace: " + ExceptionHelper.toString(ex));
+					LOGGER.error("A database error occured", ex);
 				}
 			}
 		});
@@ -242,7 +241,7 @@ public class AlterAlbumSidepane {
 						}
 					}
 				} catch (DatabaseWrapperOperationException ex) {
-					LOGGER.error("A database error occured \n Stacktrace: " + ExceptionHelper.toString(ex));
+					LOGGER.error("A database error occured", ex);
 				}
 			}
 		});
@@ -276,7 +275,7 @@ public class AlterAlbumSidepane {
 							AlterAlbumSidepane.updateAlterAlbumPage(yesButtonForIncludingImages, albumFieldNamesAndTypesTable);
 						}
 					} catch (DatabaseWrapperOperationException ex) {
-						LOGGER.error("A database error occured \n Stacktrace: " + ExceptionHelper.toString(ex));
+						LOGGER.error("A database error occured", ex);
 					}
 				}
 			}
@@ -306,7 +305,7 @@ public class AlterAlbumSidepane {
 						BrowserFacade.addModificationToAlterationList(Translator.get(DictKeys.BROWSER_ALBUMFIELD_RENAMED, oldMetaItemField.getName(), newMetaItemField.getName()));
 						AlterAlbumSidepane.updateAlterAlbumPage(yesButtonForIncludingImages, albumFieldNamesAndTypesTable);
 					} catch (DatabaseWrapperOperationException ex) {
-						LOGGER.error("An error occured while renaming the album field \n Stacktrace: " + ExceptionHelper.toString(ex));
+						LOGGER.error("An error occured while renaming the album field", ex);
 					}
 				}
 			}
@@ -331,8 +330,7 @@ public class AlterAlbumSidepane {
 							BrowserFacade.addModificationToAlterationList(Translator.get(DictKeys.BROWSER_ALBUMFIELD_REMOVED, item.getText(1)));
 							AlterAlbumSidepane.updateAlterAlbumPage(yesButtonForIncludingImages, albumFieldNamesAndTypesTable);
 						} catch (DatabaseWrapperOperationException ex) {
-							LOGGER.error("An error occured while trying to delete an album item from the " + albumName + " album \n" +
-									" Stacktrace: " + ExceptionHelper.toString(ex));
+							LOGGER.error("An error occured while trying to delete an album item from the " + albumName + " album", ex);
 						}
 
 						item.dispose();				
@@ -359,7 +357,7 @@ public class AlterAlbumSidepane {
 		try {
 			validMetaItemFields = MetaItemFieldFilter.getValidMetaItemFields(DatabaseOperations.getAlbumItemFieldNamesAndTypes(album));
 		} catch (DatabaseWrapperOperationException ex) {
-			LOGGER.error("An error occured while trying to get the list of valid meta item fields \n Stacktrace: " + ExceptionHelper.toString(ex));
+			LOGGER.error("An error occured while trying to get the list of valid meta item fields", ex);
 		}
 		for (MetaItemField metaItemField : validMetaItemFields) {
 			TableItem item = new TableItem(albumFieldNamesAndTypesTable, SWT.NONE);
@@ -449,8 +447,7 @@ public class AlterAlbumSidepane {
 					fieldNameText.setText("");
 
 				} catch (DatabaseWrapperOperationException ex) {
-					LOGGER.error("A database error occured while checking whether '" + metaItemField.getName() + "' is avialable as album name" +
-							" \n Stacktrace: " + ExceptionHelper.toString(ex));
+					LOGGER.error("A database error occured while checking whether '" + metaItemField.getName() + "' is avialable as album name", ex);
 				}
 			}
 		});

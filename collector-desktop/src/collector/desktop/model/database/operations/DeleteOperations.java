@@ -10,16 +10,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import collector.desktop.controller.filesystem.FileSystemAccessWrapper;
+import collector.desktop.controller.managers.ConnectionManager;
+import collector.desktop.controller.managers.DatabaseIntegrityManager;
 import collector.desktop.model.album.AlbumItem;
 import collector.desktop.model.album.AlbumItemPicture;
 import collector.desktop.model.album.FieldType;
 import collector.desktop.model.album.MetaItemField;
+import collector.desktop.model.database.DatabaseStringUtilities;
+import collector.desktop.model.database.QueryBuilder;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException.DBErrorState;
-import collector.desktop.model.database.utilities.ConnectionManager;
-import collector.desktop.model.database.utilities.DatabaseIntegrityManager;
-import collector.desktop.model.database.utilities.DatabaseStringUtilities;
-import collector.desktop.model.database.utilities.QueryBuilder;
 
 public class DeleteOperations {
 	private static final Logger LOGGER = LoggerFactory.getLogger(DeleteOperations.class);
@@ -38,14 +38,17 @@ public class DeleteOperations {
 		
 		// Backup the old data in java objects
 		List<AlbumItem> albumItems = QueryOperations.getAlbumItems(QueryBuilder.createSelectStarQuery(albumName));
+		
 		// Create the new table pointing to new typeinfo
 		boolean keepPictureField = QueryOperations.isPictureAlbum(albumName);
 		List<MetaItemField> newFields = QueryOperations.getAlbumItemFieldNamesAndTypes(albumName);
 		newFields = UpdateOperations.removeFieldFromMetaItemList(metaItemField, newFields);
 
+		// remember savepoint
 		String savepointName = DatabaseIntegrityManager.createSavepoint();
-		// Drop the old table + typeTable
+		
 		try {
+			// Drop the old table and typeTable
 			removeAlbum(albumName);
 		
 			// The following three columns are automatically created by createNewAlbumTable
@@ -54,7 +57,7 @@ public class DeleteOperations {
 			CreateOperations.createNewAlbumTable(newFields, albumName, DatabaseStringUtilities.encloseNameWithQuotes(
 					DatabaseStringUtilities.generateTableName(albumName)), keepPictureField);
 			
-			// Restore the old data from the java objects in the new tables [delete column]
+			// Restore the old data from the java objects
 			List<AlbumItem> newAlbumItems = removeFieldFromAlbumItemList(metaItemField, albumItems);
 			for (AlbumItem albumItem : newAlbumItems) {
 				albumItem.setAlbumName(albumName);

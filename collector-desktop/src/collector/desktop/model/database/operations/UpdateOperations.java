@@ -13,18 +13,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import collector.desktop.controller.filesystem.FileSystemAccessWrapper;
+import collector.desktop.controller.managers.ConnectionManager;
+import collector.desktop.controller.managers.DatabaseIntegrityManager;
 import collector.desktop.model.album.AlbumItem;
 import collector.desktop.model.album.AlbumItemPicture;
 import collector.desktop.model.album.FieldType;
 import collector.desktop.model.album.ItemField;
 import collector.desktop.model.album.MetaItemField;
 import collector.desktop.model.album.OptionType;
+import collector.desktop.model.database.DatabaseStringUtilities;
+import collector.desktop.model.database.QueryBuilder;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException.DBErrorState;
-import collector.desktop.model.database.utilities.ConnectionManager;
-import collector.desktop.model.database.utilities.DatabaseIntegrityManager;
-import collector.desktop.model.database.utilities.DatabaseStringUtilities;
-import collector.desktop.model.database.utilities.QueryBuilder;
 
 public class UpdateOperations {
 	private static final Logger LOGGER = LoggerFactory.getLogger(UpdateOperations.class);
