@@ -2,3 +2,7 @@
 /.classpath
 /bin
 /logs
+/.externalToolBuilders
+/.settings
+/.classpath
+/.project
