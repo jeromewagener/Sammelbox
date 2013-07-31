@@ -34,12 +34,14 @@ public class Sammelbox {
 		} catch (DatabaseWrapperOperationException ex) {
 			try {
 				LOGGER.warn("Couldn't open a database connection. Will try to open a clean connection instead.");
-				ConnectionManager.openCleanConnection();				
+				ConnectionManager.openCleanConnection();	
 			} catch (DatabaseWrapperOperationException ex2) {
 				LOGGER.error("The database is corrupt since opening a connection failed. " +
 						"Recent autosaves of the database can be found in: " + FileSystemAccessWrapper.COLLECTOR_HOME_BACKUPS);
 				
-				// TODO indicate error to user
+				ComponentFactory.getMessageBox(ApplicationUI.getShell(), 
+						Translator.get(DictKeys.DIALOG_TITLE_SAMMELBOX_CANT_BE_LAUNCHED), 
+						Translator.get(DictKeys.DIALOG_CONTENT_SAMMELBOX_CANT_BE_LAUNCHED), SWT.ERROR).open();
 			}			
 		}
 	}
