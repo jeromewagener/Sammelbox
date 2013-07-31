@@ -19,6 +19,7 @@ import collector.desktop.model.album.AlbumItemPicture;
 import collector.desktop.model.album.FieldType;
 import collector.desktop.model.album.ItemField;
 import collector.desktop.model.album.MetaItemField;
+import collector.desktop.model.album.SampleAlbumItemPicture;
 import collector.desktop.model.database.DatabaseStringUtilities;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException;
 import collector.desktop.model.database.exceptions.DatabaseWrapperOperationException.DBErrorState;
@@ -286,7 +287,14 @@ public class CreateOperations {
 				DatabaseStringUtilities.generatePictureTableName(albumName)), columns , false, true);
 	}
 	
-	// TODO explain addPictures flag
+	/** Adds the given album item to the corresponding album table 
+	 * @param albumItem the item to be added 
+	 * @param addPictures should the pictures from the given album item be added to the corresponding picture table?
+	 * This flag is useful in the case of internal operations which do not touch the picture table such as the 
+	 * rename of a field
+	 * @param updateContentVersion should the content version be automatically be set/updated during the addition?
+	 * This flag is useful in the case where items are re-added to the table after some structural alterations have
+	 * been performed that have not modified the content */
 	static long addAlbumItem(AlbumItem albumItem, boolean addPictures, boolean updateContentVersion) throws DatabaseWrapperOperationException {
 		// Check if the item contains a albumName
 		if (albumItem.getAlbumName().isEmpty()) {
@@ -388,11 +396,16 @@ public class CreateOperations {
 		}
 	}
 	
+	/** See {@link #addAlbumItem(AlbumItem, boolean, boolean)} */
 	static long addAlbumItem(AlbumItem albumItem, boolean updateContentVersion) throws DatabaseWrapperOperationException {
 		return addAlbumItem(albumItem, true, updateContentVersion);
 	}
 	
 	static void addAlbumItemPicture(AlbumItemPicture albumItemPicture) throws DatabaseWrapperOperationException {
+		if (albumItemPicture instanceof SampleAlbumItemPicture) {
+			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, "Cannot persist SampleAlbumItemPicture");
+		}
+		
 		StringBuilder sb = new StringBuilder("INSERT INTO ");
 		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(
 				DatabaseStringUtilities.generatePictureTableName(albumItemPicture.getAlbumName())));

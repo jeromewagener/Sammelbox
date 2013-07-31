@@ -233,8 +233,8 @@ public class DeleteOperations {
 		}
 	}
 	
-
-	// TODO comment also clears picture folder
+	/** Use this method to clear the picture table of the specified album 
+	 * as well as the corresponding picture folder on the filesystem */
 	static void clearPictureTable(String albumName) throws DatabaseWrapperOperationException {
 		String clearPictureTableQuery = "DELETE FROM " + 
 				DatabaseStringUtilities.encloseNameWithQuotes(DatabaseStringUtilities.generatePictureTableName(albumName));
