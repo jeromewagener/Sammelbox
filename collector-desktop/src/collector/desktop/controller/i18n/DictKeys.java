@@ -77,7 +77,9 @@ public class DictKeys {
 	public static final String DIALOG_TITLE_ENTER_OPTION = "collector.dialog.title.DIALOG_TITLE_ENTER_OPTION";
 	public static final String DIALOG_CONTENT_ENTER_OPTION = "collector.dialog.content.DIALOG_CONTENT_ENTER_OPTION";
 	public static final String DIALOG_TITLE_RESTART_NEEDED_FOR_SETTINGS	 = "collector.dialog.title.DIALOG_TITLE_RESTART_NEEDED_FOR_SETTINGS";
-	public static final String DIALOG_CONTENT_RESTART_NEEDED_FOR_SETTINGS	 = "collector.dialog.content.DIALOG_TITLE_RESTART_NEEDED_FOR_SETTINGS";
+	public static final String DIALOG_CONTENT_RESTART_NEEDED_FOR_SETTINGS = "collector.dialog.content.DIALOG_TITLE_RESTART_NEEDED_FOR_SETTINGS";
+	public static final String DIALOG_TITLE_SAMMELBOX_CANT_BE_LAUNCHED = "collector.dialog.title.SAMMELBOX_CANT_BE_LAUNCHED"; // Well this is embarrassing...
+	public static final String DIALOG_CONTENT_SAMMELBOX_CANT_BE_LAUNCHED = "collector.dialog.content.SAMMELBOX_CANT_BE_LAUNCHED"; // Unfortunately, Sammelbox is not able to access it's internal Database. However, you might want to try to restore your database from a previous backup or from a previous autosave. Please have a look at www.sammelbox.org the FAQ to find instructions on how to resolve your problem.
 	
 	/*   Open & Save Dialogs   */
 	public static final String DIALOG_BACKUP_TO_FILE = "collector.savedialog.title.BACKUP_TO_FILE";
