@@ -71,7 +71,7 @@ public class MenuManager {
 		exportItem.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent evt) {
-				if (getIsAlbumSelectedAndShowMessageIfNot()) {
+				if (isAlbumSelectedAndShowMessageIfNot()) {
 					FileDialog saveFileDialog = new FileDialog(ApplicationUI.getShell(), SWT.SAVE);
 					saveFileDialog.setText(Translator.get(DictKeys.DIALOG_EXPORT_VISIBLE_ITEMS));
 					saveFileDialog.setFilterPath(System.getProperty("user.home"));
@@ -167,7 +167,7 @@ public class MenuManager {
 		advancedSearch.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				if (getIsAlbumSelectedAndShowMessageIfNot()) {
+				if (isAlbumSelectedAndShowMessageIfNot()) {
 					ApplicationUI.changeRightCompositeTo(PanelType.AdvancedSearch, AdvancedSearchSidepane.build(
 							ApplicationUI.getThreePanelComposite(), ApplicationUI.getSelectedAlbum()));
 				}
@@ -191,7 +191,7 @@ public class MenuManager {
 		alterAlbum.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				if (getIsAlbumSelectedAndShowMessageIfNot()) {
+				if (isAlbumSelectedAndShowMessageIfNot()) {
 					ApplicationUI.changeRightCompositeTo(PanelType.AlterAlbum, AlterAlbumSidepane.build(
 							ApplicationUI.getThreePanelComposite(), ApplicationUI.getSelectedAlbum()));
 				}
@@ -205,10 +205,13 @@ public class MenuManager {
 		deleteAlbum.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				if (getIsAlbumSelectedAndShowMessageIfNot()) {
-					MessageBox messageBox = new MessageBox(ApplicationUI.getShell(), SWT.ICON_WARNING | SWT.YES | SWT.NO);
-					messageBox.setText(Translator.get(DictKeys.DIALOG_TITLE_DELETE_ALBUM));
-					messageBox.setMessage(Translator.get(DictKeys.DIALOG_CONTENT_DELETE_ALBUM, ApplicationUI.getSelectedAlbum()));
+				if (isAlbumSelectedAndShowMessageIfNot()) {					
+					MessageBox messageBox = ComponentFactory.getMessageBox(
+							ApplicationUI.getShell(), 
+							Translator.get(DictKeys.DIALOG_TITLE_DELETE_ALBUM), 
+							Translator.get(DictKeys.DIALOG_CONTENT_DELETE_ALBUM, ApplicationUI.getSelectedAlbum()), 
+							SWT.ICON_WARNING | SWT.YES | SWT.NO);
+					
 					if (messageBox.open() == SWT.YES) {
 						try {
 							DatabaseOperations.removeAlbumAndAlbumPictures(ApplicationUI.getSelectedAlbum());
@@ -285,7 +288,7 @@ public class MenuManager {
 		});
 	}
 
-	private static boolean getIsAlbumSelectedAndShowMessageIfNot() {
+	private static boolean isAlbumSelectedAndShowMessageIfNot() {
 		if (!ApplicationUI.hasSelectedAlbum()) {
 			ComponentFactory.showErrorDialog(
 					ApplicationUI.getShell(), 

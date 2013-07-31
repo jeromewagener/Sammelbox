@@ -17,7 +17,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
@@ -409,12 +408,10 @@ public class AlterAlbumSidepane {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (fieldNameText.getText().isEmpty()) {				
-					MessageBox messageBox = ComponentFactory.getMessageBox(
-							parentComposite.getShell(),
+					ComponentFactory.getMessageBox(parentComposite.getShell(),
 							Translator.get(DictKeys.DIALOG_TITLE_FIELD_MUST_HAVE_NAME),
 							Translator.get(DictKeys.DIALOG_CONTENT_FIELD_MUST_HAVE_NAME),
-							SWT.ICON_WARNING | SWT.OK);
-					messageBox.open();
+							SWT.ICON_WARNING | SWT.OK).open();
 					return;
 				}
 
@@ -424,28 +421,24 @@ public class AlterAlbumSidepane {
 
 				try {
 					if (!DatabaseOperations.isItemFieldNameAvailable(albumName, metaItemField.getName())) {
-						MessageBox messageBox = ComponentFactory.getMessageBox(
-								parentComposite.getShell(),
+						ComponentFactory.getMessageBox(parentComposite.getShell(),
 								Translator.get(DictKeys.DIALOG_TITLE_FIELD_NAME_ALREADY_USED),
 								Translator.get(DictKeys.DIALOG_CONTENT_FIELD_NAME_ALREADY_USED),
-								SWT.ICON_WARNING | SWT.OK);
-						messageBox.open();
+								SWT.ICON_WARNING | SWT.OK).open();
 						fieldNameText.selectAll();
 						fieldNameText.setFocus();
-						return;
+					} else {
+						DatabaseOperations.appendNewAlbumField(albumName, metaItemField);
+						TableItem item = new TableItem(albumFieldNamesAndTypesTable, SWT.NONE);
+						item.setText(1, fieldNameText.getText());
+						item.setText(2, fieldTypeCombo.getText());
+	
+						BrowserFacade.addModificationToAlterationList(Translator.get(DictKeys.BROWSER_ALBUMFIELD_ADDED, fieldNameText.getText(), fieldTypeCombo.getText()));
+						
+						AlterAlbumSidepane.updateAlterAlbumPage(yesButtonForIncludingImages, albumFieldNamesAndTypesTable);
+	
+						fieldNameText.setText("");
 					}
-
-					DatabaseOperations.appendNewAlbumField(albumName, metaItemField);
-					TableItem item = new TableItem(albumFieldNamesAndTypesTable, SWT.NONE);
-					item.setText(1, fieldNameText.getText());
-					item.setText(2, fieldTypeCombo.getText());
-
-					BrowserFacade.addModificationToAlterationList(Translator.get(DictKeys.BROWSER_ALBUMFIELD_ADDED, fieldNameText.getText(), fieldTypeCombo.getText()));
-					
-					AlterAlbumSidepane.updateAlterAlbumPage(yesButtonForIncludingImages, albumFieldNamesAndTypesTable);
-
-					fieldNameText.setText("");
-
 				} catch (DatabaseWrapperOperationException ex) {
 					LOGGER.error("A database error occured while checking whether '" + metaItemField.getName() + "' is avialable as album name", ex);
 				}

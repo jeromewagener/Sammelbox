@@ -74,12 +74,11 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 		} else if (event.location.startsWith(UIConstants.SHOW_DELETE_COMPOSITE)) {
 			String id = event.location.substring(UIConstants.SHOW_DELETE_COMPOSITE.length());
 			removeQuestionMarkAtTheEndIfPresent(id);
-
-			int messageBoxStyle =  SWT.ICON_WARNING | SWT.YES | SWT.NO;			
+		
 			MessageBox messageBox = ComponentFactory.getMessageBox(parentComposite.getShell(),
 					Translator.get(DictKeys.DIALOG_TITLE_DELETE_ALBUM_ITEM), 
 					Translator.get(DictKeys.DIALOG_CONTENT_DELETE_ALBUM_ITEM), 
-					messageBoxStyle);
+					SWT.ICON_WARNING | SWT.YES | SWT.NO);
 
 			if (messageBox.open() == SWT.YES) {
 				try {

@@ -24,7 +24,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Widget;
 
 import collector.desktop.controller.GuiController;
@@ -234,9 +233,9 @@ public class ImageDropAndManagementComposite extends Composite implements DropTa
 	
 	/** This method displays a message box informing the user of trying to drop the unsupported file.*/
 	public void showDroppedUnsupportedFileMessageBox(String filePathToUnsupportedFilegeBox){
-		MessageBox messageBox = new MessageBox(getShell(), SWT.ICON_ERROR);
-		messageBox.setText(Translator.get(DictKeys.DIALOG_TITLE_INVALID_IMAGE_FILE_FORMAT));
-	    messageBox.setMessage(filePathToUnsupportedFilegeBox + Translator.get(DictKeys.DIALOG_CONTENT_INVALID_IMAGE_FILE_FORMAT));
-	    messageBox.open();
+	    ComponentFactory.getMessageBox(getShell(), 
+	    		Translator.get(DictKeys.DIALOG_TITLE_INVALID_IMAGE_FILE_FORMAT), 
+	    		Translator.get(DictKeys.DIALOG_CONTENT_INVALID_IMAGE_FILE_FORMAT), 
+	    		SWT.ICON_ERROR).open();
 	}
 }

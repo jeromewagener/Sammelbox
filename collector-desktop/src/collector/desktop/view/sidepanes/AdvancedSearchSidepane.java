@@ -18,7 +18,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
@@ -147,23 +146,19 @@ public class AdvancedSearchSidepane {
 		addToSearchButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if ((fieldToSearchCombo.getSelectionIndex() == -1) 
-						|| (searchOperatorCombo.getSelectionIndex() == -1) 
-						|| valueToSearchText.getText().equals("")) {				
-					MessageBox messageBox = ComponentFactory.getMessageBox(
-							parentComposite.getShell(),
+				if ((fieldToSearchCombo.getSelectionIndex() == -1) || (searchOperatorCombo.getSelectionIndex() == -1) || valueToSearchText.getText().isEmpty()) {				
+					ComponentFactory.getMessageBox(parentComposite.getShell(),
 							Translator.get(DictKeys.DIALOG_TITLE_SELECT_QUERY_COMPONENTS),
 							Translator.get(DictKeys.DIALOG_CONTENT_SELECT_QUERY_COMPONENTS),
-							SWT.ICON_WARNING | SWT.OK);
-					messageBox.open();
-					return;
+							SWT.ICON_WARNING | SWT.OK).open();
+				} else {
+					TableItem item = new TableItem(searchQueryTable, SWT.NONE);
+					item.setText(0, fieldToSearchCombo.getItem(fieldToSearchCombo.getSelectionIndex()));
+					item.setText(1, searchOperatorCombo.getItem(searchOperatorCombo.getSelectionIndex()));
+					item.setText(2, valueToSearchText.getText());
+	
+					valueToSearchText.setText("");
 				}
-				TableItem item = new TableItem(searchQueryTable, SWT.NONE);
-				item.setText(0, fieldToSearchCombo.getItem(fieldToSearchCombo.getSelectionIndex()));
-				item.setText(1, searchOperatorCombo.getItem(searchOperatorCombo.getSelectionIndex()));
-				item.setText(2, valueToSearchText.getText());
-
-				valueToSearchText.setText("");
 			}
 		});	
 
@@ -336,12 +331,11 @@ public class AdvancedSearchSidepane {
 								QueryOperator.toQueryOperator(searchQueryTable.getItem(i).getText(1)),
 								String.valueOf(dateInMilliseconds)));
 					} catch (ParseException e1) {
-						MessageBox messageBox = ComponentFactory.getMessageBox(
+						ComponentFactory.getMessageBox(
 								parentComposite.getShell(),
 								Translator.get(DictKeys.DIALOG_TITLE_DATE_FORMAT),
 								Translator.get(DictKeys.DIALOG_CONTENT_DATE_FORMAT),
-								SWT.ICON_WARNING | SWT.OK);
-						messageBox.open();
+								SWT.ICON_WARNING | SWT.OK).open();
 					}
 
 				// In case of an option

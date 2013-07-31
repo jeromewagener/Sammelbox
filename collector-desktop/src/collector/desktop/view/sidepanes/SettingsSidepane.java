@@ -9,7 +9,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.MessageBox;
 
 import collector.desktop.controller.i18n.DictKeys;
 import collector.desktop.controller.i18n.Language;
@@ -55,11 +54,10 @@ public class SettingsSidepane {
 				
 				ApplicationSettingsManager.storeToSettingsFile();
 				
-				MessageBox messageBox = new MessageBox(ApplicationUI.getShell(), SWT.ICON_INFORMATION);
-				messageBox.setText(Translator.get(DictKeys.DIALOG_TITLE_RESTART_NEEDED_FOR_SETTINGS));
-				messageBox.setMessage(Translator.get(DictKeys.DIALOG_CONTENT_RESTART_NEEDED_FOR_SETTINGS));
-				
-				messageBox.open();				
+				ComponentFactory.getMessageBox(ApplicationUI.getShell(), 
+						Translator.get(DictKeys.DIALOG_TITLE_RESTART_NEEDED_FOR_SETTINGS), 
+						Translator.get(DictKeys.DIALOG_CONTENT_RESTART_NEEDED_FOR_SETTINGS), 
+						SWT.ICON_INFORMATION).open();
 			}
 		});
 		

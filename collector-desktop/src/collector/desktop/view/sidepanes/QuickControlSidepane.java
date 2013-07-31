@@ -28,6 +28,7 @@ import collector.desktop.model.database.exceptions.DatabaseWrapperOperationExcep
 import collector.desktop.model.database.operations.DatabaseOperations;
 import collector.desktop.view.ApplicationUI;
 import collector.desktop.view.browser.BrowserFacade;
+import collector.desktop.view.various.ComponentFactory;
 import collector.desktop.view.various.PanelType;
 
 public class QuickControlSidepane {
@@ -164,10 +165,12 @@ public class QuickControlSidepane {
 		MenuItem removeAlbum = new MenuItem(albumPopupMenu, SWT.NONE);
 		removeAlbum.setText(Translator.get(DictKeys.DROPDOWN_REMOVE));
 		removeAlbum.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				MessageBox messageBox = new MessageBox(ApplicationUI.getShell(), SWT.ICON_WARNING | SWT.YES | SWT.NO);
-				messageBox.setText(Translator.get(DictKeys.DIALOG_TITLE_DELETE_ALBUM));
-				messageBox.setMessage(Translator.get(DictKeys.DIALOG_CONTENT_DELETE_ALBUM, ApplicationUI.getSelectedAlbum()));
+			public void widgetSelected(SelectionEvent e) {				
+				MessageBox messageBox = ComponentFactory.getMessageBox(ApplicationUI.getShell(), 
+						Translator.get(DictKeys.DIALOG_TITLE_DELETE_ALBUM), 
+						Translator.get(DictKeys.DIALOG_CONTENT_DELETE_ALBUM), 
+						SWT.ICON_WARNING | SWT.YES | SWT.NO);
+				
 				if (messageBox.open() == SWT.YES) {
 					AlbumViewManager.removeAlbumViewsFromAlbum(ApplicationUI.getSelectedAlbum());
 					try {
@@ -251,9 +254,11 @@ public class QuickControlSidepane {
 		removeSavedSearch.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (viewList.getSelectionIndex() >= 0) {
-					MessageBox messageBox = new MessageBox(ApplicationUI.getShell(), SWT.ICON_WARNING | SWT.YES | SWT.NO);
-					messageBox.setText(Translator.get(DictKeys.DIALOG_TITLE_DELETE_SAVED_SEARCH));
-					messageBox.setMessage(Translator.get(DictKeys.DIALOG_TITLE_DELETE_SAVED_SEARCH, viewList.getItem(viewList.getSelectionIndex())));
+					MessageBox messageBox = ComponentFactory.getMessageBox(ApplicationUI.getShell(), 
+							Translator.get(DictKeys.DIALOG_TITLE_DELETE_SAVED_SEARCH),
+							Translator.get(DictKeys.DIALOG_CONTENT_DELETE_SAVED_SEARCH, viewList.getItem(viewList.getSelectionIndex())), 
+							SWT.ICON_WARNING | SWT.YES | SWT.NO);
+					
 					if (messageBox.open() == SWT.YES) {
 						AlbumViewManager.removeAlbumView(
 								GuiController.getGuiState().getSelectedAlbum(), viewList.getItem(viewList.getSelectionIndex()));
