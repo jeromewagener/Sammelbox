@@ -191,4 +191,13 @@ public class Utilities {
 	static void setLastPageAsHtml(String lastShownContentAsHtml) {
 		Utilities.lastPageAsHtml = lastShownContentAsHtml;
 	}
+	
+	/**
+	 * Escapes backslashed in a filepath for java(script)
+	 * @param filePath A filepath that contains backslashes as separators which is an escape sequence in javascript
+	 * @return The escaped string of the filepath.
+	 */
+	public static String escapeBackslashesInFilePath(String filePath) {
+		return filePath.replaceAll("\\\\", "\\\\\\\\");	
+	}
 }

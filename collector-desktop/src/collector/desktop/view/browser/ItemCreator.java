@@ -189,11 +189,12 @@ public class ItemCreator {
 		
 		if (pictures.size() > 1) {
 			for(AlbumItemPicture picture : pictures) {
+				String escapedJavascriptFilePath = Utilities.escapeBackslashesInFilePath(picture.getThumbnailPicturePath());
 				htmlBuilder.append(
 					"<div align=center style=\"display:inline; min-width:40px; width:auto; width:40px\">" +
 					"  <a onClick=showBigPicture(\"imageId" + id + "\") " +
-					"     onMouseOver=\"change(&quot;imageId" + id + "&quot;, &quot;" + picture.getThumbnailPicturePath() + "&quot;)\">" +
-				    "    <img onMouseOver=this.style.cursor=\"pointer\" style=\"max-width:40px; max-height:40px;\" src=\"" + picture.getThumbnailPicturePath() + "\">" +
+					"     onMouseOver=\"change(&quot;imageId" + id + "&quot;, &quot;" + escapedJavascriptFilePath + "&quot;)\">" +
+				    "    <img onMouseOver=this.style.cursor=\"pointer\" style=\"max-width:40px; max-height:40px;\" src=\"" + escapedJavascriptFilePath + "\">" +
 				    "  </a>" +
 				    "</div>");
 			}
