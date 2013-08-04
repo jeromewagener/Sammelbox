@@ -34,8 +34,9 @@ public class PictureViewCreator {
 				int counter = 1;
 	
 				for (AlbumItemPicture picture : pictures) {
+					String escapedPicturePath = Utilities.escapeBackslashesInFilePath(picture.getOriginalPicturePath());
 					smallPictures.append(
-							"<a onMouseover='change(\"bigimg\", \"" + picture.getOriginalPicturePath() + "\")'>" + 
+							"<a onMouseover='change(\"bigimg\", \"" + escapedPicturePath + "\")'>" + 
 									"  <img border=\"1\" " +
 									"       onMouseOver='this.style.cursor=\"pointer\"' " +
 									"       id=\"smallimage" + counter + "\" " +

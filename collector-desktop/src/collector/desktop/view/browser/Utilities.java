@@ -193,9 +193,10 @@ public class Utilities {
 	}
 	
 	/**
-	 * Escapes backslashed in a filepath for java(script)
-	 * @param filePath A filepath that contains backslashes as separators which is an escape sequence in javascript
-	 * @return The escaped string of the filepath.
+	 * Escapes backslashes in a file path to make it ready to use as a string parameter for a javascript method.
+	 * @param filePath A file path that contains backslashes as separators which is an escape sequence in javascript and
+	 * therefore not suitable to use as method parameter.
+	 * @return The escaped file path string.
 	 */
 	public static String escapeBackslashesInFilePath(String filePath) {
 		return filePath.replaceAll("\\\\", "\\\\\\\\");	
