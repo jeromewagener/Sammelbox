@@ -177,9 +177,9 @@ public class Utilities {
 					divs.append(ItemCreator.getAlbumItemDivContainerHtml(albumItem));
 				}
 
-				String javascript = "var div = document.getElementById('albumItems');" +
+				String javascript = "var div = document.getElementById('albumItems'); " +
 									"div.innerHTML = div.innerHTML + '" + divs + "';";
-
+ 
 				// In JavaScript (as in Java), a backslash will escape the following character. 
 				// However, Windows uses the backslash also as the file separator character. For this reason 
 				// we have to escape possible backslashes by using the backslash character itself

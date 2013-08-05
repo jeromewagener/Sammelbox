@@ -38,7 +38,7 @@ public class BuildInformationManager {
 		try {
 			buildInfoBundle = ResourceBundle.getBundle("information/buildinfo");
 		} catch (MissingResourceException mre) {
-			LOGGER.error("The properties file with the build information could be found");
+			LOGGER.error("The properties file with the build information could not be found");
 		}
 	}
 	

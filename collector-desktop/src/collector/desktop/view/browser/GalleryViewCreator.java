@@ -71,7 +71,7 @@ public class GalleryViewCreator {
 								 "      <script src=\"" + UIConstants.EFFECTS_JS + "\"></script>" +
 								 "    </head>" +
 								 "    <body style=\"background-color:#ffffff;font-family:" +  Utilities.getDefaultSystemFont() + "\">" +
-								        galleryItemHtmlBuilder.toString() +
+								 "       <div id=\"albumItems\">" + galleryItemHtmlBuilder.toString() + "</div>" +
 								 "    </body>";
 				
 		browser.setText(finalPageAsHtml);

@@ -14,7 +14,7 @@ import collector.desktop.view.composites.StatusBarComposite;
 public class AlbumItemStore {
 	private static final String SAMPLE = "Sample";
 	private static final int DEFAULT_STOP_INDEX_INCREASE_AMOUNT = 10;
-	private static final int DEFAULT_STOP_INDEX = 40;
+	private static final int DEFAULT_STOP_INDEX = 10;
 	
 	private static List<AlbumItem> albumItems = new ArrayList<AlbumItem>();
 	private static int stopIndex = DEFAULT_STOP_INDEX;
