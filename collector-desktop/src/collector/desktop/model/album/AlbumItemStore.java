@@ -161,8 +161,9 @@ public class AlbumItemStore {
 				} else if (metaItemField.getType().equals(FieldType.Integer)) {
 					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), 10 + (int)(Math.random() * ((90) + 1)), false));
 				} else if (metaItemField.getType().equals(FieldType.Decimal)) {
-					DecimalFormat twoDecimalsFormat = new DecimalFormat("#.##");
-					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), Double.valueOf(twoDecimalsFormat.format(Math.random() * (100)))));
+					DecimalFormat df = new DecimalFormat();
+					df.setMaximumFractionDigits(2);
+					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), Double.valueOf(df.format(Math.random() * (100)))));
 				} else if (metaItemField.getType().equals(FieldType.Option)) {
 					int option = (int)(Math.random() * ((2) + 1));
 					
