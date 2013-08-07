@@ -18,7 +18,7 @@
 
 package collector.desktop.model.album;
 
-import java.text.DecimalFormat;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -161,9 +161,9 @@ public class AlbumItemStore {
 				} else if (metaItemField.getType().equals(FieldType.Integer)) {
 					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), 10 + (int)(Math.random() * ((90) + 1)), false));
 				} else if (metaItemField.getType().equals(FieldType.Decimal)) {
-					DecimalFormat df = new DecimalFormat();
-					df.setMaximumFractionDigits(2);
-					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), Double.valueOf(df.format(Math.random() * (100)))));
+					BigDecimal randomDecimal = new BigDecimal(Math.random() * 100);
+				    randomDecimal = randomDecimal.setScale(2, BigDecimal.ROUND_HALF_UP);
+					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), randomDecimal.doubleValue()));
 				} else if (metaItemField.getType().equals(FieldType.Option)) {
 					int option = (int)(Math.random() * ((2) + 1));
 					
