@@ -232,11 +232,12 @@ public class MenuManager {
 					
 					if (messageBox.open() == SWT.YES) {
 						try {
+							AlbumViewManager.removeAlbumViewsFromAlbum(ApplicationUI.getSelectedAlbum());
 							DatabaseOperations.removeAlbumAndAlbumPictures(ApplicationUI.getSelectedAlbum());
 							BrowserFacade.showAlbumDeletedPage(ApplicationUI.getSelectedAlbum());
 							ApplicationUI.refreshAlbumList();
 						} catch (DatabaseWrapperOperationException ex) {
-							LOGGER.error("A database related error occured", ex);
+							LOGGER.error("A database error occured while removing the following album: '" + ApplicationUI.getSelectedAlbum() + "'", ex);
 						}
 					}
 				}
