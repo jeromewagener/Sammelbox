@@ -231,15 +231,14 @@ public class MenuManager {
 							SWT.ICON_WARNING | SWT.YES | SWT.NO);
 					
 					if (messageBox.open() == SWT.YES) {
-						AlbumViewManager.removeAlbumViewsFromAlbum(ApplicationUI.getSelectedAlbum());
 						try {
 							DatabaseOperations.removeAlbumAndAlbumPictures(ApplicationUI.getSelectedAlbum());
+							BrowserFacade.showAlbumDeletedPage(ApplicationUI.getSelectedAlbum());
+							ApplicationUI.refreshAlbumList();
 						} catch (DatabaseWrapperOperationException ex) {
-							LOGGER.error("A database error occured while removing the following album: '" + ApplicationUI.getSelectedAlbum() + "'", ex);
+							LOGGER.error("A database related error occured", ex);
 						}
-						BrowserFacade.showAlbumDeletedPage(ApplicationUI.getSelectedAlbum());
-						ApplicationUI.refreshAlbumList();
-					} 
+					}
 				}
 			}
 		});	
