@@ -7,4 +7,4 @@
      * JDBCLogger - Apache license
      * JUnit - Common Public License
    
-   Our respect and thanks go to themz
+   Our respect and thanks go to them!
