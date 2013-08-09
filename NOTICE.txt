@@ -1,11 +1,10 @@
-
    Sammelbox - Collection Manager is based and/or uses the following libraries & programs
    --------------------------------------------------------------------------------------
      * SQLite (Public Domain) & SQLite JDBC - Apache License
      * The Standard Widget Toolkit (SWT) - Eclipse Public License
-     * Log4j - Apache License
+     * Log4j2 - Apache License
      * SLF4J - MIT License
      * JDBCLogger - Apache license
      * JUnit - Common Public License
    
-   Our respect and thanks go to them!
+   Our respect and thanks go to themz
