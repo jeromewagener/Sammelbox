@@ -80,9 +80,9 @@
         	<zipfileset excludes="META-INF/*.SF" src="${lib.dir}/junit-4.10.jar"/>
             <zipfileset excludes="META-INF/*.SF" src="${lib.dir}/logging/jdbcdslog-1.0.6.2.jar"/>           
         	<zipfileset excludes="META-INF/*.SF" src="${lib.dir}/logging/slf4j-api-1.7.5.jar"/>
-        	<zipfileset excludes="META-INF/*.SF" src="${lib.dir}/logging/log4j-slf4j-impl-2.0-beta6.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="${lib.dir}/logging/log4j-core-2.0-beta6.jar"/>
-        	<zipfileset excludes="META-INF/*.SF" src="${lib.dir}/logging/log4j-api-2.0-beta6.jar"/>
+        	<zipfileset excludes="META-INF/*.SF" src="${lib.dir}/logging/log4j-slf4j-impl-2.0-beta8.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="${lib.dir}/logging/log4j-core-2.0-beta8.jar"/>
+        	<zipfileset excludes="META-INF/*.SF" src="${lib.dir}/logging/log4j-api-2.0-beta8.jar"/>
         	<fileset dir="${res.dir}"/>
             <manifest>
                 <attribute name="Main-Class" value="${main-class}"/>
@@ -98,9 +98,9 @@
         	<zipfileset excludes="META-INF/*.SF" src="${lib.dir}/junit-4.10.jar"/>
             <zipfileset excludes="META-INF/*.SF" src="${lib.dir}/logging/jdbcdslog-1.0.6.2.jar"/>           
         	<zipfileset excludes="META-INF/*.SF" src="${lib.dir}/logging/slf4j-api-1.7.5.jar"/>
-        	<zipfileset excludes="META-INF/*.SF" src="${lib.dir}/logging/log4j-slf4j-impl-2.0-beta6.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="${lib.dir}/logging/log4j-core-2.0-beta6.jar"/>
-        	<zipfileset excludes="META-INF/*.SF" src="${lib.dir}/logging/log4j-api-2.0-beta6.jar"/>        	
+        	<zipfileset excludes="META-INF/*.SF" src="${lib.dir}/logging/log4j-slf4j-impl-2.0-beta8.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="${lib.dir}/logging/log4j-core-2.0-beta8.jar"/>
+        	<zipfileset excludes="META-INF/*.SF" src="${lib.dir}/logging/log4j-api-2.0-beta8.jar"/>        	
         	<fileset dir="${res.dir}"/>
             <manifest>
                 <attribute name="Main-Class" value="${main-class}"/>
@@ -116,9 +116,9 @@
         	<zipfileset excludes="META-INF/*.SF" src="${lib.dir}/junit-4.10.jar"/>        
             <zipfileset excludes="META-INF/*.SF" src="${lib.dir}/logging/jdbcdslog-1.0.6.2.jar"/>           
         	<zipfileset excludes="META-INF/*.SF" src="${lib.dir}/logging/slf4j-api-1.7.5.jar"/>
-        	<zipfileset excludes="META-INF/*.SF" src="${lib.dir}/logging/log4j-slf4j-impl-2.0-beta6.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="${lib.dir}/logging/log4j-core-2.0-beta6.jar"/>
-        	<zipfileset excludes="META-INF/*.SF" src="${lib.dir}/logging/log4j-api-2.0-beta6.jar"/>
+        	<zipfileset excludes="META-INF/*.SF" src="${lib.dir}/logging/log4j-slf4j-impl-2.0-beta8.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="${lib.dir}/logging/log4j-core-2.0-beta8.jar"/>
+        	<zipfileset excludes="META-INF/*.SF" src="${lib.dir}/logging/log4j-api-2.0-beta8.jar"/>
         	<fileset dir="${res.dir}"/>
             <manifest>
                 <attribute name="Main-Class" value="${main-class}"/>
