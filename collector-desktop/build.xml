@@ -3,8 +3,8 @@
 	<!-- ######################################################## -->
 	<!-- ########### Put build version and type here  ########### -->
 	<!-- ######################################################## -->
-			<property name="buildVersion" value="1.0-alpha"/>
-			<property name="buildType"    value="RELEASE"/>
+			<property name="buildVersion" value="1.0-beta"/>
+			<property name="buildType"    value="SNAPSHOT"/>
 	<!-- ######################################################## -->
 	
     <property name="src.dir"     value="src"/>
