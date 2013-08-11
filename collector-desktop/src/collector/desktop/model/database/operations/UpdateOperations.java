@@ -58,10 +58,13 @@ public class UpdateOperations {
 			String newTypeInfoTableName = DatabaseStringUtilities.generateTypeInfoTableName(newAlbumName);
 			renameTable(oldTypeInfoTableName, newTypeInfoTableName);
 			
-			//  Rename the picture table
+			// Rename the picture table
 			String oldPictureTableName = DatabaseStringUtilities.generatePictureTableName(oldAlbumName);
 			String newPictureTableName = DatabaseStringUtilities.generatePictureTableName(newAlbumName);
 			renameTable(oldPictureTableName, newPictureTableName);
+			
+			// Rename the picture folder
+			FileSystemAccessWrapper.renameAlbumPictureFolder(oldAlbumName, newAlbumName);
 			
 			// Change the entry in the album master table. OptionType.UNKNOWN indicates no change of the picture storing 
 			updateAlbumInAlbumMasterTable(oldAlbumName, newAlbumName, OptionType.UNKNOWN);			

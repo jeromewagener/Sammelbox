@@ -21,6 +21,7 @@ package collector.desktop.tests.album;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +32,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import collector.desktop.controller.filesystem.FileSystemAccessWrapper;
 import collector.desktop.controller.managers.ConnectionManager;
 import collector.desktop.controller.managers.DatabaseIntegrityManager;
 import collector.desktop.model.album.AlbumItem;
@@ -237,7 +239,9 @@ public class AlterAlbumTests {
 			assertTrue("There should be an album with the name 'Books'", albumList.contains("Books"));
 			assertTrue("There should be an album with the name 'DVDs'", albumList.contains("DVDs"));
 			assertTrue("There should be an album with the name 'Music CDs'", albumList.contains("Music CDs"));
-
+			assertTrue("Each album should have its corresponding picture album folder",
+					(new File(FileSystemAccessWrapper.getFilePathForAlbum("DVDs"))).exists());
+			
 			DatabaseOperations.renameAlbum("DVDs", "Movie DVDs");
 			DatabaseOperations.renameAlbum("Books", "My Books");
 
@@ -246,6 +250,8 @@ public class AlterAlbumTests {
 			assertTrue("There should be an album with the name 'My Books'", albumList.contains("My Books"));
 			assertTrue("There should be an album with the name 'Movie DVDs'", albumList.contains("Movie DVDs"));
 			assertTrue("There should be an album with the name 'Music CDs'", albumList.contains("Music CDs"));
+			assertTrue("Each album should have its corresponding picture album folder",
+					(new File(FileSystemAccessWrapper.getFilePathForAlbum("Movie DVDs"))).exists());
 		} catch (DatabaseWrapperOperationException e ) {
 			fail(e.getMessage());
 		}
