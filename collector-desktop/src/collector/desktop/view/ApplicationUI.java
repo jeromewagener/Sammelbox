@@ -61,6 +61,7 @@ import collector.desktop.view.composites.StatusBarComposite;
 import collector.desktop.view.composites.ToolbarComposite;
 import collector.desktop.view.sidepanes.EmptySidepane;
 import collector.desktop.view.sidepanes.QuickControlSidepane;
+import collector.desktop.view.various.ComponentFactory;
 import collector.desktop.view.various.PanelType;
 
 public class ApplicationUI implements Observer {
@@ -87,7 +88,7 @@ public class ApplicationUI implements Observer {
 	/** The panel type that is currently visible on the right of the main three panel composite */
 	private static PanelType currentRightPanelType = PanelType.Empty;
 	/** An instance in order to register as an observer to event observable */
-	private static ApplicationUI instance = new ApplicationUI();
+	private static ApplicationUI instance = null;
 	
 	private ApplicationUI() {
 		EventObservable.registerObserver(this);
@@ -342,18 +343,6 @@ public class ApplicationUI implements Observer {
 		return GuiController.getGuiState().getSelectedAlbum();
 	}
 
-	/**
-	 * Determines if an album has been selected.
-	 * @return True if the selectedAlbumName is not null and not empty. True if an album is selected.
-	 */
-	public static boolean hasSelectedAlbum() {
-		if (GuiController.getGuiState().getSelectedAlbum() != null && 
-				!GuiController.getGuiState().getSelectedAlbum().isEmpty()) {
-			return true;
-		}
-		return false;
-	}
-	
 	public static void setQuickSearchTextField(Text quickSearchTextField) {
 		ApplicationUI.quickSearchTextField = quickSearchTextField;
 	}
@@ -484,6 +473,20 @@ public class ApplicationUI implements Observer {
 			if (viewList.isEnabled() == false && viewList.getItemCount() != 0) {
 				viewList.setEnabled(true);
 			}
+		} else if (event.equals(SammelboxEvent.NO_ALBUM_SELECTED)) {
+			ComponentFactory.showErrorDialog(
+					ApplicationUI.getShell(), 
+					Translator.get(DictKeys.DIALOG_TITLE_NO_ALBUM_SELECTED), 
+					Translator.get(DictKeys.DIALOG_CONTENT_NO_ALBUM_SELECTED));
 		}
+	}
+	
+	// TODO: ugly hack for alpha.
+	public static boolean isAlbumSelectedAndShowMessageIfNot() {
+		if (!GuiController.getGuiState().isAlbumSelected()) {
+			EventObservable.addEventToQueue(SammelboxEvent.NO_ALBUM_SELECTED);
+			return false;
+		}
+		return true;
 	}
 }

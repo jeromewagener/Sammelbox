@@ -29,6 +29,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import collector.desktop.controller.GuiController;
 import collector.desktop.controller.filesystem.exporting.CSVExporter;
 import collector.desktop.controller.filesystem.exporting.HTMLExporter;
 import collector.desktop.controller.i18n.DictKeys;
@@ -89,7 +90,7 @@ public class MenuManager {
 		exportItem.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent evt) {
-				if (isAlbumSelectedAndShowMessageIfNot()) {
+				if (ApplicationUI.isAlbumSelectedAndShowMessageIfNot()) {
 					FileDialog saveFileDialog = new FileDialog(ApplicationUI.getShell(), SWT.SAVE);
 					saveFileDialog.setText(Translator.get(DictKeys.DIALOG_EXPORT_VISIBLE_ITEMS));
 					saveFileDialog.setFilterPath(System.getProperty("user.home"));
@@ -185,7 +186,7 @@ public class MenuManager {
 		advancedSearch.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				if (isAlbumSelectedAndShowMessageIfNot()) {
+				if (ApplicationUI.isAlbumSelectedAndShowMessageIfNot()) {
 					ApplicationUI.changeRightCompositeTo(PanelType.AdvancedSearch, AdvancedSearchSidepane.build(
 							ApplicationUI.getThreePanelComposite(), ApplicationUI.getSelectedAlbum()));
 				}
@@ -209,7 +210,7 @@ public class MenuManager {
 		alterAlbum.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				if (isAlbumSelectedAndShowMessageIfNot()) {
+				if (ApplicationUI.isAlbumSelectedAndShowMessageIfNot()) {
 					ApplicationUI.changeRightCompositeTo(PanelType.AlterAlbum, AlterAlbumSidepane.build(
 							ApplicationUI.getThreePanelComposite(), ApplicationUI.getSelectedAlbum()));
 				}
@@ -223,7 +224,7 @@ public class MenuManager {
 		deleteAlbum.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				if (isAlbumSelectedAndShowMessageIfNot()) {					
+				if (ApplicationUI.isAlbumSelectedAndShowMessageIfNot()) {					
 					MessageBox messageBox = ComponentFactory.getMessageBox(
 							ApplicationUI.getShell(), 
 							Translator.get(DictKeys.DIALOG_TITLE_DELETE_ALBUM), 
@@ -235,6 +236,7 @@ public class MenuManager {
 							AlbumViewManager.removeAlbumViewsFromAlbum(ApplicationUI.getSelectedAlbum());
 							DatabaseOperations.removeAlbumAndAlbumPictures(ApplicationUI.getSelectedAlbum());
 							BrowserFacade.showAlbumDeletedPage(ApplicationUI.getSelectedAlbum());
+							GuiController.getGuiState().setSelectedAlbum(GuiController.getGuiState().NOALBUMSELECTED);
 							ApplicationUI.refreshAlbumList();
 						} catch (DatabaseWrapperOperationException ex) {
 							LOGGER.error("A database error occured while removing the following album: '" + ApplicationUI.getSelectedAlbum() + "'", ex);
@@ -305,18 +307,5 @@ public class MenuManager {
 				ApplicationUI.changeRightCompositeTo(PanelType.Help, EmptySidepane.build(ApplicationUI.getThreePanelComposite()));
 			}
 		});
-	}
-
-	private static boolean isAlbumSelectedAndShowMessageIfNot() {
-		if (!ApplicationUI.hasSelectedAlbum()) {
-			ComponentFactory.showErrorDialog(
-					ApplicationUI.getShell(), 
-					Translator.get(DictKeys.DIALOG_TITLE_NO_ALBUM_SELECTED), 
-					Translator.get(DictKeys.DIALOG_CONTENT_NO_ALBUM_SELECTED));
-
-			return false;
-		}
-
-		return true;
 	}
 }

@@ -27,16 +27,11 @@ import collector.desktop.model.album.AlbumItem;
 import collector.desktop.model.album.AlbumItemStore;
 import collector.desktop.view.ApplicationUI;
 import collector.desktop.view.UIConstants;
-import collector.desktop.view.various.ComponentFactory;
 
 public class DetailedViewCreator {	
 	static void showDetailedAlbum(Browser browser) {
 		// Exit if no album is selected
-		if (!ApplicationUI.hasSelectedAlbum()) {
-			ComponentFactory.showErrorDialog(
-					ApplicationUI.getShell(), 
-					Translator.get(DictKeys.DIALOG_TITLE_NO_ALBUM_SELECTED), 
-					Translator.get(DictKeys.DIALOG_CONTENT_NO_ALBUM_SELECTED));
+		if (!ApplicationUI.isAlbumSelectedAndShowMessageIfNot()) {
 			return;
 		}
 		

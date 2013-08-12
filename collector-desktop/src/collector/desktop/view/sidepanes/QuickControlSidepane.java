@@ -183,21 +183,25 @@ public class QuickControlSidepane {
 		MenuItem removeAlbum = new MenuItem(albumPopupMenu, SWT.NONE);
 		removeAlbum.setText(Translator.get(DictKeys.DROPDOWN_REMOVE));
 		removeAlbum.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {				
-				MessageBox messageBox = ComponentFactory.getMessageBox(ApplicationUI.getShell(), 
-						Translator.get(DictKeys.DIALOG_TITLE_DELETE_ALBUM), 
-						Translator.get(DictKeys.DIALOG_CONTENT_DELETE_ALBUM), 
-						SWT.ICON_WARNING | SWT.YES | SWT.NO);
-				
-				if (messageBox.open() == SWT.YES) {
-					AlbumViewManager.removeAlbumViewsFromAlbum(ApplicationUI.getSelectedAlbum());
-					try {
-						DatabaseOperations.removeAlbumAndAlbumPictures(ApplicationUI.getSelectedAlbum());
-					} catch (DatabaseWrapperOperationException ex) {
-						LOGGER.error("A database error occured while removing the following album: '" + ApplicationUI.getSelectedAlbum() + "'", ex);
+			public void widgetSelected(SelectionEvent e) {	
+				if (ApplicationUI.isAlbumSelectedAndShowMessageIfNot()) {					
+					MessageBox messageBox = ComponentFactory.getMessageBox(
+							ApplicationUI.getShell(), 
+							Translator.get(DictKeys.DIALOG_TITLE_DELETE_ALBUM), 
+							Translator.get(DictKeys.DIALOG_CONTENT_DELETE_ALBUM, ApplicationUI.getSelectedAlbum()), 
+							SWT.ICON_WARNING | SWT.YES | SWT.NO);
+					
+					if (messageBox.open() == SWT.YES) {
+						try {							
+							DatabaseOperations.removeAlbumAndAlbumPictures(ApplicationUI.getSelectedAlbum());
+							AlbumViewManager.removeAlbumViewsFromAlbum(ApplicationUI.getSelectedAlbum());
+							BrowserFacade.showAlbumDeletedPage(ApplicationUI.getSelectedAlbum());
+							GuiController.getGuiState().setSelectedAlbum(GuiController.getGuiState().NOALBUMSELECTED);
+							ApplicationUI.refreshAlbumList();
+						} catch (DatabaseWrapperOperationException ex) {
+							LOGGER.error("A database error occured while removing the following album: '" + ApplicationUI.getSelectedAlbum() + "'", ex);
+						}
 					}
-					BrowserFacade.showAlbumDeletedPage(ApplicationUI.getSelectedAlbum());
-					ApplicationUI.refreshAlbumList();
 				}
 			}
 		});

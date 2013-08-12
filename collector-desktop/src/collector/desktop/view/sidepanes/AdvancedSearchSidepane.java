@@ -284,12 +284,7 @@ public class AdvancedSearchSidepane {
 		saveAsViewButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (!ApplicationUI.hasSelectedAlbum()) {
-					ComponentFactory.showErrorDialog(
-							ApplicationUI.getShell(), 
-							Translator.get(DictKeys.DIALOG_TITLE_NO_ALBUM_SELECTED), 
-							Translator.get(DictKeys.DIALOG_CONTENT_NO_ALBUM_SELECTED));
-
+				if (!ApplicationUI.isAlbumSelectedAndShowMessageIfNot()) {
 					return;
 				}
 

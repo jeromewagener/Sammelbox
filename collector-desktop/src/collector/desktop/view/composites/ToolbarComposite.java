@@ -48,7 +48,6 @@ import collector.desktop.view.sidepanes.AdvancedSearchSidepane;
 import collector.desktop.view.sidepanes.CreateAlbumSidepane;
 import collector.desktop.view.sidepanes.EmptySidepane;
 import collector.desktop.view.sidepanes.SynchronizeSidepane;
-import collector.desktop.view.various.ComponentFactory;
 import collector.desktop.view.various.PanelType;
 
 public class ToolbarComposite extends Composite implements Observer {
@@ -73,6 +72,16 @@ public class ToolbarComposite extends Composite implements Observer {
 		searchBtn.setImage(search);
 		syncBtn.setImage(sync);
 		helpBtn.setImage(help);
+	}
+	
+	private static void setButtonsWhenNoAlbumIsSelected() {
+		homeBtn.setEnabled(true);
+		addAlbumBtn.setEnabled(true);
+		addEntryBtn.setEnabled(false);
+		viewBtn.setEnabled(false);
+		searchBtn.setEnabled(false);
+		syncBtn.setEnabled(true);
+		helpBtn.setEnabled(true);
 	}
 
 	public ToolbarComposite(final Composite parentComposite) {
@@ -245,12 +254,7 @@ public class ToolbarComposite extends Composite implements Observer {
 			public void mouseUp(MouseEvent arg0) {
 				BrowserFacade.rerunLastQuery();
 				
-				if (!ApplicationUI.hasSelectedAlbum()) {
-					ComponentFactory.showErrorDialog(
-							ApplicationUI.getShell(), 
-							Translator.get(DictKeys.DIALOG_TITLE_NO_ALBUM_SELECTED), 
-							Translator.get(DictKeys.DIALOG_CONTENT_NO_ALBUM_SELECTED));
-					
+				if (!ApplicationUI.isAlbumSelectedAndShowMessageIfNot()) {
 					return;
 				}
 				if (ApplicationUI.getCurrentRightPanelType() != PanelType.AddEntry) {
@@ -317,11 +321,7 @@ public class ToolbarComposite extends Composite implements Observer {
 			public void mouseUp(MouseEvent arg0) {
 				BrowserFacade.rerunLastQuery();
 				
-				if (!ApplicationUI.hasSelectedAlbum()) {
-					ComponentFactory.showErrorDialog(
-							ApplicationUI.getShell(), 
-							Translator.get(DictKeys.DIALOG_TITLE_NO_ALBUM_SELECTED), 
-							Translator.get(DictKeys.DIALOG_CONTENT_NO_ALBUM_SELECTED));
+				if (!ApplicationUI.isAlbumSelectedAndShowMessageIfNot()) {
 					return;
 				}
 				if (ApplicationUI.getCurrentRightPanelType() != PanelType.AdvancedSearch) {
@@ -444,6 +444,13 @@ public class ToolbarComposite extends Composite implements Observer {
 		if (event.equals(SammelboxEvent.RIGHT_SIDEPANE_CHANGED)) {
 			if (lastSelectedPanelType != ApplicationUI.getCurrentRightPanelType()) {
 				disableActiveButtons();
+			}
+		}else if (event.equals(SammelboxEvent.ALBUM_SELECTED)) {
+			String currentlySelectedAlbum = ApplicationUI.getSelectedAlbum();
+			enableAlbumButtons(currentlySelectedAlbum);
+		}else if (event.equals(SammelboxEvent.ALBUM_LIST_UPDATED)) {				
+			if (!GuiController.getGuiState().isAlbumSelected()) {
+				setButtonsWhenNoAlbumIsSelected();
 			}
 		}
 	}

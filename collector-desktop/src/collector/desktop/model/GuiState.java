@@ -18,13 +18,15 @@
 
 package collector.desktop.model;
 
+
 public class GuiState {
-	public static final String NO_ALBUM_SELECTED = "NO_ALBUM_SELECTED";
 	
-	private String selectedAlbum = NO_ALBUM_SELECTED;
+	private String selectedAlbum = null;
 	private String selectedView = null;
 	private String quickSearchTerms = null;
-	private boolean isViewDetailed = true;	
+	private boolean isViewDetailed = true;
+	/** This string is used to deselect an album by passing it to {@link #setSelectedAlbum(String)}*/
+	public final String NOALBUMSELECTED = null; 
 	
 	public String getSelectedAlbum() {
 		return selectedAlbum;
@@ -32,6 +34,17 @@ public class GuiState {
 
 	public void setSelectedAlbum(String selectedAlbum) {
 		this.selectedAlbum = selectedAlbum;
+	}
+		
+	/**
+	 * Determines if an album has been selected.
+	 * @return True if the selectedAlbumName is not null and not empty. True if an album is selected.
+	 */
+	public boolean isAlbumSelected() {
+		if (getSelectedAlbum() != null && !getSelectedAlbum().isEmpty()) {
+			return true;
+		}
+		return false;
 	}
 
 	public String getSelectedView() {

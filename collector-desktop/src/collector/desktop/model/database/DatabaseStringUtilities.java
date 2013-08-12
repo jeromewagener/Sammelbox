@@ -85,7 +85,7 @@ public class DatabaseStringUtilities {
 	/**
 	 * Encloses a given album or field name with single quotes such that db accepts it, except for columnNames in a select query.
 	 * Use {@link DatabaseStringUtilities#transformColumnNameToSelectQueryName(String)} instead for columnName in select queries.
-	 * Use quote marks to enclose columnnames or album names with spaces for example.    
+	 * Use quote marks to enclose column names or album names with spaces for example.    
 	 * @param regularName The usual name without special markup for low level db interaction.
 	 * @return The proper string for the database interaction.
 	 */
@@ -97,7 +97,7 @@ public class DatabaseStringUtilities {
 	}
 
 	/**
-	 * Transforms a given fieldName into a columnName format, the db accepts. Use squared brackets to enclose columnnames with spaces for example.    
+	 * Transforms a given fieldName into a columnName format, the db accepts. Use squared brackets to enclose column names with spaces for example.    
 	 * @param fieldName The name of a field to be transformed.
 	 * @return The proper string for low level query interaction with the database.
 	 */
@@ -106,6 +106,11 @@ public class DatabaseStringUtilities {
 			return fieldName;
 		}
 		return "[" + fieldName + "]";
+	}
+	
+	/** Tests if the character string is null or empty. True if so, otherwise false.*/
+	public static boolean isStringNullOrEmpty(String characterString) {
+		return (characterString == null || characterString.isEmpty());
 	}
 
 }

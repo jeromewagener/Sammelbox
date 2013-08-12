@@ -47,7 +47,6 @@ import org.eclipse.swt.widgets.Widget;
 import collector.desktop.controller.GuiController;
 import collector.desktop.controller.i18n.DictKeys;
 import collector.desktop.controller.i18n.Translator;
-import collector.desktop.model.GuiState;
 import collector.desktop.model.album.AlbumItemPicture;
 import collector.desktop.view.ApplicationUI;
 import collector.desktop.view.various.ComponentFactory;
@@ -220,12 +219,7 @@ public class ImageDropAndManagementComposite extends Composite implements DropTa
 
 	@Override
 	public void drop(DropTargetEvent event) {
-		if (GuiController.getGuiState().getSelectedAlbum().equals(GuiState.NO_ALBUM_SELECTED)) {
-			ComponentFactory.showErrorDialog(
-					ApplicationUI.getShell(), 
-					Translator.get(DictKeys.DIALOG_TITLE_NO_ALBUM_SELECTED), 
-					Translator.get(DictKeys.DIALOG_CONTENT_NO_ALBUM_SELECTED));
-			
+		if (ApplicationUI.isAlbumSelectedAndShowMessageIfNot()) {
 			return;
 		}
 		if (event.data instanceof String[]) {

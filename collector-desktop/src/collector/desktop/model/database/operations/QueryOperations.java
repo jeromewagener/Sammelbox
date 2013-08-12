@@ -439,7 +439,9 @@ public class QueryOperations {
 		}	
 	}
 	
-	static boolean isPictureAlbum(String albumName) throws DatabaseWrapperOperationException {		
+	static boolean isPictureAlbum(String albumName) throws DatabaseWrapperOperationException {
+		if (DatabaseStringUtilities.isStringNullOrEmpty(albumName)) {return false;}
+		
 		String query = " SELECT " + DatabaseStringUtilities.transformColumnNameToSelectQueryName(DatabaseConstants.HAS_PICTURES_COLUMN_IN_ALBUM_MASTER_TABLE) +
  					   "   FROM " + DatabaseStringUtilities.encloseNameWithQuotes(DatabaseConstants.ALBUM_MASTER_TABLE_NAME) +
 					   "  WHERE " + DatabaseStringUtilities.transformColumnNameToSelectQueryName(DatabaseConstants.ALBUMNAME_IN_ALBUM_MASTER_TABLE) + 
