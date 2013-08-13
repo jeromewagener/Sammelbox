@@ -1,4 +1,4 @@
-<project name="Collector-Desktop" basedir="." default="main">
+<project name="Sammelbox-Desktop" basedir="." default="main">
 	
 	<!-- ######################################################## -->
 	<!-- ########### Put build version and type here  ########### -->
@@ -13,7 +13,7 @@
     <property name="classes.dir" value="${build.dir}/classes"/>
     <property name="jar.dir"     value="${build.dir}/jar"/>
 	<property name="lib.dir"     value="lib"/>
-    <property name="main-class"  value="collector.desktop.Sammelbox"/>
+    <property name="main-class"  value="org.sammelbox.Sammelbox"/>
 	
 	<property file="${res.dir}/information/buildinfo.properties"/>
 	
@@ -38,7 +38,7 @@
 	 	<os family="unix" />
 	 </condition>
 	
-    <path id="collector.classpath">
+    <path id="sammelbox.classpath">
          <fileset dir="${lib.dir}" includes="**/*.jar"/>
 	</path>
 	
@@ -67,8 +67,8 @@
 	
     <target name="compile" depends="buildinfo">
         <mkdir dir="${classes.dir}"/>
-    	<javac includeantruntime="false" srcdir="${src.dir}/collector" destdir="${classes.dir}" target="1.7">
-    		<classpath refid="collector.classpath" />
+    	<javac includeantruntime="false" srcdir="${src.dir}/org" destdir="${classes.dir}" target="1.7">
+    		<classpath refid="sammelbox.classpath" />
     	</javac>
     </target>
 	
