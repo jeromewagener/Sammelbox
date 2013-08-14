@@ -175,6 +175,40 @@ public class FeedbackCreator {
 		       "    </body>" +
 		       "  </html>";
 	}
+
+	static String generateBackupInProgressPage() {
+		return "<!DOCTYPE HTML>" +
+			   "  <html>" +
+			   "    <head>" +
+			   "      <meta " + UIConstants.META_PARAMS + ">" + 
+			   "      <link rel=stylesheet href=\"" + UIConstants.STYLE_CSS + "\" />" +
+			   "      <script src=\"" + UIConstants.EFFECTS_JS + "\"></script>" +
+			   "    </head>" +
+			   "    <body bgcolor=\"#FFCC99\">" +
+		       "      <h3>" + Translator.toBeTranslated("Backup in Progress") + "</h3>" +
+		       "      <div>" + Translator.toBeTranslated("This might take a moment. During this time, " + 
+		       "				Sammelbox disables itself, but will notify you as soon as the backup is finished") + 
+		       "      </div>" +
+		       "    </body>" +
+		       "  </html>";
+	}
+	
+	static String generateBackupFinishedPage() {
+		return "<!DOCTYPE HTML>" +
+			   "  <html>" +
+			   "    <head>" +
+			   "      <meta " + UIConstants.META_PARAMS + ">" + 
+			   "      <link rel=stylesheet href=\"" + UIConstants.STYLE_CSS + "\" />" +
+			   "      <script src=\"" + UIConstants.EFFECTS_JS + "\"></script>" +
+			   "    </head>" +
+			   "    <body bgcolor=\"#99FFCC\">" +
+		       "      <h3>" + Translator.toBeTranslated("Backup Finished") + "</h3>" +
+		       "      <div>" + Translator.toBeTranslated("The backup has been created. " + 
+		       "				You can now continue to use Sammelbox") + 
+		       "      </div>" +
+		       "    </body>" +
+		       "  </html>";
+	}
 	
 	static String generateSynchronizationPage() {
 		return "<!DOCTYPE HTML>" +

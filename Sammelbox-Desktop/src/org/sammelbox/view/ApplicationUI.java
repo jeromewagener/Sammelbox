@@ -36,7 +36,6 @@ import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.sammelbox.controller.AutosaveController;
 import org.sammelbox.controller.GuiController;
 import org.sammelbox.controller.events.EventObservable;
 import org.sammelbox.controller.events.Observer;
@@ -47,8 +46,9 @@ import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.controller.listeners.BrowserListener;
 import org.sammelbox.controller.managers.AlbumManager;
 import org.sammelbox.controller.managers.AlbumViewManager;
-import org.sammelbox.controller.managers.MenuManager;
 import org.sammelbox.controller.managers.AlbumViewManager.AlbumView;
+import org.sammelbox.controller.managers.DatabaseIntegrityManager;
+import org.sammelbox.controller.managers.MenuManager;
 import org.sammelbox.model.database.QueryBuilder;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 import org.sammelbox.model.database.operations.DatabaseOperations;
@@ -217,10 +217,7 @@ public class ApplicationUI implements Observer {
 		if (maximizeShellOnStartUp(displayClientArea.width, displayClientArea.height)){
 			shell.setMaximized(true);
 		}
-		
-		// Create autosave overlay
-		AutosaveController.createAutosaveOverlay();		
-		
+				
 		shell.open();
 
 		selectDefaultAndShowWelcomePage();		
@@ -232,6 +229,12 @@ public class ApplicationUI implements Observer {
 		}
 
 		display.dispose();
+	
+		try {
+			DatabaseIntegrityManager.backupAutoSave();
+		} catch (DatabaseWrapperOperationException e) {
+			LOGGER.error("Couldn't create an auto save of the database file", e);
+		}
 	}
 
 	public static Composite getThreePanelComposite() {

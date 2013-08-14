@@ -136,7 +136,7 @@ public class Utilities {
 		return backgroundColorOfWidgetInHex;
 	}
 
-	static String getDefaultSystemFont() {
+	public static String getDefaultSystemFont() {
 		if (defaultSystemFont == null) {
 			defaultSystemFont = Display.getCurrent().getSystemFont().getFontData()[0].getName();
 		}

@@ -21,6 +21,7 @@ package org.sammelbox.controller.managers;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -79,7 +80,7 @@ public class MenuManager {
 		// Attach the menu bar to the given shell
 		ApplicationUI.getShell().setMenuBar(menu);
 	}
-
+	
 	private static void createDropdownForCollectorItem(Menu menu, MenuItem collectorItem) {
 		Menu collectorMenu = new Menu(menu);
 		collectorItem.setMenu(collectorMenu);
@@ -125,13 +126,24 @@ public class MenuManager {
 				String[] filterExt = { "*.cbk" };
 				saveFileDialog.setFilterExtensions(filterExt);
 
-				String path = saveFileDialog.open();
-				if (path != null) {
-					try {
-						DatabaseIntegrityManager.backupToFile(path);
-					} catch (DatabaseWrapperOperationException ex) {
-						LOGGER.error("An error occured while trying to backup albums to a backup file", ex);
-					}
+				final String backupPath = saveFileDialog.open();
+				if (backupPath != null) {
+					BrowserFacade.showBackupInProgressPage();
+					ApplicationUI.getShell().setEnabled(false);
+					
+					Display.getDefault().asyncExec(new Runnable() {
+						@Override
+						public void run() {
+							try {
+								DatabaseIntegrityManager.backupToFile(backupPath);
+							} catch (DatabaseWrapperOperationException e) {
+								LOGGER.error("An error occurred while creating the backup", e);
+							}
+							
+							ApplicationUI.getShell().setEnabled(true);
+							BrowserFacade.showBackupFinishedPage();
+						}
+					});
 				}
 			}
 		});
