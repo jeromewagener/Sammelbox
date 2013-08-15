@@ -525,12 +525,11 @@ public class BasicAlbumItemSidepane {
 						albumItem.addField("id", FieldType.ID, albumItemId);
 						
 						DatabaseOperations.updateAlbumItem(albumItem);
-						BrowserFacade.generateAlbumItemAddedPage(albumItemId);
+						BrowserFacade.generateAlbumItemUpdatedPage(albumItemId);
 					} else {						
 						// Create album item
 						BrowserFacade.generateAlbumItemAddedPage(
-								DatabaseOperations.addAlbumItem(albumItem, true)
-						);
+								DatabaseOperations.addAlbumItem(albumItem, true));
 					}
 					
 					// Update GUI

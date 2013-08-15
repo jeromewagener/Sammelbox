@@ -42,7 +42,6 @@ public class FeedbackCreator {
 		try {
 			updatedAlbumItem = DatabaseOperations.getAlbumItem(ApplicationUI.getSelectedAlbum(), albumItemId);
 
-
 			if (updatedAlbumItem != null) {
 				ApplicationUI.getAlbumItemBrowser().setText(
 						generateItemAddedOrUpdatedFeedbackConstruct(
