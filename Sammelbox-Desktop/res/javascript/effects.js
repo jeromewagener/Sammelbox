@@ -1,5 +1,6 @@
 	
 	
+
 	/*** Picture Swap ***/
 
 	function change(id, imgName) {
@@ -16,11 +17,13 @@
 	} 
 
 
+
 	/*** Mouse Cursor Modification ***/
 
 	function changeCursorToHand(id) {
 		document.getElementById(id).style.cursor="pointer"; 
 	}
+
 
 
 	/*** Scrollbar Position Calculation ***/
@@ -47,6 +50,8 @@
 		return getDocumentHeight() - (getYScrollPosition() + getWindowHeight())
 	}
 
+
+
 	/*** Dynamic Table Modification ***/
 
 	function triggerAlbumExpansionIfNecessary() {
@@ -58,6 +63,26 @@
 	window.onscroll = function() { 
 		triggerAlbumExpansionIfNecessary();
 	}
+
+
+
+   /*** Maximizes the given image to the window size. However, if the image is smaller
+      than the window, the image will not be stretched! ***/
+
+   function maximizeImageSize(imageId, xOffset, yOffset) {
+      document.getElementById(imageId).style.width = 'auto';
+      document.getElementById(imageId).style.height = 'auto';
+      
+      if ((window.innerHeight < document.getElementById(imageId).naturalHeight)
+         || (window.innerWidth < document.getElementById(imageId).naturalWidth))
+      {
+         if (document.getElementById(imageId).naturalWidth > document.getElementById(imageId).naturalHeight) {
+            document.getElementById(imageId).style.width = window.innerWidth - xOffset;
+         } else {
+            document.getElementById(imageId).style.height = window.innerHeight - yOffset;         
+         }
+      }
+   }
 
 
 

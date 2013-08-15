@@ -53,7 +53,7 @@ public class PictureViewCreator {
 				for (AlbumItemPicture picture : pictures) {
 					String escapedPicturePath = Utilities.escapeBackslashesInFilePath(picture.getOriginalPicturePath());
 					smallPictures.append(
-							"<a onMouseover='change(\"bigimg\", \"" + escapedPicturePath + "\")'>" + 
+							"<a onMouseover='change(\"bigimg\", \"" + escapedPicturePath + "\");maximizeImageSize(\"bigimg\", 150, 30);'>" + 
 									"  <img border=\"1\" " +
 									"       onMouseOver='this.style.cursor=\"pointer\"' " +
 									"       id=\"smallimage" + counter + "\" " +
@@ -87,10 +87,13 @@ public class PictureViewCreator {
 			                   smallPictures.toString() +		
 			        "        </td>" +
 			        "        <td align=\"left\" valign=\"top\">" +
-			        "          <img style=\"max-width: 100%; max-height: 100%;\" " +
-			        "               id=\"bigimg\" src=\"" + originalPathToPicture + "\" " +
-			        "               onMouseOver=\"changeCursorToHand('bigimg')\" " +
-			        "               onclick=\"parent.location.href='show:///lastPage'\">" +
+			        "		   <div>" +
+			        "          		<img " +
+			        "               	id=\"bigimg\" src=\"" + originalPathToPicture + "\" " +
+			        "               	onMouseOver=\"changeCursorToHand('bigimg')\" " +
+			        "               	onClick=\"parent.location.href='show:///lastPage'\"" +
+			        "                   onLoad=\"maximizeImageSize('bigimg', 150, 30)\">" +
+			        "          </div>" +
 			        "        </td>" +
 			        "      </tr>" +
 			        "    </table>" +
@@ -98,6 +101,7 @@ public class PictureViewCreator {
 			        "</html>");
 	
 			ApplicationUI.getAlbumItemBrowser().setText(picturePage.toString());
+			System.out.println(picturePage);
 		} catch (DatabaseWrapperOperationException ex) {
 			LOGGER.error("An error occured while fetching the album item #" + albumItemId + " in the album: " + 
 					ApplicationUI.getSelectedAlbum(), ex);

@@ -218,7 +218,7 @@ public class ImageDropAndManagementComposite extends Composite implements DropTa
 
 	@Override
 	public void drop(DropTargetEvent event) {
-		if (ApplicationUI.isAlbumSelectedAndShowMessageIfNot()) {
+		if (!ApplicationUI.isAlbumSelectedAndShowMessageIfNot()) {
 			return;
 		}
 		if (event.data instanceof String[]) {
