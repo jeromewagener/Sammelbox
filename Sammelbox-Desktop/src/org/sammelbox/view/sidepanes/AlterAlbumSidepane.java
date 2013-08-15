@@ -130,7 +130,7 @@ public class AlterAlbumSidepane {
 
 		// Add-field-button --> listener comes after table
 		Button addFieldButton = new Button(innerComposite, SWT.PUSH);
-		addFieldButton.setText("Add additional field to Album");
+		addFieldButton.setText(Translator.get(DictKeys.BUTTON_ADD_FIELD));
 		addFieldButton.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		// Field table
