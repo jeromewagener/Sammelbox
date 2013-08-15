@@ -89,7 +89,17 @@ public class HTMLExporter {
 
 		try {
 			BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(filepath));
-			bufferedWriter.write("<html><head><meta charset=\"utf-8\"></head><body><table style=\"border:1px solid black; border-collapse:collapse;\">" + headerBuilder.toString() + dataBuilder.toString() + "</table></body></html>");
+			bufferedWriter.write("<html>" +
+								 "	<head>" +
+								 "		<meta charset=\"UTF-8\">" +
+								 "	</head>" +
+								 "	<body>" +
+								 "		<table style=\"border:1px solid black; border-collapse:collapse;\">" + 
+								 			headerBuilder.toString() + 
+								 			dataBuilder.toString() + 
+								 "		</table>" +
+								 "	</body>" +
+								 "</html>");
 			bufferedWriter.close();
 		} catch (IOException e) {
 			e.printStackTrace();
