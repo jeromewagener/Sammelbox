@@ -22,6 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -64,6 +65,26 @@ public class WelcomePageManager {
 	}
 
 	private static void storeWelcomePageManagerInformation() {
+		// perform click cleanup
+		Iterator<String> albumOrViewNameIterator = albumAndViewsToClicks.keySet().iterator();
+		while (albumOrViewNameIterator.hasNext()) {
+			String albumOrViewName = albumOrViewNameIterator.next();
+			if (!AlbumManager.getAlbums().contains(albumOrViewName)
+					&& !AlbumViewManager.getAlbumViewNames().contains(albumOrViewName)) {
+				albumOrViewNameIterator.remove();
+			}
+		}
+		
+		// perform last updated cleanup
+		Iterator<String> albumNameIterator = albumToLastModified.keySet().iterator();
+		while (albumNameIterator.hasNext()) {
+			String albumName = albumNameIterator.next();
+			if (!AlbumManager.getAlbums().contains(albumName)) {
+				albumNameIterator.remove();
+			}
+		}
+		
+		// store
 		FileSystemAccessWrapper.storeWelcomePageManagerInformation(albumAndViewsToClicks, albumToLastModified);
 	}
 

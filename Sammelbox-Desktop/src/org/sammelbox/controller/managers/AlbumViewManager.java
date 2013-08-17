@@ -40,6 +40,20 @@ public class AlbumViewManager {
 		AlbumViewManager.loadViews();
 	}
 	
+	/** Returns the complete list of album view names for all available albums */
+	public static List<String> getAlbumViewNames() {
+		List<String> allViewNames = new LinkedList<String>();
+		
+		for (String albumName : albumNamesToAlbumViews.keySet()) {
+			for (AlbumView albumView : albumNamesToAlbumViews.get(albumName)) {
+				allViewNames.add(albumView.name);
+			}
+		}
+		
+		return allViewNames;
+	}
+	
+	/** Returns the list of album views for a specific album */
 	public static List<AlbumView> getAlbumViews(String albumName) {
 		List<AlbumView> albumViews = albumNamesToAlbumViews.get(albumName);
 		
