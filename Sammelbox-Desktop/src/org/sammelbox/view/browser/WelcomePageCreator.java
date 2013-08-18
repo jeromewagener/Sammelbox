@@ -18,7 +18,7 @@
 
 package org.sammelbox.view.browser;
 
-import org.sammelbox.controller.filesystem.FileSystemAccessWrapper;
+import org.sammelbox.controller.filesystem.FileSystemConstants;
 import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.controller.managers.AlbumManager;
@@ -45,7 +45,7 @@ public class WelcomePageCreator {
 				"	 <table>" +
 				"      <tr>" +
 				"	     <td align=\"center\">" +
-				"          <img width=\"450\" src=\" " + FileSystemAccessWrapper.LOGO + " \">" +
+				"          <img width=\"450\" src=\" " + FileSystemConstants.LOGO + " \">" +
 				"        </td>" +
 				"        <td width=\"430px\">" +
 		        "          <div style=\"margin-left:30px; padding:10px; background-color:#" + Utilities.getBackgroundColorOfWidgetInHex() + "\">" +

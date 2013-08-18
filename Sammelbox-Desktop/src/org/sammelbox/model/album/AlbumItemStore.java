@@ -22,7 +22,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.sammelbox.controller.filesystem.FileSystemAccessWrapper;
+import org.sammelbox.controller.filesystem.FileSystemConstants;
 import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
@@ -125,8 +125,8 @@ public class AlbumItemStore {
 	public static AlbumItem getSamplePictureAlbumItemWithoutFields() {
 		List<AlbumItemPicture> pictures = new ArrayList<AlbumItemPicture>();
 		
-		pictures.add(new SampleAlbumItemPicture(FileSystemAccessWrapper.PLACEHOLDERIMAGE2));
-		pictures.add(new SampleAlbumItemPicture(FileSystemAccessWrapper.PLACEHOLDERIMAGE3));
+		pictures.add(new SampleAlbumItemPicture(FileSystemConstants.PLACEHOLDERIMAGE2));
+		pictures.add(new SampleAlbumItemPicture(FileSystemConstants.PLACEHOLDERIMAGE3));
 		
 		List<ItemField> itemFields = new ArrayList<ItemField>();
 		
@@ -144,8 +144,8 @@ public class AlbumItemStore {
 		List<AlbumItemPicture> pictures = new ArrayList<AlbumItemPicture>();		
 		
 		if (containsPictures) {
-			pictures.add(new SampleAlbumItemPicture(FileSystemAccessWrapper.PLACEHOLDERIMAGE2));
-			pictures.add(new SampleAlbumItemPicture(FileSystemAccessWrapper.PLACEHOLDERIMAGE3));
+			pictures.add(new SampleAlbumItemPicture(FileSystemConstants.PLACEHOLDERIMAGE2));
+			pictures.add(new SampleAlbumItemPicture(FileSystemConstants.PLACEHOLDERIMAGE3));
 		}
 		
 		if (metaItemFields.isEmpty()) {

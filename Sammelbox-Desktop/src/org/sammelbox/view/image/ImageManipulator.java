@@ -27,6 +27,7 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.swt.widgets.Display;
 import org.sammelbox.controller.filesystem.FileSystemAccessWrapper;
+import org.sammelbox.controller.filesystem.FileSystemConstants;
 import org.sammelbox.model.album.AlbumItemPicture;
 import org.sammelbox.view.ApplicationUI;
 import org.slf4j.Logger;
@@ -58,7 +59,7 @@ public class ImageManipulator {
 			String newFileNameForThumbnail = identifierForThumbnail + ".png";
 			
 			String newFileLocationForOriginal = FileSystemAccessWrapper.getFilePathForAlbum(album) + File.separatorChar + newFileNameForOriginal;
-			String newFileLocationForThumbnail = FileSystemAccessWrapper.COLLECTOR_HOME_THUMBNAILS_FOLDER + File.separatorChar + newFileNameForThumbnail;
+			String newFileLocationForThumbnail = FileSystemConstants.COLLECTOR_HOME_THUMBNAILS_FOLDER + File.separatorChar + newFileNameForThumbnail;
 			
 			
 			if (imageWidth > MAX_WIDTH_IN_PIXELS || imageHeight > MAX_HEIGHT_IN_PIXELS) {

@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.sammelbox.controller.filesystem.FileSystemAccessWrapper;
+import org.sammelbox.controller.filesystem.FileSystemConstants;
 import org.sammelbox.model.database.DatabaseStringUtilities;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException.DBErrorState;
@@ -127,9 +128,9 @@ public class DatabaseIntegrityManager {
 	
 		// backup collector home
 		File tempAppDataDir = new File(tempDir.getPath());
-		File sourceAppDataDir = new File(FileSystemAccessWrapper.COLLECTOR_HOME);
+		File sourceAppDataDir = new File(FileSystemConstants.COLLECTOR_HOME);
 		try {
-			String excludeRegex = "^\\.lock$|^" + FileSystemAccessWrapper.DATABASE_NAME + "$"; 
+			String excludeRegex = "^\\.lock$|^" + FileSystemConstants.DATABASE_NAME + "$"; 
 			FileSystemAccessWrapper.copyDirectory(sourceAppDataDir, tempAppDataDir, excludeRegex);
 		} catch (IOException e) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState,e);
@@ -137,7 +138,7 @@ public class DatabaseIntegrityManager {
 	
 		// backup database to file
 		try (Statement statement = ConnectionManager.getConnection().createStatement()){				
-			statement.executeUpdate("backup to '" + tempDir.getPath() + File.separatorChar + FileSystemAccessWrapper.DATABASE_TO_RESTORE_NAME + "'");
+			statement.executeUpdate("backup to '" + tempDir.getPath() + File.separatorChar + FileSystemConstants.DATABASE_TO_RESTORE_NAME + "'");
 		} catch (SQLException e) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState,e);
 		}
@@ -156,10 +157,10 @@ public class DatabaseIntegrityManager {
 	 */
 	public static void restoreFromFile(String filePath) throws DatabaseWrapperOperationException {
 		FileSystemAccessWrapper.clearCollectorHome();
-		FileSystemAccessWrapper.unzipFileToFolder(filePath, FileSystemAccessWrapper.COLLECTOR_HOME);
+		FileSystemAccessWrapper.unzipFileToFolder(filePath, FileSystemConstants.COLLECTOR_HOME);
 	
 		try (Statement statement = ConnectionManager.getConnection().createStatement()) {			
-			statement.executeUpdate("restore from '" + FileSystemAccessWrapper.DATABASE_TO_RESTORE + "'");
+			statement.executeUpdate("restore from '" + FileSystemConstants.DATABASE_TO_RESTORE + "'");
 			try {
 				DatabaseIntegrityManager.lastChangeTimeStampInMS = DatabaseIntegrityManager.extractTimeStamp(new File(filePath));
 			} catch (DatabaseWrapperOperationException e) {
@@ -254,7 +255,7 @@ public class DatabaseIntegrityManager {
 		String programVersion = BuildInformationManager.instance().getBuildType() + "_" + BuildInformationManager.instance().getVersion();
 		String timeStamp = Long.toString(getLastDatabaseChangeTimeStamp());		
 	
-		String autoSaveFilePath = FileSystemAccessWrapper.COLLECTOR_HOME_BACKUPS + 
+		String autoSaveFilePath = FileSystemConstants.COLLECTOR_HOME_BACKUPS + 
 				File.separator + "PERIODICAL_BACKUP_" + programVersion + "_"; // separator for the timestamp	
 	
 		List<File> previousAutoSaveList = getAllAutoSaves();
@@ -269,7 +270,7 @@ public class DatabaseIntegrityManager {
 			}
 			autoSaveFilePath = autoSaveFilePath + timeStamp + "." + DatabaseIntegrityManager.AUTO_SAVE_EXTENSION;
 			try {
-				FileSystemAccessWrapper.copyFile(new File(FileSystemAccessWrapper.DATABASE), new File(autoSaveFilePath));
+				FileSystemAccessWrapper.copyFile(new File(FileSystemConstants.DATABASE), new File(autoSaveFilePath));
 			} catch (IOException e) {
 				LOGGER.error("Autosave - backup failed");
 				throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState, e);
@@ -294,7 +295,7 @@ public class DatabaseIntegrityManager {
 			autoSaveFilePath = autoSaveFilePath + timeStamp + "." + DatabaseIntegrityManager.AUTO_SAVE_EXTENSION;
 	
 			try {
-				FileSystemAccessWrapper.copyFile(new File(FileSystemAccessWrapper.DATABASE), new File(autoSaveFilePath));
+				FileSystemAccessWrapper.copyFile(new File(FileSystemConstants.DATABASE), new File(autoSaveFilePath));
 			} catch (IOException e) {
 				LOGGER.error("Autosave - backup failed");
 				throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState, e);

@@ -23,6 +23,7 @@ import java.nio.channels.FileChannel;
 
 import org.eclipse.swt.SWT;
 import org.sammelbox.controller.filesystem.FileSystemAccessWrapper;
+import org.sammelbox.controller.filesystem.FileSystemConstants;
 import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.controller.managers.BuildInformationManager;
@@ -54,7 +55,7 @@ public class Sammelbox {
 				ConnectionManager.openCleanConnection();	
 			} catch (DatabaseWrapperOperationException ex2) {
 				LOGGER.error("The database is corrupt since opening a connection failed. " +
-						"Recent autosaves of the database can be found in: " + FileSystemAccessWrapper.COLLECTOR_HOME_BACKUPS);
+						"Recent autosaves of the database can be found in: " + FileSystemConstants.COLLECTOR_HOME_BACKUPS);
 				
 				ComponentFactory.getMessageBox(ApplicationUI.getShell(), 
 						Translator.get(DictKeys.DIALOG_TITLE_SAMMELBOX_CANT_BE_LAUNCHED), 
@@ -75,7 +76,7 @@ public class Sammelbox {
 			// Ensure that the folder structure including the lock file exists before locking
 			FileSystemAccessWrapper.updateCollectorFileStructure();
 
-			RandomAccessFile lockFile = new RandomAccessFile(FileSystemAccessWrapper.LOCK_FILE, "rw");
+			RandomAccessFile lockFile = new RandomAccessFile(FileSystemConstants.LOCK_FILE, "rw");
 			FileChannel fileChannel = lockFile.getChannel();
 
 			if (fileChannel.tryLock() != null) {

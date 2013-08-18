@@ -58,36 +58,9 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 public class FileSystemAccessWrapper {
-	public static final String DATABASE_NAME					= "collector.db";
-	public static final String DATABASE_TO_RESTORE_NAME			= "collector.restore.db";
-	public static final String TEMP_DIR 						= System.getProperty("java.io.tmpdir");
-	public static final String USER_HOME 						= System.getProperty("user.home");
-	public static final String COLLECTOR_HOME 					= System.getProperty("user.home") + File.separatorChar + ".collector";
-	public static final String COLLECTOR_HOME_APPDATA 			= COLLECTOR_HOME + File.separatorChar + "app-data";
-	public static final String COLLECTOR_HOME_THUMBNAILS_FOLDER = COLLECTOR_HOME + File.separatorChar + "thumbnails";
-	public static final String COLLECTOR_HOME_BACKUPS			= COLLECTOR_HOME + File.separatorChar + "backups"; 
-	public static final String COLLECTOR_HOME_ALBUM_PICTURES 	= COLLECTOR_HOME + File.separatorChar + "album-pictures";
-	public static final String PLACEHOLDERIMAGE 				= COLLECTOR_HOME_APPDATA + File.separatorChar + "placeholder.png";
-	public static final String PLACEHOLDERIMAGE2 				= COLLECTOR_HOME_APPDATA + File.separatorChar + "placeholder2.png";
-	public static final String PLACEHOLDERIMAGE3 				= COLLECTOR_HOME_APPDATA + File.separatorChar + "placeholder3.png";
-	public static final String ZERO_STARS_IMAGE 				= COLLECTOR_HOME_APPDATA + File.separatorChar + "zerostars.png";
-	public static final String ONE_STAR_IMAGE 					= COLLECTOR_HOME_APPDATA + File.separatorChar + "onestar.png";
-	public static final String TWO_STARS_IMAGE 					= COLLECTOR_HOME_APPDATA + File.separatorChar + "twostars.png";
-	public static final String THREE_STARS_IMAGE 				= COLLECTOR_HOME_APPDATA + File.separatorChar + "threestars.png";
-	public static final String FOUR_STARS_IMAGE 				= COLLECTOR_HOME_APPDATA + File.separatorChar + "fourstars.png";
-	public static final String FIVE_STARS_IMAGE 				= COLLECTOR_HOME_APPDATA + File.separatorChar + "fivestars.png";
-	public static final String LOGO 							= COLLECTOR_HOME_APPDATA + File.separatorChar + "logo.png";
-	public static final String LOGO_SMALL 						= COLLECTOR_HOME_APPDATA + File.separatorChar + "logo-small.png";
-	public static final String DATABASE 						= COLLECTOR_HOME + File.separatorChar + DATABASE_NAME;
-	public static final String DATABASE_TO_RESTORE				= COLLECTOR_HOME + File.separatorChar + DATABASE_TO_RESTORE_NAME;
-	public static final String VIEW_FILE						= COLLECTOR_HOME_APPDATA + File.separatorChar + "views.xml";
-	public static final String ALBUM_FILE            			= COLLECTOR_HOME_APPDATA + File.separatorChar + "albums.xml";
-	public static final String SETTINGS_FILE					= COLLECTOR_HOME_APPDATA + File.separatorChar + "settings.xml";
-	public static final String WELCOME_PAGE_FILE				= COLLECTOR_HOME_APPDATA + File.separatorChar + "welcome.xml";
-	public static final String LOCK_FILE						= COLLECTOR_HOME_APPDATA + File.separatorChar + ".lock";
-	
 	private static final boolean OVERWRITE_EXISITING_FILES = true;
 	private static final Logger LOGGER = LoggerFactory.getLogger(FileSystemAccessWrapper.class);
+	
 	/**
 	 *  A simple regex to prevent album names whose folders of the same name cause problems on the filesystem
 	 * Minimum length is 3 alphanumeric characters possibly white spaces, underscores (u005F) hyphen_minuses (u002D). 
@@ -103,37 +76,40 @@ public class FileSystemAccessWrapper {
 	 *  During this process no existing directory or file is overwritten.
 	 *  This method must be called during initialization of the program.*/
 	public static boolean updateCollectorFileStructure() {
-		File collectorDirectory = new File(COLLECTOR_HOME);
+		File collectorDirectory = new File(FileSystemConstants.COLLECTOR_HOME);
 
 		if (!collectorDirectory.exists()) {
 			if (!collectorDirectory.mkdir()) {
-				System.err.println("Cannot create "+ COLLECTOR_HOME+ " directory although it seems that it does not exist");
+				System.err.println("Cannot create "+ FileSystemConstants.COLLECTOR_HOME+ " directory " +
+						"although it seems that it does not exist");
 				return false;
 			}
 		}
 
 		// Create Album home directory containing all albums		
-		File albumHomeDirectory = new File(COLLECTOR_HOME_ALBUM_PICTURES);
+		File albumHomeDirectory = new File(FileSystemConstants.COLLECTOR_HOME_ALBUM_PICTURES);
 
 		if (!albumHomeDirectory.exists()) {
 			if (!albumHomeDirectory.mkdir()) {
-				System.err.println("Cannot create " + COLLECTOR_HOME_ALBUM_PICTURES + " although it seems that it does not exist");
+				System.err.println("Cannot create " + FileSystemConstants.COLLECTOR_HOME_ALBUM_PICTURES + 
+						" although it seems that it does not exist");
 				return false;
 			}
 		}
 
 		// Create thumbnail directory containing all thumbnails		
-		File thumbnailsDirectory = new File(COLLECTOR_HOME_THUMBNAILS_FOLDER);
+		File thumbnailsDirectory = new File(FileSystemConstants.COLLECTOR_HOME_THUMBNAILS_FOLDER);
 
 		if (!thumbnailsDirectory.exists()) {
 			if (!thumbnailsDirectory.mkdir()) {
-				System.err.println("Cannot create " + COLLECTOR_HOME_THUMBNAILS_FOLDER + " although it seems that it does not exist");
+				System.err.println("Cannot create " + FileSystemConstants.COLLECTOR_HOME_THUMBNAILS_FOLDER + 
+						" although it seems that it does not exist");
 				return false;
 			}
 		}
 		
 		// Create the application data directory
-		File appData = new File(COLLECTOR_HOME_APPDATA);
+		File appData = new File(FileSystemConstants.COLLECTOR_HOME_APPDATA);
 		if (!appData.exists()) {
 			if (!appData.mkdir()) {
 				System.err.println("Cannot create collector app-data directory although it seems that it does not exist");
@@ -142,7 +118,7 @@ public class FileSystemAccessWrapper {
 		}
 		
 		// Create the backup directory
-		File backups = new File(COLLECTOR_HOME_BACKUPS);
+		File backups = new File(FileSystemConstants.COLLECTOR_HOME_BACKUPS);
 		if (!backups.exists()) {
 			if (!backups.mkdir()) {
 				System.err.println("Cannot create collector backup directory although it seems that it does not exist");
@@ -151,7 +127,7 @@ public class FileSystemAccessWrapper {
 		}
 		
 		// Add the lock file
-		File lockFile = new File(LOCK_FILE);
+		File lockFile = new File(FileSystemConstants.LOCK_FILE);
 		try {
 			lockFile.createNewFile();
 		} catch (IOException e) {
@@ -159,67 +135,67 @@ public class FileSystemAccessWrapper {
 		}
 		
 		// Add presentation files to application data directory
-		File placeholderPNG = new File(PLACEHOLDERIMAGE);
+		File placeholderPNG = new File(FileSystemConstants.PLACEHOLDERIMAGE);
 		if (!placeholderPNG.exists() || OVERWRITE_EXISITING_FILES) {		
 			copyResourceToFile("graphics/placeholder.png", placeholderPNG);
 		}
 		
-		File placeholder2PNG = new File(PLACEHOLDERIMAGE2);
+		File placeholder2PNG = new File(FileSystemConstants.PLACEHOLDERIMAGE2);
 		if (!placeholder2PNG.exists() || OVERWRITE_EXISITING_FILES) {		
 			copyResourceToFile("graphics/placeholder2.png", placeholder2PNG);
 		}
 		
-		File placeholder3PNG = new File(PLACEHOLDERIMAGE3);
+		File placeholder3PNG = new File(FileSystemConstants.PLACEHOLDERIMAGE3);
 		if (!placeholder3PNG.exists() || OVERWRITE_EXISITING_FILES) {		
 			copyResourceToFile("graphics/placeholder3.png", placeholder3PNG);
 		}
 
-		File zeroStarsImage = new File(ZERO_STARS_IMAGE);
+		File zeroStarsImage = new File(FileSystemConstants.ZERO_STARS_IMAGE);
 		if (!zeroStarsImage.exists() || OVERWRITE_EXISITING_FILES) {		
 			copyResourceToFile("graphics/zerostars.png", zeroStarsImage);
 		}
 		
-		File oneStarImage = new File(ONE_STAR_IMAGE);
+		File oneStarImage = new File(FileSystemConstants.ONE_STAR_IMAGE);
 		if (!oneStarImage.exists() || OVERWRITE_EXISITING_FILES) {		
 			copyResourceToFile("graphics/onestar.png", oneStarImage);
 		}
 		
-		File twoStarsImage = new File(TWO_STARS_IMAGE);
+		File twoStarsImage = new File(FileSystemConstants.TWO_STARS_IMAGE);
 		if (!twoStarsImage.exists() || OVERWRITE_EXISITING_FILES) {		
 			copyResourceToFile("graphics/twostars.png", twoStarsImage);
 		}
 		
-		File threeStarsImage = new File(THREE_STARS_IMAGE);
+		File threeStarsImage = new File(FileSystemConstants.THREE_STARS_IMAGE);
 		if (!threeStarsImage.exists() || OVERWRITE_EXISITING_FILES) {		
 			copyResourceToFile("graphics/threestars.png", threeStarsImage);
 		}
 		
-		File fourStarsImage = new File(FOUR_STARS_IMAGE);
+		File fourStarsImage = new File(FileSystemConstants.FOUR_STARS_IMAGE);
 		if (!fourStarsImage.exists() || OVERWRITE_EXISITING_FILES) {		
 			copyResourceToFile("graphics/fourstars.png", fourStarsImage);
 		}
 		
-		File fiveStarsImage = new File(FIVE_STARS_IMAGE);
+		File fiveStarsImage = new File(FileSystemConstants.FIVE_STARS_IMAGE);
 		if (!fiveStarsImage.exists() || OVERWRITE_EXISITING_FILES) {		
 			copyResourceToFile("graphics/fivestars.png", fiveStarsImage);
 		}
 		
-		File logoPNG = new File(LOGO);
+		File logoPNG = new File(FileSystemConstants.LOGO);
 		if (!logoPNG.exists() || OVERWRITE_EXISITING_FILES) {		
 			copyResourceToFile("graphics/logo.png", logoPNG);
 		}
 		
-		File logoSmallPNG = new File(LOGO_SMALL);
+		File logoSmallPNG = new File(FileSystemConstants.LOGO_SMALL);
 		if (!logoSmallPNG.exists() || OVERWRITE_EXISITING_FILES) {		
 			copyResourceToFile("graphics/logo-small.png", logoSmallPNG);
 		}
 		
-		File effectsJS = new File(COLLECTOR_HOME_APPDATA + File.separatorChar + "effects.js");
+		File effectsJS = new File(FileSystemConstants.COLLECTOR_HOME_APPDATA + File.separatorChar + "effects.js");
 		if (!effectsJS.exists() || OVERWRITE_EXISITING_FILES) {		
 			copyResourceToFile("javascript/effects.js", effectsJS);
 		}
 
-		File styleCSS = new File(COLLECTOR_HOME_APPDATA + File.separatorChar + "style.css");
+		File styleCSS = new File(FileSystemConstants.COLLECTOR_HOME_APPDATA + File.separatorChar + "style.css");
 		if (!styleCSS.exists() || OVERWRITE_EXISITING_FILES) {		
 			copyResourceToFile("stylesheets/style.css", styleCSS);
 		}
@@ -276,7 +252,7 @@ public class FileSystemAccessWrapper {
 	 * @return The path to the picture directory.
 	 */
 	public static String getFilePathForAlbum(String albumName) {
-		return COLLECTOR_HOME_ALBUM_PICTURES + File.separatorChar + albumName;
+		return FileSystemConstants.COLLECTOR_HOME_ALBUM_PICTURES + File.separatorChar + albumName;
 	}
 
 	/**
@@ -337,7 +313,7 @@ public class FileSystemAccessWrapper {
 	 * @return The file which points to the physical location of the picture.
 	 */
 	public static File getFileInAppHome(String fileNameWithExtension, String albumName) {
-		return new File(COLLECTOR_HOME_ALBUM_PICTURES + File.separatorChar + albumName + File.separatorChar + fileNameWithExtension);
+		return new File(FileSystemConstants.COLLECTOR_HOME_ALBUM_PICTURES + File.separatorChar + albumName + File.separatorChar + fileNameWithExtension);
 	}
 
 	/**
@@ -511,12 +487,12 @@ public class FileSystemAccessWrapper {
 	 * The .collector directory as well as the database will still exist after calling this method. 
 	 */
 	public static void clearCollectorHome() {	
-		File[] files = new File(COLLECTOR_HOME).listFiles();
+		File[] files = new File(FileSystemConstants.COLLECTOR_HOME).listFiles();
 
 		for (int i=0; i<files.length; i++) {
 			if (files[i].isDirectory()) {
 				deleteDirectoryRecursively(files[i]);
-			} else if (!files[i].getName().equals(DATABASE_NAME)) {
+			} else if (!files[i].getName().equals(FileSystemConstants.DATABASE_NAME)) {
 				files[i].delete();
 			}
 		}
@@ -526,12 +502,12 @@ public class FileSystemAccessWrapper {
 	 * Convenience method to remove the default application home directory. 
 	 */
 	public static void removeCollectorHome() {
-		File collectorHome = new File(COLLECTOR_HOME);
+		File collectorHome = new File(FileSystemConstants.COLLECTOR_HOME);
 
 		if (collectorHome.exists()) {
 			FileSystemAccessWrapper.clearCollectorHome();
 
-			new File(FileSystemAccessWrapper.DATABASE).delete();
+			new File(FileSystemConstants.DATABASE).delete();
 
 			collectorHome.delete();
 		}
@@ -542,7 +518,7 @@ public class FileSystemAccessWrapper {
 	 * @return true if and only if the file or directory is successfully deleted; false otherwise 
 	 */
 	public static boolean deleteDatabaseRestoreFile() {
-		File file = new File(DATABASE_TO_RESTORE);
+		File file = new File(FileSystemConstants.DATABASE_TO_RESTORE);
 		return file.delete();
 	}
 	
@@ -553,7 +529,7 @@ public class FileSystemAccessWrapper {
 	 */
 	public static List<File> getAllMatchingFilesInCollectorHome(String fileNameRegex) {
 		List<File> matchingFiles = new ArrayList<File>();
-		File path = new File(COLLECTOR_HOME_APPDATA);
+		File path = new File(FileSystemConstants.COLLECTOR_HOME_APPDATA);
 		File[] files = path.listFiles();
 		for(int i=0; i<files.length; i++) {
 			if(!files[i].isDirectory()) {
@@ -601,11 +577,11 @@ public class FileSystemAccessWrapper {
 		
 		xmlOutput.append("</views>\n");
 		
-		writeToFile(xmlOutput.toString(), VIEW_FILE);
+		writeToFile(xmlOutput.toString(), FileSystemConstants.VIEW_FILE);
 	}
 
 	public static Map<String, List<AlbumView>> loadViews() {
-		String albumViewsAsXml = readFileAsString(VIEW_FILE);
+		String albumViewsAsXml = readFileAsString(FileSystemConstants.VIEW_FILE);
 		
 		Map<String, List<AlbumView>> albumNamesToAlbumViews = new HashMap<String, List<AlbumView>>();
 		
@@ -715,11 +691,11 @@ public class FileSystemAccessWrapper {
 		
 		xmlOutput.append("</welcomePageInformation>\n");
 		
-		writeToFile(xmlOutput.toString(), WELCOME_PAGE_FILE);
+		writeToFile(xmlOutput.toString(), FileSystemConstants.WELCOME_PAGE_FILE);
 	}
 
 	public static Map<String, Integer> getAlbumAndViewsToClicks() {
-		String welcomePageInformationXml = readFileAsString(WELCOME_PAGE_FILE);
+		String welcomePageInformationXml = readFileAsString(FileSystemConstants.WELCOME_PAGE_FILE);
 		
 		Map<String, Integer> albumAndViewsToClicks = new HashMap<String, Integer>();
 		
@@ -765,7 +741,7 @@ public class FileSystemAccessWrapper {
 	}
 
 	public static Map<String, Long> getAlbumToLastModified() {
-		String welcomePageInformationXml = readFileAsString(WELCOME_PAGE_FILE);
+		String welcomePageInformationXml = readFileAsString(FileSystemConstants.WELCOME_PAGE_FILE);
 		
 		Map<String, Long> albumToLastModified = new HashMap<String, Long>();
 		
@@ -841,11 +817,11 @@ public class FileSystemAccessWrapper {
 		
 		xmlOutput.append("</albums>\n");
 		
-		writeToFile(xmlOutput.toString(), ALBUM_FILE);
+		writeToFile(xmlOutput.toString(), FileSystemConstants.ALBUM_FILE);
 	}
 
 	public static List<String> loadAlbums() {
-		String albumsAsXml = readFileAsString(ALBUM_FILE);
+		String albumsAsXml = readFileAsString(FileSystemConstants.ALBUM_FILE);
 		
 		List<String> albumToPosition = new LinkedList<String>();
 		
@@ -915,7 +891,7 @@ public class FileSystemAccessWrapper {
 	}
 
 	public static ApplicationSettings loadSettings() {
-		String applicationSettingsAsXml = readFileAsString(SETTINGS_FILE);
+		String applicationSettingsAsXml = readFileAsString(FileSystemConstants.SETTINGS_FILE);
 		
 		ApplicationSettings applicationSettings = new ApplicationSettings();
 		
@@ -963,6 +939,6 @@ public class FileSystemAccessWrapper {
 		xmlOutput.append("\t<userDefinedLanguage>" + applicationSettings.getUserDefinedLanguage().toString() + "</userDefinedLanguage>\n");
 		xmlOutput.append("</settings>\n");
 		
-		writeToFile(xmlOutput.toString(), SETTINGS_FILE);
+		writeToFile(xmlOutput.toString(), FileSystemConstants.SETTINGS_FILE);
 	}
 }
