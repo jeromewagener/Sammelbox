@@ -28,7 +28,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.sammelbox.controller.filesystem.FileSystemAccessWrapper;
+import org.sammelbox.controller.filesystem.XMLStorageWrapper;
 import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
@@ -42,8 +42,8 @@ public class WelcomePageManager {
 	private static Map<String, Long> albumToLastModified;
 	
 	public static void initializeFromWelcomeFile() {
-		albumAndViewsToClicks = FileSystemAccessWrapper.getAlbumAndViewsToClicks();
-		albumToLastModified = FileSystemAccessWrapper.getAlbumToLastModified();
+		albumAndViewsToClicks = XMLStorageWrapper.retrieveAlbumAndViewsToClicks();
+		albumToLastModified = XMLStorageWrapper.retrieveAlbumToLastModified();
 	}
 
 	public static void updateLastModifiedWithCurrentDate(String albumName) {
@@ -85,7 +85,7 @@ public class WelcomePageManager {
 		}
 		
 		// store
-		FileSystemAccessWrapper.storeWelcomePageManagerInformation(albumAndViewsToClicks, albumToLastModified);
+		XMLStorageWrapper.storeWelcomePageManagerInformation(albumAndViewsToClicks, albumToLastModified);
 	}
 
 	public static Map<String, Integer> getAlbumAndViewsSortedByClicks() {

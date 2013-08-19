@@ -28,195 +28,111 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.io.StringReader;
 import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import org.sammelbox.controller.i18n.Language;
-import org.sammelbox.controller.managers.AlbumViewManager.AlbumView;
-import org.sammelbox.controller.settings.ApplicationSettingsManager.ApplicationSettings;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 import org.sammelbox.model.database.operations.DatabaseOperations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
 
 public class FileSystemAccessWrapper {
-	private static final boolean OVERWRITE_EXISITING_FILES = true;
 	private static final Logger LOGGER = LoggerFactory.getLogger(FileSystemAccessWrapper.class);
+	private static final boolean OVERWRITE_EXISITING_FILES = true;
 	
 	/**
 	 *  A simple regex to prevent album names whose folders of the same name cause problems on the filesystem
 	 * Minimum length is 3 alphanumeric characters possibly white spaces, underscores (u005F) hyphen_minuses (u002D). 
 	 * */
 	private static final String albumNameRegex = "^(\\w|\\u005F|\\s|\\u002D){3,}$";
-	
-	/**
-	 * Instance to itself used in the process to located stored resources. 
-	 */
-	private static FileSystemAccessWrapper instance = new FileSystemAccessWrapper();
 
-	/** This method is used to create and update the file-structure for the collector application.
-	 *  During this process no existing directory or file is overwritten.
+	/** Creates the directory using the specified path. All errors that might occur will be logged 
+	 * @param directoryPath the complete (absolute) directory path. E.g. /home/user/folder1
+	 * @return true if no problem occurred, false otherwise*/
+	private static boolean createDirectoryAndLogError(String directoryPath) {
+		File directory = new File(directoryPath);
+		
+		if (!directory.exists()) {
+			if (!directory.mkdir()) {
+				LOGGER.error("Cannot create '" + directoryPath + "' "
+						+ "although it seems that the directory does not yet exist");
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	/** This method is used to create and update the file-structure
 	 *  This method must be called during initialization of the program.*/
 	public static boolean updateCollectorFileStructure() {
-		File collectorDirectory = new File(FileSystemConstants.COLLECTOR_HOME);
-
-		if (!collectorDirectory.exists()) {
-			if (!collectorDirectory.mkdir()) {
-				System.err.println("Cannot create "+ FileSystemConstants.COLLECTOR_HOME+ " directory " +
-						"although it seems that it does not exist");
-				return false;
-			}
-		}
-
-		// Create Album home directory containing all albums		
-		File albumHomeDirectory = new File(FileSystemConstants.COLLECTOR_HOME_ALBUM_PICTURES);
-
-		if (!albumHomeDirectory.exists()) {
-			if (!albumHomeDirectory.mkdir()) {
-				System.err.println("Cannot create " + FileSystemConstants.COLLECTOR_HOME_ALBUM_PICTURES + 
-						" although it seems that it does not exist");
-				return false;
-			}
-		}
-
-		// Create thumbnail directory containing all thumbnails		
-		File thumbnailsDirectory = new File(FileSystemConstants.COLLECTOR_HOME_THUMBNAILS_FOLDER);
-
-		if (!thumbnailsDirectory.exists()) {
-			if (!thumbnailsDirectory.mkdir()) {
-				System.err.println("Cannot create " + FileSystemConstants.COLLECTOR_HOME_THUMBNAILS_FOLDER + 
-						" although it seems that it does not exist");
-				return false;
-			}
-		}
+		boolean errorOccurred = false;
+				
+		errorOccurred = errorOccurred || createDirectoryAndLogError(FileSystemConstants.COLLECTOR_HOME);
+		errorOccurred = errorOccurred || createDirectoryAndLogError(FileSystemConstants.COLLECTOR_HOME_ALBUM_PICTURES);
+		errorOccurred = errorOccurred || createDirectoryAndLogError(FileSystemConstants.COLLECTOR_HOME_THUMBNAILS_FOLDER);
+		errorOccurred = errorOccurred || createDirectoryAndLogError(FileSystemConstants.COLLECTOR_HOME_APPDATA);
+		errorOccurred = errorOccurred || createDirectoryAndLogError(FileSystemConstants.COLLECTOR_HOME_BACKUPS);
 		
-		// Create the application data directory
-		File appData = new File(FileSystemConstants.COLLECTOR_HOME_APPDATA);
-		if (!appData.exists()) {
-			if (!appData.mkdir()) {
-				System.err.println("Cannot create collector app-data directory although it seems that it does not exist");
-				return false;
-			}
+		if (errorOccurred) {
+			return false;
 		}
-		
-		// Create the backup directory
-		File backups = new File(FileSystemConstants.COLLECTOR_HOME_BACKUPS);
-		if (!backups.exists()) {
-			if (!backups.mkdir()) {
-				System.err.println("Cannot create collector backup directory although it seems that it does not exist");
-				return false;
-			}
-		}
-		
+			
+		extractResourceToFile("graphics/placeholder.png", FileSystemConstants.PLACEHOLDERIMAGE);
+		extractResourceToFile("graphics/placeholder2.png", FileSystemConstants.PLACEHOLDERIMAGE2);
+		extractResourceToFile("graphics/placeholder3.png", FileSystemConstants.PLACEHOLDERIMAGE3);
+		extractResourceToFile("graphics/zerostars.png", FileSystemConstants.ZERO_STARS_IMAGE);
+		extractResourceToFile("graphics/onestar.png", FileSystemConstants.ONE_STAR_IMAGE);
+		extractResourceToFile("graphics/twostars.png", FileSystemConstants.TWO_STARS_IMAGE);
+		extractResourceToFile("graphics/threestars.png", FileSystemConstants.THREE_STARS_IMAGE);
+		extractResourceToFile("graphics/fourstars.png", FileSystemConstants.FOUR_STARS_IMAGE);
+		extractResourceToFile("graphics/fivestars.png", FileSystemConstants.FIVE_STARS_IMAGE);
+		extractResourceToFile("graphics/logo.png", FileSystemConstants.LOGO);
+		extractResourceToFile("graphics/logo-small.png", FileSystemConstants.LOGO_SMALL);
+		extractResourceToFile("javascript/effects.js", FileSystemConstants.EFFECTS_JS);
+		extractResourceToFile("stylesheets/style.css", FileSystemConstants.STYLE_CSS);
+
 		// Add the lock file
-		File lockFile = new File(FileSystemConstants.LOCK_FILE);
 		try {
-			lockFile.createNewFile();
+			File lockFile = new File(FileSystemConstants.LOCK_FILE);
+			if (!lockFile.exists()) {
+				lockFile.createNewFile();
+			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOGGER.error("Cannot create '" + FileSystemConstants.LOCK_FILE + "' "
+					+ "although it seems that the directory does not yet exist", e);
+			return false;
 		}
 		
-		// Add presentation files to application data directory
-		File placeholderPNG = new File(FileSystemConstants.PLACEHOLDERIMAGE);
-		if (!placeholderPNG.exists() || OVERWRITE_EXISITING_FILES) {		
-			copyResourceToFile("graphics/placeholder.png", placeholderPNG);
-		}
-		
-		File placeholder2PNG = new File(FileSystemConstants.PLACEHOLDERIMAGE2);
-		if (!placeholder2PNG.exists() || OVERWRITE_EXISITING_FILES) {		
-			copyResourceToFile("graphics/placeholder2.png", placeholder2PNG);
-		}
-		
-		File placeholder3PNG = new File(FileSystemConstants.PLACEHOLDERIMAGE3);
-		if (!placeholder3PNG.exists() || OVERWRITE_EXISITING_FILES) {		
-			copyResourceToFile("graphics/placeholder3.png", placeholder3PNG);
-		}
-
-		File zeroStarsImage = new File(FileSystemConstants.ZERO_STARS_IMAGE);
-		if (!zeroStarsImage.exists() || OVERWRITE_EXISITING_FILES) {		
-			copyResourceToFile("graphics/zerostars.png", zeroStarsImage);
-		}
-		
-		File oneStarImage = new File(FileSystemConstants.ONE_STAR_IMAGE);
-		if (!oneStarImage.exists() || OVERWRITE_EXISITING_FILES) {		
-			copyResourceToFile("graphics/onestar.png", oneStarImage);
-		}
-		
-		File twoStarsImage = new File(FileSystemConstants.TWO_STARS_IMAGE);
-		if (!twoStarsImage.exists() || OVERWRITE_EXISITING_FILES) {		
-			copyResourceToFile("graphics/twostars.png", twoStarsImage);
-		}
-		
-		File threeStarsImage = new File(FileSystemConstants.THREE_STARS_IMAGE);
-		if (!threeStarsImage.exists() || OVERWRITE_EXISITING_FILES) {		
-			copyResourceToFile("graphics/threestars.png", threeStarsImage);
-		}
-		
-		File fourStarsImage = new File(FileSystemConstants.FOUR_STARS_IMAGE);
-		if (!fourStarsImage.exists() || OVERWRITE_EXISITING_FILES) {		
-			copyResourceToFile("graphics/fourstars.png", fourStarsImage);
-		}
-		
-		File fiveStarsImage = new File(FileSystemConstants.FIVE_STARS_IMAGE);
-		if (!fiveStarsImage.exists() || OVERWRITE_EXISITING_FILES) {		
-			copyResourceToFile("graphics/fivestars.png", fiveStarsImage);
-		}
-		
-		File logoPNG = new File(FileSystemConstants.LOGO);
-		if (!logoPNG.exists() || OVERWRITE_EXISITING_FILES) {		
-			copyResourceToFile("graphics/logo.png", logoPNG);
-		}
-		
-		File logoSmallPNG = new File(FileSystemConstants.LOGO_SMALL);
-		if (!logoSmallPNG.exists() || OVERWRITE_EXISITING_FILES) {		
-			copyResourceToFile("graphics/logo-small.png", logoSmallPNG);
-		}
-		
-		File effectsJS = new File(FileSystemConstants.COLLECTOR_HOME_APPDATA + File.separatorChar + "effects.js");
-		if (!effectsJS.exists() || OVERWRITE_EXISITING_FILES) {		
-			copyResourceToFile("javascript/effects.js", effectsJS);
-		}
-
-		File styleCSS = new File(FileSystemConstants.COLLECTOR_HOME_APPDATA + File.separatorChar + "style.css");
-		if (!styleCSS.exists() || OVERWRITE_EXISITING_FILES) {		
-			copyResourceToFile("stylesheets/style.css", styleCSS);
-		}
-
 		return true;
 	}
 
-	public static void copyResourceToFile(String resource, File outputFile) {
+	/** Extracts the specified resource to the specified output location
+	 * @param resourceName the name of the resource to be extracted 
+	 * @param outputResourcePath the absolute location to which the resource should be extracted */
+	private static void extractResourceToFile(String resourceName, String outputResourcePath) {
 		try {
-			InputStream istream = instance.getClass().getClassLoader().getResourceAsStream(resource);
-			OutputStream ostream = new FileOutputStream(outputFile);
-
-			byte buffer[] = new byte[1024];
-			int length;
+			File resource = new File(outputResourcePath);
 			
-			while((length=istream.read(buffer)) > 0) {
-				ostream.write(buffer,0,length);
+			if (!resource.exists() || OVERWRITE_EXISITING_FILES) {			
+				InputStream istream = FileSystemAccessWrapper.class.getClassLoader().getResourceAsStream(resourceName);
+				OutputStream ostream = new FileOutputStream(outputResourcePath);
+	
+				byte buffer[] = new byte[1024];
+				int length;
+				
+				while((length=istream.read(buffer)) > 0) {
+					ostream.write(buffer, 0, length);
+				}
+				
+				ostream.close();
+				istream.close();
 			}
-			
-			ostream.close();
-			istream.close();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -559,89 +475,6 @@ public class FileSystemAccessWrapper {
 			ex.printStackTrace();
 		}
 	}
-
-	public static void storeViews(Map<String, List<AlbumView>> albumNamesToAlbumViews) {
-		StringBuilder xmlOutput = new StringBuilder();
-		
-		xmlOutput.append("<views>\n");
-		
-		for (String albumName : albumNamesToAlbumViews.keySet()) {
-			for (AlbumView albumView : albumNamesToAlbumViews.get(albumName)) {
-				xmlOutput.append("\t<view>\n");
-				xmlOutput.append("\t\t<name><![CDATA[" + albumView.getName() + "]]></name>\n");
-				xmlOutput.append("\t\t<album><![CDATA[" + albumView.getAlbum() + "]]></album>\n");
-				xmlOutput.append("\t\t<sqlQuery><![CDATA[" + albumView.getSqlQuery() + "]]></sqlQuery>\n");
-				xmlOutput.append("\t</view>\n");
-			}
-		}
-		
-		xmlOutput.append("</views>\n");
-		
-		writeToFile(xmlOutput.toString(), FileSystemConstants.VIEW_FILE);
-	}
-
-	public static Map<String, List<AlbumView>> loadViews() {
-		String albumViewsAsXml = readFileAsString(FileSystemConstants.VIEW_FILE);
-		
-		Map<String, List<AlbumView>> albumNamesToAlbumViews = new HashMap<String, List<AlbumView>>();
-		
-		if (albumViewsAsXml.isEmpty()) {
-			return albumNamesToAlbumViews;
-		}
-		
-		try {
-			DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-			InputSource inputSource = new InputSource();
-			inputSource.setCharacterStream(new StringReader(albumViewsAsXml));
-
-			Document document = documentBuilder.parse(inputSource);
-			Node root = document.getFirstChild();
-
-			if (!root.getNodeName().equals("views")) {
-				throw new Exception("Invalid Album View File");
-			} else {
-				NodeList viewNodes = document.getElementsByTagName("view");
-				
-				String name = "";
-				String album = "";
-				String sqlQuery = "";
-				
-				for (int i = 0; i < viewNodes.getLength(); i++) {
-					Node node = viewNodes.item(i);
-
-					if (node.getNodeType() == Node.ELEMENT_NODE) {
-						Element element = (Element) node;
-						
-						name = getValue("name", element);
-						album = getValue("album", element);
-						sqlQuery = getValue("sqlQuery", element);
-						
-						if (albumNamesToAlbumViews.get(album) == null) {
-							List<AlbumView> albumViews = new LinkedList<>();
-							albumViews.add(new AlbumView(name, album, sqlQuery));
-							albumNamesToAlbumViews.put(album, albumViews);
-						} else {
-							List<AlbumView> albumViews = albumNamesToAlbumViews.get(album);
-							albumViews.add(new AlbumView(name, album, sqlQuery));
-							albumNamesToAlbumViews.put(album, albumViews);
-						}
-					}
-				}
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-		
-		return albumNamesToAlbumViews;
-	}
-
-	private static String getValue(String tag, Element element) {
-		NodeList nodes = element.getElementsByTagName(tag).item(0).getChildNodes();
-		Node node = (Node) nodes.item(0);
-		return node.getNodeValue();
-	}
-
 	
 	/** Reads the specified file into a string
 	 * @param filePath the path to the file that should be read
@@ -666,125 +499,6 @@ public class FileSystemAccessWrapper {
 
 		return new String(buffer);
 	}
-
-	public static void storeWelcomePageManagerInformation(
-			Map<String, Integer> albumAndViewsToClicks,
-			Map<String, Long> albumToLastModified) {
-		
-		StringBuilder xmlOutput = new StringBuilder();
-		
-		xmlOutput.append("<welcomePageInformation>\n");
-		
-		for (String albumOrViewName : albumAndViewsToClicks.keySet()) {
-			xmlOutput.append("\t<albumAndViewsToClicks>\n");
-			xmlOutput.append("\t\t<name><![CDATA[" + albumOrViewName + "]]></name>\n");
-			xmlOutput.append("\t\t<clicks><![CDATA[" + albumAndViewsToClicks.get(albumOrViewName) + "]]></clicks>\n");
-			xmlOutput.append("\t</albumAndViewsToClicks>\n");
-		}
-		
-		for (String albumName : albumToLastModified.keySet()) {
-			xmlOutput.append("\t<albumToLastModified>\n");
-			xmlOutput.append("\t\t<albumName><![CDATA[" + albumName + "]]></albumName>\n");
-			xmlOutput.append("\t\t<lastModified><![CDATA[" + albumToLastModified.get(albumName) + "]]></lastModified>\n");
-			xmlOutput.append("\t</albumToLastModified>\n");
-		}
-		
-		xmlOutput.append("</welcomePageInformation>\n");
-		
-		writeToFile(xmlOutput.toString(), FileSystemConstants.WELCOME_PAGE_FILE);
-	}
-
-	public static Map<String, Integer> getAlbumAndViewsToClicks() {
-		String welcomePageInformationXml = readFileAsString(FileSystemConstants.WELCOME_PAGE_FILE);
-		
-		Map<String, Integer> albumAndViewsToClicks = new HashMap<String, Integer>();
-		
-		if (welcomePageInformationXml.isEmpty()) {
-			return albumAndViewsToClicks;
-		}
-		
-		try {
-			DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-			InputSource inputSource = new InputSource();
-			inputSource.setCharacterStream(new StringReader(welcomePageInformationXml));
-
-			Document document = documentBuilder.parse(inputSource);
-			Node root = document.getFirstChild();
-
-			if (!root.getNodeName().equals("welcomePageInformation")) {
-				throw new Exception("Invalid Welcome Page File");
-			} else {
-				NodeList viewNodes = document.getElementsByTagName("albumAndViewsToClicks");
-				
-				String name = "";
-				Integer clicks = 0;
-
-				for (int i = 0; i < viewNodes.getLength(); i++) {
-					Node node = viewNodes.item(i);
-
-					if (node.getNodeType() == Node.ELEMENT_NODE) {
-						Element element = (Element) node;
-						
-						name = getValue("name", element);
-						clicks = Integer.parseInt(getValue("clicks", element));
-						
-						albumAndViewsToClicks.put(name, clicks);
-					}
-				}
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-		
-		return albumAndViewsToClicks;
-	}
-
-	public static Map<String, Long> getAlbumToLastModified() {
-		String welcomePageInformationXml = readFileAsString(FileSystemConstants.WELCOME_PAGE_FILE);
-		
-		Map<String, Long> albumToLastModified = new HashMap<String, Long>();
-		
-		if (welcomePageInformationXml.isEmpty()) {
-			return albumToLastModified;
-		}
-		
-		try {
-			DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-			InputSource inputSource = new InputSource();
-			inputSource.setCharacterStream(new StringReader(welcomePageInformationXml));
-
-			Document document = documentBuilder.parse(inputSource);
-			Node root = document.getFirstChild();
-
-			if (!root.getNodeName().equals("welcomePageInformation")) {
-				throw new Exception("Invalid Welcome Page File");
-			} else {
-				NodeList viewNodes = document.getElementsByTagName("albumToLastModified");
-				
-				String name = "";
-				Long lastModified = 0L;
-
-				for (int i = 0; i < viewNodes.getLength(); i++) {
-					Node node = viewNodes.item(i);
-
-					if (node.getNodeType() == Node.ELEMENT_NODE) {
-						Element element = (Element) node;
-						
-						name = getValue("albumName", element);
-						lastModified = Long.parseLong(getValue("lastModified", element));
-						
-						albumToLastModified.put(name, lastModified);
-					}
-				}
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-		
-		return albumToLastModified;
-	}
 	
 	public static String readInputStreamIntoString(InputStream fileInputStream) {
 		StringBuilder stringBuilder = new StringBuilder();
@@ -802,66 +516,6 @@ public class FileSystemAccessWrapper {
 		}
 
 		return stringBuilder.toString();
-	}
-	
-	public static void storeAlbums(Collection<String> albums) {
-		StringBuilder xmlOutput = new StringBuilder();
-		
-		xmlOutput.append("<albums>\n");
-		
-		for (String album : albums) {
-			xmlOutput.append("\t<album>\n");
-			xmlOutput.append("\t\t<name><![CDATA[" + album + "]]></name>\n");
-			xmlOutput.append("\t</album>\n");
-		}
-		
-		xmlOutput.append("</albums>\n");
-		
-		writeToFile(xmlOutput.toString(), FileSystemConstants.ALBUM_FILE);
-	}
-
-	public static List<String> loadAlbums() {
-		String albumsAsXml = readFileAsString(FileSystemConstants.ALBUM_FILE);
-		
-		List<String> albumToPosition = new LinkedList<String>();
-		
-		if (albumsAsXml.isEmpty()) {
-			return albumToPosition;
-		}
-		
-		try {
-			DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-			InputSource inputSource = new InputSource();
-			inputSource.setCharacterStream(new StringReader(albumsAsXml));
-
-			Document document = documentBuilder.parse(inputSource);
-			Node root = document.getFirstChild();
-
-			if (!root.getNodeName().equals("albums")) {
-				throw new Exception("Invalid Album File");
-			} else {
-				NodeList viewNodes = document.getElementsByTagName("album");
-				
-				String name = "";
-				
-				for (int i = 0; i < viewNodes.getLength(); i++) {
-					Node node = viewNodes.item(i);
-
-					if (node.getNodeType() == Node.ELEMENT_NODE) {
-						Element element = (Element) node;
-						
-						name = getValue("name", element);
-						
-						albumToPosition.add(name);
-					}
-				}
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-		
-		return albumToPosition;
 	}
 	
 	public static String getFileExtension(String fileNameOrPath) {
@@ -888,57 +542,5 @@ public class FileSystemAccessWrapper {
 			return false;
 		}
 		return true;
-	}
-
-	public static ApplicationSettings loadSettings() {
-		String applicationSettingsAsXml = readFileAsString(FileSystemConstants.SETTINGS_FILE);
-		
-		ApplicationSettings applicationSettings = new ApplicationSettings();
-		
-		if (applicationSettingsAsXml.isEmpty()) {
-			return applicationSettings;
-		}
-		
-		try {
-			DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-			InputSource inputSource = new InputSource();
-			inputSource.setCharacterStream(new StringReader(applicationSettingsAsXml));
-
-			Document document = documentBuilder.parse(inputSource);
-			Node root = document.getFirstChild();
-
-			if (!root.getNodeName().equals("settings")) {
-				throw new Exception("Invalid Settings File");
-			} else {
-				NodeList settingNodes = root.getChildNodes();
-								
-				for (int i = 0; i < settingNodes.getLength(); i++) {
-					Node node = settingNodes.item(i);
-
-					if (node.getNodeType() == Node.ELEMENT_NODE) {
-						Element element = (Element) node;
-						
-						if (element.getNodeName().equals("userDefinedLanguage")) {
-							applicationSettings.setUserDefinedLanguage(Language.valueOf(element.getFirstChild().getNodeValue()));
-						}
-					}
-				}
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-		
-		return applicationSettings;
-	}
-
-	public static void storeSettings(ApplicationSettings applicationSettings) {
-		StringBuilder xmlOutput = new StringBuilder();
-		
-		xmlOutput.append("<settings>\n");
-		xmlOutput.append("\t<userDefinedLanguage>" + applicationSettings.getUserDefinedLanguage().toString() + "</userDefinedLanguage>\n");
-		xmlOutput.append("</settings>\n");
-		
-		writeToFile(xmlOutput.toString(), FileSystemConstants.SETTINGS_FILE);
 	}
 }

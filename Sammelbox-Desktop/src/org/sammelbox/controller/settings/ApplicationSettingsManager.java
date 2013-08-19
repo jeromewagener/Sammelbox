@@ -20,7 +20,7 @@ package org.sammelbox.controller.settings;
 
 import java.util.Locale;
 
-import org.sammelbox.controller.filesystem.FileSystemAccessWrapper;
+import org.sammelbox.controller.filesystem.XMLStorageWrapper;
 import org.sammelbox.controller.i18n.Language;
 
 public class ApplicationSettingsManager {
@@ -31,11 +31,11 @@ public class ApplicationSettingsManager {
 	}
 	
 	public static void initializeFromSettingsFile() {
-		applicationSettings = FileSystemAccessWrapper.loadSettings();
+		applicationSettings = XMLStorageWrapper.retrieveSettings();
 	}
 	
 	public static void storeToSettingsFile() {
-		FileSystemAccessWrapper.storeSettings(applicationSettings);
+		XMLStorageWrapper.storeSettings(applicationSettings);
 	}
 	
 	public static Locale getUserDefinedLocale() {

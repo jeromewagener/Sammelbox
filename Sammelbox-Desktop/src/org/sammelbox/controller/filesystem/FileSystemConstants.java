@@ -33,4 +33,6 @@ public class FileSystemConstants {
 	public static final String SETTINGS_FILE					= COLLECTOR_HOME_APPDATA + File.separatorChar + "settings.xml";
 	public static final String WELCOME_PAGE_FILE				= COLLECTOR_HOME_APPDATA + File.separatorChar + "welcome.xml";
 	public static final String LOCK_FILE						= COLLECTOR_HOME_APPDATA + File.separatorChar + ".lock";
+	public static final String EFFECTS_JS						= COLLECTOR_HOME_APPDATA + File.separatorChar + "effects.js";
+	public static final String STYLE_CSS						= COLLECTOR_HOME_APPDATA + File.separatorChar + "style.css";
 }
