@@ -23,13 +23,17 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 import org.sammelbox.controller.managers.ConnectionManager;
 import org.sammelbox.model.album.AlbumItem;
@@ -96,12 +100,32 @@ public class QueryOperations {
 			}
 			queryFields = new ArrayList<QueryComponent>();
 			for (MetaItemField field : albumFields) {
-				// Only take quicksearchable fields into account
 				if (field.isQuickSearchable()) {
-					if (field.getType().equals(FieldType.Text)) {
+					if (field.getType().equals(FieldType.Text) || field.getType().equals(FieldType.Option) || 
+							field.getType().equals(FieldType.URL)) {
 						queryFields.add(QueryBuilder.getQueryComponent(field.getName(), QueryOperator.like, term));
-					} else {
-						queryFields.add(QueryBuilder.getQueryComponent(field.getName(), QueryOperator.equals, term));
+					}
+					else if ((field.getType().equals(FieldType.Integer) || field.getType().equals(FieldType.StarRating))
+							&& (Pattern.compile("-?[0-9]+").matcher(term).matches())) {
+						queryFields.add(QueryBuilder.getQueryComponent(
+								field.getName(), QueryOperator.equals, Integer.valueOf(term).toString()));
+					}
+					else if (field.getType().equals(FieldType.Decimal) && Pattern.compile("\\d+(.\\d+)*").matcher(term).matches()) {
+						queryFields.add(QueryBuilder.getQueryComponent(
+								field.getName(), QueryOperator.equals, Double.valueOf(term).toString()));
+					}
+					else if (field.getType().equals(FieldType.Date)) {
+						try {
+							// FIXME this doesn't work and there is always exactly one day missing?!?
+							// TODO as soon as the date format can be defined via the settings, adapt this code
+							SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+							Date parsedDate = sdf.parse(term);
+							
+							queryFields.add(QueryBuilder.getQueryComponent(
+									field.getName(), QueryOperator.equals, String.valueOf(parsedDate.getTime())));
+						} catch (ParseException e) {
+							continue;
+						}
 					}
 				}
 			}// end of for - fields
