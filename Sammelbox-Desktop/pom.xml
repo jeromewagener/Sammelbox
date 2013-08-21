@@ -4,39 +4,140 @@
    <groupId>org.sammelbox</groupId>
    <artifactId>Sammelbox-Desktop</artifactId>
    <packaging>jar</packaging>
-   <version>1.0-SNAPSHOT</version>
+   <version>1.0-BETA-SNAPSHOT</version>
    <name>Sammelbox</name>
    <url>http://www.sammelbox.org</url>
+   
+
+   <!-- The following local repository is necessary since no official or recent
+     versions of the SWT libary can be found in the official repositories 
+     Add new files using the following command:
+       >> mvn install:install-file -Dfile=swt-XX.jar -DgroupId=org.eclipse.swt -DartifactId=swt-XXXYY -Dversion=X.Y -Dpackaging=jar -DlocalRepositoryPath=../Sammelbox-Desktop/swtrepo
+   -->
+   <repositories>
+      <repository>
+         <id>swtrepo</id>
+         <url>file://${basedir}/swtrepo</url>
+      </repository>
+   </repositories>
+   
+
+   <!-- Dependencies that are valid for all builds. These are fetched from the central repos -->
    <dependencies>
       <dependency>
          <groupId>junit</groupId>
          <artifactId>junit</artifactId>
-         <version>3.8.1</version>
-         <scope>system</scope>
-         <systemPath>${basedir}/lib/junit-4.10.jar</systemPath>
+         <version>4.8.1</version>
+         <scope>test</scope>
       </dependency>
       <dependency>
-         <groupId>org.slf4j</groupId>
-         <artifactId>slf4j-api</artifactId>
-         <version>1.7.5</version>
-         <scope>system</scope>
-         <systemPath>${basedir}/lib/logging/slf4j-api-1.7.5.jar</systemPath>
+         <groupId>org.xerial</groupId>
+         <artifactId>sqlite-jdbc</artifactId>
+         <version>3.7.2</version>
       </dependency>
       <dependency>
-         <groupId>org.swt</groupId>
-         <artifactId>org.swt</artifactId>
-         <version>1.3</version>
-         <scope>system</scope>
-         <systemPath>${basedir}/lib/swt-4.2-linux-x64.jar</systemPath>
+         <groupId>com.googlecode.usc</groupId>
+         <artifactId>jdbcdslog</artifactId>
+         <version>1.0.6.2</version>
       </dependency>
-      <dependency>
-         <groupId>org.jdbclog</groupId>
-         <artifactId>org.jdbclog</artifactId>
-         <version>1.3</version>
-         <scope>system</scope>
-         <systemPath>${basedir}/lib/logging/jdbcdslog-1.0.6.2.jar</systemPath>
-      </dependency>
+<dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.7.5</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-ext</artifactId>
+      <version>1.7.5</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j.adapters</groupId>
+      <artifactId>log4j-slf4j-impl</artifactId>
+      <version>2.0-beta4</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <version>2.0-beta4</version>
+      <scope>runtime</scope>
+    </dependency> 
    </dependencies>
+
+
+   <!-- Dependencies that depend on the build platform. (i.e. SWT) -->
+   <profiles>
+      <profile>
+         <id>linux64</id>
+         <activation>
+            <os>
+               <family>unix</family>
+               <name>Linux</name>
+               <arch>amd64</arch>
+            </os>
+         </activation>
+         <dependencies>
+            <dependency>
+               <groupId>org.eclipse.swt</groupId>
+               <artifactId>swt-linux64</artifactId>
+               <version>4.3</version>
+            </dependency>
+         </dependencies>
+      </profile>
+      <profile>
+         <id>linux32</id>
+         <activation>
+            <os>
+               <family>unix</family>
+               <name>Linux</name>
+               <arch>x86</arch>
+            </os>
+         </activation>
+         <dependencies>
+            <dependency>
+               <groupId>org.eclipse.swt</groupId>
+               <artifactId>swt-linux32</artifactId>
+               <version>4.3</version>
+            </dependency>
+         </dependencies>
+      </profile>
+      <profile>
+         <id>win64</id>
+         <activation>
+            <os>
+               <family>windows</family>
+               <arch>x64</arch>
+            </os>
+         </activation>
+         <dependencies>
+            <dependency>
+               <groupId>org.eclipse.swt</groupId>
+               <artifactId>swt-win64</artifactId>
+               <version>4.3</version>
+            </dependency>
+         </dependencies>
+      </profile>
+      <profile>
+         <id>win32</id>
+         <activation>
+            <os>
+               <family>windows</family>
+               <arch>x86</arch>
+            </os>
+         </activation>
+         <dependencies>
+            <dependency>
+               <groupId>org.eclipse.swt</groupId>
+               <artifactId>swt-win32</artifactId>
+               <version>4.3</version>
+            </dependency>
+         </dependencies>
+      </profile>
+   </profiles>
+
+
+   <!-- Various build plugins etc.. -->
    <build>
       <sourceDirectory>src</sourceDirectory>
       <testSourceDirectory>test</testSourceDirectory>
@@ -57,69 +158,41 @@
          </plugin>
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-jar-plugin</artifactId>
-            <configuration>
-               <archive>
-                  <manifest>
-                     <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                     <addClasspath>true</addClasspath>
-                     <classpathPrefix>lib</classpathPrefix>
-                     <mainClass>org.sammelbox.Sammelbox</mainClass>
-                  </manifest>
-                  <manifestEntries>
-                     <Class-Path>../lib/</Class-Path>
-                  </manifestEntries>
-               </archive>
-            </configuration>
-         </plugin>
-         <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-dependency-plugin</artifactId>
-            <version>2.1</version>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <version>2.2.1</version>
             <executions>
                <execution>
-                  <id>copy-dependencies</id>
+                  <id>package-jar-with-dependencies</id>
                   <phase>package</phase>
                   <goals>
-                     <goal>copy-dependencies</goal>
+                     <goal>single</goal>
                   </goals>
                   <configuration>
-                     <outputDirectory>${project.build.directory}/lib</outputDirectory>
-                     <overWriteReleases>false</overWriteReleases>
-                     <overWriteSnapshots>false</overWriteSnapshots>
-                     <overWriteIfNewer>true</overWriteIfNewer>
+                     <appendAssemblyId>false</appendAssemblyId>
+                     <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                     </descriptorRefs>
+                     <archive>
+                        <manifest>
+                           <mainClass>org.sammelbox.Sammelbox</mainClass>
+                        </manifest>
+                     </archive>
                   </configuration>
                </execution>
             </executions>
          </plugin>
-         <plugin>
-            <artifactId>maven-assembly-plugin</artifactId>
-            <configuration>
-               <descriptors>
-                  <descriptor>assembly.xml</descriptor>
-               </descriptors>
-               <archive>
-                  <manifest>
-                     <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                     <addClasspath>true</addClasspath>
-                     <classpathPrefix>lib</classpathPrefix>
-                     <mainClass>org.sammelbox.Sammelbox</mainClass>
-                  </manifest>
-                  <manifestEntries>
-                     <Class-Path>../lib/*</Class-Path>
-                  </manifestEntries>
-               </archive>
-            </configuration>
-            <executions>
-               <execution>
-                  <phase>package</phase>
-                  <goals>
-                     <goal>attached</goal>
-                  </goals>
-               </execution>
-            </executions>
-         </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>2.14.1</version>
+          <configuration>
+            <systemPropertyVariables>
+              <log4j.configuration>log4j2.xml</log4j.configuration>
+            </systemPropertyVariables>
+          </configuration>
+        </plugin>
       </plugins>
    </build>
 </project>
+
 
