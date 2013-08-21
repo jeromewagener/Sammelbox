@@ -353,7 +353,7 @@ public class FileSystemAccessWrapper {
 			
 			zipFile.close();
 		} catch (IOException ioe) {
-			System.err.println("FileSystemAccessWrapper: " + ioe.getMessage());
+			LOGGER.error("An error occured while unziping the archive to the folder", ioe);
 		}
 
 	}
@@ -512,35 +512,37 @@ public class FileSystemAccessWrapper {
 				stringBuilder.append(ls);
 			}
 		} catch (IOException ioe) {
-			System.err.println(ioe.getMessage());
+			LOGGER.error("An error occured while reading the input stream to a string", ioe);
 		}
 
 		return stringBuilder.toString();
 	}
 	
+	/** Returns the file extension by searching for the last dot in the given string 
+	 * @return the extension without the dot, or an empty string if no extension can be detected */
 	public static String getFileExtension(String fileNameOrPath) {
-		String extension = "";
-
-		int i = fileNameOrPath.lastIndexOf('.');
-		if (i > 0) {
-		    extension = fileNameOrPath.substring(i + 1);
+		int positionOfLastDot = fileNameOrPath.lastIndexOf('.');
+		if (positionOfLastDot > 0) {
+		    return fileNameOrPath.substring(positionOfLastDot + 1);
 		}
 		
-		return extension;
+		return "";
 	}
 	
-	public static boolean isNameFileSystemCompliant(String name) {
-		if (!name.matches(albumNameRegex)) {
+	/** This method tests whether the given album name could be used to create a picture folder having the same name 
+	 * @return if the albumName can be used to create a picture folder, false otherwise*/
+	public static boolean isSAlbumNameFileSystemCompliant(String albumName) {
+		if (!albumName.matches(albumNameRegex)) {
 			return false;
 		}
 		
-		// Tests if an album with 'name' could actually create a valid albumPictureFolder		
-		File testFile = new File (getFilePathForAlbum(name));
+		File testFile = new File(getFilePathForAlbum(albumName));
 		try {
 			testFile.getCanonicalPath();
 		} catch (IOException e) {
 			return false;
 		}
+		
 		return true;
 	}
 }
