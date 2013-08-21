@@ -33,12 +33,13 @@ import org.sammelbox.model.database.operations.DatabaseOperations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AlbumItemResultSet {
+public class AlbumItemResultSet {	
+	private static final Logger LOGGER = LoggerFactory.getLogger(AlbumItemResultSet.class);
+	
 	private ResultSet items;
 	private String albumName = "";
 	private ResultSetMetaData metaData = null;
 	private Map<Integer, MetaItemField> metaInfoMap = new HashMap<Integer, MetaItemField>();
-	private static final Logger LOGGER = LoggerFactory.getLogger(AlbumItemResultSet.class);
 	
 	/**
 	 * Constructor.
@@ -139,7 +140,7 @@ public class AlbumItemResultSet {
 				return metaData.getColumnCount();
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LOGGER.error("An error occured while retrieving the field could from the album item result set");
 		}
 
 		return 0;
@@ -215,13 +216,13 @@ public class AlbumItemResultSet {
 	
 	/**
 	 * Closes the result set and ensures that allocated resources are freed properly-
-	 * @return True if the closing was successfully. False otherwise.
+	 * @return true if the closing was successfully, false otherwise.
 	 */
 	public boolean close() {
 		try {
 			items.close();
 		} catch (SQLException e) {			
-			e.printStackTrace();
+			LOGGER.error("An error occured while closing the album item result set");
 			return false;
 		}
 		return true;

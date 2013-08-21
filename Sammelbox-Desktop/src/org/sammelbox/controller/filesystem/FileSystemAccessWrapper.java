@@ -134,7 +134,7 @@ public class FileSystemAccessWrapper {
 				istream.close();
 			}
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			LOGGER.error("An error occured while extracting the resource (" + resourceName + ") to " + outputResourcePath, ex);
 		}
 	}
 
@@ -472,7 +472,7 @@ public class FileSystemAccessWrapper {
 
 			out.close();
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			LOGGER.error("An error occured while writing '" + content + "' to filepath", ex);
 		}
 	}
 	
@@ -494,7 +494,7 @@ public class FileSystemAccessWrapper {
 
 			return new String(buffer);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.error("An error occured while reading the file (" + filePath + ") into a string", e);
 		}
 
 		return new String(buffer);

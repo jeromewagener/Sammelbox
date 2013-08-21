@@ -29,8 +29,12 @@ import org.sammelbox.model.album.AlbumItem;
 import org.sammelbox.model.album.AlbumItemStore;
 import org.sammelbox.model.album.FieldType;
 import org.sammelbox.model.album.OptionType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HTMLExporter {
+	private final static Logger LOGGER = LoggerFactory.getLogger(HTMLExporter.class);
+	
 	public static void exportVisibleItems(String filepath) {
 		List<AlbumItem> visibleAlbumItems = AlbumItemStore.getAllVisibleAlbumItems();
 
@@ -102,7 +106,7 @@ public class HTMLExporter {
 								 "</html>");
 			bufferedWriter.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOGGER.error("An error occured while writing the HTML to its destination", e);
 		}
 	}
 }

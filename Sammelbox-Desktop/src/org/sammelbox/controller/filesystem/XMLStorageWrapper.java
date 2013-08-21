@@ -13,6 +13,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.sammelbox.controller.i18n.Language;
 import org.sammelbox.controller.managers.AlbumViewManager.AlbumView;
 import org.sammelbox.controller.settings.ApplicationSettingsManager.ApplicationSettings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -20,6 +22,8 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 public class XMLStorageWrapper {
+	private final static Logger LOGGER = LoggerFactory.getLogger(XMLStorageWrapper.class);
+	
 	private static String getValue(String tag, Element element) {
 		NodeList nodes = element.getElementsByTagName(tag).item(0).getChildNodes();
 		Node node = (Node) nodes.item(0);
@@ -136,7 +140,7 @@ public class XMLStorageWrapper {
 				}
 			}
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			LOGGER.error("An error occured while parsing the settings XML file");
 		}
 		
 		return applicationSettings;
@@ -180,7 +184,7 @@ public class XMLStorageWrapper {
 				}
 			}
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			LOGGER.error("An error occured while parsing the albums XML file");
 		}
 		
 		return albumToPosition;
@@ -236,7 +240,7 @@ public class XMLStorageWrapper {
 				}
 			}
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			LOGGER.error("An error occured while parsing the album views XML file");
 		}
 		
 		return albumNamesToAlbumViews;
@@ -282,7 +286,7 @@ public class XMLStorageWrapper {
 				}
 			}
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			LOGGER.error("An error occured while parsing the welcome page XML file");
 		}
 		
 		return albumToLastModified;
@@ -328,7 +332,7 @@ public class XMLStorageWrapper {
 				}
 			}
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			LOGGER.error("An error occured while parsing the welcome page XML file");
 		}
 		
 		return albumAndViewsToClicks;

@@ -29,8 +29,12 @@ import org.sammelbox.model.album.AlbumItem;
 import org.sammelbox.model.album.AlbumItemStore;
 import org.sammelbox.model.album.FieldType;
 import org.sammelbox.model.album.OptionType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CSVExporter {
+	private final static Logger LOGGER = LoggerFactory.getLogger(CSVExporter.class);
+	
 	public static void exportVisibleItems(String filepath) {
 		List<AlbumItem> visibleAlbumItems = AlbumItemStore.getAllVisibleAlbumItems();
 		
@@ -99,7 +103,7 @@ public class CSVExporter {
 			bufferedWriter.write(headerBuilder.toString() + dataBuilder.toString());
 			bufferedWriter.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOGGER.error("An error occured while writing the export data to its destinatation (" + filepath + ")", e);
 		}
 	}
 }
