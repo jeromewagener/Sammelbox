@@ -12,7 +12,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.sammelbox.controller.i18n.Language;
 import org.sammelbox.controller.managers.AlbumViewManager.AlbumView;
-import org.sammelbox.controller.settings.ApplicationSettingsManager.ApplicationSettings;
+import org.sammelbox.model.settings.ApplicationSettings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -35,6 +35,8 @@ public class XMLStorageWrapper {
 		
 		xmlOutput.append("<settings>\n");
 		xmlOutput.append("\t<userDefinedLanguage>" + applicationSettings.getUserDefinedLanguage().toString() + "</userDefinedLanguage>\n");
+		xmlOutput.append("\t<dateFormat>" + applicationSettings.getDateFormat() + "</dateFormat>\n");
+		xmlOutput.append("\t<detailedViewIsDefault>" + applicationSettings.isDetailedViewDefault() + "</detailedViewIsDefault>\n");
 		xmlOutput.append("</settings>\n");
 		
 		FileSystemAccessWrapper.writeToFile(xmlOutput.toString(), FileSystemLocations.getSettingsXML());
@@ -125,22 +127,14 @@ public class XMLStorageWrapper {
 			if (!root.getNodeName().equals("settings")) {
 				throw new Exception("Invalid Settings File");
 			} else {
-				NodeList settingNodes = root.getChildNodes();
-								
-				for (int i = 0; i < settingNodes.getLength(); i++) {
-					Node node = settingNodes.item(i);
-
-					if (node.getNodeType() == Node.ELEMENT_NODE) {
-						Element element = (Element) node;
-						
-						if (element.getNodeName().equals("userDefinedLanguage")) {
-							applicationSettings.setUserDefinedLanguage(Language.valueOf(element.getFirstChild().getNodeValue()));
-						}
-					}
-				}
+				Element element = (Element) root;
+				
+				applicationSettings.setUserDefinedLanguage(Language.valueOf(getValue("userDefinedLanguage", element)));
+				applicationSettings.setDateFormat(getValue("dateFormat", element));
+				applicationSettings.setDetailedViewIsDefault(Boolean.valueOf(getValue("detailedViewIsDefault", element)));
 			}
 		} catch (Exception ex) {
-			LOGGER.error("An error occured while parsing the settings XML file");
+			LOGGER.error("An error occured while parsing the settings XML file", ex);
 		}
 		
 		return applicationSettings;

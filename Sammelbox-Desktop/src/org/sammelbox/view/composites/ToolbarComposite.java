@@ -36,6 +36,7 @@ import org.sammelbox.controller.events.Observer;
 import org.sammelbox.controller.events.SammelboxEvent;
 import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
+import org.sammelbox.controller.settings.ApplicationSettingsManager;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 import org.sammelbox.model.database.operations.DatabaseOperations;
 import org.sammelbox.view.ApplicationUI;
@@ -60,14 +61,14 @@ public class ToolbarComposite extends Composite implements Observer {
 			addEntryActive = null, searchActive = null, syncActive = null,
 			helpActive = null;
 	private static Button homeBtn = null, addAlbumBtn = null, addEntryBtn = null,
-			viewBtn = null, searchBtn = null, syncBtn = null, helpBtn = null;
+			toggleViewBtn = null, searchBtn = null, syncBtn = null, helpBtn = null;
 	private static PanelType lastSelectedPanelType = PanelType.Empty;
 
 	private static void disableActiveButtons() {
 		homeBtn.setImage(home);
 		addAlbumBtn.setImage(addAlbum);
 		addEntryBtn.setImage(addEntry);
-		viewBtn.setImage(detailedView);
+		toggleViewBtn.setImage(detailedView);
 		searchBtn.setImage(search);
 		syncBtn.setImage(sync);
 		helpBtn.setImage(help);
@@ -77,7 +78,7 @@ public class ToolbarComposite extends Composite implements Observer {
 		homeBtn.setEnabled(true);
 		addAlbumBtn.setEnabled(true);
 		addEntryBtn.setEnabled(false);
-		viewBtn.setEnabled(false);
+		toggleViewBtn.setEnabled(false);
 		searchBtn.setEnabled(false);
 		syncBtn.setEnabled(true);
 		helpBtn.setEnabled(true);
@@ -155,11 +156,11 @@ public class ToolbarComposite extends Composite implements Observer {
 		addEntryBtn.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_ADD_ENTRY));
 		addEntryBtn.setEnabled(false);
 
-		viewBtn = new Button(innerComposite, SWT.PUSH);
-		viewBtn.setImage(detailedView);
-		viewBtn.setText(Translator.get(DictKeys.BUTTON_TOGGLE));
-		viewBtn.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_TOGGLE_TO_GALLERY));
-		viewBtn.setEnabled(false);
+		toggleViewBtn = new Button(innerComposite, SWT.PUSH);
+		toggleViewBtn.setImage(detailedView);
+		toggleViewBtn.setText(Translator.get(DictKeys.BUTTON_TOGGLE));
+		toggleViewBtn.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_TOGGLE_TO_GALLERY));
+		toggleViewBtn.setEnabled(false);
 
 		searchBtn = new Button(innerComposite, SWT.PUSH);
 		searchBtn.setImage(search);
@@ -194,9 +195,9 @@ public class ToolbarComposite extends Composite implements Observer {
 
 				addEntryBtn.setEnabled(false);
 
-				viewBtn.setEnabled(false);
-				viewBtn.setImage(detailedView);
-				viewBtn.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_TOGGLE_TO_GALLERY));
+				toggleViewBtn.setEnabled(false);
+				toggleViewBtn.setImage(detailedView);
+				toggleViewBtn.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_TOGGLE_TO_GALLERY));
 
 				searchBtn.setEnabled(false);
 				
@@ -290,16 +291,16 @@ public class ToolbarComposite extends Composite implements Observer {
 			}
 		});
 
-		viewBtn.addMouseListener(new MouseListener() {
+		toggleViewBtn.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseUp(MouseEvent arg0) {
 				if (GuiController.getGuiState().isViewDetailed()) {
-					viewBtn.setImage(pictureView);
-					viewBtn.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_TOGGLE_TO_DETAILS));
+					toggleViewBtn.setImage(detailedView);
+					toggleViewBtn.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_TOGGLE_TO_DETAILS));
 					GuiController.getGuiState().setViewDetailed(false);
 				} else {
-					viewBtn.setImage(detailedView);
-					viewBtn.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_TOGGLE_TO_GALLERY));
+					toggleViewBtn.setImage(pictureView);
+					toggleViewBtn.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_TOGGLE_TO_GALLERY));
 					GuiController.getGuiState().setViewDetailed(true);
 				}
 				
@@ -460,18 +461,25 @@ public class ToolbarComposite extends Composite implements Observer {
 
 		try {
 			if (DatabaseOperations.isPictureAlbum(albumName)) {
-				viewBtn.setImage(pictureView);
-				viewBtn.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_TOGGLE_TO_GALLERY));
-				viewBtn.setEnabled(true);
+				if (ApplicationSettingsManager.getApplicationSettings().isDetailedViewDefault()) {
+					toggleViewBtn.setImage(pictureView);
+					toggleViewBtn.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_TOGGLE_TO_GALLERY));
+				} else {
+					toggleViewBtn.setImage(detailedView);
+					toggleViewBtn.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_TOGGLE_TO_DETAILS));
+				}
+				
+				toggleViewBtn.setEnabled(true);
 			} else {
-				viewBtn.setImage(detailedView);
-				viewBtn.setEnabled(false);
+				toggleViewBtn.setImage(detailedView);
+				toggleViewBtn.setEnabled(false);
 			}
 		} catch (DatabaseWrapperOperationException ex) {
 			LOGGER.error("An error occured while checking whether the following album contains pictures: '" + albumName + "'", ex);
 		}
 
-		GuiController.getGuiState().setViewDetailed(true);
+		GuiController.getGuiState().setViewDetailed(
+				ApplicationSettingsManager.getApplicationSettings().isDetailedViewDefault());
 		BrowserFacade.rerunLastQuery();
 		searchBtn.setEnabled(true);
 	}

@@ -289,6 +289,7 @@ public class ApplicationUI implements Observer {
 			put(PanelType.Synchronization, UIConstants.RIGHT_PANEL_MEDIUM_WIDTH);
 			put(PanelType.UpdateEntry, UIConstants.RIGHT_PANEL_LARGE_WIDTH);
 			put(PanelType.Help, UIConstants.RIGHT_PANEL_SMALL_WIDTH);
+			put(PanelType.Settings, UIConstants.RIGHT_PANEL_LARGE_WIDTH);
 		}
 	};
 

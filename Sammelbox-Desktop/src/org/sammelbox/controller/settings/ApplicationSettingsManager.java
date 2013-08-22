@@ -22,6 +22,7 @@ import java.util.Locale;
 
 import org.sammelbox.controller.filesystem.XMLStorageWrapper;
 import org.sammelbox.controller.i18n.Language;
+import org.sammelbox.model.settings.ApplicationSettings;
 
 public class ApplicationSettingsManager {
 	private static ApplicationSettings applicationSettings = new ApplicationSettings();
@@ -48,21 +49,12 @@ public class ApplicationSettingsManager {
 		}
 	}
 	
-	public static void setUserDefinedLanguage(Language language) {
-		applicationSettings.setUserDefinedLanguage(language);
+	public static void setApplicationSettings(ApplicationSettings applicationSettings) {
+		ApplicationSettingsManager.applicationSettings = applicationSettings;
+		storeToSettingsFile();
 	}
 	
-	public static class ApplicationSettings {
-		private Language userDefinedLanguage = Language.Unknown;
-
-		public ApplicationSettings() {}
-		
-		public Language getUserDefinedLanguage() {
-			return userDefinedLanguage;
-		}
-
-		public void setUserDefinedLanguage(Language userDefinedLanguage) {
-			this.userDefinedLanguage = userDefinedLanguage;
-		}
+	public static ApplicationSettings getApplicationSettings() {
+		return applicationSettings;
 	}
 }

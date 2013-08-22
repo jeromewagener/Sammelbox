@@ -18,13 +18,15 @@
 
 package org.sammelbox.model;
 
+import org.sammelbox.controller.settings.ApplicationSettingsManager;
+
 
 public class GuiState {
 	
 	private String selectedAlbum = null;
 	private String selectedView = null;
 	private String quickSearchTerms = null;
-	private boolean isViewDetailed = true;
+	private boolean isViewDetailed = ApplicationSettingsManager.getApplicationSettings().isDetailedViewDefault();
 	/** This string is used to deselect an album by passing it to {@link #setSelectedAlbum(String)}*/
 	public final String NOALBUMSELECTED = null; 
 	
