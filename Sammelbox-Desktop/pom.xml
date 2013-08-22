@@ -10,6 +10,7 @@
    <properties>
       <timestamp>${maven.build.timestamp}</timestamp>
       <maven.build.timestamp.format>dd-MM-yyyy HH:mm</maven.build.timestamp.format>
+      <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
    </properties>
 
 
