@@ -12,6 +12,7 @@
       <maven.build.timestamp.format>dd-MM-yyyy HH:mm</maven.build.timestamp.format>
    </properties>
 
+
    <!-- The following local repository is necessary since no official or recent
      versions of the SWT libary can be found in the official repositories 
      Add new files using the following command:
@@ -23,7 +24,7 @@
          <url>file://${basedir}/swtrepo</url>
       </repository>
    </repositories>
-   
+
 
    <!-- Dependencies that are valid for all builds. These are fetched from the central repos -->
    <dependencies>
@@ -43,29 +44,29 @@
          <artifactId>jdbcdslog</artifactId>
          <version>1.0.6.2</version>
       </dependency>
-<dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <version>1.7.5</version>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-ext</artifactId>
-      <version>1.7.5</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j.adapters</groupId>
-      <artifactId>log4j-slf4j-impl</artifactId>
-      <version>2.0-beta4</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-core</artifactId>
-      <version>2.0-beta4</version>
-      <scope>runtime</scope>
-    </dependency> 
+      <dependency>
+         <groupId>org.slf4j</groupId>
+         <artifactId>slf4j-api</artifactId>
+         <version>1.7.5</version>
+      </dependency>
+      <dependency>
+         <groupId>org.slf4j</groupId>
+         <artifactId>slf4j-ext</artifactId>
+         <version>1.7.5</version>
+         <scope>runtime</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.apache.logging.log4j.adapters</groupId>
+         <artifactId>log4j-slf4j-impl</artifactId>
+         <version>2.0-beta4</version>
+         <scope>runtime</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.apache.logging.log4j</groupId>
+         <artifactId>log4j-core</artifactId>
+         <version>2.0-beta4</version>
+         <scope>runtime</scope>
+      </dependency>
    </dependencies>
 
 
@@ -73,6 +74,9 @@
    <profiles>
       <profile>
          <id>linux64</id>
+         <build>
+            <finalName>${project.name}-${project.version}-linux64</finalName>
+         </build>
          <activation>
             <os>
                <family>unix</family>
@@ -90,6 +94,9 @@
       </profile>
       <profile>
          <id>linux32</id>
+         <build>
+            <finalName>${project.name}-${project.version}-linux32</finalName>
+         </build>
          <activation>
             <os>
                <family>unix</family>
@@ -107,6 +114,9 @@
       </profile>
       <profile>
          <id>win64</id>
+         <build>
+            <finalName>${project.name}-${project.version}-win64</finalName>
+         </build>
          <activation>
             <os>
                <family>windows</family>
@@ -123,6 +133,9 @@
       </profile>
       <profile>
          <id>win32</id>
+         <build>
+            <finalName>${project.name}-${project.version}-win32</finalName>
+         </build>
          <activation>
             <os>
                <family>windows</family>
@@ -185,18 +198,17 @@
                </execution>
             </executions>
          </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.14.1</version>
-          <configuration>
-            <systemPropertyVariables>
-              <log4j.configuration>log4j2.xml</log4j.configuration>
-            </systemPropertyVariables>
-          </configuration>
-        </plugin>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>2.14.1</version>
+            <configuration>
+               <systemPropertyVariables>
+                  <log4j.configuration>log4j2.xml</log4j.configuration>
+               </systemPropertyVariables>
+            </configuration>
+         </plugin>
       </plugins>
    </build>
 </project>
-
 
