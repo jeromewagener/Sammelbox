@@ -130,8 +130,19 @@ public class ImageDropAndManagementComposite extends Composite implements DropTa
 		}
 
 		for (final AlbumItemPicture picture : pictures) {			
-			Image originalImage = new Image(Display.getCurrent(), picture.getOriginalPicturePath());	
-			Image scaledImage = new Image(Display.getCurrent(), originalImage.getImageData().scaledTo(100, 100));
+			Image originalImage = new Image(Display.getCurrent(), picture.getOriginalPicturePath());
+			Image scaledImage;
+			
+			int originalWidth = originalImage.getImageData().width;
+			int originalHeight = originalImage.getImageData().height;
+			
+			if (originalWidth < originalHeight) {
+				scaledImage = new Image(Display.getCurrent(), originalImage.getImageData().scaledTo(
+					(int) Math.round(originalImage.getImageData().width / ((double)(originalImage.getImageData().height / 100.0))), 100));
+			} else {
+				scaledImage = new Image(Display.getCurrent(), originalImage.getImageData().scaledTo(
+					100, (int) Math.round(originalImage.getImageData().height / ((double)(originalImage.getImageData().width / 100.0)))));
+			}
 
 			Label pictureLabel = new Label(imageComposite, SWT.NONE);
 			pictureLabel.setImage(scaledImage);
