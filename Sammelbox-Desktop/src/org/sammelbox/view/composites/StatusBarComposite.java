@@ -104,7 +104,9 @@ public class StatusBarComposite {
 	}
 	
 	private String getDefaultStatus() {
-		return Translator.get(DictKeys.STATUSBAR_PROGRAM_STARTED, BuildInformationManager.instance().getVersion(), 
-				BuildInformationManager.instance().getBuildTimeStamp(), BuildInformationManager.instance().getBuildType());
+		return Translator.get(DictKeys.STATUSBAR_PROGRAM_STARTED, 
+				BuildInformationManager.instance().getApplicationName(),
+				BuildInformationManager.instance().getVersion(), 
+				BuildInformationManager.instance().getBuildTimeStamp());
 	}
 }

@@ -1,10 +1,12 @@
-/build
-/.classpath
-/bin
+# Files generated while compilation or runtime
 /logs
-/.externalToolBuilders
-/.settings
-/.classpath
-/.project
 /res/information/buildinfo.properties
 /target
+
+# Eclipse specific files
+/.metadata
+/.project
+/.classpath
+/.settings
+/.classpath
+

@@ -7,7 +7,10 @@
    <version>1.0-BETA-SNAPSHOT</version>
    <name>Sammelbox</name>
    <url>http://www.sammelbox.org</url>
-   
+   <properties>
+      <timestamp>${maven.build.timestamp}</timestamp>
+      <maven.build.timestamp.format>dd-MM-yyyy HH:mm</maven.build.timestamp.format>
+   </properties>
 
    <!-- The following local repository is necessary since no official or recent
      versions of the SWT libary can be found in the official repositories 
@@ -144,6 +147,7 @@
       <resources>
          <resource>
             <directory>res</directory>
+            <filtering>true</filtering>
          </resource>
       </resources>
       <plugins>

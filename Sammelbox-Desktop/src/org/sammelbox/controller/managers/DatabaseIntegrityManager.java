@@ -252,7 +252,9 @@ public class DatabaseIntegrityManager {
 	 * @throws DatabaseWrapperOperationException 
 	 */
 	public static void backupAutoSave() throws DatabaseWrapperOperationException {		
-		String programVersion = BuildInformationManager.instance().getBuildType() + "_" + BuildInformationManager.instance().getVersion();
+		String programVersion = BuildInformationManager.instance().getApplicationName() 
+				+ "_" + BuildInformationManager.instance().getVersion()
+				+ "_" + BuildInformationManager.instance().getBuildTimeStamp();
 		String timeStamp = Long.toString(getLastDatabaseChangeTimeStamp());		
 	
 		String autoSaveFilePath = FileSystemConstants.COLLECTOR_HOME_BACKUPS + 
