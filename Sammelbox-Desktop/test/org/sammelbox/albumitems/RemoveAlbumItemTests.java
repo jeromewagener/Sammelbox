@@ -58,14 +58,14 @@ public class RemoveAlbumItemTests {
 
 	@Before
 	public void setUp() throws Exception {
-		TestExecuter.resetEverything();
+		TestExecuter.resetTestHome();
 		createDVDAlbum();
 		fillDVDAlbum();
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		TestExecuter.resetEverything();
+		TestExecuter.resetTestHome();
 	}
 
 	@Test

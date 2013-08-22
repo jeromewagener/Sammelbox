@@ -41,12 +41,12 @@ public class ModifyAlbumViewTests {
 
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		TestExecuter.resetEverything();
+		TestExecuter.resetTestHome();
 	}
 
 	@Before
 	public void setUp() {
-		TestExecuter.resetEverything();
+		TestExecuter.resetTestHome();
 		
 		// Although the list is wrongly assigned to the shell itself, this allows to test the view behavior
 		ApplicationUI.setViewList(new List(ApplicationUI.getShell(), SWT.SINGLE | SWT.BORDER | SWT.V_SCROLL));
@@ -54,7 +54,7 @@ public class ModifyAlbumViewTests {
 
 	@After
 	public void tearDown() throws Exception {
-		TestExecuter.resetEverything();
+		TestExecuter.resetTestHome();
 	}
 	
 	@Test

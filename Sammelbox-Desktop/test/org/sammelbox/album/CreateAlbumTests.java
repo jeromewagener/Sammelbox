@@ -48,12 +48,12 @@ public class CreateAlbumTests {
 
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		TestExecuter.resetEverything();
+		TestExecuter.resetTestHome();
 	}
 
 	@Before
 	public void setUp() {
-		TestExecuter.resetEverything();
+		TestExecuter.resetTestHome();
 	}
 
 	@After

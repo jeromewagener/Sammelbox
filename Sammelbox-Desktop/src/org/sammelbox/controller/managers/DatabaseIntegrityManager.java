@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.sammelbox.controller.filesystem.FileSystemAccessWrapper;
-import org.sammelbox.controller.filesystem.FileSystemConstants;
+import org.sammelbox.controller.filesystem.FileSystemLocations;
 import org.sammelbox.model.database.DatabaseStringUtilities;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException.DBErrorState;
@@ -126,11 +126,11 @@ public class DatabaseIntegrityManager {
 			tempDir.mkdir();
 		}
 	
-		// backup collector home
+		// backup home directory
 		File tempAppDataDir = new File(tempDir.getPath());
-		File sourceAppDataDir = new File(FileSystemConstants.COLLECTOR_HOME);
+		File sourceAppDataDir = new File(FileSystemLocations.getActiveHomeDir());
 		try {
-			String excludeRegex = "^\\.lock$|^" + FileSystemConstants.DATABASE_NAME + "$"; 
+			String excludeRegex = "^\\.lock$|^" + FileSystemLocations.DATABASE_NAME + "$"; 
 			FileSystemAccessWrapper.copyDirectory(sourceAppDataDir, tempAppDataDir, excludeRegex);
 		} catch (IOException e) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState,e);
@@ -138,7 +138,7 @@ public class DatabaseIntegrityManager {
 	
 		// backup database to file
 		try (Statement statement = ConnectionManager.getConnection().createStatement()){				
-			statement.executeUpdate("backup to '" + tempDir.getPath() + File.separatorChar + FileSystemConstants.DATABASE_TO_RESTORE_NAME + "'");
+			statement.executeUpdate("backup to '" + tempDir.getPath() + File.separatorChar + FileSystemLocations.DATABASE_TO_RESTORE_NAME + "'");
 		} catch (SQLException e) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState,e);
 		}
@@ -156,11 +156,11 @@ public class DatabaseIntegrityManager {
 	 * @throws DatabaseWrapperOperationException 
 	 */
 	public static void restoreFromFile(String filePath) throws DatabaseWrapperOperationException {
-		FileSystemAccessWrapper.clearCollectorHome();
-		FileSystemAccessWrapper.unzipFileToFolder(filePath, FileSystemConstants.COLLECTOR_HOME);
+		FileSystemAccessWrapper.clearHomeDirectory();
+		FileSystemAccessWrapper.unzipFileToFolder(filePath, FileSystemLocations.getActiveHomeDir());
 	
 		try (Statement statement = ConnectionManager.getConnection().createStatement()) {			
-			statement.executeUpdate("restore from '" + FileSystemConstants.DATABASE_TO_RESTORE + "'");
+			statement.executeUpdate("restore from '" + FileSystemLocations.getDatabaseRestoreFile() + "'");
 			try {
 				DatabaseIntegrityManager.lastChangeTimeStampInMS = DatabaseIntegrityManager.extractTimeStamp(new File(filePath));
 			} catch (DatabaseWrapperOperationException e) {
@@ -174,7 +174,7 @@ public class DatabaseIntegrityManager {
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState);
 		}
 	
-		if ( !FileSystemAccessWrapper.updateCollectorFileStructure() ) {
+		if ( !FileSystemAccessWrapper.updateSammelboxFileStructure() ) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState);
 		}
 	
@@ -203,7 +203,7 @@ public class DatabaseIntegrityManager {
 	 * @return List of files of previous autosaves. Empty list if none exist
 	 */
 	public static List<File> getAllAutoSaves() throws DatabaseWrapperOperationException{
-		List<File> autoSaves = FileSystemAccessWrapper.getAllMatchingFilesInCollectorHome(DatabaseIntegrityManager.AUTO_SAVE_FILE_REGEX);
+		List<File> autoSaves = FileSystemAccessWrapper.getAllMatchingFilesInHomeDirectory(DatabaseIntegrityManager.AUTO_SAVE_FILE_REGEX);
 		Collections.sort(autoSaves, new Comparator<File>() {
 			@Override
 			public int compare(File file1, File file2) {
@@ -257,7 +257,7 @@ public class DatabaseIntegrityManager {
 				+ "_" + BuildInformationManager.instance().getBuildTimeStamp();
 		String timeStamp = Long.toString(getLastDatabaseChangeTimeStamp());		
 	
-		String autoSaveFilePath = FileSystemConstants.COLLECTOR_HOME_BACKUPS + 
+		String autoSaveFilePath = FileSystemLocations.getBackupDir() + 
 				File.separator + "PERIODICAL_BACKUP_" + programVersion + "_"; // separator for the timestamp	
 	
 		List<File> previousAutoSaveList = getAllAutoSaves();
@@ -272,7 +272,7 @@ public class DatabaseIntegrityManager {
 			}
 			autoSaveFilePath = autoSaveFilePath + timeStamp + "." + DatabaseIntegrityManager.AUTO_SAVE_EXTENSION;
 			try {
-				FileSystemAccessWrapper.copyFile(new File(FileSystemConstants.DATABASE), new File(autoSaveFilePath));
+				FileSystemAccessWrapper.copyFile(new File(FileSystemLocations.getDatabaseFile()), new File(autoSaveFilePath));
 			} catch (IOException e) {
 				LOGGER.error("Autosave - backup failed");
 				throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState, e);
@@ -297,7 +297,7 @@ public class DatabaseIntegrityManager {
 			autoSaveFilePath = autoSaveFilePath + timeStamp + "." + DatabaseIntegrityManager.AUTO_SAVE_EXTENSION;
 	
 			try {
-				FileSystemAccessWrapper.copyFile(new File(FileSystemConstants.DATABASE), new File(autoSaveFilePath));
+				FileSystemAccessWrapper.copyFile(new File(FileSystemLocations.getDatabaseFile()), new File(autoSaveFilePath));
 			} catch (IOException e) {
 				LOGGER.error("Autosave - backup failed");
 				throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState, e);

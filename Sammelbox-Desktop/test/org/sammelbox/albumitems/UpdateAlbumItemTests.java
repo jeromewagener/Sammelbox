@@ -55,14 +55,14 @@ public class UpdateAlbumItemTests {
 
 	@Before
 	public void setUp() throws Exception {
-		TestExecuter.resetEverything();
+		TestExecuter.resetTestHome();
 		createBooksAlbum();
 		fillBooksAlbum();
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		TestExecuter.resetEverything();
+		TestExecuter.resetTestHome();
 	}
 
 	@Test

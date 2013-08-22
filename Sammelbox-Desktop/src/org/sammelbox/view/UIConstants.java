@@ -20,7 +20,7 @@ package org.sammelbox.view;
 
 import java.io.File;
 
-import org.sammelbox.controller.filesystem.FileSystemConstants;
+import org.sammelbox.controller.filesystem.FileSystemLocations;
 
 public class UIConstants {
 	// ------------------ GUI Constants ------------------
@@ -37,8 +37,8 @@ public class UIConstants {
 	public static final int MIN_SHELL_HEIGHT = 700;
 	
 	// ------------------ Browser Constants ------------------
-	public static final String STYLE_CSS = "file://"+ FileSystemConstants.COLLECTOR_HOME_APPDATA + File.separatorChar + "style.css";
-	public static final String EFFECTS_JS = "file://" + FileSystemConstants.COLLECTOR_HOME_APPDATA + File.separatorChar + "effects.js";
+	public static final String STYLE_CSS = "file://"+ FileSystemLocations.getAppDataDir() + File.separatorChar + "style.css";
+	public static final String EFFECTS_JS = "file://" + FileSystemLocations.getAppDataDir() + File.separatorChar + "effects.js";
 	public static final String META_PARAMS = "http-equiv=\"X-UA-Compatible\" content=\"IE=9\" charset=\"utf-8\"";
 	
 	// ------------------ Browser Listener Constants ------------------

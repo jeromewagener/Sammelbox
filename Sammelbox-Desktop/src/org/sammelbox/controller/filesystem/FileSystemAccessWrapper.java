@@ -43,14 +43,11 @@ import org.slf4j.LoggerFactory;
 
 public class FileSystemAccessWrapper {
 	private static final Logger LOGGER = LoggerFactory.getLogger(FileSystemAccessWrapper.class);
-	private static final boolean OVERWRITE_EXISITING_FILES = true;
-	
-	/**
-	 *  A simple regex to prevent album names whose folders of the same name cause problems on the filesystem
-	 * Minimum length is 3 alphanumeric characters possibly white spaces, underscores (u005F) hyphen_minuses (u002D). 
-	 * */
+	private static final boolean OVERWRITE_EXISITING_FILES = true;	
+	/** A simple regular expression.. to prevent album names whose folders of the same name cause problems on the filesystem
+	 * Minimum length is 3 alphanumeric characters possibly white spaces, underscores (u005F) hyphen_minuses (u002D). */
 	private static final String albumNameRegex = "^(\\w|\\u005F|\\s|\\u002D){3,}$";
-
+	
 	/** Creates the directory using the specified path. All errors that might occur will be logged 
 	 * @param directoryPath the complete (absolute) directory path. E.g. /home/user/folder1
 	 * @return true if no problem occurred, false otherwise*/
@@ -70,41 +67,41 @@ public class FileSystemAccessWrapper {
 	
 	/** This method is used to create and update the file-structure
 	 *  This method must be called during initialization of the program.*/
-	public static boolean updateCollectorFileStructure() {
+	public static boolean updateSammelboxFileStructure() {		
 		boolean errorOccurred = false;
 				
-		errorOccurred = errorOccurred || createDirectoryAndLogError(FileSystemConstants.COLLECTOR_HOME);
-		errorOccurred = errorOccurred || createDirectoryAndLogError(FileSystemConstants.COLLECTOR_HOME_ALBUM_PICTURES);
-		errorOccurred = errorOccurred || createDirectoryAndLogError(FileSystemConstants.COLLECTOR_HOME_THUMBNAILS_FOLDER);
-		errorOccurred = errorOccurred || createDirectoryAndLogError(FileSystemConstants.COLLECTOR_HOME_APPDATA);
-		errorOccurred = errorOccurred || createDirectoryAndLogError(FileSystemConstants.COLLECTOR_HOME_BACKUPS);
+		errorOccurred = errorOccurred || createDirectoryAndLogError(FileSystemLocations.getActiveHomeDir());
+		errorOccurred = errorOccurred || createDirectoryAndLogError(FileSystemLocations.getAlbumPicturesDir());
+		errorOccurred = errorOccurred || createDirectoryAndLogError(FileSystemLocations.getThumbnailsDir());
+		errorOccurred = errorOccurred || createDirectoryAndLogError(FileSystemLocations.getAppDataDir());
+		errorOccurred = errorOccurred || createDirectoryAndLogError(FileSystemLocations.getBackupDir());
 		
 		if (errorOccurred) {
 			return false;
 		}
 			
-		extractResourceToFile("graphics/placeholder.png", FileSystemConstants.PLACEHOLDERIMAGE);
-		extractResourceToFile("graphics/placeholder2.png", FileSystemConstants.PLACEHOLDERIMAGE2);
-		extractResourceToFile("graphics/placeholder3.png", FileSystemConstants.PLACEHOLDERIMAGE3);
-		extractResourceToFile("graphics/zerostars.png", FileSystemConstants.ZERO_STARS_IMAGE);
-		extractResourceToFile("graphics/onestar.png", FileSystemConstants.ONE_STAR_IMAGE);
-		extractResourceToFile("graphics/twostars.png", FileSystemConstants.TWO_STARS_IMAGE);
-		extractResourceToFile("graphics/threestars.png", FileSystemConstants.THREE_STARS_IMAGE);
-		extractResourceToFile("graphics/fourstars.png", FileSystemConstants.FOUR_STARS_IMAGE);
-		extractResourceToFile("graphics/fivestars.png", FileSystemConstants.FIVE_STARS_IMAGE);
-		extractResourceToFile("graphics/logo.png", FileSystemConstants.LOGO);
-		extractResourceToFile("graphics/logo-small.png", FileSystemConstants.LOGO_SMALL);
-		extractResourceToFile("javascript/effects.js", FileSystemConstants.EFFECTS_JS);
-		extractResourceToFile("stylesheets/style.css", FileSystemConstants.STYLE_CSS);
+		extractResourceToFile("graphics/placeholder.png", FileSystemLocations.getPlaceholderPNG());
+		extractResourceToFile("graphics/placeholder2.png", FileSystemLocations.getPlaceholder2PNG());
+		extractResourceToFile("graphics/placeholder3.png", FileSystemLocations.getPlaceholder3PNG());
+		extractResourceToFile("graphics/zerostars.png", FileSystemLocations.getZeroStarsPNG());
+		extractResourceToFile("graphics/onestar.png", FileSystemLocations.getOneStarPNG());
+		extractResourceToFile("graphics/twostars.png", FileSystemLocations.getTwoStarsPNG());
+		extractResourceToFile("graphics/threestars.png", FileSystemLocations.getThreeStarsPNG());
+		extractResourceToFile("graphics/fourstars.png", FileSystemLocations.getFourStarsPNG());
+		extractResourceToFile("graphics/fivestars.png", FileSystemLocations.getFiveStarsPNG());
+		extractResourceToFile("graphics/logo.png", FileSystemLocations.getLogoPNG());
+		extractResourceToFile("graphics/logo-small.png", FileSystemLocations.getLogoSmallPNG());
+		extractResourceToFile("javascript/effects.js", FileSystemLocations.getEffectsJS());
+		extractResourceToFile("stylesheets/style.css", FileSystemLocations.getStyleJS());
 
 		// Add the lock file
 		try {
-			File lockFile = new File(FileSystemConstants.LOCK_FILE);
+			File lockFile = new File(FileSystemLocations.getLockFile());
 			if (!lockFile.exists()) {
 				lockFile.createNewFile();
 			}
 		} catch (IOException e) {
-			LOGGER.error("Cannot create '" + FileSystemConstants.LOCK_FILE + "' "
+			LOGGER.error("Cannot create '" + FileSystemLocations.getLockFile() + "' "
 					+ "although it seems that the directory does not yet exist", e);
 			return false;
 		}
@@ -141,7 +138,7 @@ public class FileSystemAccessWrapper {
 	/** This method is used to create album picture folders if the album is set to contain pictures and the folder does not exist yet.
 	 *  During this process no existing directory or file is overwritten.
 	 *  This method must be called after a new album is created or altered.
-	 *  It should be also called during initialization of the program after the collector file structure has been updated. */
+	 *  It should be also called during initialization of the program after the file structure has been updated. */
 	public static boolean updateAlbumFileStructure(Connection databaseConnection) {
 		// Create inside the album home directory all album directories
 		try {
@@ -150,7 +147,7 @@ public class FileSystemAccessWrapper {
 
 				if (DatabaseOperations.isPictureAlbum(albumName) && !albumDirectory.exists()) {
 					if (!albumDirectory.mkdir()) {
-						LOGGER.error("Cannot create collector album directory although it seems that it does not exist");
+						LOGGER.error("Cannot create album directory although it seems that it does not exist");
 						return false;
 					}
 				}
@@ -168,7 +165,7 @@ public class FileSystemAccessWrapper {
 	 * @return The path to the picture directory.
 	 */
 	public static String getFilePathForAlbum(String albumName) {
-		return FileSystemConstants.COLLECTOR_HOME_ALBUM_PICTURES + File.separatorChar + albumName;
+		return FileSystemLocations.getAlbumPicturesDir() + File.separatorChar + albumName;
 	}
 
 	/**
@@ -229,7 +226,7 @@ public class FileSystemAccessWrapper {
 	 * @return The file which points to the physical location of the picture.
 	 */
 	public static File getFileInAppHome(String fileNameWithExtension, String albumName) {
-		return new File(FileSystemConstants.COLLECTOR_HOME_ALBUM_PICTURES + File.separatorChar + albumName + File.separatorChar + fileNameWithExtension);
+		return new File(FileSystemLocations.getAlbumPicturesDir() + File.separatorChar + albumName + File.separatorChar + fileNameWithExtension);
 	}
 
 	/**
@@ -400,15 +397,15 @@ public class FileSystemAccessWrapper {
 
 	/**
 	 * Convenience method to erase all content from the default application home directory.
-	 * The .collector directory as well as the database will still exist after calling this method. 
+	 * The home directory as well as the database will still exist after calling this method. 
 	 */
-	public static void clearCollectorHome() {	
-		File[] files = new File(FileSystemConstants.COLLECTOR_HOME).listFiles();
+	public static void clearHomeDirectory() {	
+		File[] files = new File(FileSystemLocations.getActiveHomeDir()).listFiles();
 
 		for (int i=0; i<files.length; i++) {
 			if (files[i].isDirectory()) {
 				deleteDirectoryRecursively(files[i]);
-			} else if (!files[i].getName().equals(FileSystemConstants.DATABASE_NAME)) {
+			} else if (!files[i].getName().equals(FileSystemLocations.DATABASE_NAME)) {
 				files[i].delete();
 			}
 		}
@@ -417,15 +414,15 @@ public class FileSystemAccessWrapper {
 	/**
 	 * Convenience method to remove the default application home directory. 
 	 */
-	public static void removeCollectorHome() {
-		File collectorHome = new File(FileSystemConstants.COLLECTOR_HOME);
+	public static void removeHomeDirectory() {
+		File homeDirectory = new File(FileSystemLocations.getActiveHomeDir());
 
-		if (collectorHome.exists()) {
-			FileSystemAccessWrapper.clearCollectorHome();
+		if (homeDirectory.exists()) {
+			FileSystemAccessWrapper.clearHomeDirectory();
 
-			new File(FileSystemConstants.DATABASE).delete();
+			new File(FileSystemLocations.getDatabaseFile()).delete();
 
-			collectorHome.delete();
+			homeDirectory.delete();
 		}
 	}
 
@@ -434,18 +431,18 @@ public class FileSystemAccessWrapper {
 	 * @return true if and only if the file or directory is successfully deleted; false otherwise 
 	 */
 	public static boolean deleteDatabaseRestoreFile() {
-		File file = new File(FileSystemConstants.DATABASE_TO_RESTORE);
+		File file = new File(FileSystemLocations.getDatabaseRestoreFile());
 		return file.delete();
 	}
 	
 	/**
 	 * Retrieves a list of files whose file name matches the provided regex. Only files in the appdate folder (no directories) are matched.
-	 * @param fileNameRegex The regular expression to match files in the collector home against.
+	 * @param fileNameRegex The regular expression to match files in the home directory against.
 	 * @return A list of file handles to the matching files. Empty list if none are found.
 	 */
-	public static List<File> getAllMatchingFilesInCollectorHome(String fileNameRegex) {
+	public static List<File> getAllMatchingFilesInHomeDirectory(String fileNameRegex) {
 		List<File> matchingFiles = new ArrayList<File>();
-		File path = new File(FileSystemConstants.COLLECTOR_HOME_APPDATA);
+		File path = new File(FileSystemLocations.getAppDataDir());
 		File[] files = path.listFiles();
 		for(int i=0; i<files.length; i++) {
 			if(!files[i].isDirectory()) {

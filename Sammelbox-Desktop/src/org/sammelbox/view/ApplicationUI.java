@@ -40,7 +40,7 @@ import org.sammelbox.controller.GuiController;
 import org.sammelbox.controller.events.EventObservable;
 import org.sammelbox.controller.events.Observer;
 import org.sammelbox.controller.events.SammelboxEvent;
-import org.sammelbox.controller.filesystem.FileSystemConstants;
+import org.sammelbox.controller.filesystem.FileSystemLocations;
 import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.controller.listeners.BrowserListener;
@@ -113,7 +113,7 @@ public class ApplicationUI implements Observer {
 		instance = new ApplicationUI();		
 		
 		// set program icon
-		shell.setImage(new Image(shell.getDisplay(), FileSystemConstants.LOGO_SMALL));
+		shell.setImage(new Image(shell.getDisplay(), FileSystemLocations.getLogoSmallPNG()));
 		
 		// setup the Layout for the shell
 		GridLayout shellGridLayout = new GridLayout(1, false);

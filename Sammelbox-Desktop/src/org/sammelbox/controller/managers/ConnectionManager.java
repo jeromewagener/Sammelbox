@@ -27,7 +27,7 @@ import java.sql.SQLException;
 
 import org.jdbcdslog.ConnectionLoggingProxy;
 import org.sammelbox.controller.filesystem.FileSystemAccessWrapper;
-import org.sammelbox.controller.filesystem.FileSystemConstants;
+import org.sammelbox.controller.filesystem.FileSystemLocations;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException.DBErrorState;
 import org.sammelbox.model.database.operations.DatabaseOperations;
@@ -48,7 +48,7 @@ public class ConnectionManager {
 		// This hides all internal SQL exceptions
 		try {
 			if (ConnectionManager.connection == null || connection.isClosed()) {
-				ConnectionManager.connection = DriverManager.getConnection(ConnectionManager.SQLITE_CONNECTION_STRING + FileSystemConstants.DATABASE);
+				ConnectionManager.connection = DriverManager.getConnection(ConnectionManager.SQLITE_CONNECTION_STRING + FileSystemLocations.getDatabaseFile());
 				ConnectionManager.connection = ConnectionLoggingProxy.wrap(connection);
 
 				ConnectionManager.enableForeignKeySupportForCurrentSession();
@@ -120,34 +120,34 @@ public class ConnectionManager {
 		closeConnection();			
 
 		String corruptSnapshotFileName = DatabaseIntegrityManager.CORRUPT_DATABASE_SNAPSHOT_PREFIX + System.currentTimeMillis();
-		File corruptTemporarySnapshotFile = new File(FileSystemConstants.USER_HOME + File.separator + corruptSnapshotFileName);
+		File corruptTemporarySnapshotFile = new File(FileSystemLocations.USER_HOME + File.separator + corruptSnapshotFileName);
 		corruptTemporarySnapshotFile.deleteOnExit();
 		// Copy file to temporary location
 		try {
-			FileSystemAccessWrapper.copyFile(new File(FileSystemConstants.DATABASE), corruptTemporarySnapshotFile);
+			FileSystemAccessWrapper.copyFile(new File(FileSystemLocations.getDatabaseFile()), corruptTemporarySnapshotFile);
 		} catch (IOException e1) {
 			LOGGER.error("Copying the corrupt database file to a temporary location failed" , e1);
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState);
 		}
 
-		// Clean collector home
-		FileSystemAccessWrapper.removeCollectorHome();
+		// Clean home directory
+		FileSystemAccessWrapper.removeHomeDirectory();
 
 		// Copy the corrupt snapshot from the temporary location into the app data folder 
-		String corruptSnapshotFilePath = FileSystemConstants.COLLECTOR_HOME_APPDATA + File.separator + corruptSnapshotFileName;
+		String corruptSnapshotFilePath = FileSystemLocations.getActiveHomeDir() + File.separator + corruptSnapshotFileName;
 		File corruptSnapshotFile = new File(corruptSnapshotFilePath);			
 		try {
 			FileSystemAccessWrapper.copyFile(corruptTemporarySnapshotFile, corruptSnapshotFile);
 		} catch (IOException e) {
-			LOGGER.error("Copying the corrupt database file from the temporary location back to the clean Collector HOME failed. Manual cleanup may be required", e);
+			LOGGER.error("Copying the corrupt database file from the temporary location back to the clean home directory failed. Manual cleanup may be required", e);
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState);
 		}
 
-		// Try to open a regular connection to the newly setup collector HOME
+		// Try to open a regular connection to the newly setup home directory
 		openConnection();
 
-		if (FileSystemAccessWrapper.updateCollectorFileStructure() == false) {
-			LOGGER.error("Updating the structure of the Collector HOME failed. Manual cleanup may be required");
+		if (FileSystemAccessWrapper.updateSammelboxFileStructure() == false) {
+			LOGGER.error("Updating the structure of the home directory failed. Manual cleanup may be required");
 			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState);
 		}
 	}

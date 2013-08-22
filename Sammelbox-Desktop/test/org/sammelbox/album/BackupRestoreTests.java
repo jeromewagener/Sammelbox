@@ -32,7 +32,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.sammelbox.TestExecuter;
-import org.sammelbox.controller.filesystem.FileSystemConstants;
+import org.sammelbox.controller.filesystem.FileSystemLocations;
 import org.sammelbox.controller.managers.ConnectionManager;
 import org.sammelbox.controller.managers.DatabaseIntegrityManager;
 import org.sammelbox.model.album.AlbumItem;
@@ -52,12 +52,12 @@ public class BackupRestoreTests {
 
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		TestExecuter.resetEverything();
+		TestExecuter.resetTestHome();
 	}
 
 	@Before
 	public void setUp() {
-		TestExecuter.resetEverything();
+		TestExecuter.resetTestHome();
 	}
 
 	@After
@@ -220,7 +220,7 @@ public class BackupRestoreTests {
 			}
 
 			assertTrue("Resultset should contain 3 items", counter == 3);
-			DatabaseIntegrityManager.backupToFile(FileSystemConstants.TEMP_DIR + 
+			DatabaseIntegrityManager.backupToFile(FileSystemLocations.TEMP_DIR + 
 					File.separatorChar + "testBackupRestoreOfSingleAlbum.cbk");
 		} catch (DatabaseWrapperOperationException e) {
 			fail("testBackupOfSingleAlbum raised an exception");
@@ -265,7 +265,7 @@ public class BackupRestoreTests {
 			}
 
 			assertTrue("Resultset should contain 0 items", counter == 0);	
-			DatabaseIntegrityManager.backupToFile(FileSystemConstants.TEMP_DIR + 
+			DatabaseIntegrityManager.backupToFile(FileSystemLocations.TEMP_DIR + 
 					File.separatorChar + "testBackupRestoreOfMultipleAlbums.cbk");
 		} catch (DatabaseWrapperOperationException e) {
 			fail("Failed on internal db error");			
@@ -276,7 +276,7 @@ public class BackupRestoreTests {
 	public void testRestoreOfSingleAlbum() {
 		testBackupOfSingleAlbum();
 		try {
-			DatabaseIntegrityManager.restoreFromFile(FileSystemConstants.TEMP_DIR + 
+			DatabaseIntegrityManager.restoreFromFile(FileSystemLocations.TEMP_DIR + 
 					File.separatorChar + "testBackupRestoreOfSingleAlbum.cbk");
 
 			AlbumItemResultSet allAlbumItems = DatabaseOperations.executeSQLQuery("SELECT * FROM Books");
@@ -298,7 +298,7 @@ public class BackupRestoreTests {
 		testBackupOfMultipleAlbums();
 		
 		try {
-			DatabaseIntegrityManager.restoreFromFile(FileSystemConstants.TEMP_DIR + 
+			DatabaseIntegrityManager.restoreFromFile(FileSystemLocations.TEMP_DIR + 
 					File.separatorChar + "testBackupRestoreOfMultipleAlbums.cbk");
 
 			AlbumItemResultSet allAlbumItems = DatabaseOperations.executeSQLQuery("SELECT * FROM " + 
@@ -388,7 +388,7 @@ public class BackupRestoreTests {
 				fail("Album Item could not be inserted into album");
 			}
 
-			DatabaseIntegrityManager.backupToFile(FileSystemConstants.TEMP_DIR + 
+			DatabaseIntegrityManager.backupToFile(FileSystemLocations.TEMP_DIR + 
 					File.separatorChar + "testRestoreAndModificiationOfTestDataAlbums.cbk");
 		} catch (DatabaseWrapperOperationException e) {
 			fail("Failed on internal db error");
@@ -398,7 +398,7 @@ public class BackupRestoreTests {
 	@Test
 	public void testRestoreOfModificiationOfTestDataAlbums() {
 		try {
-			DatabaseIntegrityManager.restoreFromFile(FileSystemConstants.TEMP_DIR + 
+			DatabaseIntegrityManager.restoreFromFile(FileSystemLocations.TEMP_DIR + 
 					File.separatorChar + "testRestoreAndModificiationOfTestDataAlbums.cbk");
 
 			AlbumItemResultSet allAlbumItems = DatabaseOperations.executeSQLQuery("SELECT * FROM Books");

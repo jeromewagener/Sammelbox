@@ -37,7 +37,7 @@ public class XMLStorageWrapper {
 		xmlOutput.append("\t<userDefinedLanguage>" + applicationSettings.getUserDefinedLanguage().toString() + "</userDefinedLanguage>\n");
 		xmlOutput.append("</settings>\n");
 		
-		FileSystemAccessWrapper.writeToFile(xmlOutput.toString(), FileSystemConstants.SETTINGS_FILE);
+		FileSystemAccessWrapper.writeToFile(xmlOutput.toString(), FileSystemLocations.getSettingsXML());
 	}
 	
 	public static void storeAlbums(Collection<String> albums) {
@@ -53,7 +53,7 @@ public class XMLStorageWrapper {
 		
 		xmlOutput.append("</albums>\n");
 		
-		FileSystemAccessWrapper.writeToFile(xmlOutput.toString(), FileSystemConstants.ALBUM_FILE);
+		FileSystemAccessWrapper.writeToFile(xmlOutput.toString(), FileSystemLocations.getAlbumsXML());
 	}
 	
 	public static void storeViews(Map<String, List<AlbumView>> albumNamesToAlbumViews) {
@@ -73,7 +73,7 @@ public class XMLStorageWrapper {
 		
 		xmlOutput.append("</views>\n");
 		
-		FileSystemAccessWrapper.writeToFile(xmlOutput.toString(), FileSystemConstants.VIEW_FILE);
+		FileSystemAccessWrapper.writeToFile(xmlOutput.toString(), FileSystemLocations.getViewsXML());
 	}
 	
 	public static void storeWelcomePageManagerInformation(
@@ -100,12 +100,12 @@ public class XMLStorageWrapper {
 		
 		xmlOutput.append("</welcomePageInformation>\n");
 		
-		FileSystemAccessWrapper.writeToFile(xmlOutput.toString(), FileSystemConstants.WELCOME_PAGE_FILE);
+		FileSystemAccessWrapper.writeToFile(xmlOutput.toString(), FileSystemLocations.getWelcomeXML());
 	}
 	
 	public static ApplicationSettings retrieveSettings() {
 		String applicationSettingsAsXml = FileSystemAccessWrapper.readFileAsString(
-				FileSystemConstants.SETTINGS_FILE);
+				FileSystemLocations.getSettingsXML());
 		
 		ApplicationSettings applicationSettings = new ApplicationSettings();
 		
@@ -147,7 +147,7 @@ public class XMLStorageWrapper {
 	}
 
 	public static List<String> retrieveAlbums() {
-		String albumsAsXml = FileSystemAccessWrapper.readFileAsString(FileSystemConstants.ALBUM_FILE);
+		String albumsAsXml = FileSystemAccessWrapper.readFileAsString(FileSystemLocations.getAlbumsXML());
 		
 		List<String> albumToPosition = new LinkedList<String>();
 		
@@ -191,7 +191,7 @@ public class XMLStorageWrapper {
 	}
 	
 	public static Map<String, List<AlbumView>> retrieveViews() {
-		String albumViewsAsXml = FileSystemAccessWrapper.readFileAsString(FileSystemConstants.VIEW_FILE);
+		String albumViewsAsXml = FileSystemAccessWrapper.readFileAsString(FileSystemLocations.getViewsXML());
 		
 		Map<String, List<AlbumView>> albumNamesToAlbumViews = new HashMap<String, List<AlbumView>>();
 		
@@ -247,7 +247,7 @@ public class XMLStorageWrapper {
 	}
 
 	public static Map<String, Long> retrieveAlbumToLastModified() {
-		String welcomePageInformationXml = FileSystemAccessWrapper.readFileAsString(FileSystemConstants.WELCOME_PAGE_FILE);
+		String welcomePageInformationXml = FileSystemAccessWrapper.readFileAsString(FileSystemLocations.getWelcomeXML());
 		
 		Map<String, Long> albumToLastModified = new HashMap<String, Long>();
 		
@@ -293,7 +293,7 @@ public class XMLStorageWrapper {
 	}
 
 	public static Map<String, Integer> retrieveAlbumAndViewsToClicks() {
-		String welcomePageInformationXml = FileSystemAccessWrapper.readFileAsString(FileSystemConstants.WELCOME_PAGE_FILE);
+		String welcomePageInformationXml = FileSystemAccessWrapper.readFileAsString(FileSystemLocations.getWelcomeXML());
 		
 		Map<String, Integer> albumAndViewsToClicks = new HashMap<String, Integer>();
 		

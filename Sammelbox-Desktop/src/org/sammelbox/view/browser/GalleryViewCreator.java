@@ -21,7 +21,7 @@ package org.sammelbox.view.browser;
 import java.util.List;
 
 import org.eclipse.swt.browser.Browser;
-import org.sammelbox.controller.filesystem.FileSystemConstants;
+import org.sammelbox.controller.filesystem.FileSystemLocations;
 import org.sammelbox.model.album.AlbumItem;
 import org.sammelbox.model.album.AlbumItemPicture;
 import org.sammelbox.model.album.AlbumItemStore;
@@ -64,7 +64,7 @@ public class GalleryViewCreator {
 			}
 			
 			if (pictures == null || pictures.isEmpty()) {
-				picturePath = FileSystemConstants.PLACEHOLDERIMAGE;
+				picturePath = FileSystemLocations.getPlaceholderPNG();
 			} else {
 				picturePath = pictures.get(0).getThumbnailPicturePath();
 			}

@@ -55,7 +55,7 @@ public class AddAlbumItemTests {
 
 	@Before
 	public void setUp() throws Exception {
-		TestExecuter.resetEverything();
+		TestExecuter.resetTestHome();
 		createBooksAlbum();
 	}
 

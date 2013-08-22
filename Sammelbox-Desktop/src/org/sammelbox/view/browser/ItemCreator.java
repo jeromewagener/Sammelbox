@@ -22,7 +22,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
-import org.sammelbox.controller.filesystem.FileSystemConstants;
+import org.sammelbox.controller.filesystem.FileSystemLocations;
 import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.controller.settings.ApplicationSettingsManager;
@@ -67,7 +67,7 @@ public class ItemCreator {
 	}
 	
 	private static String getThumbnailForFirstPicture(AlbumItem albumItem) {
-		return ((albumItem.getFirstPicture() != null) ? albumItem.getFirstPicture().getThumbnailPicturePath() : FileSystemConstants.PLACEHOLDERIMAGE);
+		return ((albumItem.getFirstPicture() != null) ? albumItem.getFirstPicture().getThumbnailPicturePath() : FileSystemLocations.getPlaceholderPNG());
 	}
 	
 	static void addAlbumItemDivContainer(AlbumItem albumItem, StringBuilder htmlBuilder) {
@@ -187,18 +187,18 @@ public class ItemCreator {
 	
 	private static String getFieldNameAndStars(String fieldName, StarRating rating) {
 		if (rating.equals(StarRating.OneStar)) {
-			return "<span class=\"boldy\"> " + Utilities.escapeHtmlString(fieldName) + "</span><img height=20 src=" + FileSystemConstants.ONE_STAR_IMAGE + "><br>";
+			return "<span class=\"boldy\"> " + Utilities.escapeHtmlString(fieldName) + "</span><img height=20 src=" + FileSystemLocations.getOneStarPNG() + "><br>";
 		} else if (rating.equals(StarRating.TwoStars)) {
-			return "<span class=\"boldy\"> " + Utilities.escapeHtmlString(fieldName) + "</span><img height=20 src=" + FileSystemConstants.TWO_STARS_IMAGE + "><br>";
+			return "<span class=\"boldy\"> " + Utilities.escapeHtmlString(fieldName) + "</span><img height=20 src=" + FileSystemLocations.getTwoStarsPNG() + "><br>";
 		} else if (rating.equals(StarRating.ThreeStars)) {
-			return "<span class=\"boldy\"> " + Utilities.escapeHtmlString(fieldName) + "</span><img height=20 src=" + FileSystemConstants.THREE_STARS_IMAGE + "><br>";
+			return "<span class=\"boldy\"> " + Utilities.escapeHtmlString(fieldName) + "</span><img height=20 src=" + FileSystemLocations.getThreeStarsPNG() + "><br>";
 		} else if (rating.equals(StarRating.FourStars)) {
-			return "<span class=\"boldy\"> " + Utilities.escapeHtmlString(fieldName) + "</span><img height=20 src=" + FileSystemConstants.FOUR_STARS_IMAGE + "><br>";
+			return "<span class=\"boldy\"> " + Utilities.escapeHtmlString(fieldName) + "</span><img height=20 src=" + FileSystemLocations.getFourStarsPNG() + "><br>";
 		} else if (rating.equals(StarRating.FiveStars)) {
-			return "<span class=\"boldy\"> " + Utilities.escapeHtmlString(fieldName) + "</span><img height=20 src=" + FileSystemConstants.FIVE_STARS_IMAGE + "><br>";
+			return "<span class=\"boldy\"> " + Utilities.escapeHtmlString(fieldName) + "</span><img height=20 src=" + FileSystemLocations.getFiveStarsPNG() + "><br>";
 		}
 		
-		return "<span class=\"boldy\"> " + Utilities.escapeHtmlString(fieldName) + "</span><img height=20 src=" + FileSystemConstants.ZERO_STARS_IMAGE + "><br>";
+		return "<span class=\"boldy\"> " + Utilities.escapeHtmlString(fieldName) + "</span><img height=20 src=" + FileSystemLocations.getZeroStarsPNG() + "><br>";
 	}
 	
 	private static String getAlternativePicturesHtml(long id, List<AlbumItemPicture> pictures) {
@@ -224,7 +224,7 @@ public class ItemCreator {
 		// Initialize with placeholder
 		String mainPictureHtml = "<img id=\"imageId" + id + "\" " +
 				 				 "     style=\"max-width:195px; max-height:195px;\"" +
-				 				 "     src=\"" + FileSystemConstants.PLACEHOLDERIMAGE + "\">";
+				 				 "     src=\"" + FileSystemLocations.getPlaceholderPNG() + "\">";
 		
 		// Use primary image if available
 		if (!albumItemPictures.isEmpty()) {

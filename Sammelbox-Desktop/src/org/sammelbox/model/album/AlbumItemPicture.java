@@ -20,7 +20,7 @@ package org.sammelbox.model.album;
 
 import java.io.File;
 
-import org.sammelbox.controller.filesystem.FileSystemConstants;
+import org.sammelbox.controller.filesystem.FileSystemLocations;
 
 public class AlbumItemPicture {
 	public static final Long PICTURE_ID_UNDEFINED = Long.MAX_VALUE;
@@ -97,12 +97,12 @@ public class AlbumItemPicture {
 	}
 
 	public String getThumbnailPicturePath() {
-		return FileSystemConstants.COLLECTOR_HOME_THUMBNAILS_FOLDER + 
+		return FileSystemLocations.getThumbnailsDir() + 
 				File.separatorChar + getThumbnailPictureName();
 	}
 
 	public String getOriginalPicturePath() {
-		return FileSystemConstants.COLLECTOR_HOME_ALBUM_PICTURES + 
+		return FileSystemLocations.getAlbumPicturesDir() + 
 				File.separatorChar + albumName + File.separatorChar + getOriginalPictureName();
 	}
 }

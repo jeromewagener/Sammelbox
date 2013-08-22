@@ -44,17 +44,17 @@ public class AdvancedSearchTests {
 
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		TestExecuter.resetEverything();
+		TestExecuter.resetTestHome();
 	}
 
 	@Before
 	public void setUp() {
-		TestExecuter.resetEverything();
+		TestExecuter.resetTestHome();
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		TestExecuter.resetEverything();
+		TestExecuter.resetTestHome();
 	}
 
 	@Test

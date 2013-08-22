@@ -44,18 +44,18 @@ public class RunAlbumViewTests {
 
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		TestExecuter.resetEverything();
+		TestExecuter.resetTestHome();
 	}
 
 	@Before
 	public void setUp() {
-		TestExecuter.resetEverything();
+		TestExecuter.resetTestHome();
 	}
 
 	@After
 	public void tearDown() throws Exception {
 		ConnectionManager.closeConnection();
-		TestExecuter.resetEverything();
+		TestExecuter.resetTestHome();
 	}
 
 	@Test

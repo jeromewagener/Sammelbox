@@ -46,7 +46,7 @@ public class RemoveAlbumTests {
 
 	@Before
 	public void setUp() throws Exception {
-		TestExecuter.resetEverything();
+		TestExecuter.resetTestHome();
 
 		// Create Album to delete
 		final String albumName = "Books";
@@ -72,7 +72,7 @@ public class RemoveAlbumTests {
 
 	@After
 	public void tearDown() throws Exception {
-		TestExecuter.resetEverything();
+		TestExecuter.resetTestHome();
 	}
 
 	@Test

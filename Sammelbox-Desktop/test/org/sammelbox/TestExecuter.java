@@ -35,6 +35,7 @@ import org.sammelbox.albumviews.GeneralAlbumViewTests;
 import org.sammelbox.albumviews.ModifyAlbumViewTests;
 import org.sammelbox.albumviews.RunAlbumViewTests;
 import org.sammelbox.controller.filesystem.FileSystemAccessWrapper;
+import org.sammelbox.controller.filesystem.FileSystemLocations;
 import org.sammelbox.controller.managers.ConnectionManager;
 import org.sammelbox.searching.AdvancedSearchTests;
 import org.sammelbox.searching.QuickSearchTests;
@@ -64,7 +65,7 @@ public class TestExecuter {
 	public static final String PATH_TO_TEST_CBK = 
 			System.getProperty("user.dir") + File.separatorChar + "test" +
 					File.separatorChar + "testdata" + 
-					File.separatorChar + "test-albums-version-2.8.1.cbk";
+					File.separatorChar + "test-albums-version-2.8.2.cbk";
 	
 	public static final String PATH_TO_TEST_PICTURE_1 = 
 			System.getProperty("user.dir") + File.separatorChar + "res" + 
@@ -81,16 +82,17 @@ public class TestExecuter {
 					File.separator + "graphics"+
 					File.separatorChar + "placeholder3.png";
 	
-	public static void resetEverything() {
-		try {			
+	public static void resetTestHome() {
+		try {
+			FileSystemLocations.setActiveHomeDir(FileSystemLocations.DEFAULT_SAMMELBOX_TEST_HOME);
 			ConnectionManager.closeConnection();
-			FileSystemAccessWrapper.removeCollectorHome();
+			FileSystemAccessWrapper.removeHomeDirectory();
 			Class.forName("org.sqlite.JDBC");
-			FileSystemAccessWrapper.updateCollectorFileStructure();			
+			FileSystemAccessWrapper.updateSammelboxFileStructure();			
 			ConnectionManager.openConnection();
 			FileSystemAccessWrapper.updateAlbumFileStructure(ConnectionManager.getConnection());
 		} catch (Exception e) {
-			fail("A problem occured while resetting everything for the alter album tests");
+			fail("A problem occured while resetting the test home directory");
 		}
 	}
 }
