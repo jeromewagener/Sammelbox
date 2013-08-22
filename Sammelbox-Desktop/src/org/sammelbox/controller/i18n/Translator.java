@@ -22,7 +22,7 @@ import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import org.sammelbox.controller.settings.ApplicationSettingsManager;
+import org.sammelbox.controller.settings.SettingsManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +38,7 @@ public class Translator {
 	 * The user preference has priority over the system language.
 	 * */
 	public static void setLanguageFromSettingsOrSystem() {
-		Language language = ApplicationSettingsManager.getUserDefinedLanguage();
+		Language language = SettingsManager.getUserDefinedLanguage();
 		
 		if (language != Language.Unknown) {
 			setLanguageManually(language);

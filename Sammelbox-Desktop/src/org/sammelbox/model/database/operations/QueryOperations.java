@@ -36,6 +36,7 @@ import java.util.UUID;
 import java.util.regex.Pattern;
 
 import org.sammelbox.controller.managers.ConnectionManager;
+import org.sammelbox.controller.settings.SettingsManager;
 import org.sammelbox.model.album.AlbumItem;
 import org.sammelbox.model.album.AlbumItemPicture;
 import org.sammelbox.model.album.AlbumItemResultSet;
@@ -117,8 +118,7 @@ public class QueryOperations {
 					else if (field.getType().equals(FieldType.Date)) {
 						try {
 							// FIXME this doesn't work and there is always exactly one day missing?!?
-							// TODO as soon as the date format can be defined via the settings, adapt this code
-							SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+							SimpleDateFormat sdf = new SimpleDateFormat(SettingsManager.getSettings().getDateFormat());
 							Date parsedDate = sdf.parse(term);
 							
 							queryFields.add(QueryBuilder.getQueryComponent(

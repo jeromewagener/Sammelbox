@@ -44,6 +44,7 @@ import org.sammelbox.controller.MetaItemFieldFilter;
 import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.controller.managers.AlbumViewManager;
+import org.sammelbox.controller.settings.SettingsManager;
 import org.sammelbox.model.album.FieldType;
 import org.sammelbox.model.album.MetaItemField;
 import org.sammelbox.model.album.OptionType;
@@ -332,7 +333,7 @@ public class AdvancedSearchSidepane {
 				// In case of a date
 				if (DatabaseOperations.isDateField(ApplicationUI.getSelectedAlbum(), searchQueryTable.getItem(i).getText(0))) {
 					// Convert string to milliseconds
-					DateFormat df = new SimpleDateFormat("d/M/yyyy");
+					DateFormat df = new SimpleDateFormat(SettingsManager.getSettings().getDateFormat());
 					java.util.Date result = null;
 					try {
 						result = df.parse(searchQueryTable.getItem(i).getText(2));

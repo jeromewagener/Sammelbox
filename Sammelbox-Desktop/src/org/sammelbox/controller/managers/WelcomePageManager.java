@@ -31,6 +31,7 @@ import java.util.Map;
 import org.sammelbox.controller.filesystem.XMLStorageWrapper;
 import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
+import org.sammelbox.controller.settings.SettingsManager;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 import org.sammelbox.model.database.operations.DatabaseOperations;
 import org.slf4j.Logger;
@@ -95,8 +96,7 @@ public class WelcomePageManager {
 	public static String getLastModifiedDate(String albumName) {
 		for (String key : albumToLastModified.keySet()) {
 			if (key.equals(albumName)) {
-				SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy");
-				
+				SimpleDateFormat simpleDateFormat = new SimpleDateFormat(SettingsManager.getSettings().getDateFormat());
 				return simpleDateFormat.format(new Date(albumToLastModified.get(key)));
 			}
 		}

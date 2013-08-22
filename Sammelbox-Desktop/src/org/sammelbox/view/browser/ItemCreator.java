@@ -18,14 +18,13 @@
 
 package org.sammelbox.view.browser;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
 import org.sammelbox.controller.filesystem.FileSystemLocations;
 import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
-import org.sammelbox.controller.settings.ApplicationSettingsManager;
+import org.sammelbox.controller.settings.SettingsManager;
 import org.sammelbox.model.album.AlbumItem;
 import org.sammelbox.model.album.AlbumItemPicture;
 import org.sammelbox.model.album.FieldType;
@@ -108,7 +107,7 @@ public class ItemCreator {
 				java.sql.Date sqlDate = fieldItem.getValue();
 				java.util.Date utilDate = new java.util.Date(sqlDate.getTime());
 
-				SimpleDateFormat dateFormater = (SimpleDateFormat) DateFormat.getDateInstance(DateFormat.LONG, ApplicationSettingsManager.getUserDefinedLocale());
+				SimpleDateFormat dateFormater = new SimpleDateFormat(SettingsManager.getSettings().getDateFormat());
 				htmlDataColumnContent.append(getFieldNameAndValueLine(fieldItem.getName(), dateFormater.format(utilDate)));
 			} else  if (fieldItem.getType().equals(FieldType.Text)) {
 				htmlDataColumnContent.append(getFieldNameAndValueLine(fieldItem.getName(), Utilities.escapeHtmlString((String) fieldItem.getValue())));

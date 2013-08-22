@@ -36,7 +36,7 @@ import org.sammelbox.controller.events.Observer;
 import org.sammelbox.controller.events.SammelboxEvent;
 import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
-import org.sammelbox.controller.settings.ApplicationSettingsManager;
+import org.sammelbox.controller.settings.SettingsManager;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 import org.sammelbox.model.database.operations.DatabaseOperations;
 import org.sammelbox.view.ApplicationUI;
@@ -461,7 +461,7 @@ public class ToolbarComposite extends Composite implements Observer {
 
 		try {
 			if (DatabaseOperations.isPictureAlbum(albumName)) {
-				if (ApplicationSettingsManager.getApplicationSettings().isDetailedViewDefault()) {
+				if (SettingsManager.getSettings().isDetailedViewDefault()) {
 					toggleViewBtn.setImage(pictureView);
 					toggleViewBtn.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_TOGGLE_TO_GALLERY));
 				} else {
@@ -479,7 +479,7 @@ public class ToolbarComposite extends Composite implements Observer {
 		}
 
 		GuiController.getGuiState().setViewDetailed(
-				ApplicationSettingsManager.getApplicationSettings().isDetailedViewDefault());
+				SettingsManager.getSettings().isDetailedViewDefault());
 		BrowserFacade.rerunLastQuery();
 		searchBtn.setEnabled(true);
 	}

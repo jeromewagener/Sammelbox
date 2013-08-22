@@ -29,7 +29,7 @@ import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.controller.managers.BuildInformationManager;
 import org.sammelbox.controller.managers.ConnectionManager;
 import org.sammelbox.controller.managers.WelcomePageManager;
-import org.sammelbox.controller.settings.ApplicationSettingsManager;
+import org.sammelbox.controller.settings.SettingsManager;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 import org.sammelbox.view.ApplicationUI;
 import org.sammelbox.view.various.ComponentFactory;
@@ -74,7 +74,7 @@ public class Sammelbox {
 			FileSystemAccessWrapper.updateSammelboxFileStructure();
 
 			// Load available files
-			ApplicationSettingsManager.initializeFromSettingsFile();
+			SettingsManager.initializeFromSettingsFile();
 			WelcomePageManager.initializeFromWelcomeFile();
 			Translator.setLanguageFromSettingsOrSystem();
 			

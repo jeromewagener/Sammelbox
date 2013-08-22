@@ -34,7 +34,7 @@ import org.eclipse.swt.widgets.Label;
 import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Language;
 import org.sammelbox.controller.i18n.Translator;
-import org.sammelbox.controller.settings.ApplicationSettingsManager;
+import org.sammelbox.controller.settings.SettingsManager;
 import org.sammelbox.model.settings.ApplicationSettings;
 import org.sammelbox.view.ApplicationUI;
 import org.sammelbox.view.various.ComponentFactory;
@@ -79,7 +79,7 @@ public class SettingsSidepane {
 		
 		final Combo viewSelectionCombo = new Combo(languageComposite, SWT.READ_ONLY);
 		viewSelectionCombo.setItems(new String[] { Translator.toBeTranslated("Detailed View"), Translator.toBeTranslated("Gallery View")});
-		if (ApplicationSettingsManager.getApplicationSettings().isDetailedViewDefault()) {
+		if (SettingsManager.getSettings().isDetailedViewDefault()) {
 			viewSelectionCombo.setText(Translator.toBeTranslated("Detailed View"));
 		} else {
 			viewSelectionCombo.setText(Translator.toBeTranslated("Gallery View"));
@@ -91,7 +91,7 @@ public class SettingsSidepane {
 		final Combo dateFormatSelectionCombo = new Combo(languageComposite, SWT.READ_ONLY);
 		dateFormatSelectionCombo.setItems(new String[] { EUROPEAN_DOT, EUROPEAN_SLASH, AMERICAN_DOT, AMERICAN_SLASH});
 		
-		String definedDateFormat = ApplicationSettingsManager.getApplicationSettings().getDateFormat();
+		String definedDateFormat = SettingsManager.getSettings().getDateFormat();
 		for (String key : dateExamplesToFormats.keySet()) {
 			if (dateExamplesToFormats.get(key).equals(definedDateFormat)) {
 				dateFormatSelectionCombo.setText(key);
@@ -114,12 +114,12 @@ public class SettingsSidepane {
 		saveSettingsButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				ApplicationSettings appSettings = ApplicationSettingsManager.getApplicationSettings();
+				ApplicationSettings appSettings = SettingsManager.getSettings();
 				
 				appSettings.setUserDefinedLanguage(Language.valueOf(languageCombo.getItem(languageCombo.getSelectionIndex())));
 				appSettings.setDetailedViewIsDefault(viewSelectionCombo.getSelectionIndex() == 0);
 				appSettings.setDateFormat(dateExamplesToFormats.get(dateFormatSelectionCombo.getItem(dateFormatSelectionCombo.getSelectionIndex())));
-				ApplicationSettingsManager.setApplicationSettings(appSettings);
+				SettingsManager.setApplicationSettings(appSettings);
 				
 				Translator.setLanguageManually(Language.valueOf(languageCombo.getItem(languageCombo.getSelectionIndex())));
 				ComponentFactory.getMessageBox(ApplicationUI.getShell(), 
