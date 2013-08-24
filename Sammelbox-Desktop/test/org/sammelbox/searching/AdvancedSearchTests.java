@@ -111,7 +111,7 @@ public class AdvancedSearchTests {
 		try {
 			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
 			ArrayList<QueryComponent> queryComponents = new ArrayList<QueryComponent>();
-			queryComponents.add(QueryBuilder.getQueryComponent("Title", QueryOperator.equals, "Short Circuit 2"));
+			queryComponents.add(QueryBuilder.getQueryComponent("Title", QueryOperator.EQUALS, "Short Circuit 2"));
 			AlbumItemResultSet searchResults = DatabaseOperations.executeSQLQuery(
 					QueryBuilder.buildQuery(queryComponents, true, "DVDs"));
 
@@ -140,8 +140,8 @@ public class AdvancedSearchTests {
 			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
 
 			ArrayList<QueryComponent> queryComponents = new ArrayList<QueryComponent>();
-			queryComponents.add(QueryBuilder.getQueryComponent("Title", QueryOperator.equals, "Short Circuit 2"));
-			queryComponents.add(QueryBuilder.getQueryComponent("Actors", QueryOperator.equals, "Cynthia Gibb, Fisher Stevens"));
+			queryComponents.add(QueryBuilder.getQueryComponent("Title", QueryOperator.EQUALS, "Short Circuit 2"));
+			queryComponents.add(QueryBuilder.getQueryComponent("Actors", QueryOperator.EQUALS, "Cynthia Gibb, Fisher Stevens"));
 
 			AlbumItemResultSet searchResults = DatabaseOperations.executeSQLQuery(
 					QueryBuilder.buildQuery(queryComponents, true, "DVDs"));
@@ -171,9 +171,9 @@ public class AdvancedSearchTests {
 		try {
 			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
 			ArrayList<QueryComponent> queryComponents = new ArrayList<QueryComponent>();
-			queryComponents.add(QueryBuilder.getQueryComponent("Title", QueryOperator.equals, "Short Circuit 2"));
-			queryComponents.add(QueryBuilder.getQueryComponent("Title", QueryOperator.equals, "One Flew Over The Cuckoo's Nest"));
-			queryComponents.add(QueryBuilder.getQueryComponent("Title", QueryOperator.equals, "RED"));
+			queryComponents.add(QueryBuilder.getQueryComponent("Title", QueryOperator.EQUALS, "Short Circuit 2"));
+			queryComponents.add(QueryBuilder.getQueryComponent("Title", QueryOperator.EQUALS, "One Flew Over The Cuckoo's Nest"));
+			queryComponents.add(QueryBuilder.getQueryComponent("Title", QueryOperator.EQUALS, "RED"));
 			AlbumItemResultSet searchResults = DatabaseOperations.executeSQLQuery(
 					QueryBuilder.buildQuery(queryComponents, false, "DVDs"));
 
@@ -203,7 +203,7 @@ public class AdvancedSearchTests {
 		try {
 			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
 			ArrayList<QueryComponent> queryComponents = new ArrayList<QueryComponent>();
-			queryComponents.add(QueryBuilder.getQueryComponent("Author", QueryOperator.like, "Helm"));
+			queryComponents.add(QueryBuilder.getQueryComponent("Author", QueryOperator.LIKE, "Helm"));
 			AlbumItemResultSet searchResults = DatabaseOperations.executeSQLQuery(
 					QueryBuilder.buildQuery(queryComponents, true, "Books"));
 
@@ -232,9 +232,9 @@ public class AdvancedSearchTests {
 		try {
 			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
 			ArrayList<QueryComponent> queryComponents = new ArrayList<QueryComponent>();
-			queryComponents.add(QueryBuilder.getQueryComponent("Book Title", QueryOperator.like, "Code"));
-			queryComponents.add(QueryBuilder.getQueryComponent("Book Title", QueryOperator.like, "Design"));
-			queryComponents.add(QueryBuilder.getQueryComponent("Book Title", QueryOperator.like, "Programmer"));
+			queryComponents.add(QueryBuilder.getQueryComponent("Book Title", QueryOperator.LIKE, "Code"));
+			queryComponents.add(QueryBuilder.getQueryComponent("Book Title", QueryOperator.LIKE, "Design"));
+			queryComponents.add(QueryBuilder.getQueryComponent("Book Title", QueryOperator.LIKE, "Programmer"));
 			AlbumItemResultSet searchResults = DatabaseOperations.executeSQLQuery(
 					QueryBuilder.buildQuery(queryComponents, false, "Books"));
 
@@ -264,7 +264,7 @@ public class AdvancedSearchTests {
 		try {
 			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
 			ArrayList<QueryComponent> queryComponents = new ArrayList<QueryComponent>();
-			queryComponents.add(QueryBuilder.getQueryComponent("Price", QueryOperator.biggerThan, "30.0"));
+			queryComponents.add(QueryBuilder.getQueryComponent("Price", QueryOperator.BIGGER_THAN, "30.0"));
 			AlbumItemResultSet searchResults = DatabaseOperations.executeSQLQuery(
 					QueryBuilder.buildQuery(queryComponents, true, "Books"));
 
@@ -286,7 +286,7 @@ public class AdvancedSearchTests {
 		try {
 			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
 			ArrayList<QueryComponent> queryComponents = new ArrayList<QueryComponent>();
-			queryComponents.add(QueryBuilder.getQueryComponent("Price", QueryOperator.biggerOrEqualThan, "30.0"));
+			queryComponents.add(QueryBuilder.getQueryComponent("Price", QueryOperator.BIGGER_OR_EQUAL_THAN, "30.0"));
 			AlbumItemResultSet searchResults = DatabaseOperations.executeSQLQuery(
 					QueryBuilder.buildQuery(queryComponents, true, "Books"));
 
@@ -308,7 +308,7 @@ public class AdvancedSearchTests {
 		try {
 			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
 			ArrayList<QueryComponent> queryComponents = new ArrayList<QueryComponent>();
-			queryComponents.add(QueryBuilder.getQueryComponent("Artist", QueryOperator.equals, "Rick Astley"));
+			queryComponents.add(QueryBuilder.getQueryComponent("Artist", QueryOperator.EQUALS, "Rick Astley"));
 			AlbumItemResultSet searchResults = DatabaseOperations.executeSQLQuery(
 					QueryBuilder.buildQuery(queryComponents, true, "Music CDs"));
 

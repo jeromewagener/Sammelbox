@@ -26,13 +26,16 @@ import org.eclipse.swt.widgets.Composite;
 import org.sammelbox.controller.listeners.BrowserListener;
 import org.sammelbox.view.ApplicationUI;
 
-public class BrowserComposite {
+public final class BrowserComposite {
+	private BrowserComposite() {
+		// use build method instead
+	}
 	
 	/** Returns a browser composite which is used to render HTML.
 	 * @param parentComposite the parent composite
 	 * @param browserListener a class of various listeners for the browser
 	 * @return a new browser composite */
-	public static Composite getBrowserComposite(Composite parentComposite, BrowserListener browserListener) {
+	public static Composite build(Composite parentComposite, BrowserListener browserListener) {
 		// setup SWT browser composite
 		Composite browserComposite = new Composite(parentComposite, SWT.NONE);
 		browserComposite.setLayout(new GridLayout());

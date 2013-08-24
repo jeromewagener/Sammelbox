@@ -69,7 +69,7 @@ public class AlterAlbumTests {
 		try {
 			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
 
-			MetaItemField metaItemField = new MetaItemField("Publisher", FieldType.Text, false);
+			MetaItemField metaItemField = new MetaItemField("Publisher", FieldType.TEXT, false);
 			long originalAlbumItemCount = DatabaseOperations.getNumberOfItemsInAlbum("Books");
 
 			DatabaseOperations.appendNewAlbumField("Books", metaItemField);
@@ -90,7 +90,7 @@ public class AlterAlbumTests {
 		try {
 			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
 
-			MetaItemField metaItemField = new MetaItemField("Publisher", FieldType.Text, true);
+			MetaItemField metaItemField = new MetaItemField("Publisher", FieldType.TEXT, true);
 			long originalAlbumItemCount = DatabaseOperations.getNumberOfItemsInAlbum("Books");
 
 			DatabaseOperations.appendNewAlbumField("Books", metaItemField);
@@ -112,7 +112,7 @@ public class AlterAlbumTests {
 			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
 			long originalAlbumItemCount = DatabaseOperations.getNumberOfItemsInAlbum("Books");
 
-			MetaItemField metaItemField = new MetaItemField("Publisher", FieldType.Text, false);
+			MetaItemField metaItemField = new MetaItemField("Publisher", FieldType.TEXT, false);
 
 			DatabaseOperations.appendNewAlbumField("Books", metaItemField);
 			List<MetaItemField> metaDataItems = DatabaseOperations.getAlbumItemFieldNamesAndTypes("Books");
@@ -188,7 +188,7 @@ public class AlterAlbumTests {
 			assertTrue("The first column name should be 'Book Title'", metaDataItems.get(0).getName().equals("Book Title"));
 
 			MetaItemField bookTitleField = metaDataItems.get(0);
-			MetaItemField titleField = new MetaItemField("Title", FieldType.Text, false);
+			MetaItemField titleField = new MetaItemField("Title", FieldType.TEXT, false);
 
 			DatabaseOperations.renameAlbumItemField("Books", bookTitleField, titleField);
 
@@ -215,7 +215,7 @@ public class AlterAlbumTests {
 			}
 
 			MetaItemField dvdTitleField = metaDataItems.get(0);
-			MetaItemField titleField = new MetaItemField("DVD Title", FieldType.Text, dvdTitleField.isQuickSearchable());
+			MetaItemField titleField = new MetaItemField("DVD Title", FieldType.TEXT, dvdTitleField.isQuickSearchable());
 
 			DatabaseOperations.renameAlbumItemField("DVDs", dvdTitleField, titleField);
 			metaDataItems = DatabaseOperations.getAlbumItemFieldNamesAndTypes("DVDs");
@@ -270,7 +270,7 @@ public class AlterAlbumTests {
 			assertTrue("Typeinfo table for Books should exist", 
 					TestQueries.isDatabaseTableAvailable(DatabaseStringUtilities.generateTypeInfoTableName("Books")));
 			
-			MetaItemField authorMetaItemField = new MetaItemField("Author", FieldType.Text, false);
+			MetaItemField authorMetaItemField = new MetaItemField("Author", FieldType.TEXT, false);
 			DatabaseOperations.removeAlbumItemField("Books", authorMetaItemField);
 			metaDataItems = DatabaseOperations.getAlbumItemFieldNamesAndTypes("Books");
 
@@ -341,8 +341,8 @@ public class AlterAlbumTests {
 		try {
 			List<MetaItemField> fields = new ArrayList<>();
 			
-			fields.add(new MetaItemField("field1", FieldType.Text));
-			fields.add(new MetaItemField("field2", FieldType.Text));
+			fields.add(new MetaItemField("field1", FieldType.TEXT));
+			fields.add(new MetaItemField("field2", FieldType.TEXT));
 			
 			DatabaseOperations.createNewAlbum("TestAlbum", fields, false);
 			
@@ -359,8 +359,8 @@ public class AlterAlbumTests {
 		try {
 			List<MetaItemField> fields = new ArrayList<>();
 			
-			fields.add(new MetaItemField("field1", FieldType.Text));
-			fields.add(new MetaItemField("field2", FieldType.Text));
+			fields.add(new MetaItemField("field1", FieldType.TEXT));
+			fields.add(new MetaItemField("field2", FieldType.TEXT));
 			
 			DatabaseOperations.createNewAlbum("Test Album 1", fields, false);
 			
@@ -430,7 +430,7 @@ public class AlterAlbumTests {
 			
 			Map<Integer, MetaItemField> metaItemFields = DatabaseOperations.getAlbumItemMetaMap("DVDs");
 			MetaItemField oldField = metaItemFields.get(3);
-			MetaItemField newField = new MetaItemField("Test A", FieldType.Decimal, false);
+			MetaItemField newField = new MetaItemField("Test A", FieldType.DECIMAL, false);
 			DatabaseOperations.renameAlbumItemField("DVDs", oldField, newField);
 			
 			assertTrue("The number of items should not have changed after a field rename", 
@@ -438,7 +438,7 @@ public class AlterAlbumTests {
 			assertTrue("The number of pictures should not have changed after a field rename", 
 					numberOfPictures == TestQueries.getNumberOfRecordsInTable(DatabaseStringUtilities.generatePictureTableName("DVDs")));
 						
-			MetaItemField oscarWinningField = new MetaItemField("Oscar winning movie", FieldType.Option, false);
+			MetaItemField oscarWinningField = new MetaItemField("Oscar winning movie", FieldType.OPTION, false);
 			DatabaseOperations.appendNewAlbumField("DVDs", oscarWinningField);
 			
 			assertTrue("The number of items should not have changed after a field has been added", 
@@ -488,10 +488,10 @@ public class AlterAlbumTests {
 
 			final int initialColumnCount = DatabaseOperations.getAlbumItemMetaMap("Music CDs").size();
 			
-			MetaItemField price = new MetaItemField("Price", FieldType.Decimal);
+			MetaItemField price = new MetaItemField("Price", FieldType.DECIMAL);
 			DatabaseOperations.appendNewAlbumField("Music CDs", price);
 			
-			MetaItemField releaseDate = new MetaItemField("Release Date", FieldType.Date);
+			MetaItemField releaseDate = new MetaItemField("Release Date", FieldType.DATE);
 			DatabaseOperations.appendNewAlbumField("Music CDs", releaseDate);
 			
 			assertTrue("Music CDs should now have two additional columns", 

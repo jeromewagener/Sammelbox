@@ -29,7 +29,7 @@ import org.sammelbox.view.browser.BrowserFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class QueryBuilder {
+public final class QueryBuilder {
 	private static final Logger LOGGER = LoggerFactory.getLogger(QueryBuilder.class);
 	
 	/** A singleton instance of the QueryBuilder class */
@@ -48,18 +48,18 @@ public class QueryBuilder {
 	
 	/** All available query operators together with some utility functions */
 	public enum QueryOperator {
-		equals,
-		notEquals,
-		like,
-		smallerThan, 
-		smallerOrEqualThan, 
-		biggerThan,
-		biggerOrEqualThan,
-		dateEquals,
-		dateBefore,
-		dateBeforeEquals,
-		dateAfterEquals,
-		dateAfter;
+		EQUALS,
+		NOT_EQUALS,
+		LIKE,
+		SMALLER_THAN, 
+		SMALLER_OR_EQUAL_THAN, 
+		BIGGER_THAN,
+		BIGGER_OR_EQUAL_THAN,
+		DATE_EQUALS,
+		DATE_BEFORE,
+		DATE_BEFORE_OR_EQUAL,
+		DATE_AFTER_OR_EQUAL,
+		DATE_AFTER;
 		
 		/** Returns all operators suited for text queries 
 		 * @return an string array containing all operators suited for text queries */
@@ -107,37 +107,37 @@ public class QueryBuilder {
 		 * @param queryOperator the QueryOperator to be transformed
 		 * @return a string with the corresponding SQL operator */
 		public static String toSQLOperator(QueryOperator queryOperator) {
-			if (queryOperator.equals(QueryOperator.equals)) {
+			if (queryOperator.equals(QueryOperator.EQUALS)) {
 				return "=";
 			}
-			else if (queryOperator.equals(QueryOperator.notEquals)) {
+			else if (queryOperator.equals(QueryOperator.NOT_EQUALS)) {
 				return "!=";
 			}
-			else if (queryOperator.equals(QueryOperator.like)) {
+			else if (queryOperator.equals(QueryOperator.LIKE)) {
 				return "like";
 			}
-			else if (queryOperator.equals(QueryOperator.smallerThan)) {
+			else if (queryOperator.equals(QueryOperator.SMALLER_THAN)) {
 				return "<";
 			}
-			else if (queryOperator.equals(QueryOperator.smallerOrEqualThan)) {
+			else if (queryOperator.equals(QueryOperator.SMALLER_OR_EQUAL_THAN)) {
 				return "<=";
 			}
-			else if (queryOperator.equals(QueryOperator.biggerThan)) {
+			else if (queryOperator.equals(QueryOperator.BIGGER_THAN)) {
 				return ">";
 			}
-			else if (queryOperator.equals(QueryOperator.biggerOrEqualThan)) {
+			else if (queryOperator.equals(QueryOperator.BIGGER_OR_EQUAL_THAN)) {
 				return ">=";
 			} 
-			else if (queryOperator.equals(QueryOperator.dateEquals)) {
+			else if (queryOperator.equals(QueryOperator.DATE_EQUALS)) {
 				return "=";
 			} 
-			else if (queryOperator.equals(QueryOperator.dateBefore)) {
+			else if (queryOperator.equals(QueryOperator.DATE_BEFORE)) {
 				return "<";
 			} 
-			else if (queryOperator.equals(QueryOperator.dateBeforeEquals)) {
+			else if (queryOperator.equals(QueryOperator.DATE_BEFORE_OR_EQUAL)) {
 				return "<=";
 			} 
-			else if (queryOperator.equals(QueryOperator.dateAfterEquals)) {
+			else if (queryOperator.equals(QueryOperator.DATE_AFTER_OR_EQUAL)) {
 				return ">";
 			}
 
@@ -149,43 +149,43 @@ public class QueryBuilder {
 		 * @return a QueryOperator transformation of the field operator */
 		public static QueryOperator toQueryOperator(String fieldOperator) {
 			if (fieldOperator.equals("=")) {
-				return QueryOperator.equals;
+				return QueryOperator.EQUALS;
 			}
 			else if (fieldOperator.equals("!=")) {
-				return QueryOperator.notEquals;
+				return QueryOperator.NOT_EQUALS;
 			}
 			else if (fieldOperator.equals("like")) {
-				return QueryOperator.like;
+				return QueryOperator.LIKE;
 			}
 			else if (fieldOperator.equals("<")) {
-				return QueryOperator.smallerThan;
+				return QueryOperator.SMALLER_THAN;
 			}
 			else if (fieldOperator.equals("<=")) {
-				return QueryOperator.smallerOrEqualThan;
+				return QueryOperator.SMALLER_OR_EQUAL_THAN;
 			}
 			else if (fieldOperator.equals(">")) {
-				return QueryOperator.biggerThan;
+				return QueryOperator.BIGGER_THAN;
 			}
 			else if (fieldOperator.equals(">=")) {
-				return QueryOperator.biggerOrEqualThan;
+				return QueryOperator.BIGGER_OR_EQUAL_THAN;
 			}
 			else if (fieldOperator.equals("equals")) {
-				return QueryOperator.dateEquals;
+				return QueryOperator.DATE_EQUALS;
 			}
 			else if (fieldOperator.equals("before")) {
-				return QueryOperator.dateBefore;
+				return QueryOperator.DATE_BEFORE;
 			}
 			else if (fieldOperator.equals("before or equals")) {
-				return QueryOperator.dateBeforeEquals;
+				return QueryOperator.DATE_BEFORE_OR_EQUAL;
 			}
 			else if (fieldOperator.equals("after or equals")) {
-				return QueryOperator.dateAfterEquals;
+				return QueryOperator.DATE_AFTER_OR_EQUAL;
 			}
 			else if (fieldOperator.equals("after")) {
-				return QueryOperator.dateAfter;
+				return QueryOperator.DATE_AFTER;
 			}
 			else if (fieldOperator.equals("after")) {
-				return QueryOperator.dateAfter;
+				return QueryOperator.DATE_AFTER;
 			}
 			else {
 				return null;
@@ -250,10 +250,10 @@ public class QueryBuilder {
 			
 		for (int i=0; i<queryComponents.size(); i++) {	
 			
-			if (fieldNameToFieldTypeMap.get(queryComponents.get(i).fieldName).equals(FieldType.Option) ||
+			if (fieldNameToFieldTypeMap.get(queryComponents.get(i).fieldName).equals(FieldType.OPTION) ||
 					fieldNameToFieldTypeMap.get(queryComponents.get(i).fieldName).equals(FieldType.URL) ||
-					fieldNameToFieldTypeMap.get(queryComponents.get(i).fieldName).equals(FieldType.Text)) {
-				if (queryComponents.get(i).operator == QueryOperator.like) {
+					fieldNameToFieldTypeMap.get(queryComponents.get(i).fieldName).equals(FieldType.TEXT)) {
+				if (queryComponents.get(i).operator == QueryOperator.LIKE) {
 					query.append( "(" +
 							"[" + queryComponents.get(i).fieldName + "] " + 
 							QueryOperator.toSQLOperator(queryComponents.get(i).operator) + " " + 

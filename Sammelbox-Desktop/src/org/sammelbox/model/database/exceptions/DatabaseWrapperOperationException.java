@@ -19,31 +19,31 @@
 package org.sammelbox.model.database.exceptions;
 
 public class DatabaseWrapperOperationException extends Exception {
-	/** 
-	 * An enumeration of the different errors that can occur during database operations.
-	 * ErrorWithDirtyState means that there can be lingering side effects in the db and/or involved variable. 
-	 * ErrorWithCleanState means that there are absolutely no side effects to the db  */
+	/** An enumeration of the different errors that can occur during database operations.
+	 * ERROR_CLEAN_STATE means that there are absolutely no side effects to the db  */
 	public static enum DBErrorState {
-		ErrorWithDirtyState,
-		ErrorWithCleanState
+		/** ERROR_DIRTY_STATE means that there can be lingering side effects in the db and/or involved variable. */
+		ERROR_DIRTY_STATE,
+		/** ERROR_CLEAN_STATE means that there are absolutely no side effects to the db */
+		ERROR_CLEAN_STATE
 	}
 	
 	private static final long serialVersionUID = 1L;	
 	/** When this exception is caught this state can be used to determine which type of error the database has encountered.*/
-	public DBErrorState ErrorState;
+	public DBErrorState errorState;
 	
 	public DatabaseWrapperOperationException(DBErrorState errorState, String message) {
 		super(message);
-		this.ErrorState = errorState;
+		this.errorState = errorState;
 	}
 	
 	public DatabaseWrapperOperationException(DBErrorState errorState) {
 		super();
-		this.ErrorState = errorState;
+		this.errorState = errorState;
 	}
 	
 	public DatabaseWrapperOperationException(DBErrorState errorState, Throwable cause) {
 		super(cause);
-		this.ErrorState = errorState;
+		this.errorState = errorState;
 	}
 }

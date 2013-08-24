@@ -62,7 +62,7 @@ public class ToolbarComposite extends Composite implements Observer {
 			helpActive = null;
 	private static Button homeBtn = null, addAlbumBtn = null, addEntryBtn = null,
 			toggleViewBtn = null, searchBtn = null, syncBtn = null, helpBtn = null;
-	private static PanelType lastSelectedPanelType = PanelType.Empty;
+	private static PanelType lastSelectedPanelType = PanelType.EMPTY;
 
 	private static void disableActiveButtons() {
 		homeBtn.setImage(home);
@@ -185,9 +185,9 @@ public class ToolbarComposite extends Composite implements Observer {
 			public void mouseUp(MouseEvent arg0) {
 				disableActiveButtons();
 
-				ApplicationUI.changeRightCompositeTo(PanelType.Empty, EmptySidepane.build(ApplicationUI.getThreePanelComposite()));
+				ApplicationUI.changeRightCompositeTo(PanelType.EMPTY, EmptySidepane.build(ApplicationUI.getThreePanelComposite()));
 				
-				lastSelectedPanelType = PanelType.Empty;
+				lastSelectedPanelType = PanelType.EMPTY;
 				
 				homeBtn.setImage(homeActive);
 
@@ -216,8 +216,8 @@ public class ToolbarComposite extends Composite implements Observer {
 		addAlbumBtn.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseUp(MouseEvent arg0) {
-				if (ApplicationUI.getCurrentRightPanelType() != PanelType.AddAlbum) {
-					ApplicationUI.changeRightCompositeTo(PanelType.AddAlbum,
+				if (ApplicationUI.getCurrentRightPanelType() != PanelType.ADD_ALBUM) {
+					ApplicationUI.changeRightCompositeTo(PanelType.ADD_ALBUM,
 							CreateAlbumSidepane
 									.build(ApplicationUI
 											.getThreePanelComposite()));
@@ -226,17 +226,17 @@ public class ToolbarComposite extends Composite implements Observer {
 
 					disableActiveButtons();
 					addAlbumBtn.setImage(addAlbumActive);
-					ApplicationUI.setCurrentRightPanelType(PanelType.AddAlbum);
-					lastSelectedPanelType = PanelType.AddAlbum;
+					ApplicationUI.setCurrentRightPanelType(PanelType.ADD_ALBUM);
+					lastSelectedPanelType = PanelType.ADD_ALBUM;
 				} else {
-					ApplicationUI.changeRightCompositeTo(PanelType.Empty,
+					ApplicationUI.changeRightCompositeTo(PanelType.EMPTY,
 							EmptySidepane.build(ApplicationUI
 									.getThreePanelComposite()));
 					StatusBarComposite.getInstance(parentComposite.getShell())
 							.writeStatus(Translator.get(DictKeys.STATUSBAR_PROGRAM_STARTED));
 
 					disableActiveButtons();
-					ApplicationUI.setCurrentRightPanelType(PanelType.Empty);
+					ApplicationUI.setCurrentRightPanelType(PanelType.EMPTY);
 				}
 			}
 
@@ -257,8 +257,8 @@ public class ToolbarComposite extends Composite implements Observer {
 				if (!ApplicationUI.isAlbumSelectedAndShowMessageIfNot()) {
 					return;
 				}
-				if (ApplicationUI.getCurrentRightPanelType() != PanelType.AddEntry) {
-					ApplicationUI.changeRightCompositeTo(PanelType.AddAlbum,
+				if (ApplicationUI.getCurrentRightPanelType() != PanelType.ADD_ENTRY) {
+					ApplicationUI.changeRightCompositeTo(PanelType.ADD_ALBUM,
 							AddAlbumItemSidepane.build(
 									ApplicationUI.getThreePanelComposite(),
 									ApplicationUI.getSelectedAlbum()));
@@ -268,17 +268,17 @@ public class ToolbarComposite extends Composite implements Observer {
 
 					disableActiveButtons();
 					addEntryBtn.setImage(addEntryActive);
-					ApplicationUI.setCurrentRightPanelType(PanelType.AddEntry);
-					lastSelectedPanelType = PanelType.AddEntry;
+					ApplicationUI.setCurrentRightPanelType(PanelType.ADD_ENTRY);
+					lastSelectedPanelType = PanelType.ADD_ENTRY;
 				} else {
-					ApplicationUI.changeRightCompositeTo(PanelType.Empty,
+					ApplicationUI.changeRightCompositeTo(PanelType.EMPTY,
 							EmptySidepane.build(ApplicationUI
 									.getThreePanelComposite()));
 					StatusBarComposite.getInstance(parentComposite.getShell())
 							.writeStatus(Translator.get(DictKeys.STATUSBAR_PROGRAM_STARTED));
 
 					disableActiveButtons();
-					ApplicationUI.setCurrentRightPanelType(PanelType.Empty);
+					ApplicationUI.setCurrentRightPanelType(PanelType.EMPTY);
 				}
 			}
 
@@ -324,8 +324,8 @@ public class ToolbarComposite extends Composite implements Observer {
 				if (!ApplicationUI.isAlbumSelectedAndShowMessageIfNot()) {
 					return;
 				}
-				if (ApplicationUI.getCurrentRightPanelType() != PanelType.AdvancedSearch) {
-					ApplicationUI.changeRightCompositeTo(PanelType.AdvancedSearch,
+				if (ApplicationUI.getCurrentRightPanelType() != PanelType.ADVANCED_SEARCH) {
+					ApplicationUI.changeRightCompositeTo(PanelType.ADVANCED_SEARCH,
 							AdvancedSearchSidepane.build(
 									ApplicationUI.getThreePanelComposite(),
 									ApplicationUI.getSelectedAlbum()));
@@ -336,17 +336,17 @@ public class ToolbarComposite extends Composite implements Observer {
 					disableActiveButtons();
 					searchBtn.setImage(searchActive);
 					ApplicationUI
-							.setCurrentRightPanelType(PanelType.AdvancedSearch);
-					lastSelectedPanelType = PanelType.AdvancedSearch;
+							.setCurrentRightPanelType(PanelType.ADVANCED_SEARCH);
+					lastSelectedPanelType = PanelType.ADVANCED_SEARCH;
 				} else {
-					ApplicationUI.changeRightCompositeTo(PanelType.Empty,
+					ApplicationUI.changeRightCompositeTo(PanelType.EMPTY,
 							EmptySidepane.build(ApplicationUI
 									.getThreePanelComposite()));
 					StatusBarComposite.getInstance(parentComposite.getShell())
 							.writeStatus(Translator.get(DictKeys.STATUSBAR_PROGRAM_STARTED));
 
 					disableActiveButtons();
-					ApplicationUI.setCurrentRightPanelType(PanelType.Empty);
+					ApplicationUI.setCurrentRightPanelType(PanelType.EMPTY);
 				}
 			}
 
@@ -364,8 +364,8 @@ public class ToolbarComposite extends Composite implements Observer {
 			public void mouseUp(MouseEvent arg0) {
 				BrowserFacade.showSynchronizePage();
 				
-				if (ApplicationUI.getCurrentRightPanelType() != PanelType.Synchronization) {
-					ApplicationUI.changeRightCompositeTo(PanelType.Synchronization,
+				if (ApplicationUI.getCurrentRightPanelType() != PanelType.SYNCHRONIZATION) {
+					ApplicationUI.changeRightCompositeTo(PanelType.SYNCHRONIZATION,
 							SynchronizeSidepane.build(ApplicationUI.getThreePanelComposite()));
 					StatusBarComposite
 							.getInstance(parentComposite.getShell())
@@ -373,16 +373,16 @@ public class ToolbarComposite extends Composite implements Observer {
 
 					disableActiveButtons();
 					syncBtn.setImage(syncActive);
-					ApplicationUI.setCurrentRightPanelType(PanelType.Synchronization);
-					lastSelectedPanelType = PanelType.Synchronization;
+					ApplicationUI.setCurrentRightPanelType(PanelType.SYNCHRONIZATION);
+					lastSelectedPanelType = PanelType.SYNCHRONIZATION;
 				} else {
-					ApplicationUI.changeRightCompositeTo(PanelType.Empty,
+					ApplicationUI.changeRightCompositeTo(PanelType.EMPTY,
 							EmptySidepane.build(ApplicationUI.getThreePanelComposite()));
 					StatusBarComposite.getInstance(parentComposite.getShell())
 							.writeStatus(Translator.get(DictKeys.STATUSBAR_PROGRAM_STARTED));
 
 					disableActiveButtons();
-					ApplicationUI.setCurrentRightPanelType(PanelType.Empty);
+					ApplicationUI.setCurrentRightPanelType(PanelType.EMPTY);
 				}
 			}
 
@@ -398,9 +398,9 @@ public class ToolbarComposite extends Composite implements Observer {
 		helpBtn.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseUp(MouseEvent arg0) {
-				if (ApplicationUI.getCurrentRightPanelType() != PanelType.Help) {
+				if (ApplicationUI.getCurrentRightPanelType() != PanelType.HELP) {
 					BrowserFacade.loadHelpPage();
-					ApplicationUI.changeRightCompositeTo(PanelType.Help,
+					ApplicationUI.changeRightCompositeTo(PanelType.HELP,
 							EmptySidepane.build(ApplicationUI
 									.getThreePanelComposite()));
 					StatusBarComposite.getInstance(parentComposite.getShell())
@@ -408,17 +408,17 @@ public class ToolbarComposite extends Composite implements Observer {
 
 					disableActiveButtons();
 					helpBtn.setImage(helpActive);
-					ApplicationUI.setCurrentRightPanelType(PanelType.Empty);
-					lastSelectedPanelType = PanelType.Empty;
+					ApplicationUI.setCurrentRightPanelType(PanelType.EMPTY);
+					lastSelectedPanelType = PanelType.EMPTY;
 				} else {
-					ApplicationUI.changeRightCompositeTo(PanelType.Empty,
+					ApplicationUI.changeRightCompositeTo(PanelType.EMPTY,
 							EmptySidepane.build(ApplicationUI
 									.getThreePanelComposite()));
 					StatusBarComposite.getInstance(parentComposite.getShell())
 							.writeStatus(Translator.get(DictKeys.STATUSBAR_PROGRAM_STARTED));
 
 					disableActiveButtons();
-					ApplicationUI.setCurrentRightPanelType(PanelType.Empty);
+					ApplicationUI.setCurrentRightPanelType(PanelType.EMPTY);
 				}
 			}
 

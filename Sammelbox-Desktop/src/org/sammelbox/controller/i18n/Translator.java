@@ -40,15 +40,15 @@ public class Translator {
 	public static void setLanguageFromSettingsOrSystem() {
 		Language language = SettingsManager.getUserDefinedLanguage();
 		
-		if (language != Language.Unknown) {
+		if (language != Language.UNKNOWN) {
 			setLanguageManually(language);
 		} else {
 			switch (System.getProperty("user.language")) {
 			case "de":
-				setLanguageManually(Language.Deutsch);
+				setLanguageManually(Language.DEUTSCH);
 				break;
 			default:
-				setLanguageManually(Language.English);
+				setLanguageManually(Language.ENGLISH);
 			}
 		}
 	}
@@ -72,8 +72,8 @@ public class Translator {
 	 * @return the used language
 	 * */
 	public static Language getUsedLanguage() {
-		if (language == Language.Unknown) {
-			return Language.English;
+		if (language == Language.UNKNOWN) {
+			return Language.ENGLISH;
 		}
 		
 		return language;

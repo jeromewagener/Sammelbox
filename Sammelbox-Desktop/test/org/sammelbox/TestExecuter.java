@@ -65,7 +65,7 @@ public class TestExecuter {
 	public static final String PATH_TO_TEST_CBK = 
 			System.getProperty("user.dir") + File.separatorChar + "test" +
 					File.separatorChar + "testdata" + 
-					File.separatorChar + "test-albums-version-2.8.2.cbk";
+					File.separatorChar + "test-albums-version-3.0.cbk";
 	
 	public static final String PATH_TO_TEST_PICTURE_1 = 
 			System.getProperty("user.dir") + File.separatorChar + "res" + 

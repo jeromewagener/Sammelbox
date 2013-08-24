@@ -29,7 +29,7 @@ import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException
 import org.sammelbox.view.ApplicationUI;
 import org.sammelbox.view.composites.StatusBarComposite;
 
-public class AlbumItemStore {
+public final class AlbumItemStore {
 	private static final String SAMPLE = "Sample";
 	private static final int DEFAULT_STOP_INDEX_INCREASE_AMOUNT = 10;
 	private static final int DEFAULT_STOP_INDEX = 50;
@@ -37,6 +37,9 @@ public class AlbumItemStore {
 	private static List<AlbumItem> albumItems = new ArrayList<AlbumItem>();
 	private static int stopIndex = DEFAULT_STOP_INDEX;
 	private static int previousStopIndex = DEFAULT_STOP_INDEX;
+	
+	private AlbumItemStore() {
+	}
 	
 	public static void reinitializeStore(AlbumItemResultSet albumItemResultSet) throws DatabaseWrapperOperationException {
 		albumItems.clear();
@@ -131,7 +134,7 @@ public class AlbumItemStore {
 		List<ItemField> itemFields = new ArrayList<ItemField>();
 		
 		itemFields.add(new ItemField(Translator.get(
-				DictKeys.BROWSER_NO_FIELDS_ADDED_YET), FieldType.Text, Translator.get(DictKeys.BROWSER_PLEASE_USE_NEW_ALBUM_SIDEPANE)));		
+				DictKeys.BROWSER_NO_FIELDS_ADDED_YET), FieldType.TEXT, Translator.get(DictKeys.BROWSER_PLEASE_USE_NEW_ALBUM_SIDEPANE)));		
 		
 		AlbumItem albumItem = new AlbumItem(SAMPLE, itemFields);
 		albumItem.setPictures(pictures);
@@ -150,21 +153,21 @@ public class AlbumItemStore {
 		
 		if (metaItemFields.isEmpty()) {
 			itemFields.add(new ItemField(Translator.get(
-					DictKeys.BROWSER_NO_FIELDS_ADDED_YET), FieldType.Text, Translator.get(DictKeys.BROWSER_PLEASE_USE_NEW_ALBUM_SIDEPANE)));
+					DictKeys.BROWSER_NO_FIELDS_ADDED_YET), FieldType.TEXT, Translator.get(DictKeys.BROWSER_PLEASE_USE_NEW_ALBUM_SIDEPANE)));
 		} else {
 			for (MetaItemField metaItemField : metaItemFields) {
-				if (metaItemField.getType().equals(FieldType.Text)) {
+				if (metaItemField.getType().equals(FieldType.TEXT)) {
 					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), Translator.get(
 							DictKeys.BROWSER_THIS_IS_A_SAMPLE_TEXT, metaItemField.getName()), false));
-				} else if (metaItemField.getType().equals(FieldType.Date)) {
+				} else if (metaItemField.getType().equals(FieldType.DATE)) {
 					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), new java.sql.Date(System.currentTimeMillis()), false));
-				} else if (metaItemField.getType().equals(FieldType.Integer)) {
+				} else if (metaItemField.getType().equals(FieldType.INTEGER)) {
 					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), 10 + (int)(Math.random() * ((90) + 1)), false));
-				} else if (metaItemField.getType().equals(FieldType.Decimal)) {
+				} else if (metaItemField.getType().equals(FieldType.DECIMAL)) {
 					BigDecimal randomDecimal = new BigDecimal(Math.random() * 100);
 				    randomDecimal = randomDecimal.setScale(2, BigDecimal.ROUND_HALF_UP);
 					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), randomDecimal.doubleValue()));
-				} else if (metaItemField.getType().equals(FieldType.Option)) {
+				} else if (metaItemField.getType().equals(FieldType.OPTION)) {
 					int option = (int)(Math.random() * ((2) + 1));
 					
 					if (option == 0) {
@@ -175,9 +178,9 @@ public class AlbumItemStore {
 						itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), OptionType.UNKNOWN, false));
 					}
 					
-				} else if (metaItemField.getType().equals(FieldType.StarRating)) {
+				} else if (metaItemField.getType().equals(FieldType.STAR_RATING)) {
 					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), StarRating.values()[(int)(Math.random() * ((5) + 1))], false));
-				} else if (metaItemField.getType().equals(FieldType.Time)) {
+				} else if (metaItemField.getType().equals(FieldType.TIME)) {
 					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), System.currentTimeMillis(), false));
 				} else if (metaItemField.getType().equals(FieldType.URL)) {
 					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), "www.sammelbox.org", false));

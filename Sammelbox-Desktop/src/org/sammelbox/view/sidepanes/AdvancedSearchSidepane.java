@@ -59,8 +59,12 @@ import org.sammelbox.view.various.TextInputDialog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AdvancedSearchSidepane {
+public final class AdvancedSearchSidepane {
 	private final static Logger LOGGER = LoggerFactory.getLogger(AdvancedSearchSidepane.class);
+	
+	private AdvancedSearchSidepane() {
+		// use build method instead
+	}
 	
 	/** Returns an advanced search composite providing the means for easily building and executing SQL queries. The composite is 
 	 * automatically created based on the fields of the specified album.
@@ -108,29 +112,29 @@ public class AdvancedSearchSidepane {
 				if (fieldToSearchCombo.getSelectionIndex() != -1) {
 					for (MetaItemField metaItemField : (java.util.List<MetaItemField>) fieldToSearchCombo.getData("validMetaItemFields")) {
 						if (metaItemField.getName().equals(fieldToSearchCombo.getItem(fieldToSearchCombo.getSelectionIndex()))) {
-							if (metaItemField.getType() == FieldType.Text) {
+							if (metaItemField.getType() == FieldType.TEXT) {
 								searchOperatorCombo.setItems(QueryOperator.toTextOperatorStringArray());
 								valueToSearchText.setText("");
-							} else if (metaItemField.getType() == FieldType.StarRating) {
+							} else if (metaItemField.getType() == FieldType.STAR_RATING) {
 								searchOperatorCombo.setItems(QueryOperator.toNumberOperatorStringArray());
 								valueToSearchText.setText("[0..5]");
-							} else if (metaItemField.getType() == FieldType.Decimal) {
+							} else if (metaItemField.getType() == FieldType.DECIMAL) {
 								searchOperatorCombo.setItems(QueryOperator.toNumberOperatorStringArray());
 								valueToSearchText.setText("");
-							} else if (metaItemField.getType() == FieldType.Integer) {
+							} else if (metaItemField.getType() == FieldType.INTEGER) {
 								searchOperatorCombo.setItems(QueryOperator.toNumberOperatorStringArray());
 								valueToSearchText.setText("");
-							} else if (metaItemField.getType() == FieldType.Date) {
+							} else if (metaItemField.getType() == FieldType.DATE) {
 								searchOperatorCombo.setItems(QueryOperator.toDateOperatorStringArray());
 
 								SimpleDateFormat sdfmt = new SimpleDateFormat();
 								sdfmt.applyPattern("d/M/yyyy");
 
 								valueToSearchText.setText(sdfmt.format(new Date(System.currentTimeMillis())));
-							} else if (metaItemField.getType() == FieldType.Time) {
+							} else if (metaItemField.getType() == FieldType.TIME) {
 								searchOperatorCombo.setItems(QueryOperator.toDateOperatorStringArray());
 								valueToSearchText.setText("");
-							} else if (metaItemField.getType() == FieldType.Option) {
+							} else if (metaItemField.getType() == FieldType.OPTION) {
 								searchOperatorCombo.setItems(QueryOperator.toYesNoOperatorStringArray());
 
 								searchOperatorCombo.select(0);

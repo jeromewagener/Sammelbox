@@ -30,6 +30,10 @@ import org.sammelbox.model.album.MetaItemField;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 
 public class DatabaseOperations {	
+	private DatabaseOperations() {
+		// use static methods
+	}
+	
 	/**
 	 * Creates a new album according to the specified properties.
 	 * @param albumName The name of the album to be created.

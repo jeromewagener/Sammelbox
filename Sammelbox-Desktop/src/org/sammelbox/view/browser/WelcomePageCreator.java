@@ -29,6 +29,9 @@ import org.sammelbox.view.UIConstants;
 public class WelcomePageCreator {
 	private static final int NUMBER_OF_FAVORITES_SHOWN = 5;
 
+	private WelcomePageCreator() {
+	}
+	
 	static void loadWelcomePage() {
 		ApplicationUI.getAlbumItemBrowser().setText(
 				"<!DOCTYPE HTML>" +

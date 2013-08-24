@@ -41,12 +41,16 @@ import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CreateOperations {
+public final class CreateOperations {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CreateOperations.class);
+	
+	private CreateOperations() {
+		// use static methods
+	}
 	
 	static void createNewAlbum(String albumName, List<MetaItemField> fields, boolean hasAlbumPictures) throws DatabaseWrapperOperationException {
 		if (fields == null || !DatabaseOperations.isAlbumNameAvailable(albumName)) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, "The chosen album name is already in use");
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE, "The chosen album name is already in use");
 		}
 		
 		createNewAlbumTable(fields, albumName, DatabaseStringUtilities.encloseNameWithQuotes(
@@ -145,7 +149,7 @@ public class CreateOperations {
 			// Create the Album table			
 			statement.executeUpdate(createMainTableString);
 		} catch (SQLException sqlException) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState, sqlException);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE, sqlException);
 		}
 	}
 	
@@ -189,7 +193,7 @@ public class CreateOperations {
 		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(createTypeInfoTableString);) {
 			preparedStatement.executeUpdate();
 		} catch(SQLException e) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState, e);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE, e);
 		}
 
 		// Append the schema version uuid to the list of metaFields
@@ -230,7 +234,7 @@ public class CreateOperations {
 		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(sqlStringbuiler.toString())) {
 			preparedStatement.execute();
 		} catch (SQLException e) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState, e);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE, e);
 		}
 	}
 	
@@ -238,11 +242,11 @@ public class CreateOperations {
 		List<MetaItemField> fields = new ArrayList<MetaItemField>();
 		
 		// Add the natural album name
-		fields.add(new MetaItemField(DatabaseConstants.ALBUMNAME_IN_ALBUM_MASTER_TABLE, FieldType.Text));
+		fields.add(new MetaItemField(DatabaseConstants.ALBUMNAME_IN_ALBUM_MASTER_TABLE, FieldType.TEXT));
 		// Add the table name column
-		fields.add(new MetaItemField(DatabaseConstants.ALBUM_TABLENAME_IN_ALBUM_MASTER_TABLE, FieldType.Text));
+		fields.add(new MetaItemField(DatabaseConstants.ALBUM_TABLENAME_IN_ALBUM_MASTER_TABLE, FieldType.TEXT));
 		// Add the table's picture state column indicating if the album structure has pictures or not
-		fields.add(new MetaItemField(DatabaseConstants.HAS_PICTURES_COLUMN_IN_ALBUM_MASTER_TABLE, FieldType.Option));		
+		fields.add(new MetaItemField(DatabaseConstants.HAS_PICTURES_COLUMN_IN_ALBUM_MASTER_TABLE, FieldType.OPTION));		
 		
 		// Create the album master table.
 		createTableWithIdAsPrimaryKey(DatabaseConstants.ALBUM_MASTER_TABLE_NAME, fields , false, true);
@@ -287,16 +291,16 @@ public class CreateOperations {
 		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(createTableString);) {			
 			preparedStatement.executeUpdate();
 		} catch (Exception e) {			
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState, e);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE, e);
 		}
 	}
 
 	static void createPictureTable(String albumName) throws DatabaseWrapperOperationException {		
 		List<MetaItemField> columns = new ArrayList<MetaItemField>();
 		// The filename of the original picture 
-		columns.add(new MetaItemField(DatabaseConstants.ORIGINAL_PICTURE_FILE_NAME_IN_PICTURE_TABLE, FieldType.Text));
+		columns.add(new MetaItemField(DatabaseConstants.ORIGINAL_PICTURE_FILE_NAME_IN_PICTURE_TABLE, FieldType.TEXT));
 		// The filename of the generated thumbnail picture
-		columns.add(new MetaItemField(DatabaseConstants.THUMBNAIL_PICTURE_FILE_NAME_IN_PICTURE_TABLE, FieldType.Text));
+		columns.add(new MetaItemField(DatabaseConstants.THUMBNAIL_PICTURE_FILE_NAME_IN_PICTURE_TABLE, FieldType.TEXT));
 		// The id of the album item the picture belongs to
 		columns.add(new MetaItemField(DatabaseConstants.ALBUM_ITEM_ID_REFERENCE_IN_PICTURE_TABLE, FieldType.ID));
 	
@@ -316,20 +320,20 @@ public class CreateOperations {
 		// Check if the item contains a albumName
 		if (albumItem.getAlbumName().isEmpty()) {
 			LOGGER.error("Item {} has no albumName", albumItem);
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE);
 		}
 		
 		// Check if specified album Item is valid
 		if (!albumItem.isValid()) {
 			LOGGER.error("Item {} is invalid", albumItem);
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE);
 		}
 
 		// Check if content version should be carried over if yes ensure a content version is present
 		if (updateContentVersion == false && albumItem.getContentVersion() == null) {
 			LOGGER.error("The option for carrying over the old content version " +
 					"is checked but no content version is found in the item!");
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE);
 		}
 
 		// Build the SQL string with place-holders '?'
@@ -383,7 +387,7 @@ public class CreateOperations {
 				}
 			} catch (SQLException sqlEx) {
 				DatabaseIntegrityManager.rollbackToSavepoint(savepointName);
-				throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, sqlEx);
+				throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE, sqlEx);
 			}
 			
 			// If possible (and demanded) store picture links
@@ -407,7 +411,7 @@ public class CreateOperations {
 			return idOfAddedItem;
 		} catch (SQLException e) {
 			DatabaseIntegrityManager.rollbackToSavepoint(savepointName);
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE, e);
 		} finally {
 			DatabaseIntegrityManager.releaseSavepoint(savepointName);
 		}
@@ -420,7 +424,7 @@ public class CreateOperations {
 	
 	static void addAlbumItemPicture(AlbumItemPicture albumItemPicture) throws DatabaseWrapperOperationException {
 		if (albumItemPicture instanceof SampleAlbumItemPicture) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, "Cannot persist SampleAlbumItemPicture");
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE, "Cannot persist SampleAlbumItemPicture");
 		}
 		
 		StringBuilder sb = new StringBuilder("INSERT INTO ");
@@ -443,7 +447,7 @@ public class CreateOperations {
 		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(sb.toString())){			
 			preparedStatement.executeUpdate();
 		} catch (SQLException e) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState, e);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE, e);
 		}
 	}
 }

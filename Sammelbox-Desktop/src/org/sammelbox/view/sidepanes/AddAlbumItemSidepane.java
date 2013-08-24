@@ -29,8 +29,11 @@ import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.view.UIConstants;
 import org.sammelbox.view.various.ComponentFactory;
 
-public class AddAlbumItemSidepane {
-
+public final class AddAlbumItemSidepane {
+	private AddAlbumItemSidepane() {
+		// use build method instead
+	}
+	
 	/** Returns an "add album item" composite. This composite provides the fields (field names and value input fields)
 	 *  needed by the add item composite.
 	 * @param parentComposite the parent composite

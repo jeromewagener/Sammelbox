@@ -35,6 +35,9 @@ import org.slf4j.LoggerFactory;
 public class HTMLExporter {
 	private final static Logger LOGGER = LoggerFactory.getLogger(HTMLExporter.class);
 	
+	private HTMLExporter() {
+	}
+	
 	public static void exportVisibleItems(String filepath) {
 		List<AlbumItem> visibleAlbumItems = AlbumItemStore.getAllVisibleAlbumItems();
 
@@ -56,7 +59,7 @@ public class HTMLExporter {
 					// do not show ID either
 				}
 				else {
-					if (albumItem.getField(i).getType().equals(FieldType.Option)) {
+					if (albumItem.getField(i).getType().equals(FieldType.OPTION)) {
 						if (firstLine) {
 							headerBuilder.append("<th style=\"border:1px solid black;\">" + albumItem.getField(i).getName() + "</th>");
 						}

@@ -39,8 +39,12 @@ import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HelperOperations {
+public final class HelperOperations {
 	private static final Logger LOGGER = LoggerFactory.getLogger(HelperOperations.class);
+	
+	private HelperOperations() {
+		// use static methods
+	}
 	
 	/**
 	 * This helper method sets a value based on type to a preparedStatement at the specified position
@@ -53,23 +57,23 @@ public class HelperOperations {
 	static void setValueToPreparedStatement(PreparedStatement preparedStatement, int parameterIndex,  ItemField field, String albumName) throws DatabaseWrapperOperationException {
 		try {
 			switch (field.getType()) {
-			case Text: 
+			case TEXT: 
 				String text = field.getValue();
 				preparedStatement.setString(parameterIndex, text);		
 				break;
-			case Decimal: 
+			case DECIMAL: 
 				Double real = field.getValue();
 				preparedStatement.setDouble(parameterIndex, real);		
 				break;
-			case Date: 
+			case DATE: 
 				Date date = field.getValue();
 				preparedStatement.setDate(parameterIndex, date);		
 				break;
-			case Time: 
+			case TIME: 
 				Time time = field.getValue();
 				preparedStatement.setTime(parameterIndex, time);		
 				break;
-			case Option: 
+			case OPTION: 
 				OptionType option = field.getValue();
 				// Textual representation of the enum is stored in the DB. 
 				preparedStatement.setString(parameterIndex, option.toString());		
@@ -78,11 +82,11 @@ public class HelperOperations {
 				String	url = field.getValue();
 				preparedStatement.setString(parameterIndex, url);		
 				break;
-			case StarRating: 
+			case STAR_RATING: 
 				StarRating starRating = field.getValue();
 				preparedStatement.setInt(parameterIndex, starRating.getIntegerValue());		
 				break;
-			case Integer: 
+			case INTEGER: 
 				Integer	integer = field.getValue();
 				preparedStatement.setString(parameterIndex, integer.toString());		
 				break;
@@ -90,7 +94,7 @@ public class HelperOperations {
 				break;
 			}			
 		} catch (SQLException e) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState, e);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE, e);
 		}
 	}
 	
@@ -107,7 +111,7 @@ public class HelperOperations {
 		try {
 			dbmetadata = ConnectionManager.getConnection().getMetaData();
 		} catch (SQLException e1) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE);
 		}
 		
 		try (ResultSet dbmetars = dbmetadata.getImportedKeys(null, null, tableName)) {
@@ -121,7 +125,7 @@ public class HelperOperations {
 			
 		} catch (SQLException sqlException) {
 			LOGGER.error("Could not detect fieldtype for column [" + columnName + "] in table [" + tableName + "]", sqlException);
-			return FieldType.Text;
+			return FieldType.TEXT;
 		}	
 
 		String dbtypeInfoTableName = DatabaseStringUtilities.generateTypeInfoTableName(tableName);
@@ -132,10 +136,10 @@ public class HelperOperations {
 			
 		} catch (SQLException e) {
 			LOGGER.error("Could not detect fieldtype for column [" + columnName + "] in table [" + tableName + "]", e);
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE, e);
 		} catch (IllegalArgumentException e) {
 			LOGGER.error("Could not detect fieldtype for column [" + columnName + "] in table [" + tableName + "]", e);
-			return FieldType.Text;
+			return FieldType.TEXT;
 		}	
 		
 	}
@@ -147,22 +151,22 @@ public class HelperOperations {
 			case ID:
 				value = results.getLong(columnIndex);
 				break;
-			case Text:
+			case TEXT:
 				value = results.getString(columnIndex);
 				break;
-			case Decimal:
+			case DECIMAL:
 				value = results.getDouble(columnIndex);
 				break;
-			case Integer:
+			case INTEGER:
 				value = results.getInt(columnIndex);
 				break;
-			case Date:
+			case DATE:
 				value = results.getDate(columnIndex);
 				break;
-			case Time:
+			case TIME:
 				value = results.getTime(columnIndex);
 				break;
-			case Option:
+			case OPTION:
 				String optionValue = results.getString(columnIndex);
 				if (optionValue != null && !optionValue.isEmpty()) {
 					value =  OptionType.valueOf(optionValue);
@@ -174,7 +178,7 @@ public class HelperOperations {
 				String urlString = results.getString(columnIndex);
 				value =  urlString;
 				break;
-			case StarRating:
+			case STAR_RATING:
 				value = StarRating.getByIntegerValue(results.getInt(columnIndex));
 				break;
 			case UUID:
@@ -186,7 +190,7 @@ public class HelperOperations {
 			}
 			return value;
 		} catch (SQLException e) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE, e);
 		}
 	}
 }

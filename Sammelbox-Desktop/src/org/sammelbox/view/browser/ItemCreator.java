@@ -38,8 +38,11 @@ import org.sammelbox.view.ApplicationUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ItemCreator {
+public final class ItemCreator {
 	private final static Logger LOGGER = LoggerFactory.getLogger(ItemCreator.class);
+	
+	private ItemCreator() {
+	}
 	
 	static String getAlbumItemTableRowHtml(AlbumItem albumItem) {
 		return getAlbumItemTableRowHtml(albumItem, true);
@@ -95,7 +98,7 @@ public class ItemCreator {
 					// do not show, but store id
 					id = fieldItem.getValue();
 				}
-			} else if (fieldItem.getType().equals(FieldType.Option)) {
+			} else if (fieldItem.getType().equals(FieldType.OPTION)) {
 				if (fieldItem.getValue() == OptionType.YES) {
 					htmlDataColumnContent.append(getFieldNameAndValueLine(fieldItem.getName(), Translator.get(DictKeys.BROWSER_YES)));
 				} else if (fieldItem.getValue() == OptionType.NO) {
@@ -103,19 +106,19 @@ public class ItemCreator {
 				} else if (fieldItem.getValue() == OptionType.UNKNOWN) {
 					htmlDataColumnContent.append(getFieldNameAndValueLine(fieldItem.getName(), Translator.get(DictKeys.BROWSER_UNKNOWN)));
 				}
-			} else if (fieldItem.getType().equals(FieldType.Date)) {
+			} else if (fieldItem.getType().equals(FieldType.DATE)) {
 				java.sql.Date sqlDate = fieldItem.getValue();
 				java.util.Date utilDate = new java.util.Date(sqlDate.getTime());
 
 				SimpleDateFormat dateFormater = new SimpleDateFormat(SettingsManager.getSettings().getDateFormat());
 				htmlDataColumnContent.append(getFieldNameAndValueLine(fieldItem.getName(), dateFormater.format(utilDate)));
-			} else  if (fieldItem.getType().equals(FieldType.Text)) {
+			} else  if (fieldItem.getType().equals(FieldType.TEXT)) {
 				htmlDataColumnContent.append(getFieldNameAndValueLine(fieldItem.getName(), Utilities.escapeHtmlString((String) fieldItem.getValue())));
-			} else if (fieldItem.getType().equals(FieldType.Integer)) {
+			} else if (fieldItem.getType().equals(FieldType.INTEGER)) {
 				htmlDataColumnContent.append(getFieldNameAndValueLine(fieldItem.getName(), ((Integer) fieldItem.getValue()).toString()));
-			} else if (fieldItem.getType().equals(FieldType.Decimal)) {
+			} else if (fieldItem.getType().equals(FieldType.DECIMAL)) {
 				htmlDataColumnContent.append(getFieldNameAndValueLine(fieldItem.getName(), ((Double) fieldItem.getValue()).toString()));
-			} else if (fieldItem.getType().equals(FieldType.StarRating)) {
+			} else if (fieldItem.getType().equals(FieldType.STAR_RATING)) {
 				htmlDataColumnContent.append(getFieldNameAndStars(fieldItem.getName(), (StarRating) fieldItem.getValue()));
 			} else if (fieldItem.getType().equals(FieldType.URL)) {
 				htmlDataColumnContent.append(getFieldNameAndValueLine(fieldItem.getName(), ((String) fieldItem.getValue())));
@@ -185,15 +188,15 @@ public class ItemCreator {
 	}
 	
 	private static String getFieldNameAndStars(String fieldName, StarRating rating) {
-		if (rating.equals(StarRating.OneStar)) {
+		if (rating.equals(StarRating.ONE_STAR)) {
 			return "<span class=\"boldy\"> " + Utilities.escapeHtmlString(fieldName) + "</span><img height=20 src=" + FileSystemLocations.getOneStarPNG() + "><br>";
-		} else if (rating.equals(StarRating.TwoStars)) {
+		} else if (rating.equals(StarRating.TWO_STARS)) {
 			return "<span class=\"boldy\"> " + Utilities.escapeHtmlString(fieldName) + "</span><img height=20 src=" + FileSystemLocations.getTwoStarsPNG() + "><br>";
-		} else if (rating.equals(StarRating.ThreeStars)) {
+		} else if (rating.equals(StarRating.THREE_STARS)) {
 			return "<span class=\"boldy\"> " + Utilities.escapeHtmlString(fieldName) + "</span><img height=20 src=" + FileSystemLocations.getThreeStarsPNG() + "><br>";
-		} else if (rating.equals(StarRating.FourStars)) {
+		} else if (rating.equals(StarRating.FOUR_STARS)) {
 			return "<span class=\"boldy\"> " + Utilities.escapeHtmlString(fieldName) + "</span><img height=20 src=" + FileSystemLocations.getFourStarsPNG() + "><br>";
-		} else if (rating.equals(StarRating.FiveStars)) {
+		} else if (rating.equals(StarRating.FIVE_STARS)) {
 			return "<span class=\"boldy\"> " + Utilities.escapeHtmlString(fieldName) + "</span><img height=20 src=" + FileSystemLocations.getFiveStarsPNG() + "><br>";
 		}
 		

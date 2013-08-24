@@ -43,8 +43,12 @@ import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class UpdateOperations {
+public final class UpdateOperations {
 	private static final Logger LOGGER = LoggerFactory.getLogger(UpdateOperations.class);
+	
+	private UpdateOperations() {
+		// use static methods
+	}
 	
 	static void renameAlbum(String oldAlbumName, String newAlbumName) throws DatabaseWrapperOperationException {		
 		String savepointName =  DatabaseIntegrityManager.createSavepoint();
@@ -70,7 +74,7 @@ public class UpdateOperations {
 	
 			DatabaseIntegrityManager.updateLastDatabaseChangeTimeStamp();
 		} catch (DatabaseWrapperOperationException e) {
-			if (e.ErrorState.equals(DBErrorState.ErrorWithDirtyState)) {
+			if (e.errorState.equals(DBErrorState.ERROR_DIRTY_STATE)) {
 				DatabaseIntegrityManager.rollbackToSavepoint(savepointName);
 			}
 		} finally {
@@ -113,7 +117,7 @@ public class UpdateOperations {
 			} else {
 				LOGGER.error("The specified meta item field is not part of the album");
 			}
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE);
 		}
 		
 		String savepointName = DatabaseIntegrityManager.createSavepoint();		
@@ -148,9 +152,9 @@ public class UpdateOperations {
 			rebuildIndexForTable(albumName, newFields);
 			DatabaseIntegrityManager.updateLastDatabaseChangeTimeStamp();
 		} catch (DatabaseWrapperOperationException e) {
-			if (e.ErrorState.equals(DBErrorState.ErrorWithDirtyState)) {
+			if (e.errorState.equals(DBErrorState.ERROR_DIRTY_STATE)) {
 				DatabaseIntegrityManager.rollbackToSavepoint(savepointName);
-				throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
+				throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE, e);
 			}
 		} finally {
 			DatabaseIntegrityManager.releaseSavepoint(savepointName);
@@ -161,7 +165,7 @@ public class UpdateOperations {
 		// Check if the specified columns exists.
 		List<MetaItemField> metaInfos = QueryOperations.getAllAlbumItemMetaItemFields(albumName);
 		if (!metaInfos.contains(metaItemField)) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE);
 		}
 
 		String savepointName = DatabaseIntegrityManager.createSavepoint();
@@ -196,9 +200,9 @@ public class UpdateOperations {
 			rebuildIndexForTable(albumName, newFields);
 			DatabaseIntegrityManager.updateLastDatabaseChangeTimeStamp();
 		} catch (DatabaseWrapperOperationException e) {
-			if (e.ErrorState.equals(DBErrorState.ErrorWithDirtyState)) {
+			if (e.errorState.equals(DBErrorState.ERROR_DIRTY_STATE)) {
 				DatabaseIntegrityManager.rollbackToSavepoint(savepointName);
-				throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
+				throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE, e);
 			}
 		} finally {
 			DatabaseIntegrityManager.releaseSavepoint(savepointName);
@@ -225,9 +229,9 @@ public class UpdateOperations {
 			updateSchemaVersion(albumName);
 			DatabaseIntegrityManager.updateLastDatabaseChangeTimeStamp();
 		} catch (DatabaseWrapperOperationException e) {
-			if (e.ErrorState.equals(DBErrorState.ErrorWithDirtyState)) {
+			if (e.errorState.equals(DBErrorState.ERROR_DIRTY_STATE)) {
 				DatabaseIntegrityManager.rollbackToSavepoint(savepointName);
-				throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState);
+				throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE);
 			}
 		} finally {
 			DatabaseIntegrityManager.releaseSavepoint(savepointName);
@@ -321,7 +325,7 @@ public class UpdateOperations {
 	static void appendNewAlbumField(String albumName, MetaItemField metaItemField) throws DatabaseWrapperOperationException {
 		if (metaItemField.getType().equals(FieldType.ID) || metaItemField == null 
 				|| !QueryOperations.isItemFieldNameAvailable(albumName, metaItemField.getName())) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE);
 		}
 
 		String savepointName = DatabaseIntegrityManager.createSavepoint();
@@ -329,9 +333,9 @@ public class UpdateOperations {
 			appendNewTableColumn(albumName, metaItemField);
 			DatabaseIntegrityManager.updateLastDatabaseChangeTimeStamp();
 		} catch (DatabaseWrapperOperationException e) {
-			if (e.ErrorState.equals(DBErrorState.ErrorWithDirtyState)) {
+			if (e.errorState.equals(DBErrorState.ERROR_DIRTY_STATE)) {
 				DatabaseIntegrityManager.rollbackToSavepoint(savepointName);
-				throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState);
+				throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE);
 			}
 		} finally {
 			DatabaseIntegrityManager.releaseSavepoint(savepointName);			
@@ -354,12 +358,12 @@ public class UpdateOperations {
 		sb.append(" ADD COLUMN ");
 		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(metaItemField.getName()));
 		sb.append(" ");
-		sb.append(FieldType.Text.toDatabaseTypeString());
+		sb.append(FieldType.TEXT.toDatabaseTypeString());
 
 		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(sb.toString())) {
 			preparedStatement.executeUpdate();
 		} catch (SQLException e) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState, e);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE, e);
 		}
 
 		updateTableColumnWithDefaultValue(DatabaseStringUtilities.generateTableName(albumName), metaItemField);
@@ -374,7 +378,7 @@ public class UpdateOperations {
 		String savepointName = DatabaseIntegrityManager.createSavepoint();
 		
 		if (albumPicturesEnabled && QueryOperations.isPictureAlbum(albumName)) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, "Album " + albumName + " already contains pictures");
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE, "Album " + albumName + " already contains pictures");
 		}
 
 		try {
@@ -385,7 +389,7 @@ public class UpdateOperations {
 				DeleteOperations.clearPictureTable(albumName);
 			}
 		} catch ( DatabaseWrapperOperationException e) {
-			if (e.ErrorState.equals(DBErrorState.ErrorWithDirtyState)) {
+			if (e.errorState.equals(DBErrorState.ERROR_DIRTY_STATE)) {
 				DatabaseIntegrityManager.rollbackToSavepoint(savepointName);
 			}
 		} finally {
@@ -413,7 +417,7 @@ public class UpdateOperations {
 		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(sb.toString())) {
 			preparedStatement.executeUpdate();					
 		}catch (SQLException e) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE);
 		}
 		
 		sb.delete(0,sb.length());
@@ -427,7 +431,7 @@ public class UpdateOperations {
 			preparedStatement.setString(1, metaItemField.getType().toString());
 			preparedStatement.executeUpdate();
 		}catch (SQLException e) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE);
 		}		
 
 		updateSchemaVersion(albumName);
@@ -487,7 +491,7 @@ public class UpdateOperations {
 
 			preparedStatement.executeUpdate();
 		} catch (SQLException e) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState, e);			
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE, e);			
 		}
 	}
 
@@ -509,7 +513,7 @@ public class UpdateOperations {
 			try {
 				CreateOperations.createIndex(albumName, quicksearchColumnNames);
 			} catch (DatabaseWrapperOperationException e) {
-				if (e.ErrorState.equals(DBErrorState.ErrorWithDirtyState)) {
+				if (e.errorState.equals(DBErrorState.ERROR_DIRTY_STATE)) {
 					DatabaseIntegrityManager.rollbackToSavepoint(savepointName);
 				}
 			}finally {
@@ -522,7 +526,7 @@ public class UpdateOperations {
 		// Check if the item contains a albumName
 		if (albumItem.getAlbumName().isEmpty()) {
 			LOGGER.error("Album item {} has no albumName", albumItem);
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE);
 		}
 
 		// Get the id and make sure the field exist;
@@ -530,7 +534,7 @@ public class UpdateOperations {
 
 		if (idField == null) {
 			LOGGER.error("The album item {} which should be updated has no id field", albumItem);
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE);
 		}
 
 		// Build the string with place-holders '?'
@@ -605,7 +609,7 @@ public class UpdateOperations {
 			updateContentVersion(albumItem.getAlbumName(), id, UUID.randomUUID());
 			DatabaseIntegrityManager.updateLastDatabaseChangeTimeStamp();
 		} catch (DatabaseWrapperOperationException e) {
-			if (e.ErrorState.equals(DBErrorState.ErrorWithDirtyState)) {
+			if (e.errorState.equals(DBErrorState.ERROR_DIRTY_STATE)) {
 				DatabaseIntegrityManager.rollbackToSavepoint(savepointName);
 			}
 		} catch (SQLException e) {
@@ -631,7 +635,7 @@ public class UpdateOperations {
 			preparedStatement.executeUpdate();
 		}catch (SQLException e) {
 			DatabaseIntegrityManager.rollbackToSavepoint(savepointName);
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE);
 		}finally {
 			DatabaseIntegrityManager.releaseSavepoint(savepointName);
 		}
@@ -652,7 +656,7 @@ public class UpdateOperations {
 			preparedStatement.executeUpdate();
 		} catch (SQLException e) {
 			DatabaseIntegrityManager.rollbackToSavepoint(savepointName);
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE);
 		}finally {
 			DatabaseIntegrityManager.releaseSavepoint(savepointName);
 		}
@@ -671,22 +675,22 @@ public class UpdateOperations {
 		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(sqlString)) {						
 			
 			switch (columnMetaInfo.getType()) {
-			case Text: 
+			case TEXT: 
 				preparedStatement.setString(1, (String) columnMetaInfo.getType().getDefaultValue());
 				break;
-			case Decimal: 
+			case DECIMAL: 
 				preparedStatement.setDouble(1, (Double) columnMetaInfo.getType().getDefaultValue());
 				break;
-			case Integer: 
+			case INTEGER: 
 				preparedStatement.setInt(1, (Integer) columnMetaInfo.getType().getDefaultValue());
 				break;
-			case Date: 
+			case DATE: 
 				preparedStatement.setDate(1, (Date) columnMetaInfo.getType().getDefaultValue());
 				break;
-			case Time:
+			case TIME:
 				preparedStatement.setTime(1, (Time) columnMetaInfo.getType().getDefaultValue());
 				break;
-			case Option: 
+			case OPTION: 
 				String option = columnMetaInfo.getType().getDefaultValue().toString();
 				preparedStatement.setString(1, option);
 				break;
@@ -694,7 +698,7 @@ public class UpdateOperations {
 				String url = columnMetaInfo.getType().getDefaultValue().toString();
 				preparedStatement.setString(1, url);
 				break;
-			case StarRating: 
+			case STAR_RATING: 
 				String rating = columnMetaInfo.getType().getDefaultValue().toString();
 				preparedStatement.setString(1, rating);
 				break;
@@ -703,7 +707,7 @@ public class UpdateOperations {
 			}
 			preparedStatement.execute();
 		} catch (SQLException e) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState,e);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE,e);
 		}
 	}
 	
@@ -731,7 +735,7 @@ public class UpdateOperations {
 			preparedStatement.setString(3, hasPictureFlag.toString());
 			preparedStatement.executeUpdate();
 		} catch (SQLException e) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState, e);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE, e);
 		}
 	}
 
@@ -749,7 +753,7 @@ public class UpdateOperations {
 			preparedStatement.setString(1, albumName);
 			preparedStatement.executeUpdate();
 		} catch (SQLException e) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState, e);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE, e);
 		}
 	}
 
@@ -795,7 +799,7 @@ public class UpdateOperations {
 			
 			preparedStatement.executeUpdate();
 		} catch (SQLException e) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState, e);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE, e);
 		}
 	}
 }

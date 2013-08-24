@@ -34,7 +34,11 @@ import org.sammelbox.view.various.ComponentFactory;
 import org.sammelbox.view.various.SynchronizeCompositeHelper;
 import org.sammelbox.view.various.SynchronizeStep;
 
-public class SynchronizeSidepane {
+public final class SynchronizeSidepane {
+	private SynchronizeSidepane() {
+		// use build method instead
+	}
+	
 	public static Composite build(Composite parentComposite) {		
 		// setup synchronize composite
 		Composite synchronizeComposite = new Composite(parentComposite, SWT.NONE);

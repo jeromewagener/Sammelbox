@@ -19,5 +19,5 @@
 package org.sammelbox.controller.events;
 
 public interface Observer {
-	public void update(SammelboxEvent event);
+	void update(SammelboxEvent event);
 }

@@ -19,16 +19,16 @@
 package org.sammelbox.controller.i18n;
 
 public enum Language {
-	Unknown,
-	English,
-	Deutsch;
+	UNKNOWN,
+	ENGLISH,
+	DEUTSCH;
 	
 	public static String getDictionaryBundle(Language language) {
 		switch (language) {
-		case English:
+		case ENGLISH:
 			return "internationalization/dict_en";
 
-		case Deutsch:
+		case DEUTSCH:
 			return "internationalization/dict_de";
 		
 		default:
@@ -41,7 +41,7 @@ public enum Language {
 		
 		int i=0;
 		for (Language language : values()) {
-			if (language != Unknown) {
+			if (language != UNKNOWN) {
 				allLanguages[i++] = language.toString();
 			}
 		}

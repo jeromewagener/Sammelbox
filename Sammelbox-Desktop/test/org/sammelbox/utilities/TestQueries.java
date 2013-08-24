@@ -51,9 +51,9 @@ public class TestQueries {
 			}
 
 			throw new DatabaseWrapperOperationException(
-					DBErrorState.ErrorWithCleanState, "The number of items could not be fetched for the table " + tableName);
+					DBErrorState.ERROR_CLEAN_STATE, "The number of items could not be fetched for the table " + tableName);
 		} catch (SQLException e) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE, e);
 		}
 	}
 }

@@ -161,11 +161,11 @@ public class UpdateAlbumItemTests {
 	}
 
 	private void createBooksAlbum() {
-		MetaItemField titleField = new MetaItemField("Book Title", FieldType.Text, true);
-		MetaItemField authorField = new MetaItemField("Author", FieldType.Text, true);
-		MetaItemField purchaseField = new MetaItemField("Purchased", FieldType.Date, false);
-		MetaItemField priceField = new MetaItemField("Price", FieldType.Decimal, false);
-		MetaItemField lenttoField = new MetaItemField("Lent out", FieldType.Option, true);
+		MetaItemField titleField = new MetaItemField("Book Title", FieldType.TEXT, true);
+		MetaItemField authorField = new MetaItemField("Author", FieldType.TEXT, true);
+		MetaItemField purchaseField = new MetaItemField("Purchased", FieldType.DATE, false);
+		MetaItemField priceField = new MetaItemField("Price", FieldType.DECIMAL, false);
+		MetaItemField lenttoField = new MetaItemField("Lent out", FieldType.OPTION, true);
 
 		List<MetaItemField> columns = new ArrayList<MetaItemField>();
 		columns.add(titleField);
@@ -196,11 +196,11 @@ public class UpdateAlbumItemTests {
 		AlbumItem item = new AlbumItem(albumName);
 
 		List<ItemField> fields = new ArrayList<ItemField>();
-		fields.add(new ItemField("Book Title", FieldType.Text, "book title"));
-		fields.add(new ItemField("Author", FieldType.Text, "the author"));
-		fields.add(new ItemField("Purchased", FieldType.Date, new Date(System.currentTimeMillis())));
-		fields.add(new ItemField("Price", FieldType.Decimal, 4.2d)); 
-		fields.add(new ItemField("Lent out", FieldType.Option, OptionType.YES));
+		fields.add(new ItemField("Book Title", FieldType.TEXT, "book title"));
+		fields.add(new ItemField("Author", FieldType.TEXT, "the author"));
+		fields.add(new ItemField("Purchased", FieldType.DATE, new Date(System.currentTimeMillis())));
+		fields.add(new ItemField("Price", FieldType.DECIMAL, 4.2d)); 
+		fields.add(new ItemField("Lent out", FieldType.OPTION, OptionType.YES));
 
 		List<AlbumItemPicture> albumItemPictures = new ArrayList<AlbumItemPicture>();
 		albumItemPictures.add(new AlbumItemPicture(TestExecuter.PATH_TO_TEST_PICTURE_1, 

@@ -23,15 +23,15 @@ import java.sql.Time;
 
 public enum FieldType {
 	ID,
-	Text,
-	Decimal, 
-	Date, 
-	Time,
+	TEXT,
+	DECIMAL, 
+	DATE, 
+	TIME,
 	UUID,
-	StarRating,
-	URL, 
-	Integer,
-	Option; 
+	STAR_RATING,
+	URL,
+	INTEGER,
+	OPTION; 
 
 	/** 
 	 * The Picture type and ID are not included since they should not be directly be edited by the user. 
@@ -40,12 +40,12 @@ public enum FieldType {
 	 */
 	public static String[] toUserTypeStringArray() {
 		return new String[] { 	
-				FieldType.Text.toString(), 
-				FieldType.Integer.toString(),
-				FieldType.Decimal.toString(),
-				FieldType.StarRating.toString(),
-				FieldType.Option.toString(),
-				FieldType.Date.toString(),
+				FieldType.TEXT.toString(), 
+				FieldType.INTEGER.toString(),
+				FieldType.DECIMAL.toString(),
+				FieldType.STAR_RATING.toString(),
+				FieldType.OPTION.toString(),
+				FieldType.DATE.toString(),
 				FieldType.URL.toString()
 				//FieldType.Time.toString(),//TODO In the current iteration the time is not needed as explicit field type. 
 		};
@@ -60,28 +60,28 @@ public enum FieldType {
 		switch (this) {
 		case ID :
 			res = "INTEGER";
-		case Text:
+		case TEXT:
 			res = "TEXT";
 			break;
-		case Decimal:
+		case DECIMAL:
 			res = "REAL";
 			break;
-		case Date:
+		case DATE:
 			res = "DATE";
 			break;
-		case Time:
+		case TIME:
 			res = "TIME";
 			break;
 		case UUID:
 			res= "TEXT";
 			break;
-		case StarRating:
+		case STAR_RATING:
 			res = "INTEGER";
 			break;
 		case URL:
 			res = "TEXT";
 			break;
-		case Integer:
+		case INTEGER:
 			res = "INTEGER";
 			break;
 		// Default value is never reached, it would result in a null pointer exception.
@@ -100,22 +100,22 @@ public enum FieldType {
 	 */
 	public Object getDefaultValue() {
 		switch (this){
-		case Text: 
+		case TEXT: 
 			return  "";
-		case Decimal: 
+		case DECIMAL: 
 			return 0.0d;
-		case Integer: 
+		case INTEGER: 
 			return 0;
-		case Date: 
+		case DATE: 
 			return new Date(System.currentTimeMillis());
-		case Time: 
+		case TIME: 
 			return new Time(System.currentTimeMillis());
 		case URL:
 			return "";
-		case Option:
+		case OPTION:
 			return OptionType.UNKNOWN;
-		case StarRating :
-			return org.sammelbox.model.album.StarRating.ZeroStars;
+		case STAR_RATING :
+			return org.sammelbox.model.album.StarRating.ZERO_STARS;
 		// Default value is never reached, it would result in a null pointer exception.
 		// However method must return something.
 		default:

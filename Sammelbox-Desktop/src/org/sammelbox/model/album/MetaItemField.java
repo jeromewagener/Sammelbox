@@ -18,10 +18,7 @@
 
 package org.sammelbox.model.album;
 
-import org.sammelbox.model.database.operations.DatabaseOperations;
-
 public class MetaItemField {
-
 	protected String name;
 	protected FieldType type;
 	protected boolean quickSearchable;

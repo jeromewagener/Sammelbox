@@ -33,13 +33,16 @@ import org.sammelbox.view.ApplicationUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ImageManipulator {
+public final class ImageManipulator {
 	private final static Logger LOGGER = LoggerFactory.getLogger(ApplicationUI.class);
 	
 	/** The maximum height of a thumb nail in pixels. Only originals with a higher resolution will be resized */
 	private final static int MAX_HEIGHT_IN_PIXELS = 200;
 	/** The maximum width of a thumb nail in pixels. Only originals with a higher resolution will be resized */
 	private final static int MAX_WIDTH_IN_PIXELS = 200;
+	
+	public ImageManipulator() {
+	}
 	
 	/** This method is used to copy originals, and create thumb nails, within the picture folder
 	 * @param pictureFile the original image

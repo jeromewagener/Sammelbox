@@ -29,8 +29,11 @@ import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.view.UIConstants;
 import org.sammelbox.view.various.ComponentFactory;
 
-public class UpdateAlbumItemSidepane {
-
+public final class UpdateAlbumItemSidepane {
+	private UpdateAlbumItemSidepane() {
+		// use build method instead
+	}
+	
 	/** Returns an "update album item" composite. This composite provides the fields (field names and value input fields)
 	 *  needed by the update item composite.
 	 * @param parentComposite the parent composite

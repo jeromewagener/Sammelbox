@@ -64,11 +64,11 @@ public class CreateAlbumTests {
 	@Test
 	public void testBookCreation() {		
 		final String albumName = "Books";
-		MetaItemField titleField = new MetaItemField("Book Title", FieldType.Text, true);
-		MetaItemField authorField = new MetaItemField("Author", FieldType.Text, true);
-		MetaItemField purchaseField = new MetaItemField("Purchased", FieldType.Date, false);
-		MetaItemField priceField = new MetaItemField("Price", FieldType.Decimal, false);
-		MetaItemField lenttoField = new MetaItemField("Lent to", FieldType.Text, false);
+		MetaItemField titleField = new MetaItemField("Book Title", FieldType.TEXT, true);
+		MetaItemField authorField = new MetaItemField("Author", FieldType.TEXT, true);
+		MetaItemField purchaseField = new MetaItemField("Purchased", FieldType.DATE, false);
+		MetaItemField priceField = new MetaItemField("Price", FieldType.DECIMAL, false);
+		MetaItemField lenttoField = new MetaItemField("Lent to", FieldType.TEXT, false);
 		
 		List<MetaItemField> columns = new ArrayList<MetaItemField>();
 		columns.add(titleField);
@@ -97,11 +97,11 @@ public class CreateAlbumTests {
 	@Test
 	public void testAlbumCreationWithFieldNameWithSpaces() {		
 		final String albumName = "My Books";
-		MetaItemField titleField = new MetaItemField("Book Title", FieldType.Text, true);
-		MetaItemField authorField = new MetaItemField("Author", FieldType.Text, true);
-		MetaItemField purchaseField = new MetaItemField("Purchased", FieldType.Date, false);
-		MetaItemField priceField = new MetaItemField("Price", FieldType.Decimal, false);
-		MetaItemField lenttoField = new MetaItemField("Lent to", FieldType.Text, false);
+		MetaItemField titleField = new MetaItemField("Book Title", FieldType.TEXT, true);
+		MetaItemField authorField = new MetaItemField("Author", FieldType.TEXT, true);
+		MetaItemField purchaseField = new MetaItemField("Purchased", FieldType.DATE, false);
+		MetaItemField priceField = new MetaItemField("Price", FieldType.DECIMAL, false);
+		MetaItemField lenttoField = new MetaItemField("Lent to", FieldType.TEXT, false);
 		
 		List<MetaItemField> columns = new ArrayList<MetaItemField>();
 		columns.add(titleField);

@@ -52,9 +52,13 @@ import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class QueryOperations {
+public final class QueryOperations {
 	private static final String SQLITE_INDEX_COLUMN_NAME = "COLUMN_NAME";
 	private static final Logger LOGGER = LoggerFactory.getLogger(QueryOperations.class);
+	
+	private QueryOperations() {
+		// use static methods
+	}
 	
 	static AlbumItemResultSet executeSQLQuery(String sqlStatement, String albumName) throws DatabaseWrapperOperationException {	
 		Map<Integer, MetaItemField> metaInfoMap = QueryOperations.getAlbumItemMetaMap(albumName);
@@ -73,7 +77,7 @@ public class QueryOperations {
 			return albumItemRS;
 		} catch (DatabaseWrapperOperationException e) {
 			LOGGER.error("The query: \"{}\" could not be executed and terminated with message: {}", sqlStatement ,  e.getMessage());
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE, e);
 		}		
 	}
 	
@@ -102,27 +106,27 @@ public class QueryOperations {
 			queryFields = new ArrayList<QueryComponent>();
 			for (MetaItemField field : albumFields) {
 				if (field.isQuickSearchable()) {
-					if (field.getType().equals(FieldType.Text) || field.getType().equals(FieldType.Option) || 
+					if (field.getType().equals(FieldType.TEXT) || field.getType().equals(FieldType.OPTION) || 
 							field.getType().equals(FieldType.URL)) {
-						queryFields.add(QueryBuilder.getQueryComponent(field.getName(), QueryOperator.like, term));
+						queryFields.add(QueryBuilder.getQueryComponent(field.getName(), QueryOperator.LIKE, term));
 					}
-					else if ((field.getType().equals(FieldType.Integer) || field.getType().equals(FieldType.StarRating))
+					else if ((field.getType().equals(FieldType.INTEGER) || field.getType().equals(FieldType.STAR_RATING))
 							&& (Pattern.compile("-?[0-9]+").matcher(term).matches())) {
 						queryFields.add(QueryBuilder.getQueryComponent(
-								field.getName(), QueryOperator.equals, Integer.valueOf(term).toString()));
+								field.getName(), QueryOperator.EQUALS, Integer.valueOf(term).toString()));
 					}
-					else if (field.getType().equals(FieldType.Decimal) && Pattern.compile("\\d+(.\\d+)*").matcher(term).matches()) {
+					else if (field.getType().equals(FieldType.DECIMAL) && Pattern.compile("\\d+(.\\d+)*").matcher(term).matches()) {
 						queryFields.add(QueryBuilder.getQueryComponent(
-								field.getName(), QueryOperator.equals, Double.valueOf(term).toString()));
+								field.getName(), QueryOperator.EQUALS, Double.valueOf(term).toString()));
 					}
-					else if (field.getType().equals(FieldType.Date)) {
+					else if (field.getType().equals(FieldType.DATE)) {
 						try {
 							// FIXME this doesn't work and there is always exactly one day missing?!?
 							SimpleDateFormat sdf = new SimpleDateFormat(SettingsManager.getSettings().getDateFormat());
 							Date parsedDate = sdf.parse(term);
 							
 							queryFields.add(QueryBuilder.getQueryComponent(
-									field.getName(), QueryOperator.equals, String.valueOf(parsedDate.getTime())));
+									field.getName(), QueryOperator.EQUALS, String.valueOf(parsedDate.getTime())));
 						} catch (ParseException e) {
 							continue;
 						}
@@ -147,9 +151,9 @@ public class QueryOperations {
 			}
 			LOGGER.error("The number of items could not be fetch for album {}", albumName);
 			throw new DatabaseWrapperOperationException(
-					DBErrorState.ErrorWithCleanState, "The number of items could not be fetched for album " + albumName);
+					DBErrorState.ERROR_CLEAN_STATE, "The number of items could not be fetched for album " + albumName);
 		} catch (SQLException e) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE, e);
 		}
 	}
 	
@@ -167,7 +171,7 @@ public class QueryOperations {
 			return albumList;
 			
 		} catch (SQLException e) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE, e);
 		}		
 	}
 
@@ -177,7 +181,7 @@ public class QueryOperations {
 		try {
 			dbmetadata = ConnectionManager.getConnection().getMetaData();			
 		} catch (SQLException e) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE, e);
 		}
 				
 		try (ResultSet indexRS = dbmetadata.getIndexInfo(null, null, tableName, false, true)) {	
@@ -188,7 +192,7 @@ public class QueryOperations {
 			}
 			return indexedColumns;
 		} catch (SQLException e) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE, e);
 		}		
 	}
 
@@ -198,7 +202,7 @@ public class QueryOperations {
 		try {
 			dbmetadata =  ConnectionManager.getConnection().getMetaData();
 		} catch (SQLException e) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE, e);
 		}
 		
 		try (ResultSet indexRS = dbmetadata.getIndexInfo(null, null, tableName, false, true);) {			
@@ -207,7 +211,7 @@ public class QueryOperations {
 			}
 			return indexName;
 		} catch (SQLException e) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE, e);
 		}		
 	}
 
@@ -217,7 +221,7 @@ public class QueryOperations {
 		
 		// Is available means that it does not exist in the db, hence its fields cannot be retrieved
 		if (QueryOperations.isAlbumNameAvailable(albumName)) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE);
 		}
 
 		List<String> quickSearchableColumnNames = getIndexedColumnNames(DatabaseStringUtilities.generateTableName(albumName));
@@ -245,7 +249,7 @@ public class QueryOperations {
 			
 			return itemMetadata;
 		} catch (SQLException e) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE, e);
 		}		
 	}
 
@@ -277,7 +281,7 @@ public class QueryOperations {
 			}
 			return itemMetadata;
 		} catch (SQLException e) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE, e);
 		}		
 	}
 
@@ -304,7 +308,7 @@ public class QueryOperations {
 			}
 			return itemMetaData;
 		} catch (SQLException e) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE, e);
 		}
 	}
 	
@@ -328,7 +332,7 @@ public class QueryOperations {
 					pictures.add(new AlbumItemPicture(rs.getLong(1), rs.getString(2), rs.getString(3), albumName, rs.getLong(4)));
 				}			
 			} catch (SQLException e) {			
-				throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
+				throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE, e);
 			}
 		}
 		
@@ -346,7 +350,7 @@ public class QueryOperations {
 			requestedItem = items.get(0);
 			return requestedItem;
 		} catch (IndexOutOfBoundsException e) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE, e);
 		}		
 	}
 
@@ -392,7 +396,7 @@ public class QueryOperations {
 			}
 
 		} catch (SQLException e) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState,e);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE,e);
 		}
 
 		return list;
@@ -400,7 +404,7 @@ public class QueryOperations {
 	
 	static boolean isDateField(String albumName, String fieldName) throws DatabaseWrapperOperationException {
 		for (MetaItemField metaItemField : getAllAlbumItemMetaItemFields(albumName)) {
-			if (metaItemField.getName().equals(fieldName) && metaItemField.getType().equals(FieldType.Date)) {
+			if (metaItemField.getName().equals(fieldName) && metaItemField.getType().equals(FieldType.DATE)) {
 				return true;
 			}
 		}
@@ -409,7 +413,7 @@ public class QueryOperations {
 
 	static boolean isOptionField(String albumName, String fieldName) throws DatabaseWrapperOperationException {
 		for (MetaItemField metaItemField : getAllAlbumItemMetaItemFields(albumName)) {
-			if (metaItemField.getName().equals(fieldName) && metaItemField.getType().equals(FieldType.Option)) {
+			if (metaItemField.getName().equals(fieldName) && metaItemField.getType().equals(FieldType.OPTION)) {
 				return true;
 			}
 		}
@@ -418,7 +422,7 @@ public class QueryOperations {
 	
 	static boolean isStarRatingField(String albumName, String fieldName) throws DatabaseWrapperOperationException {
 		for (MetaItemField metaItemField : getAllAlbumItemMetaItemFields(albumName)) {
-			if (metaItemField.getName().equals(fieldName) && metaItemField.getType().equals(FieldType.StarRating)) {
+			if (metaItemField.getName().equals(fieldName) && metaItemField.getType().equals(FieldType.STAR_RATING)) {
 				return true;
 			}
 		}
@@ -477,7 +481,7 @@ public class QueryOperations {
 				return OptionType.valueOf(resultSet.getString(1)) == OptionType.YES;
 			}
 		} catch (SQLException e) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState, e);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE, e);
 		}
 		
 		return false;
@@ -496,7 +500,7 @@ public class QueryOperations {
 				return resultSet.getString(1);
 			}
 		} catch (SQLException e) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState, e);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE, e);
 		}
 		
 		return null;

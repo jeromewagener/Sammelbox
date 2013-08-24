@@ -24,7 +24,10 @@ import org.sammelbox.model.album.AlbumItem;
 import org.sammelbox.model.album.AlbumItemResultSet;
 import org.sammelbox.view.ApplicationUI;
 
-public class BrowserFacade {
+public final class BrowserFacade {
+	private BrowserFacade() {
+	}
+	
 	public static void loadWelcomePage() { WelcomePageCreator.loadWelcomePage(); }
 	public static void rerunLastQuery() { Utilities.performLastQuery(ApplicationUI.getAlbumItemBrowser()); }
 	public static void loadHelpPage() { Utilities.loadHelpPage(); }

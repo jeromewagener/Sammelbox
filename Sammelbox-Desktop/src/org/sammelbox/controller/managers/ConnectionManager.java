@@ -65,10 +65,10 @@ public class ConnectionManager {
 
 			// Run a fetch  to check if the database connection is up and running
 			if (ConnectionManager.isConnectionReady() == false) {
-				throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState);
+				throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE);
 			}
 		} catch (SQLException e) {			
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE);
 		}
 	}
 
@@ -83,7 +83,7 @@ public class ConnectionManager {
 			}
 		} catch (SQLException e) {
 			LOGGER.error("Unable to close the database connection");
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState, e);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE, e);
 		}
 	}
 
@@ -127,7 +127,7 @@ public class ConnectionManager {
 			FileSystemAccessWrapper.copyFile(new File(FileSystemLocations.getDatabaseFile()), corruptTemporarySnapshotFile);
 		} catch (IOException e1) {
 			LOGGER.error("Copying the corrupt database file to a temporary location failed" , e1);
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE);
 		}
 
 		// Clean home directory
@@ -140,7 +140,7 @@ public class ConnectionManager {
 			FileSystemAccessWrapper.copyFile(corruptTemporarySnapshotFile, corruptSnapshotFile);
 		} catch (IOException e) {
 			LOGGER.error("Copying the corrupt database file from the temporary location back to the clean home directory failed. Manual cleanup may be required", e);
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE);
 		}
 
 		// Try to open a regular connection to the newly setup home directory
@@ -148,7 +148,7 @@ public class ConnectionManager {
 
 		if (FileSystemAccessWrapper.updateSammelboxFileStructure() == false) {
 			LOGGER.error("Updating the structure of the home directory failed. Manual cleanup may be required");
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE);
 		}
 	}
 
@@ -165,7 +165,7 @@ public class ConnectionManager {
 		try (PreparedStatement preparedStatement = connection.prepareStatement("PRAGMA foreign_keys = ON");) {			
 			preparedStatement.executeUpdate();
 		} catch (SQLException e) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE);
 		} 
 	}
 }

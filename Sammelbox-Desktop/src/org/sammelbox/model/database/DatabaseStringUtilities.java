@@ -20,8 +20,10 @@ package org.sammelbox.model.database;
 
 import org.sammelbox.model.database.operations.DatabaseConstants;
 
-public class DatabaseStringUtilities {
-
+public final class DatabaseStringUtilities {
+	private DatabaseStringUtilities() {
+	}
+	
 	/** Creates a database safe album table name for a given album name. The according suffix is used! */
 	public static String generateTableName(String albumName) {
 		return (albumName.toLowerCase()).replace(" ", "_");

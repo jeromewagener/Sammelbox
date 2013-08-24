@@ -18,7 +18,11 @@
 
 package org.sammelbox.model.database.operations;
 
-public class DatabaseConstants {
+public final class DatabaseConstants {
+	private DatabaseConstants() {
+		// use static methods
+	}
+	
 	/** The default name for ID columns */
 	public static final String ID_COLUMN_NAME = "id";
 	/** The final name of the column containing the type information foreign key in the main table.*/

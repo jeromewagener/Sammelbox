@@ -81,7 +81,7 @@ public class ItemField extends MetaItemField {
 	 */
 	public ItemField() {
 		this.name = "";
-		this.type = FieldType.Text;
+		this.type = FieldType.TEXT;
 		this.value = null;
 	}
 
@@ -116,28 +116,28 @@ public class ItemField extends MetaItemField {
 		case ID:
 			return (value instanceof Long);
 			
-		case Text:
+		case TEXT:
 			return (value instanceof String);
 
-		case Decimal:
+		case DECIMAL:
 			return (value instanceof Double);
 
-		case Date:
+		case DATE:
 			return (value instanceof Date);
 			
-		case Time:
+		case TIME:
 			return (value instanceof Time);
 			
 		case URL:
 			return value instanceof String;
 			
-		case Integer:
+		case INTEGER:
 			return value instanceof Integer;
 			
-		case Option:
+		case OPTION:
 			return value instanceof OptionType;
 			
-		case StarRating:
+		case STAR_RATING:
 			return value instanceof StarRating;
 
 		case UUID:

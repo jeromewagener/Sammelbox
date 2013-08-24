@@ -31,8 +31,11 @@ import org.sammelbox.view.UIConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class FeedbackCreator {
+public final class FeedbackCreator {
 	private final static Logger LOGGER = LoggerFactory.getLogger(FeedbackCreator.class);
+	
+	private FeedbackCreator() {
+	}
 	
 	/** A list of alterations that have already been performed via the alter album functionality */
 	private static LinkedList<String> alterations = new LinkedList<String>();

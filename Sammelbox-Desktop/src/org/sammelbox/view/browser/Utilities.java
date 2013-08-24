@@ -45,6 +45,9 @@ public class Utilities {
 	/** The default system font */
 	private static String defaultSystemFont = null;
 	
+	private Utilities() {
+	}
+	
 	static String getAnchorForAlbumItemId(long albumItemId) {
 		return "albumId" + albumItemId;
 	}

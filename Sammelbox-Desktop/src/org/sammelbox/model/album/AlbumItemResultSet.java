@@ -56,7 +56,7 @@ public class AlbumItemResultSet {
 			this.albumName = DatabaseOperations.getAlbumName(metaData.getTableName(1));			
 			this.metaInfoMap = DatabaseOperations.getAlbumItemMetaMap(albumName);
 		} catch (SQLException sqlException) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE);
 		}		
 	}	
 	
@@ -75,7 +75,7 @@ public class AlbumItemResultSet {
 			this.metaData = items.getMetaData();
 			this.albumName = DatabaseOperations.getAlbumName(metaData.getTableName(1));	
 		} catch (SQLException e) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE, e);
 		}
 	}
 	
@@ -96,7 +96,7 @@ public class AlbumItemResultSet {
 			this.metaData = items.getMetaData();
 			this.albumName = albumName;
 		} catch (SQLException e) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE, e);
 		}
 	}
 
@@ -161,7 +161,7 @@ public class AlbumItemResultSet {
 			return (T)outValue;
 		} catch (DatabaseWrapperOperationException e) {
 			LOGGER.error("Fetching the field value for the index {} failed", fieldIndex);
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE, e);
 		}		
 	}
 

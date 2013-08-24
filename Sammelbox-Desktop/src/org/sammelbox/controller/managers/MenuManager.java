@@ -153,7 +153,7 @@ public class MenuManager {
 		restoreItem.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent evt) {
-				ApplicationUI.changeRightCompositeTo(PanelType.Empty, EmptySidepane.build(ApplicationUI.getThreePanelComposite()));
+				ApplicationUI.changeRightCompositeTo(PanelType.EMPTY, EmptySidepane.build(ApplicationUI.getThreePanelComposite()));
 
 				FileDialog openFileDialog = new FileDialog(ApplicationUI.getShell(), SWT.OPEN);
 				openFileDialog.setText(Translator.get(DictKeys.DIALOG_RESTORE_FROM_FILE));
@@ -198,7 +198,7 @@ public class MenuManager {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				if (ApplicationUI.isAlbumSelectedAndShowMessageIfNot()) {
-					ApplicationUI.changeRightCompositeTo(PanelType.AdvancedSearch, AdvancedSearchSidepane.build(
+					ApplicationUI.changeRightCompositeTo(PanelType.ADVANCED_SEARCH, AdvancedSearchSidepane.build(
 							ApplicationUI.getThreePanelComposite(), ApplicationUI.getSelectedAlbum()));
 				}
 			}
@@ -212,7 +212,7 @@ public class MenuManager {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				ApplicationUI.changeRightCompositeTo(
-						PanelType.AddAlbum, CreateAlbumSidepane.build(ApplicationUI.getThreePanelComposite()));
+						PanelType.ADD_ALBUM, CreateAlbumSidepane.build(ApplicationUI.getThreePanelComposite()));
 			}
 		});
 		
@@ -222,7 +222,7 @@ public class MenuManager {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				if (ApplicationUI.isAlbumSelectedAndShowMessageIfNot()) {
-					ApplicationUI.changeRightCompositeTo(PanelType.AlterAlbum, AlterAlbumSidepane.build(
+					ApplicationUI.changeRightCompositeTo(PanelType.ALTER_ALBUM, AlterAlbumSidepane.build(
 							ApplicationUI.getThreePanelComposite(), ApplicationUI.getSelectedAlbum()));
 				}
 			}
@@ -269,7 +269,7 @@ public class MenuManager {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				ApplicationUI.changeRightCompositeTo(
-						PanelType.Synchronization, SynchronizeSidepane.build(ApplicationUI.getThreePanelComposite()));
+						PanelType.SYNCHRONIZATION, SynchronizeSidepane.build(ApplicationUI.getThreePanelComposite()));
 			}
 		});
 	}
@@ -284,7 +284,7 @@ public class MenuManager {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				ApplicationUI.changeRightCompositeTo(
-						PanelType.Settings, SettingsSidepane.build(ApplicationUI.getThreePanelComposite()));
+						PanelType.SETTINGS, SettingsSidepane.build(ApplicationUI.getThreePanelComposite()));
 			}
 		});
 	}
@@ -302,7 +302,7 @@ public class MenuManager {
 				ApplicationUI.refreshAlbumList();
 				BrowserFacade.loadHtmlFromInputStream(
 						ApplicationUI.getShell().getClass().getClassLoader().getResourceAsStream("htmlfiles/help.html"));
-				ApplicationUI.changeRightCompositeTo(PanelType.Help, EmptySidepane.build(ApplicationUI.getThreePanelComposite()));
+				ApplicationUI.changeRightCompositeTo(PanelType.HELP, EmptySidepane.build(ApplicationUI.getThreePanelComposite()));
 			}
 		});
 
@@ -315,7 +315,7 @@ public class MenuManager {
 				ApplicationUI.refreshAlbumList();
 				BrowserFacade.loadHtmlFromInputStream(
 						ApplicationUI.getShell().getClass().getClassLoader().getResourceAsStream("htmlfiles/about.html"));
-				ApplicationUI.changeRightCompositeTo(PanelType.Help, EmptySidepane.build(ApplicationUI.getThreePanelComposite()));
+				ApplicationUI.changeRightCompositeTo(PanelType.HELP, EmptySidepane.build(ApplicationUI.getThreePanelComposite()));
 			}
 		});
 	}

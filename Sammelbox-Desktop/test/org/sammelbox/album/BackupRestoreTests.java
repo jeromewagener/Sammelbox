@@ -68,11 +68,11 @@ public class BackupRestoreTests {
 	private void createBookAlbum() {		
 		final String albumName = "Books";
 
-		MetaItemField titleField = new MetaItemField("Book Title", FieldType.Text, true);
-		MetaItemField authorField = new MetaItemField("Author", FieldType.Text, true);
-		MetaItemField purchaseField = new MetaItemField("Purchased", FieldType.Date, false);
-		MetaItemField priceField = new MetaItemField("Price", FieldType.Decimal, false);
-		MetaItemField lenttoField = new MetaItemField("Lent to", FieldType.Text, false);
+		MetaItemField titleField = new MetaItemField("Book Title", FieldType.TEXT, true);
+		MetaItemField authorField = new MetaItemField("Author", FieldType.TEXT, true);
+		MetaItemField purchaseField = new MetaItemField("Purchased", FieldType.DATE, false);
+		MetaItemField priceField = new MetaItemField("Price", FieldType.DECIMAL, false);
+		MetaItemField lenttoField = new MetaItemField("Lent to", FieldType.TEXT, false);
 
 		List<MetaItemField> columns = new ArrayList<MetaItemField>();
 		columns.add(titleField);
@@ -91,8 +91,8 @@ public class BackupRestoreTests {
 	private void createDVDAlbum() {		
 		final String albumName = "DVD Album";
 
-		MetaItemField DVDTitleField = new MetaItemField("DVD Title", FieldType.Text, true);
-		MetaItemField actorField = new MetaItemField("Actors", FieldType.Text, true);
+		MetaItemField DVDTitleField = new MetaItemField("DVD Title", FieldType.TEXT, true);
+		MetaItemField actorField = new MetaItemField("Actors", FieldType.TEXT, true);
 
 		List<MetaItemField> columns = new ArrayList<MetaItemField>();
 		columns.add(DVDTitleField);
@@ -108,8 +108,8 @@ public class BackupRestoreTests {
 	private void createMusicAlbum() {
 		final String albumName = "Music Album";
 
-		MetaItemField titleField = new MetaItemField("Title", FieldType.Text, true);
-		MetaItemField artistField = new MetaItemField("Artist", FieldType.Text, true);
+		MetaItemField titleField = new MetaItemField("Title", FieldType.TEXT, true);
+		MetaItemField artistField = new MetaItemField("Artist", FieldType.TEXT, true);
 
 		List<MetaItemField> columns = new ArrayList<MetaItemField>();
 		columns.add(titleField);
@@ -128,11 +128,11 @@ public class BackupRestoreTests {
 		AlbumItem item = new AlbumItem(albumName);
 
 		List<ItemField> fields = new ArrayList<ItemField>();
-		fields.add( new ItemField("Book Title", FieldType.Text, "book title 1"));
-		fields.add( new ItemField("Author", FieldType.Text, "the author 1"));
-		fields.add( new ItemField("Purchased", FieldType.Date, new Date(System.currentTimeMillis())));
-		fields.add( new ItemField("Price", FieldType.Decimal, 4.2d));
-		fields.add( new ItemField("Lent to", FieldType.Text, "some random name 1"));
+		fields.add( new ItemField("Book Title", FieldType.TEXT, "book title 1"));
+		fields.add( new ItemField("Author", FieldType.TEXT, "the author 1"));
+		fields.add( new ItemField("Purchased", FieldType.DATE, new Date(System.currentTimeMillis())));
+		fields.add( new ItemField("Price", FieldType.DECIMAL, 4.2d));
+		fields.add( new ItemField("Lent to", FieldType.TEXT, "some random name 1"));
 
 		item.setFields(fields);
 
@@ -145,11 +145,11 @@ public class BackupRestoreTests {
 		item = new AlbumItem(albumName);
 
 		fields = new ArrayList<ItemField>();
-		fields.add( new ItemField("Book Title", FieldType.Text, "book title 2"));
-		fields.add( new ItemField("Author", FieldType.Text, "the author 2"));
-		fields.add( new ItemField("Purchased", FieldType.Date, new Date(System.currentTimeMillis())));
-		fields.add( new ItemField("Price", FieldType.Decimal, 4.22d));
-		fields.add( new ItemField("Lent to", FieldType.Text, "some random name 2"));
+		fields.add( new ItemField("Book Title", FieldType.TEXT, "book title 2"));
+		fields.add( new ItemField("Author", FieldType.TEXT, "the author 2"));
+		fields.add( new ItemField("Purchased", FieldType.DATE, new Date(System.currentTimeMillis())));
+		fields.add( new ItemField("Price", FieldType.DECIMAL, 4.22d));
+		fields.add( new ItemField("Lent to", FieldType.TEXT, "some random name 2"));
 
 		item.setFields(fields);
 
@@ -162,11 +162,11 @@ public class BackupRestoreTests {
 		item = new AlbumItem(albumName);
 
 		fields = new ArrayList<ItemField>();
-		fields.add( new ItemField("Book Title", FieldType.Text, "book title 3"));
-		fields.add( new ItemField("Author", FieldType.Text, "the author 3"));
-		fields.add( new ItemField("Purchased", FieldType.Date, new Date(System.currentTimeMillis())));
-		fields.add( new ItemField("Price", FieldType.Decimal, 4.23d));
-		fields.add( new ItemField("Lent to", FieldType.Text, "some random name 3"));
+		fields.add( new ItemField("Book Title", FieldType.TEXT, "book title 3"));
+		fields.add( new ItemField("Author", FieldType.TEXT, "the author 3"));
+		fields.add( new ItemField("Purchased", FieldType.DATE, new Date(System.currentTimeMillis())));
+		fields.add( new ItemField("Price", FieldType.DECIMAL, 4.23d));
+		fields.add( new ItemField("Lent to", FieldType.TEXT, "some random name 3"));
 
 		item.setFields(fields);
 
@@ -182,8 +182,8 @@ public class BackupRestoreTests {
 
 		AlbumItem item = new AlbumItem(albumName);
 		List<ItemField> fields = new ArrayList<ItemField>();
-		fields.add( new ItemField("DVD Title", FieldType.Text, "dvd title 1"));
-		fields.add( new ItemField("Actors", FieldType.Text, "actor 1"));
+		fields.add( new ItemField("DVD Title", FieldType.TEXT, "dvd title 1"));
+		fields.add( new ItemField("Actors", FieldType.TEXT, "actor 1"));
 		item.setFields(fields);
 
 		try {
@@ -194,8 +194,8 @@ public class BackupRestoreTests {
 
 		item = new AlbumItem(albumName);
 		fields = new ArrayList<ItemField>();
-		fields.add( new ItemField("DVD Title", FieldType.Text, "dvd title 2"));
-		fields.add( new ItemField("Actors", FieldType.Text, "actor 2"));
+		fields.add( new ItemField("DVD Title", FieldType.TEXT, "dvd title 2"));
+		fields.add( new ItemField("Actors", FieldType.TEXT, "actor 2"));
 		item.setFields(fields);
 
 		try {
@@ -376,11 +376,11 @@ public class BackupRestoreTests {
 			AlbumItem item = new AlbumItem(albumName);
 
 			List<ItemField> fields = new ArrayList<ItemField>();
-			fields.add( new ItemField("Book Title", FieldType.Text, "added title"));
-			fields.add( new ItemField("Author", FieldType.Text, "added author"));
-			fields.add( new ItemField("Purchased", FieldType.Date, new Date(System.currentTimeMillis())));
-			fields.add( new ItemField("Lent to", FieldType.Text, "added person"));
-			fields.add( new ItemField("Second Hand", FieldType.Option, OptionType.YES));
+			fields.add( new ItemField("Book Title", FieldType.TEXT, "added title"));
+			fields.add( new ItemField("Author", FieldType.TEXT, "added author"));
+			fields.add( new ItemField("Purchased", FieldType.DATE, new Date(System.currentTimeMillis())));
+			fields.add( new ItemField("Lent to", FieldType.TEXT, "added person"));
+			fields.add( new ItemField("Second Hand", FieldType.OPTION, OptionType.YES));
 
 			item.setFields(fields);
 

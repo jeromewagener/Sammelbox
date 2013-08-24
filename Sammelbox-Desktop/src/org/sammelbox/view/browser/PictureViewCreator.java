@@ -31,8 +31,11 @@ import org.sammelbox.view.composites.StatusBarComposite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PictureViewCreator {
+public final class PictureViewCreator {
 	private static final Logger LOGGER = LoggerFactory.getLogger(PictureViewCreator.class);
+	
+	private PictureViewCreator() {
+	}
 	
 	static void showPicture(long albumItemId) {
 		StatusBarComposite.getInstance(ApplicationUI.getShell()).writeStatus(Translator.get(DictKeys.STATUSBAR_CLICK_TO_RETURN));

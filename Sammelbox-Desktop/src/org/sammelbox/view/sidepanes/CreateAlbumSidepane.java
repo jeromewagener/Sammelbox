@@ -55,8 +55,12 @@ import org.sammelbox.view.various.TextInputDialog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CreateAlbumSidepane {
+public final class CreateAlbumSidepane {
 	private final static Logger LOGGER = LoggerFactory.getLogger(CreateAlbumSidepane.class);
+	
+	private CreateAlbumSidepane() {
+		// use build method instead
+	}
 	
 	/** Returns a "create new album" composite. This composite provides the user interface to create a new album. Meaning that an 
 	 * album name can be specified, as well as an undefined number of fields (columns) with user defined types etc..
@@ -346,7 +350,7 @@ public class CreateAlbumSidepane {
 				
 				BrowserFacade.performBrowserQueryAndShow(QueryBuilder.createSelectStarQuery(albumName));
 
-				ApplicationUI.changeRightCompositeTo(PanelType.Empty, EmptySidepane.build(parentComposite));
+				ApplicationUI.changeRightCompositeTo(PanelType.EMPTY, EmptySidepane.build(parentComposite));
 			}
 		});
 

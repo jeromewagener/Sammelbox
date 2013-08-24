@@ -19,13 +19,13 @@
 package org.sammelbox.view.various;
 
 public enum PanelType {
-	Empty,
-	AddAlbum,
-	AlterAlbum,
-	AddEntry,
-	UpdateEntry,
-	AdvancedSearch,
-	Synchronization,
-	Settings,
-	Help
+	EMPTY,
+	ADD_ALBUM,
+	ALTER_ALBUM,
+	ADD_ENTRY,
+	UPDATE_ENTRY,
+	ADVANCED_SEARCH,
+	SYNCHRONIZATION,
+	SETTINGS,
+	HELP
 }

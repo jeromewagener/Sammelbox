@@ -39,7 +39,7 @@ import org.sammelbox.model.settings.ApplicationSettings;
 import org.sammelbox.view.ApplicationUI;
 import org.sammelbox.view.various.ComponentFactory;
 
-public class SettingsSidepane {
+public final class SettingsSidepane {
 	private static final String EUROPEAN_DOT = "16.01.1988";
 	private static final String EUROPEAN_SLASH = "16/01/1988";
 	private static final String AMERICAN_DOT = "01.16.1988";
@@ -55,6 +55,10 @@ public class SettingsSidepane {
         dateExamplesToFormats = Collections.unmodifiableMap(myDateExamplesToFormats);
     }
 	
+    private SettingsSidepane() {
+		// use build method instead
+	}
+    
 	public static Composite build(Composite parentComposite) {		
 		// setup settings composite
 		Composite settingsComposite = new Composite(parentComposite, SWT.NONE);

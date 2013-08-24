@@ -24,8 +24,7 @@ import java.util.Observer;
 
 import org.eclipse.swt.widgets.Label;
 
-
-public class SynchronizeCompositeHelper implements Observer {
+public class SynchronizeCompositeHelper implements Observer {	
 	private HashMap<SynchronizeStep, Label> synchronizeStepsToLabelsMap = null;
 	
 	public void storeSynchronizeCompositeLabels(HashMap<SynchronizeStep, Label> syncronizeStepsToLabelsMap) {

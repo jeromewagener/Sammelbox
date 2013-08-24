@@ -36,26 +36,27 @@ import org.sammelbox.view.various.ComponentFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Sammelbox {
+public final class Sammelbox {
 	private final static Logger LOGGER = LoggerFactory.getLogger(Sammelbox.class);
 	
-	/**
-	 * This method initializes the file structure and opens the database connections.
-	 * @throws Exception Either a class not found exception if the JDBC driver could not be initialized or
-	 * an exception if the database connection could not be established.
-	 */
-	private static void setupConnectionAndFilesystem() throws Exception {		
-		Class.forName("org.sqlite.JDBC");
-		
+	private Sammelbox() {
+		// Sammelbox is launched using the main method
+	}
+	
+	/** This method initializes the file structure and opens the database connections. */
+	private static void setupConnectionAndFilesystem() {
 		try {
+			Class.forName("org.sqlite.JDBC");
 			ConnectionManager.openConnection();
-		} catch (DatabaseWrapperOperationException ex) {
+		} catch (ClassNotFoundException cnfe) {
+			LOGGER.warn("org.sqlite.JDBC couldn't be found on the classpath", cnfe);
+		} catch (DatabaseWrapperOperationException dwoe) {
 			try {
-				LOGGER.warn("Couldn't open a database connection. Will try to open a clean connection instead.");
+				LOGGER.warn("Couldn't open a database connection. Will try to open a clean connection instead.", dwoe);
 				ConnectionManager.openCleanConnection();	
-			} catch (DatabaseWrapperOperationException ex2) {
+			} catch (DatabaseWrapperOperationException dwoe2) {
 				LOGGER.error("The database is corrupt since opening a connection failed. " +
-						"Recent autosaves of the database can be found in: " + FileSystemLocations.getBackupDir());
+						"Recent autosaves of the database can be found in: " + FileSystemLocations.getBackupDir(), dwoe2);
 				
 				ComponentFactory.getMessageBox(ApplicationUI.getShell(), 
 						Translator.get(DictKeys.DIALOG_TITLE_SAMMELBOX_CANT_BE_LAUNCHED), 

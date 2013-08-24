@@ -30,8 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class AlbumItem {
-	public static Long ITEM_ID_UNDEFINED = Long.MAX_VALUE;
-	
+	private final static Long ITEM_ID_UNDEFINED = Long.MAX_VALUE;
 	private final static Logger LOGGER = LoggerFactory.getLogger(AlbumItem.class);
 	
 	protected long itemId = ITEM_ID_UNDEFINED;

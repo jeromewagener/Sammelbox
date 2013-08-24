@@ -60,10 +60,14 @@ import org.sammelbox.view.various.PanelType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BasicAlbumItemSidepane {
+public final class BasicAlbumItemSidepane {
 	private static final Logger LOGGER = LoggerFactory.getLogger(BasicAlbumItemSidepane.class);
 	private static final int BASIC_ALBUM_SIDEPANE_WIDTH_IN_PIXELS = 200;
 
+	private BasicAlbumItemSidepane() {
+		// use build method instead
+	}
+	
 	/** Returns a "basic album item" composite. This composite provides the fields (field names and value input fields)
 	 *  needed by the add item composite.
 	 * @param parentComposite the parent composite
@@ -137,7 +141,7 @@ public class BasicAlbumItemSidepane {
 			case UUID:
 				// not shown
 				break;
-			case Text: 
+			case TEXT: 
 				ComponentFactory.getSmallBoldItalicLabel(basicAlbumItemComposite, fieldName + ":");
 
 				Text textText = new Text(
@@ -165,7 +169,7 @@ public class BasicAlbumItemSidepane {
 					textText.setText((String) albumItem.getField(fieldName).getValue());
 				}
 
-				textText.setData("FieldType", FieldType.Text);
+				textText.setData("FieldType", FieldType.TEXT);
 				textText.setData("FieldName", fieldName);
 
 				break;
@@ -191,7 +195,7 @@ public class BasicAlbumItemSidepane {
 
 				break;	
 
-			case Decimal:
+			case DECIMAL:
 				ComponentFactory.getSmallBoldItalicLabel(basicAlbumItemComposite, fieldName + ":");
 
 				final Text numberText = new Text(basicAlbumItemComposite, SWT.BORDER);
@@ -225,12 +229,12 @@ public class BasicAlbumItemSidepane {
 					}
 				});
 
-				numberText.setData("FieldType", FieldType.Decimal);
+				numberText.setData("FieldType", FieldType.DECIMAL);
 				numberText.setData("FieldName", fieldName);
 
 				break;
 
-			case Integer:
+			case INTEGER:
 				ComponentFactory.getSmallBoldItalicLabel(basicAlbumItemComposite, fieldName + ":");
 
 				final Text integerText = new Text(basicAlbumItemComposite, SWT.BORDER);
@@ -264,12 +268,12 @@ public class BasicAlbumItemSidepane {
 					}
 				});
 
-				integerText.setData("FieldType", FieldType.Integer);
+				integerText.setData("FieldType", FieldType.INTEGER);
 				integerText.setData("FieldName", fieldName);
 
 				break;	
 
-			case Date:
+			case DATE:
 				ComponentFactory.getSmallBoldItalicLabel(basicAlbumItemComposite, fieldName + ":");
 
 				DateTime datePicker = new DateTime(basicAlbumItemComposite, SWT.BORDER | SWT.DATE | SWT.DROP_DOWN);
@@ -282,12 +286,12 @@ public class BasicAlbumItemSidepane {
 					datePicker.setDate(calendarForDate.get(Calendar.YEAR), calendarForDate.get(Calendar.MONTH), calendarForDate.get(Calendar.DAY_OF_MONTH));
 				}
 
-				datePicker.setData("FieldType", FieldType.Date);
+				datePicker.setData("FieldType", FieldType.DATE);
 				datePicker.setData("FieldName", fieldName);
 
 				break;
 
-			case Time:
+			case TIME:
 				ComponentFactory.getSmallBoldItalicLabel(basicAlbumItemComposite, fieldName + ":");
 
 				DateTime timePicker = new DateTime(basicAlbumItemComposite, SWT.BORDER | SWT.TIME | SWT.DROP_DOWN);
@@ -301,19 +305,19 @@ public class BasicAlbumItemSidepane {
 					timePicker.setTime(calendarForTime.get(Calendar.HOUR), calendarForTime.get(Calendar.MINUTE), calendarForTime.get(Calendar.SECOND));
 				}
 
-				timePicker.setData("FieldType", FieldType.Time);
+				timePicker.setData("FieldType", FieldType.TIME);
 				timePicker.setData("FieldName", fieldName);
 
 				break;
 
-			case StarRating:
+			case STAR_RATING:
 				ComponentFactory.getSmallBoldItalicLabel(basicAlbumItemComposite, fieldName + ":");
 
 				final Combo ratingCombo = new Combo(basicAlbumItemComposite, SWT.DROP_DOWN | SWT.READ_ONLY);
 				ratingCombo.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 
 				// Fill the comboBox
-				ratingCombo.setData("FieldType", FieldType.StarRating);
+				ratingCombo.setData("FieldType", FieldType.STAR_RATING);
 				ratingCombo.setData("FieldName", fieldName);
 				ratingCombo.setItems(StarRating.toComboBoxArray());
 				
@@ -325,13 +329,13 @@ public class BasicAlbumItemSidepane {
 				
 				break;
 
-			case Option:
+			case OPTION:
 				ComponentFactory.getSmallBoldItalicLabel(basicAlbumItemComposite, fieldName + ":");
 
 				Composite yesNoComposite = new Composite(basicAlbumItemComposite, SWT.NULL);
 				yesNoComposite.setLayout(new RowLayout());
 				yesNoComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
-				yesNoComposite.setData("FieldType", FieldType.Option);
+				yesNoComposite.setData("FieldType", FieldType.OPTION);
 				yesNoComposite.setData("FieldName", fieldName);
 
 				Button yesButton = new Button(yesNoComposite, SWT.RADIO);
@@ -424,7 +428,7 @@ public class BasicAlbumItemSidepane {
 
 						albumItem.setPictures(imageDropAndManagementComposite.getAllPictures());
 					} else if ((fieldType = (FieldType) control.getData("FieldType")) != null) {
-						if (fieldType.equals(FieldType.Text)) {
+						if (fieldType.equals(FieldType.TEXT)) {
 							Text text = (Text) control;
 
 							albumItem.addField(
@@ -438,7 +442,7 @@ public class BasicAlbumItemSidepane {
 									(String) url.getData("FieldName"),
 									(FieldType) url.getData("FieldType"),
 									url.getText());
-						} else if (fieldType.equals(FieldType.Decimal)) {
+						} else if (fieldType.equals(FieldType.DECIMAL)) {
 							Text text = (Text) control;
 							double number = 0.0;
 
@@ -450,7 +454,7 @@ public class BasicAlbumItemSidepane {
 									(String) text.getData("FieldName"),
 									(FieldType) text.getData("FieldType"),
 									number);
-						} else if (fieldType.equals(FieldType.Integer)) {
+						} else if (fieldType.equals(FieldType.INTEGER)) {
 							Text text = (Text) control;
 							int integer = 0;
 
@@ -462,7 +466,7 @@ public class BasicAlbumItemSidepane {
 									(String) text.getData("FieldName"),
 									(FieldType) text.getData("FieldType"),
 									integer);
-						} else if (fieldType.equals(FieldType.Date)) {
+						} else if (fieldType.equals(FieldType.DATE)) {
 							DateTime dateTime = (DateTime) control;
 
 							Calendar calendar = Calendar.getInstance();
@@ -472,14 +476,14 @@ public class BasicAlbumItemSidepane {
 									(String) dateTime.getData("FieldName"),
 									(FieldType) dateTime.getData("FieldType"),
 									new Date(calendar.getTimeInMillis()));
-						} else if (fieldType.equals(FieldType.StarRating)) {							
+						} else if (fieldType.equals(FieldType.STAR_RATING)) {							
 							Combo combo = (Combo) control;
 							
 							albumItem.addField(
 									(String) combo.getData("FieldName"),
 									(FieldType) combo.getData("FieldType"),
 									StarRating.values()[combo.getSelectionIndex()]);
-						} else if (fieldType.equals(FieldType.Option)) {
+						} else if (fieldType.equals(FieldType.OPTION)) {
 							Composite yesNoComposite = (Composite) control;
 
 							for (Control yesNoControl : yesNoComposite.getChildren()) {
@@ -533,7 +537,7 @@ public class BasicAlbumItemSidepane {
 					}
 					
 					// Update GUI
-					ApplicationUI.changeRightCompositeTo(PanelType.Empty, EmptySidepane.build(ApplicationUI.getThreePanelComposite()));
+					ApplicationUI.changeRightCompositeTo(PanelType.EMPTY, EmptySidepane.build(ApplicationUI.getThreePanelComposite()));
 					WelcomePageManager.updateLastModifiedWithCurrentDate(ApplicationUI.getSelectedAlbum());
 				} catch (DatabaseWrapperOperationException ex) {
 					LOGGER.error("A database related error occured", ex);

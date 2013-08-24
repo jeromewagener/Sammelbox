@@ -21,7 +21,10 @@ package org.sammelbox.view.sidepanes;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
-public class EmptySidepane {
+public final class EmptySidepane {
+	private EmptySidepane() {
+		// use build method instead
+	}
 	
 	/** Returns an empty composite
 	 * @param parentComposite the parent composite

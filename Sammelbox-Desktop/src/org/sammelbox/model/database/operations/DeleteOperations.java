@@ -38,8 +38,12 @@ import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DeleteOperations {
+public final class DeleteOperations {
 	private static final Logger LOGGER = LoggerFactory.getLogger(DeleteOperations.class);
+	
+	private DeleteOperations() {
+		// use static methods
+	}
 	
 	static void removeAlbumItemField(String albumName, MetaItemField metaItemField) throws DatabaseWrapperOperationException {
 		// Check if the specified columns exists.
@@ -50,7 +54,7 @@ public class DeleteOperations {
 			} else {
 				LOGGER.error("The specified meta item field is not part of the album");
 			}
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE);
 		}
 		
 		// Backup the old data in java objects
@@ -84,10 +88,10 @@ public class DeleteOperations {
 			UpdateOperations.rebuildIndexForTable(albumName, newFields);
 			DatabaseIntegrityManager.updateLastDatabaseChangeTimeStamp();
 		} catch (DatabaseWrapperOperationException e) {
-			if (e.ErrorState.equals(DBErrorState.ErrorWithCleanState)) {
+			if (e.errorState.equals(DBErrorState.ERROR_CLEAN_STATE)) {
 				DatabaseIntegrityManager.rollbackToSavepoint(savepointName);					
 				LOGGER.error("Unable to roll back before to state before the removal of the album item field");
-				throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
+				throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE, e);
 			}
 		} finally {
 			DatabaseIntegrityManager.releaseSavepoint(savepointName);
@@ -130,9 +134,9 @@ public class DeleteOperations {
 			
 			DatabaseIntegrityManager.updateLastDatabaseChangeTimeStamp();
 		} catch (DatabaseWrapperOperationException e) {
-			if (e.ErrorState.equals(DBErrorState.ErrorWithDirtyState)) {
+			if (e.errorState.equals(DBErrorState.ERROR_DIRTY_STATE)) {
 				DatabaseIntegrityManager.rollbackToSavepoint(savepointName);
-				throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
+				throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE, e);
 			}
 		} finally {
 			DatabaseIntegrityManager.releaseSavepoint(savepointName);
@@ -152,9 +156,9 @@ public class DeleteOperations {
 			FileSystemAccessWrapper.deleteDirectoryRecursively(
 					new File(FileSystemAccessWrapper.getFilePathForAlbum(albumName)));
 		} catch (DatabaseWrapperOperationException e) {
-			if (e.ErrorState.equals(DBErrorState.ErrorWithDirtyState)) {
+			if (e.errorState.equals(DBErrorState.ERROR_DIRTY_STATE)) {
 				DatabaseIntegrityManager.rollbackToSavepoint(savepointName);
-				throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
+				throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE, e);
 			}
 		} finally {
 			DatabaseIntegrityManager.releaseSavepoint(savepointName);
@@ -174,7 +178,7 @@ public class DeleteOperations {
 		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(sb.toString())) {						
 			preparedStatement.executeUpdate();
 		} catch (SQLException e) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState, e);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE, e);
 		}
 	}
 	
@@ -187,7 +191,7 @@ public class DeleteOperations {
 		try (Statement statement = ConnectionManager.getConnection().createStatement()){		
 			statement.execute("DROP TABLE IF EXISTS " + tableName);
 		} catch (Exception e) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState, e);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE, e);
 		}
 	}
 	
@@ -214,7 +218,7 @@ public class DeleteOperations {
 			statement.execute(sqlStatementString);
 		} catch (SQLException e) {
 			DatabaseIntegrityManager.rollbackToSavepoint(savepointName);
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE, e);
 		} finally {
 			DatabaseIntegrityManager.releaseSavepoint(savepointName);
 		}
@@ -244,7 +248,7 @@ public class DeleteOperations {
 			}			
 		} catch (SQLException e) {
 			DatabaseIntegrityManager.rollbackToSavepoint(savepointName);
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE, e);
 		} finally {
 			DatabaseIntegrityManager.releaseSavepoint(savepointName);
 		}
@@ -264,7 +268,7 @@ public class DeleteOperations {
 			FileSystemAccessWrapper.deleteDirectoryRecursively(new File(FileSystemAccessWrapper.getFilePathForAlbum(albumName)));			
 		} catch (SQLException e) {
 			DatabaseIntegrityManager.rollbackToSavepoint(savepointName);
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE, e);
 		} finally {
 			DatabaseIntegrityManager.releaseSavepoint(savepointName);
 		}

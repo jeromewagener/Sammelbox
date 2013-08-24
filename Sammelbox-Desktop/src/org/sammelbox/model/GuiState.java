@@ -20,15 +20,23 @@ package org.sammelbox.model;
 
 import org.sammelbox.controller.settings.SettingsManager;
 
-
 public class GuiState {
-	
 	private String selectedAlbum = null;
 	private String selectedView = null;
 	private String quickSearchTerms = null;
 	private boolean isViewDetailed = SettingsManager.getSettings().isDetailedViewDefault();
-	/** This string is used to deselect an album by passing it to {@link #setSelectedAlbum(String)}*/
+	/** This string is used to de-select an album by passing it to {@link #setSelectedAlbum(String)} */
 	public final String NOALBUMSELECTED = null; 
+	
+	public GuiState() {
+	}
+	
+	public GuiState(String selectedAlbum, String selectedView, String quickSearchTerms, boolean isViewDetailed) {
+		this.selectedAlbum = selectedAlbum;
+		this.selectedView = selectedView;
+		this.quickSearchTerms = quickSearchTerms;
+		this.isViewDetailed = isViewDetailed;
+	}
 	
 	public String getSelectedAlbum() {
 		return selectedAlbum;

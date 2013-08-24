@@ -81,7 +81,7 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 			String id = event.location.substring(UIConstants.SHOW_UPDATE_COMPOSITE.length());
 			removeQuestionMarkAtTheEndIfPresent(id);
 
-			ApplicationUI.changeRightCompositeTo(PanelType.UpdateEntry,
+			ApplicationUI.changeRightCompositeTo(PanelType.UPDATE_ENTRY,
 					UpdateAlbumItemSidepane.build(parentComposite, ApplicationUI.getSelectedAlbum(), Long.parseLong(id)));
 			BrowserFacade.jumpToAnchor(BrowserFacade.getAnchorForAlbumItemId(Integer.parseInt(id)));
 
@@ -160,7 +160,7 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 			String id = event.location.substring(UIConstants.SHOW_DETAILS_COMPOSITE.length());
 			removeQuestionMarkAtTheEndIfPresent(id);
 
-			ApplicationUI.changeRightCompositeTo(PanelType.UpdateEntry,
+			ApplicationUI.changeRightCompositeTo(PanelType.UPDATE_ENTRY,
 					UpdateAlbumItemSidepane.build(parentComposite, ApplicationUI.getSelectedAlbum(), Long.parseLong(id)));
 
 			BrowserFacade.jumpToAnchor(BrowserFacade.getAnchorForAlbumItemId(Long.parseLong(id)));
@@ -181,7 +181,7 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 		} else if (event.location.equals(UIConstants.SHOW_DETAILS_VIEW_OF_ALBUM)) {
 			BrowserFacade.performBrowserQueryAndShow(QueryBuilder.createSelectStarQuery(ApplicationUI.getSelectedAlbum()));
 			
-			ApplicationUI.changeRightCompositeTo(PanelType.Empty, EmptySidepane.build(ApplicationUI.getThreePanelComposite()));
+			ApplicationUI.changeRightCompositeTo(PanelType.EMPTY, EmptySidepane.build(ApplicationUI.getThreePanelComposite()));
 			// Do not change the page
 			event.doit = false;
 		}

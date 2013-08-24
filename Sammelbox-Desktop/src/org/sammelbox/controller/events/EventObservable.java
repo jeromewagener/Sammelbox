@@ -26,7 +26,7 @@ import java.util.Queue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EventObservable {
+public final class EventObservable {
 	private final static Logger LOGGER = LoggerFactory.getLogger(EventObservable.class);
 	
 	private static List<Observer> observers = new ArrayList<Observer>();

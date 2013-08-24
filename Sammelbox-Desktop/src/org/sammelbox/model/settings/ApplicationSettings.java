@@ -3,7 +3,7 @@ package org.sammelbox.model.settings;
 import org.sammelbox.controller.i18n.Language;
 
 public class ApplicationSettings {
-	private Language userDefinedLanguage = Language.Unknown;
+	private Language userDefinedLanguage = Language.UNKNOWN;
 	private String dateFormat = "dd/MM/yyyy";
 	private boolean detailedViewIsDefault = true;
 	

@@ -18,13 +18,15 @@
 
 package org.sammelbox.model.album;
 
+import org.sammelbox.controller.i18n.Translator;
+
 public enum StarRating {
-	ZeroStars  (0),
-	OneStar    (1),
-	TwoStars   (2),
-	ThreeStars (3),
-	FourStars  (4),
-	FiveStars  (5);
+	ZERO_STARS  (0),
+	ONE_STAR    (1),
+	TWO_STARS   (2),
+	THREE_STARS (3),
+	FOUR_STARS  (4),
+	FIVE_STARS  (5);
 	
 	private int numericValue;
 	
@@ -38,12 +40,12 @@ public enum StarRating {
 
 	public static String[] toComboBoxArray() {
 		return new String[] {
-				StarRating.ZeroStars.getIntegerValue() + " Stars", // TODO translate
-				StarRating.OneStar.getIntegerValue() + " Star",
-				StarRating.TwoStars.getIntegerValue() + " Stars",
-				StarRating.ThreeStars.getIntegerValue() + " Stars",
-				StarRating.FourStars.getIntegerValue() + " Stars",
-				StarRating.FiveStars.getIntegerValue() + " Stars"};
+				StarRating.ZERO_STARS.getIntegerValue() + Translator.toBeTranslated(" Stars"),
+				StarRating.ONE_STAR.getIntegerValue() + Translator.toBeTranslated(" Stars"),
+				StarRating.TWO_STARS.getIntegerValue() + Translator.toBeTranslated(" Stars"),
+				StarRating.THREE_STARS.getIntegerValue() + Translator.toBeTranslated(" Stars"),
+				StarRating.FOUR_STARS.getIntegerValue() + Translator.toBeTranslated(" Stars"),
+				StarRating.FIVE_STARS.getIntegerValue() + Translator.toBeTranslated(" Stars")};
 	}
 
 	public static Object getByIntegerValue(int integerValue) {
@@ -53,6 +55,6 @@ public enum StarRating {
 			}
 		}
 		
-		return StarRating.ZeroStars;
+		return StarRating.ZERO_STARS;
 	}
 }

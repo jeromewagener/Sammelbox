@@ -48,8 +48,12 @@ import org.sammelbox.view.various.PanelType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class QuickControlSidepane {
+public final class QuickControlSidepane {
 	private static final Logger LOGGER = LoggerFactory.getLogger(QuickControlSidepane.class);
+	
+	private QuickControlSidepane() {
+		// use build method instead
+	}
 	
 	/** Returns a quick control composite (select-album-list, quick-search) used by the GUI 
 	 * @param parentComposite the parent composite
@@ -119,7 +123,7 @@ public class QuickControlSidepane {
 				if (albumList.getSelectionIndex() != -1)	{			
 					ApplicationUI.setSelectedAlbum(albumList.getItem(albumList.getSelectionIndex()));
 
-					ApplicationUI.changeRightCompositeTo(PanelType.Empty, EmptySidepane.build(ApplicationUI.getThreePanelComposite()));
+					ApplicationUI.changeRightCompositeTo(PanelType.EMPTY, EmptySidepane.build(ApplicationUI.getThreePanelComposite()));
 
 					WelcomePageManager.increaseClickCountForAlbumOrView(albumList.getItem(albumList.getSelectionIndex()));
 				}
@@ -164,7 +168,7 @@ public class QuickControlSidepane {
 		createNewAlbum.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				ApplicationUI.changeRightCompositeTo(
-						PanelType.AddAlbum, CreateAlbumSidepane.build(ApplicationUI.getThreePanelComposite()));
+						PanelType.ADD_ALBUM, CreateAlbumSidepane.build(ApplicationUI.getThreePanelComposite()));
 			}
 		});
 		MenuItem alterAlbum = new MenuItem(albumPopupMenu, SWT.NONE);
@@ -172,7 +176,7 @@ public class QuickControlSidepane {
 		alterAlbum.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				ApplicationUI.changeRightCompositeTo(
-						PanelType.AlterAlbum, AlterAlbumSidepane.build(
+						PanelType.ALTER_ALBUM, AlterAlbumSidepane.build(
 								ApplicationUI.getThreePanelComposite(), ApplicationUI.getSelectedAlbum()));
 			}
 		});
@@ -295,7 +299,7 @@ public class QuickControlSidepane {
 		addSavedSearch.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (viewList.getSelectionIndex() >= 0) {
-					ApplicationUI.changeRightCompositeTo(PanelType.AdvancedSearch, 
+					ApplicationUI.changeRightCompositeTo(PanelType.ADVANCED_SEARCH, 
 							AdvancedSearchSidepane.build(ApplicationUI.getThreePanelComposite(), ApplicationUI.getSelectedAlbum()));
 				}
 			}

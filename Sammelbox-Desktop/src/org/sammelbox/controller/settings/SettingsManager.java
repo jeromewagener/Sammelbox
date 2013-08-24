@@ -41,7 +41,7 @@ public class SettingsManager {
 	
 	public static Locale getUserDefinedLocale() {
 		switch (applicationSettings.getUserDefinedLanguage()) {
-		case Deutsch:
+		case DEUTSCH:
 			return Locale.GERMAN;
 
 		default:

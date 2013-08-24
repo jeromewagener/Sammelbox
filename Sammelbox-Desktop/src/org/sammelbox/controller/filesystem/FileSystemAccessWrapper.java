@@ -46,7 +46,7 @@ public class FileSystemAccessWrapper {
 	private static final boolean OVERWRITE_EXISITING_FILES = true;	
 	/** A simple regular expression.. to prevent album names whose folders of the same name cause problems on the filesystem
 	 * Minimum length is 3 alphanumeric characters possibly white spaces, underscores (u005F) hyphen_minuses (u002D). */
-	private static final String albumNameRegex = "^(\\w|\\u005F|\\s|\\u002D){3,}$";
+	private static final String ALBUM_NAME_REGEX = "^(\\w|\\u005F|\\s|\\u002D){3,}$";
 	
 	/** Creates the directory using the specified path. All errors that might occur will be logged 
 	 * @param directoryPath the complete (absolute) directory path. E.g. /home/user/folder1
@@ -529,7 +529,7 @@ public class FileSystemAccessWrapper {
 	/** This method tests whether the given album name could be used to create a picture folder having the same name 
 	 * @return if the albumName can be used to create a picture folder, false otherwise*/
 	public static boolean isSAlbumNameFileSystemCompliant(String albumName) {
-		if (!albumName.matches(albumNameRegex)) {
+		if (!albumName.matches(ALBUM_NAME_REGEX)) {
 			return false;
 		}
 		

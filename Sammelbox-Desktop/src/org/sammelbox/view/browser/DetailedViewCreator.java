@@ -27,7 +27,10 @@ import org.sammelbox.model.album.AlbumItemStore;
 import org.sammelbox.view.ApplicationUI;
 import org.sammelbox.view.UIConstants;
 
-public class DetailedViewCreator {	
+public final class DetailedViewCreator {	
+	private DetailedViewCreator() {
+	}
+	
 	static void showDetailedAlbum(Browser browser) {
 		// Exit if no album is selected
 		if (!ApplicationUI.isAlbumSelectedAndShowMessageIfNot()) {

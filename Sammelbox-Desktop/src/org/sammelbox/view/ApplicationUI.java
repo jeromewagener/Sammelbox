@@ -63,12 +63,12 @@ import org.sammelbox.view.various.PanelType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ApplicationUI implements Observer {
+public final class ApplicationUI implements Observer {
 	private final static Logger LOGGER = LoggerFactory.getLogger(ApplicationUI.class);
 	/** A reference to the main display */
-	private final static Display display = new Display();
+	private final static Display DISPLAY = new Display();
 	/** A reference to the main shell */
-	private final static Shell shell = new Shell(display);
+	private final static Shell SHELL = new Shell(DISPLAY);
 	
 	/** A reference to the SWT list containing all available albums */
 	private static List albumList;
@@ -85,7 +85,7 @@ public class ApplicationUI implements Observer {
 	/** A reference to the SWT album item browser listener*/
 	private static BrowserListener albumItemBrowserListener;
 	/** The panel type that is currently visible on the right of the main three panel composite */
-	private static PanelType currentRightPanelType = PanelType.Empty;
+	private static PanelType currentRightPanelType = PanelType.EMPTY;
 	/** An instance in order to register as an observer to event observable */
 	private static ApplicationUI instance = null;
 	
@@ -126,7 +126,7 @@ public class ApplicationUI implements Observer {
 		shell.setLayout(shellGridLayout);
 		
 		// center the shell to primary screen
-		Monitor primaryMonitor = display.getPrimaryMonitor();
+		Monitor primaryMonitor = DISPLAY.getPrimaryMonitor();
 		Rectangle primaryMonitorBounds = primaryMonitor.getClientArea();
 		int totalPrimaryScreenWidth = primaryMonitorBounds.x + (int) (primaryMonitorBounds.width / (float) getNumberOfScreens());
 		int totalPrimaryScreenHeight = primaryMonitorBounds.y + primaryMonitorBounds.height;
@@ -187,7 +187,7 @@ public class ApplicationUI implements Observer {
 		lowerLeftSubComposite = EmptySidepane.build(leftComposite);		
 		lowerLeftSubComposite.setLayoutData(gridDataForLowerLeftComposite);
 		albumItemBrowserListener = new BrowserListener(threePanelComposite);
-		centerComposite = BrowserComposite.getBrowserComposite(threePanelComposite, albumItemBrowserListener);
+		centerComposite = BrowserComposite.build(threePanelComposite, albumItemBrowserListener);
 		centerComposite.setLayout(new GridLayout(1, false));
 		centerComposite.setLayoutData(gridDataForCenterComposite);
 		rightComposite = EmptySidepane.build(threePanelComposite);
@@ -213,7 +213,7 @@ public class ApplicationUI implements Observer {
 		// SWT display management
 		shell.pack();
 
-		Rectangle displayClientArea = display.getPrimaryMonitor().getClientArea();
+		Rectangle displayClientArea = DISPLAY.getPrimaryMonitor().getClientArea();
 		if (maximizeShellOnStartUp(displayClientArea.width, displayClientArea.height)){
 			shell.setMaximized(true);
 		}
@@ -223,12 +223,12 @@ public class ApplicationUI implements Observer {
 		selectDefaultAndShowWelcomePage();		
 
 		while (!shell.isDisposed()) {
-			if (!display.readAndDispatch()) {
-				display.sleep();
+			if (!DISPLAY.readAndDispatch()) {
+				DISPLAY.sleep();
 			}
 		}
 
-		display.dispose();
+		DISPLAY.dispose();
 	
 		try {
 			DatabaseIntegrityManager.backupAutoSave();
@@ -281,15 +281,15 @@ public class ApplicationUI implements Observer {
 
 	public static HashMap<PanelType, Integer> panelTypeToPixelSize = new HashMap<PanelType, Integer>() {
 		private static final long serialVersionUID = 1L;	{
-			put(PanelType.Empty, UIConstants.RIGHT_PANEL_NO_WIDTH);
-			put(PanelType.AddAlbum, UIConstants.RIGHT_PANEL_LARGE_WIDTH);
-			put(PanelType.AddEntry, UIConstants.RIGHT_PANEL_LARGE_WIDTH);
-			put(PanelType.AdvancedSearch, UIConstants.RIGHT_PANEL_LARGE_WIDTH);
-			put(PanelType.AlterAlbum, UIConstants.RIGHT_PANEL_LARGE_WIDTH);
-			put(PanelType.Synchronization, UIConstants.RIGHT_PANEL_MEDIUM_WIDTH);
-			put(PanelType.UpdateEntry, UIConstants.RIGHT_PANEL_LARGE_WIDTH);
-			put(PanelType.Help, UIConstants.RIGHT_PANEL_SMALL_WIDTH);
-			put(PanelType.Settings, UIConstants.RIGHT_PANEL_LARGE_WIDTH);
+			put(PanelType.EMPTY, UIConstants.RIGHT_PANEL_NO_WIDTH);
+			put(PanelType.ADD_ALBUM, UIConstants.RIGHT_PANEL_LARGE_WIDTH);
+			put(PanelType.ADD_ENTRY, UIConstants.RIGHT_PANEL_LARGE_WIDTH);
+			put(PanelType.ADVANCED_SEARCH, UIConstants.RIGHT_PANEL_LARGE_WIDTH);
+			put(PanelType.ALTER_ALBUM, UIConstants.RIGHT_PANEL_LARGE_WIDTH);
+			put(PanelType.SYNCHRONIZATION, UIConstants.RIGHT_PANEL_MEDIUM_WIDTH);
+			put(PanelType.UPDATE_ENTRY, UIConstants.RIGHT_PANEL_LARGE_WIDTH);
+			put(PanelType.HELP, UIConstants.RIGHT_PANEL_SMALL_WIDTH);
+			put(PanelType.SETTINGS, UIConstants.RIGHT_PANEL_LARGE_WIDTH);
 		}
 	};
 
@@ -442,7 +442,7 @@ public class ApplicationUI implements Observer {
 	}
 
 	public static Shell getShell() {
-		return shell;
+		return SHELL;
 	}
 	
 	/**

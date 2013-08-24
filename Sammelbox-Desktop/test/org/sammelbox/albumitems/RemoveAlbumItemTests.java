@@ -99,8 +99,8 @@ public class RemoveAlbumItemTests {
 	private void createDVDAlbum() {
 		final String albumName = DVD_ALBUM_NAME;
 
-		MetaItemField DVDTitleField = new MetaItemField(DVD_TITLE_FIELD_NAME, FieldType.Text, true);
-		MetaItemField actorField = new MetaItemField("Actors", FieldType.Text, true);
+		MetaItemField DVDTitleField = new MetaItemField(DVD_TITLE_FIELD_NAME, FieldType.TEXT, true);
+		MetaItemField actorField = new MetaItemField("Actors", FieldType.TEXT, true);
 
 		List<MetaItemField> columns = new ArrayList<MetaItemField>();
 		columns.add(DVDTitleField);
@@ -118,8 +118,8 @@ public class RemoveAlbumItemTests {
 
 		AlbumItem item = new AlbumItem(albumName);
 		List<ItemField> fields = new ArrayList<ItemField>();
-		fields.add( new ItemField(DVD_TITLE_FIELD_NAME, FieldType.Text, DVD_TITLE_FIELD_VALUE));
-		fields.add( new ItemField("Actors", FieldType.Text, "actor 1"));
+		fields.add( new ItemField(DVD_TITLE_FIELD_NAME, FieldType.TEXT, DVD_TITLE_FIELD_VALUE));
+		fields.add( new ItemField("Actors", FieldType.TEXT, "actor 1"));
 		item.setFields(fields);
 		
 		try {
@@ -130,8 +130,8 @@ public class RemoveAlbumItemTests {
 
 		item = new AlbumItem(albumName);
 		fields = new ArrayList<ItemField>();
-		fields.add(new ItemField(DVD_TITLE_FIELD_NAME, FieldType.Text, "dvd title 2"));
-		fields.add(new ItemField("Actors", FieldType.Text, "actor 2"));
+		fields.add(new ItemField(DVD_TITLE_FIELD_NAME, FieldType.TEXT, "dvd title 2"));
+		fields.add(new ItemField("Actors", FieldType.TEXT, "actor 2"));
 		item.setFields(fields);
 		
 		try {

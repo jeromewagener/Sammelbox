@@ -64,7 +64,7 @@ public class DatabaseIntegrityManager {
 			return savepointName;
 		} catch (SQLException e) {
 			LOGGER.error("Creating the savepoint {} failed", savepointName);
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE, e);
 		}
 	}
 	
@@ -81,14 +81,14 @@ public class DatabaseIntegrityManager {
 	
 		if (savepointName == null || savepointName.isEmpty()){
 			LOGGER.error("The savepoint could not be released since the name string is null or empty");
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE);
 		}
 		
 		try (PreparedStatement releaseSavepointStatement = ConnectionManager.getConnection().prepareStatement("RELEASE SAVEPOINT " + DatabaseStringUtilities.encloseNameWithQuotes(savepointName));){			
 			releaseSavepointStatement.execute();
 		} catch (SQLException e) {
 			LOGGER.error("Releasing the savepoint {} failed", savepointName);
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState, e);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE, e);
 		}
 	}
 	
@@ -101,7 +101,7 @@ public class DatabaseIntegrityManager {
 	
 		if (savepointName == null || savepointName.isEmpty()){
 			LOGGER.error("The savepoint could not be rolledback to since the name string is null or empty");
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE);
 		}	
 	
 		try (PreparedStatement rollbackToSavepointStatement = ConnectionManager.getConnection().prepareStatement(
@@ -109,7 +109,7 @@ public class DatabaseIntegrityManager {
 			rollbackToSavepointStatement.execute();
 		} catch (SQLException e) {
 			LOGGER.error("Rolling back the savepoint {} failed", savepointName);
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState,e);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE,e);
 		}
 	}
 	
@@ -133,14 +133,14 @@ public class DatabaseIntegrityManager {
 			String excludeRegex = "^\\.lock$|^" + FileSystemLocations.DATABASE_NAME + "$"; 
 			FileSystemAccessWrapper.copyDirectory(sourceAppDataDir, tempAppDataDir, excludeRegex);
 		} catch (IOException e) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState,e);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE,e);
 		}
 	
 		// backup database to file
 		try (Statement statement = ConnectionManager.getConnection().createStatement()){				
 			statement.executeUpdate("backup to '" + tempDir.getPath() + File.separatorChar + FileSystemLocations.DATABASE_TO_RESTORE_NAME + "'");
 		} catch (SQLException e) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState,e);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE,e);
 		}
 	
 		// zip the whole temp folder
@@ -167,19 +167,19 @@ public class DatabaseIntegrityManager {
 				DatabaseIntegrityManager.lastChangeTimeStampInMS = System.currentTimeMillis();
 			}
 		} catch (SQLException e) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState,e);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE,e);
 		}
 	
 		if ( !FileSystemAccessWrapper.deleteDatabaseRestoreFile() ) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE);
 		}
 	
 		if ( !FileSystemAccessWrapper.updateSammelboxFileStructure() ) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE);
 		}
 	
 		if ( !FileSystemAccessWrapper.updateAlbumFileStructure(ConnectionManager.getConnection()) ) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE);
 		}
 		
 		// Update timestamp
@@ -230,18 +230,18 @@ public class DatabaseIntegrityManager {
 		try {
 			fileName = autoSaveFile.getCanonicalFile().getName();
 		} catch (IOException e) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE, e);
 		}
 		
 		if ( !fileName.matches(DatabaseIntegrityManager.AUTO_SAVE_FILE_REGEX) ) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE);
 		}
 		
 		try {
 			long databaseChangeTimeStamp = Long.parseLong(fileName.substring(fileName.indexOf("_") + 1, fileName.indexOf(".")));
 			return databaseChangeTimeStamp;
 		} catch (NumberFormatException e) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithCleanState, e);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE, e);
 		}
 	}
 	
@@ -275,7 +275,7 @@ public class DatabaseIntegrityManager {
 				FileSystemAccessWrapper.copyFile(new File(FileSystemLocations.getDatabaseFile()), new File(autoSaveFilePath));
 			} catch (IOException e) {
 				LOGGER.error("Autosave - backup failed");
-				throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState, e);
+				throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE, e);
 			}
 		} else {// Autosaves detected
 	
@@ -290,7 +290,7 @@ public class DatabaseIntegrityManager {
 				if (oldestAutoSave.exists()) {
 					if (!oldestAutoSave.delete()){
 						LOGGER.error("Autosave - cannot delete old autosave");
-						throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState);
+						throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE);
 					}
 				}
 			}
@@ -300,7 +300,7 @@ public class DatabaseIntegrityManager {
 				FileSystemAccessWrapper.copyFile(new File(FileSystemLocations.getDatabaseFile()), new File(autoSaveFilePath));
 			} catch (IOException e) {
 				LOGGER.error("Autosave - backup failed");
-				throw new DatabaseWrapperOperationException(DBErrorState.ErrorWithDirtyState, e);
+				throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE, e);
 			}
 		}
 	}

@@ -34,8 +34,11 @@ import org.sammelbox.view.UIConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class GalleryViewCreator {
+public final class GalleryViewCreator {
 	private final static Logger LOGGER = LoggerFactory.getLogger(GalleryViewCreator.class);
+	
+	private GalleryViewCreator() {
+	}
 	
 	static void showOverviewAlbum(Browser browser) {
 		StringBuilder galleryItemHtmlBuilder = new StringBuilder();

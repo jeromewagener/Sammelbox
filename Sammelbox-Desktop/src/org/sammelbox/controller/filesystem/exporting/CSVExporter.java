@@ -35,6 +35,9 @@ import org.slf4j.LoggerFactory;
 public class CSVExporter {
 	private final static Logger LOGGER = LoggerFactory.getLogger(CSVExporter.class);
 	
+	private CSVExporter() {
+	}
+	
 	public static void exportVisibleItems(String filepath) {
 		List<AlbumItem> visibleAlbumItems = AlbumItemStore.getAllVisibleAlbumItems();
 		
@@ -51,7 +54,7 @@ public class CSVExporter {
 					// do not show ID either
 				}
 				else {
-					if (albumItem.getField(i).getType().equals(FieldType.Option)) {
+					if (albumItem.getField(i).getType().equals(FieldType.OPTION)) {
 						if (firstLine) {
 							headerBuilder.append(albumItem.getField(i).getName());
 							

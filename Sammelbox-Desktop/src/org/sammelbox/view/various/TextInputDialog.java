@@ -30,7 +30,6 @@ import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-
 public class TextInputDialog extends Dialog {
 	/** Stores the value which is eventually entered */
 	private String value = null;

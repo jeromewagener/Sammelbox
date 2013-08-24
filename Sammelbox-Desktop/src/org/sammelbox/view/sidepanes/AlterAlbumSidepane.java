@@ -55,8 +55,12 @@ import org.sammelbox.view.various.TextInputDialog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AlterAlbumSidepane {
+public final class AlterAlbumSidepane {
 	private final static Logger LOGGER = LoggerFactory.getLogger(AlterAlbumSidepane.class);
+	
+	private AlterAlbumSidepane() {
+		// use build method instead
+	}
 	
 	/** Returns an "alter album" composite. This composite provides the user interface to alter an existing album. Meaning that an 
 	 * album name can be renamed, fields can be removed, fields can be added etc.. This composite is created based on an an existing

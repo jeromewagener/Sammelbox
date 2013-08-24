@@ -70,16 +70,16 @@ public class AddAlbumItemTests {
 		AlbumItem item = new AlbumItem(albumName);
 
 		List<ItemField> fields = new ArrayList<ItemField>();
-		fields.add( new ItemField("Book Title", FieldType.Text, "book title"));
-		fields.add( new ItemField("Author", FieldType.Text, "the author"));
-		fields.add( new ItemField("Purchased", FieldType.Date, new Date(System.currentTimeMillis())));
-		fields.add( new ItemField("Price", FieldType.Decimal, 4.2d));
-		fields.add( new ItemField("Lent to", FieldType.Text, "some random name"));
-		fields.add( new ItemField("In Stock", FieldType.Option, OptionType.NO));
-		fields.add( new ItemField("Rating", FieldType.StarRating, StarRating.FiveStars));
+		fields.add( new ItemField("Book Title", FieldType.TEXT, "book title"));
+		fields.add( new ItemField("Author", FieldType.TEXT, "the author"));
+		fields.add( new ItemField("Purchased", FieldType.DATE, new Date(System.currentTimeMillis())));
+		fields.add( new ItemField("Price", FieldType.DECIMAL, 4.2d));
+		fields.add( new ItemField("Lent to", FieldType.TEXT, "some random name"));
+		fields.add( new ItemField("In Stock", FieldType.OPTION, OptionType.NO));
+		fields.add( new ItemField("Rating", FieldType.STAR_RATING, StarRating.FIVE_STARS));
 		String url = "http://www.example.com";
 		fields.add( new ItemField("Publisher Website", FieldType.URL, url));
-		fields.add( new ItemField("Time Stamp", FieldType.Time, new Time(System.currentTimeMillis())));
+		fields.add( new ItemField("Time Stamp", FieldType.TIME, new Time(System.currentTimeMillis())));
 
 		item.setFields(fields);
 		item.setContentVersion(UUID.randomUUID());
@@ -118,16 +118,16 @@ public class AddAlbumItemTests {
 
 		AlbumItem item = new AlbumItem(albumName);
 		List<ItemField> fields = new ArrayList<ItemField>();
-		fields.add( new ItemField("Book Title", FieldType.Text, "book title"));
-		fields.add( new ItemField("Author", FieldType.Text, "the author"));
-		fields.add( new ItemField("Purchased", FieldType.Date, new Date(System.currentTimeMillis())));
-		fields.add( new ItemField("Price", FieldType.Decimal, 4.2d));
-		fields.add( new ItemField("Lent to", FieldType.Text, "some random name"));
-		fields.add( new ItemField("In Stock", FieldType.Option, OptionType.NO));
-		fields.add( new ItemField("Rating", FieldType.StarRating, StarRating.FiveStars));
+		fields.add( new ItemField("Book Title", FieldType.TEXT, "book title"));
+		fields.add( new ItemField("Author", FieldType.TEXT, "the author"));
+		fields.add( new ItemField("Purchased", FieldType.DATE, new Date(System.currentTimeMillis())));
+		fields.add( new ItemField("Price", FieldType.DECIMAL, 4.2d));
+		fields.add( new ItemField("Lent to", FieldType.TEXT, "some random name"));
+		fields.add( new ItemField("In Stock", FieldType.OPTION, OptionType.NO));
+		fields.add( new ItemField("Rating", FieldType.STAR_RATING, StarRating.FIVE_STARS));
 		String url = "http://www.example.com";
 		fields.add( new ItemField("Publisher Website", FieldType.URL, url));
-		fields.add( new ItemField("Time Stamp", FieldType.Time, new Time(System.currentTimeMillis())));
+		fields.add( new ItemField("Time Stamp", FieldType.TIME, new Time(System.currentTimeMillis())));
 		item.setFields(fields);
 		
 		try {
@@ -166,16 +166,16 @@ public class AddAlbumItemTests {
 
 		AlbumItem item = new AlbumItem(albumName);
 		List<ItemField> fields = new ArrayList<ItemField>();
-		fields.add( new ItemField("Book Title", FieldType.Text, "book's title"));
-		fields.add( new ItemField("Author", FieldType.Text, "the author"));
-		fields.add( new ItemField("Purchased", FieldType.Date, new Date(System.currentTimeMillis())));
-		fields.add( new ItemField("Price", FieldType.Decimal, 4.2d));
-		fields.add( new ItemField("Lent to", FieldType.Text, "some random name"));
-		fields.add( new ItemField("In Stock", FieldType.Option, OptionType.NO));
-		fields.add( new ItemField("Rating", FieldType.StarRating, StarRating.FiveStars));
+		fields.add( new ItemField("Book Title", FieldType.TEXT, "book's title"));
+		fields.add( new ItemField("Author", FieldType.TEXT, "the author"));
+		fields.add( new ItemField("Purchased", FieldType.DATE, new Date(System.currentTimeMillis())));
+		fields.add( new ItemField("Price", FieldType.DECIMAL, 4.2d));
+		fields.add( new ItemField("Lent to", FieldType.TEXT, "some random name"));
+		fields.add( new ItemField("In Stock", FieldType.OPTION, OptionType.NO));
+		fields.add( new ItemField("Rating", FieldType.STAR_RATING, StarRating.FIVE_STARS));
 		String url = "http://www.example.com";
 		fields.add( new ItemField("Publisher Website", FieldType.URL, url));
-		fields.add( new ItemField("Time Stamp", FieldType.Time, new Time(System.currentTimeMillis())));
+		fields.add( new ItemField("Time Stamp", FieldType.TIME, new Time(System.currentTimeMillis())));
 		item.setFields(fields);
 		
 		try {
@@ -209,15 +209,15 @@ public class AddAlbumItemTests {
 
 	private void createBooksAlbum() {
 		final String albumName = "Books";
-		MetaItemField titleField = new MetaItemField("Book Title", FieldType.Text, true);
-		MetaItemField authorField = new MetaItemField("Author", FieldType.Text, true);
-		MetaItemField purchaseField = new MetaItemField("Purchased", FieldType.Date, false);
-		MetaItemField priceField = new MetaItemField("Price", FieldType.Decimal, false);
-		MetaItemField lenttoField = new MetaItemField("Lent to", FieldType.Text, false);
-		MetaItemField inStock = new MetaItemField("In Stock", FieldType.Option, false);
-		MetaItemField rating = new MetaItemField("Rating", FieldType.StarRating, false);
+		MetaItemField titleField = new MetaItemField("Book Title", FieldType.TEXT, true);
+		MetaItemField authorField = new MetaItemField("Author", FieldType.TEXT, true);
+		MetaItemField purchaseField = new MetaItemField("Purchased", FieldType.DATE, false);
+		MetaItemField priceField = new MetaItemField("Price", FieldType.DECIMAL, false);
+		MetaItemField lenttoField = new MetaItemField("Lent to", FieldType.TEXT, false);
+		MetaItemField inStock = new MetaItemField("In Stock", FieldType.OPTION, false);
+		MetaItemField rating = new MetaItemField("Rating", FieldType.STAR_RATING, false);
 		MetaItemField publisherWebsite = new MetaItemField("Publisher Website", FieldType.URL, false);
-		MetaItemField timeStamp = new MetaItemField("Time Stamp", FieldType.Time, false);
+		MetaItemField timeStamp = new MetaItemField("Time Stamp", FieldType.TIME, false);
 
 		List<MetaItemField> columns = new ArrayList<MetaItemField>();
 		columns.add(titleField);
