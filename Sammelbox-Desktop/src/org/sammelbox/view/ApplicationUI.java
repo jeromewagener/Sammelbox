@@ -18,6 +18,7 @@
 
 package org.sammelbox.view;
 
+import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.HeadlessException;
 import java.util.HashMap;
@@ -125,15 +126,6 @@ public final class ApplicationUI implements Observer {
 		shell.setText(Translator.get(DictKeys.TITLE_MAIN_WINDOW));				
 		shell.setLayout(shellGridLayout);
 		
-		// center the shell to primary screen
-		Monitor primaryMonitor = DISPLAY.getPrimaryMonitor();
-		Rectangle primaryMonitorBounds = primaryMonitor.getClientArea();
-		int totalPrimaryScreenWidth = primaryMonitorBounds.x + (int) (primaryMonitorBounds.width / (float) getNumberOfScreens());
-		int totalPrimaryScreenHeight = primaryMonitorBounds.y + primaryMonitorBounds.height;
-		int xCoordinateForShell = totalPrimaryScreenWidth / 2 - UIConstants.MIN_SHELL_WIDTH / 2;
-		int yCoordinateForShell = totalPrimaryScreenHeight / 2 - UIConstants.MIN_SHELL_HEIGHT / 2;
-		shell.setLocation(xCoordinateForShell, yCoordinateForShell);
-
 		// define toolbar composite layout data
 		GridData gridDataForToolbarComposite = new GridData(GridData.FILL_BOTH);
 		gridDataForToolbarComposite.grabExcessHorizontalSpace = true;
@@ -200,7 +192,13 @@ public final class ApplicationUI implements Observer {
 
 		// Create the menu bar
 		MenuManager.createAndInitializeMenuBar(shell);
-		
+
+		// center the shell to primary screen
+		Rectangle primaryScreenClientArea = getPrimaryScreenClientArea();
+		int xCoordinateForShell = primaryScreenClientArea.width / 2 - shell.getBounds().width / 2;
+		int yCoordinateForShell = primaryScreenClientArea.height / 2 - shell.getBounds().height / 2;
+		shell.setLocation(xCoordinateForShell, yCoordinateForShell);
+
 		// Create the album manager
 		AlbumManager.initialize();
 		for (String albumName : AlbumManager.getAlbums()) {
@@ -491,5 +489,35 @@ public final class ApplicationUI implements Observer {
 			return false;
 		}
 		return true;
+	}
+	
+	private static Rectangle getPrimaryScreenClientArea() {
+		Monitor primaryMonitorBySwt = DISPLAY.getPrimaryMonitor();
+		Rectangle primaryMonitorClientAreaBySwt = primaryMonitorBySwt.getClientArea();
+		GraphicsDevice[]screens =  GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
+		  for (GraphicsDevice screen : screens) {
+			  if (isPrimaryMonitor(screen)) {
+				  // Cut off any excess area such as OS task-bars. 
+				 Rectangle primaryScreenBoundsByJava = new Rectangle(	screen.getDefaultConfiguration().getBounds().x,
+																	   	screen.getDefaultConfiguration().getBounds().y,
+																	   	screen.getDefaultConfiguration().getBounds().width,
+																		screen.getDefaultConfiguration().getBounds().height);
+				  return primaryMonitorClientAreaBySwt.intersection(primaryScreenBoundsByJava);				 
+			  } 			 
+		  }
+		  
+		  // No primary screen has been found by java, use SWT to get clientArea of PrimaryScreen as fallback.
+		  return primaryMonitorClientAreaBySwt;
+	}	
+	
+	private static boolean isPrimaryMonitor(GraphicsDevice screen) {
+		java.awt.Rectangle screenBounds = screen.getDefaultConfiguration().getBounds();
+		
+		// If the top left corner of the screen is (0,0) that means we consider it the primary screen.
+		// The x,y might be negative too depending on the virtual screens.
+		if (screenBounds.getX() == 0 && screenBounds.getY() == 0) {
+			return true;
+		}
+		return false;
 	}
 }
