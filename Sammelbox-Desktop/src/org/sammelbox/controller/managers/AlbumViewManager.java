@@ -106,6 +106,10 @@ public class AlbumViewManager {
 	public static boolean hasViewWithName(String albumName, String viewName) {
 		List<AlbumView> albumViews = albumNamesToAlbumViews.get(albumName);
 		
+		if (albumViews == null) {
+			return false;
+		}
+		
 		for (AlbumView albumView : albumViews) {
 			if (albumView.name.equals(viewName)) {
 				return true;
