@@ -37,7 +37,7 @@ public class UIConstants {
 	public static final int MIN_SHELL_HEIGHT = 700;
 	
 	// ------------------ Browser Constants ------------------
-	public static final String STYLE_CSS = "file://"+ FileSystemLocations.getAppDataDir() + File.separatorChar + "style.css";
+	public static final String STYLE_CSS = "file://" + FileSystemLocations.getStyleCSS();
 	public static final String EFFECTS_JS = "file://" + FileSystemLocations.getAppDataDir() + File.separatorChar + "effects.js";
 	public static final String META_PARAMS = "http-equiv=\"X-UA-Compatible\" content=\"IE=9\" charset=\"utf-8\"";
 	

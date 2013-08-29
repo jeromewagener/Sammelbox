@@ -92,7 +92,7 @@ public class FileSystemAccessWrapper {
 		extractResourceToFile("graphics/logo.png", FileSystemLocations.getLogoPNG());
 		extractResourceToFile("graphics/logo-small.png", FileSystemLocations.getLogoSmallPNG());
 		extractResourceToFile("javascript/effects.js", FileSystemLocations.getEffectsJS());
-		extractResourceToFile("stylesheets/style.css", FileSystemLocations.getStyleJS());
+		extractResourceToFile("stylesheets/style.css", FileSystemLocations.getStyleCSS());
 
 		// Add the lock file
 		try {
