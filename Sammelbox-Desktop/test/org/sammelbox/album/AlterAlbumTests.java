@@ -266,9 +266,9 @@ public class AlterAlbumTests {
 			assertTrue("The second column name should be 'Author'", metaDataItems.get(1).getName().equals("Author"));
 
 			assertTrue("Picture table for Books should exist", 
-					TestQueries.isDatabaseTableAvailable(DatabaseStringUtilities.generatePictureTableName("Books")));
+					TestQueries.isDatabaseTablePresent(DatabaseStringUtilities.generatePictureTableName("Books")));
 			assertTrue("Typeinfo table for Books should exist", 
-					TestQueries.isDatabaseTableAvailable(DatabaseStringUtilities.generateTypeInfoTableName("Books")));
+					TestQueries.isDatabaseTablePresent(DatabaseStringUtilities.generateTypeInfoTableName("Books")));
 			
 			MetaItemField authorMetaItemField = new MetaItemField("Author", FieldType.TEXT, false);
 			DatabaseOperations.removeAlbumItemField("Books", authorMetaItemField);
@@ -279,9 +279,9 @@ public class AlterAlbumTests {
 			}
 
 			assertTrue("Picture table for Books should still exist", 
-					TestQueries.isDatabaseTableAvailable(DatabaseStringUtilities.generatePictureTableName("Books")));
+					TestQueries.isDatabaseTablePresent(DatabaseStringUtilities.generatePictureTableName("Books")));
 			assertTrue("Typeinfo table for Books should still exist", 
-					TestQueries.isDatabaseTableAvailable(DatabaseStringUtilities.generateTypeInfoTableName("Books")));
+					TestQueries.isDatabaseTablePresent(DatabaseStringUtilities.generateTypeInfoTableName("Books")));
 			
 			assertTrue("The album item count incorrectly changed", 
 					originalAlbumItemCount == DatabaseOperations.getNumberOfItemsInAlbum("Books"));
@@ -324,11 +324,11 @@ public class AlterAlbumTests {
 			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
 			DatabaseOperations.renameAlbum("DVDs", "My DVD Collection");
 			
-			if (!TestQueries.isDatabaseTableAvailable("my_dvd_collection_typeinfo")) {
+			if (!TestQueries.isDatabaseTablePresent("my_dvd_collection_typeinfo")) {
 				fail("The typeinfo table should always be present");
 			}
 			
-			if (!TestQueries.isDatabaseTableAvailable("my_dvd_collection_pictures")) {
+			if (!TestQueries.isDatabaseTablePresent("my_dvd_collection_pictures")) {
 				fail("The picture table should always be present");
 			}
 		} catch (DatabaseWrapperOperationException e) {
@@ -346,7 +346,7 @@ public class AlterAlbumTests {
 			
 			DatabaseOperations.createNewAlbum("TestAlbum", fields, false);
 			
-			if (!TestQueries.isDatabaseTableAvailable("TestAlbum_pictures")) {
+			if (!TestQueries.isDatabaseTablePresent(DatabaseStringUtilities.generateTableName("TestAlbum"))) {
 				fail("The picture table should always be present");
 			}
 		} catch (DatabaseWrapperOperationException e) {
@@ -364,7 +364,7 @@ public class AlterAlbumTests {
 			
 			DatabaseOperations.createNewAlbum("Test Album 1", fields, false);
 			
-			if (!TestQueries.isDatabaseTableAvailable("test_album_1_pictures")) {
+			if (!TestQueries.isDatabaseTablePresent("test_album_1_pictures")) {
 				fail("The table name should be lower case and spaces should be replaced by underscores");
 			}
 		} catch (DatabaseWrapperOperationException e) {
@@ -386,7 +386,7 @@ public class AlterAlbumTests {
 			
 			// picture records should be removed while picture table should remain
 			assertTrue("Picture table should still exist", 
-					TestQueries.isDatabaseTableAvailable(DatabaseStringUtilities.generatePictureTableName("DVDs")));
+					TestQueries.isDatabaseTablePresent(DatabaseStringUtilities.generatePictureTableName("DVDs")));
 			assertTrue("DVDs no longer have pictures associated", !DatabaseOperations.isPictureAlbum("DVDs"));
 			assertTrue("There must be NO picture records since the picture functionality has been disabled", 
 					TestQueries.getNumberOfRecordsInTable(DatabaseStringUtilities.generatePictureTableName("DVDs")) == 0);
@@ -395,7 +395,7 @@ public class AlterAlbumTests {
 			DatabaseOperations.setAlbumPictureFunctionality("DVDs", true);
 			
 			assertTrue("Picture table should still exist", 
-					TestQueries.isDatabaseTableAvailable(DatabaseStringUtilities.generatePictureTableName("DVDs")));
+					TestQueries.isDatabaseTablePresent(DatabaseStringUtilities.generatePictureTableName("DVDs")));
 			assertTrue("DVDs must have pictures again", DatabaseOperations.isPictureAlbum("DVDs"));
 			
 			// add new pictures pictures to existing item

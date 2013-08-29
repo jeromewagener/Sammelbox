@@ -27,5 +27,6 @@ public enum PanelType {
 	ADVANCED_SEARCH,
 	SYNCHRONIZATION,
 	SETTINGS,
-	HELP
+	HELP,
+	IMPORT
 }

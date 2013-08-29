@@ -108,10 +108,14 @@ public final class ItemCreator {
 				}
 			} else if (fieldItem.getType().equals(FieldType.DATE)) {
 				java.sql.Date sqlDate = fieldItem.getValue();
-				java.util.Date utilDate = new java.util.Date(sqlDate.getTime());
-
-				SimpleDateFormat dateFormater = new SimpleDateFormat(SettingsManager.getSettings().getDateFormat());
-				htmlDataColumnContent.append(getFieldNameAndValueLine(fieldItem.getName(), dateFormater.format(utilDate)));
+				if (sqlDate != null) {
+					java.util.Date utilDate = new java.util.Date(sqlDate.getTime());
+	
+					SimpleDateFormat dateFormater = new SimpleDateFormat(SettingsManager.getSettings().getDateFormat());
+					htmlDataColumnContent.append(getFieldNameAndValueLine(fieldItem.getName(), dateFormater.format(utilDate)));
+				} else {
+					htmlDataColumnContent.append(getFieldNameAndValueLine(fieldItem.getName(), ""));
+				}
 			} else  if (fieldItem.getType().equals(FieldType.TEXT)) {
 				htmlDataColumnContent.append(getFieldNameAndValueLine(fieldItem.getName(), Utilities.escapeHtmlString((String) fieldItem.getValue())));
 			} else if (fieldItem.getType().equals(FieldType.INTEGER)) {

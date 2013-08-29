@@ -39,11 +39,11 @@ public class DatabaseOperations {
 	 * @param albumName The name of the album to be created.
 	 * @param fields The metadata fields describing the fields of the new album. Pass an empty list as argument
 	 * when creating an album with no fields.
-	 * @param hasAlbumPictures When set to true creates a single picture field in the album.
+	 * @param isPictureAlbum true indicates that this album may contain pictures and that the related flag in the master table should be set  
 	 * @throws DatabaseWrapperOperationException 
 	 */
-	public static void createNewAlbum(String albumName, List<MetaItemField> fields, boolean hasAlbumPictures) throws DatabaseWrapperOperationException {
-		CreateOperations.createNewAlbum(albumName, fields, hasAlbumPictures);
+	public static void createNewAlbum(String albumName, List<MetaItemField> fields, boolean isPictureAlbum) throws DatabaseWrapperOperationException {
+		CreateOperations.createNewAlbum(albumName, fields, isPictureAlbum);
 	}
 	
 	/**

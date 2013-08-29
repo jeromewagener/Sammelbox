@@ -40,6 +40,7 @@ import org.sammelbox.view.sidepanes.AdvancedSearchSidepane;
 import org.sammelbox.view.sidepanes.AlterAlbumSidepane;
 import org.sammelbox.view.sidepanes.CreateAlbumSidepane;
 import org.sammelbox.view.sidepanes.EmptySidepane;
+import org.sammelbox.view.sidepanes.ImportSidepane;
 import org.sammelbox.view.sidepanes.SettingsSidepane;
 import org.sammelbox.view.sidepanes.SynchronizeSidepane;
 import org.sammelbox.view.various.ComponentFactory;
@@ -57,21 +58,21 @@ public class MenuManager {
 		Menu menu = new Menu(ApplicationUI.getShell(), SWT.BAR);
 
 		// Create all the menu items for the bar menu
-		MenuItem collectorItem = new MenuItem(menu, SWT.CASCADE);
+		MenuItem sammelboxItem = new MenuItem(menu, SWT.CASCADE);
 		MenuItem albumItem = new MenuItem(menu, SWT.CASCADE);
 		MenuItem synchronizeItem = new MenuItem(menu, SWT.CASCADE);
 		MenuItem settingsItem = new MenuItem(menu, SWT.CASCADE);
 		MenuItem helpItem = new MenuItem(menu, SWT.CASCADE);
 
 		// Set the text labels for each of the main menu items
-		collectorItem.setText(Translator.get(DictKeys.MENU_COLLECTOR));
+		sammelboxItem.setText(Translator.get(DictKeys.MENU_COLLECTOR));
 		albumItem.setText(Translator.get(DictKeys.MENU_ALBUM));
 		synchronizeItem.setText(Translator.get(DictKeys.MENU_SYNCHRONIZE));
 		settingsItem.setText(Translator.get(DictKeys.MENU_SETTINGS));
 		helpItem.setText(Translator.get(DictKeys.MENU_HELP));
 
 		// Setup dropdown menus for the main menu items
-		createDropdownForCollectorItem(menu, collectorItem);
+		createDropdownForSammelboxItem(menu, sammelboxItem);
 		createDropdownForAlbumItem(menu, albumItem);
 		createDropdownSynchronizeItem(menu, synchronizeItem);
 		createDropdownSettingsItem(menu, settingsItem);
@@ -81,11 +82,21 @@ public class MenuManager {
 		ApplicationUI.getShell().setMenuBar(menu);
 	}
 	
-	private static void createDropdownForCollectorItem(Menu menu, MenuItem collectorItem) {
-		Menu collectorMenu = new Menu(menu);
-		collectorItem.setMenu(collectorMenu);
+	private static void createDropdownForSammelboxItem(Menu menu, MenuItem sammelboxItem) {
+		Menu sammelboxMenu = new Menu(menu);
+		sammelboxItem.setMenu(sammelboxMenu);
 
-		MenuItem exportItem = new MenuItem(collectorMenu, SWT.NONE);
+		MenuItem importItem = new MenuItem(sammelboxMenu, SWT.NONE);
+		importItem.setText(Translator.toBeTranslated("Import to new album"));
+		importItem.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent evt) {
+				ApplicationUI.changeRightCompositeTo(PanelType.IMPORT, ImportSidepane.build(
+						ApplicationUI.getThreePanelComposite()));
+			}
+		});
+		
+		MenuItem exportItem = new MenuItem(sammelboxMenu, SWT.NONE);
 		exportItem.setText(Translator.get(DictKeys.MENU_EXPORT_VISIBLE_ITEMS));
 		exportItem.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -113,9 +124,9 @@ public class MenuManager {
 			}
 		});
 		
-		new MenuItem(collectorMenu, SWT.SEPARATOR);
+		new MenuItem(sammelboxMenu, SWT.SEPARATOR);
 		
-		MenuItem backupItem = new MenuItem(collectorMenu, SWT.NONE);
+		MenuItem backupItem = new MenuItem(sammelboxMenu, SWT.NONE);
 		backupItem.setText(Translator.get(DictKeys.MENU_BACKUP_ALBUMS_TO_FILE));
 		backupItem.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -148,7 +159,7 @@ public class MenuManager {
 			}
 		});
 		
-		MenuItem restoreItem = new MenuItem(collectorMenu, SWT.NONE);
+		MenuItem restoreItem = new MenuItem(sammelboxMenu, SWT.NONE);
 		restoreItem.setText(Translator.get(DictKeys.MENU_RESTORE_ALBUM_FROM_FILE));
 		restoreItem.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -176,9 +187,9 @@ public class MenuManager {
 			}
 		});
 		
-		new MenuItem(collectorMenu, SWT.SEPARATOR);
+		new MenuItem(sammelboxMenu, SWT.SEPARATOR);
 		
-		MenuItem exitItem = new MenuItem(collectorMenu, SWT.NONE);
+		MenuItem exitItem = new MenuItem(sammelboxMenu, SWT.NONE);
 		exitItem.setText(Translator.get(DictKeys.MENU_EXIT));
 		exitItem.addSelectionListener(new SelectionAdapter() {
 			@Override
