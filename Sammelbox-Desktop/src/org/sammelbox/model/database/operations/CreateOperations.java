@@ -79,8 +79,8 @@ public final class CreateOperations {
 	 * @param fields The fields making up the new album content. Null if a temporary copy of the specified existing table should be made.
 	 * @param albumName The name of the album which is currently created
 	 * @param tableName The database name of the table to be created
-	 * @param albumHasPictures True indicates that this table may contain pictures and the related flag in the master table is set.   
 	 * @throws DatabaseWrapperOperationException 
+	 * @param albumHasPictures true indicates that this album may contain pictures and the related flag in the master table should be set  
 	 */
 	static void createNewAlbumTable(List<MetaItemField> fields, String albumName, String tableName, boolean albumHasPictures) throws DatabaseWrapperOperationException {
 		String typeInfoTableName = "";

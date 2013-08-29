@@ -285,7 +285,7 @@ public class AlbumItem {
 	
 	/**
 	 * Checks if all fields are valid according to field.isValid()
-	 * @return True if all fields are valid, false otherwise.
+	 * @return true if all fields are valid, false otherwise.
 	 */
 	public boolean isValid() {
 		for (ItemField field : fields) {

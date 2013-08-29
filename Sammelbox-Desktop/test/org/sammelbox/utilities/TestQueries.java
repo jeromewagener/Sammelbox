@@ -28,16 +28,20 @@ import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException.DBErrorState;
 
 public class TestQueries {
-	public static boolean isDatabaseTableAvailable(String tableName) {
-		String query = "SELECT * FROM " + tableName;
+	public static boolean isDatabaseTablePresent(String tableName) throws DatabaseWrapperOperationException {
+		String query = "SELECT name FROM sqlite_master WHERE type='table' AND name='" + tableName + "';";
 	
 		try (Statement statement = ConnectionManager.getConnection().createStatement();
 			 ResultSet resultSet = statement.executeQuery(query)) {
+			
+			while (resultSet.next()) {
+				return true;
+			}
 		} catch (SQLException e) {
-			return false;
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE, e);
 		}
 		
-		return true;
+		return false;
 	}
 	
 	public static long getNumberOfRecordsInTable(String tableName) throws DatabaseWrapperOperationException {

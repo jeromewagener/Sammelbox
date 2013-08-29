@@ -68,20 +68,20 @@ public final class SettingsSidepane {
 		// label header
 		ComponentFactory.getPanelHeaderComposite(settingsComposite, Translator.get(DictKeys.LABEL_SETTINGS));
 
-		Composite languageComposite = new Composite(settingsComposite, SWT.NONE);
-		languageComposite.setLayout(new GridLayout(2, false));
+		Composite innerComposite = new Composite(settingsComposite, SWT.NONE);
+		innerComposite.setLayout(new GridLayout(2, false));
 		
-		Label label = new Label(languageComposite, SWT.NONE);
+		Label label = new Label(innerComposite, SWT.NONE);
 		label.setText(Translator.get(DictKeys.LABEL_LANGUAGE));
 		
-		final Combo languageCombo = new Combo(languageComposite, SWT.READ_ONLY);
+		final Combo languageCombo = new Combo(innerComposite, SWT.READ_ONLY);
 		languageCombo.setItems(Language.allLanguages());
 		languageCombo.setText(Translator.getUsedLanguage().toString());
 		
-		Label defaultViewSelection = new Label(languageComposite, SWT.NONE);
+		Label defaultViewSelection = new Label(innerComposite, SWT.NONE);
 		defaultViewSelection.setText(Translator.toBeTranslated("Default View"));
 		
-		final Combo viewSelectionCombo = new Combo(languageComposite, SWT.READ_ONLY);
+		final Combo viewSelectionCombo = new Combo(innerComposite, SWT.READ_ONLY);
 		viewSelectionCombo.setItems(new String[] { Translator.toBeTranslated("Detailed View"), Translator.toBeTranslated("Gallery View")});
 		if (SettingsManager.getSettings().isDetailedViewDefault()) {
 			viewSelectionCombo.setText(Translator.toBeTranslated("Detailed View"));
@@ -89,10 +89,10 @@ public final class SettingsSidepane {
 			viewSelectionCombo.setText(Translator.toBeTranslated("Gallery View"));
 		}
 		
-		Label dateFormatSelection = new Label(languageComposite, SWT.NONE);
+		Label dateFormatSelection = new Label(innerComposite, SWT.NONE);
 		dateFormatSelection.setText(Translator.toBeTranslated("Date Format"));
 		
-		final Combo dateFormatSelectionCombo = new Combo(languageComposite, SWT.READ_ONLY);
+		final Combo dateFormatSelectionCombo = new Combo(innerComposite, SWT.READ_ONLY);
 		dateFormatSelectionCombo.setItems(new String[] { EUROPEAN_DOT, EUROPEAN_SLASH, AMERICAN_DOT, AMERICAN_SLASH});
 		
 		String definedDateFormat = SettingsManager.getSettings().getDateFormat();

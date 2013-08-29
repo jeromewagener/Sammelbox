@@ -86,12 +86,12 @@ public class CreateAlbumTests {
 		try {
 			List<MetaItemField> albumMetaFields = DatabaseOperations.getAlbumItemFieldNamesAndTypes(albumName);
 			Assert.assertTrue(albumMetaFields.containsAll(columns));
+			
+			assertTrue("Picture table should always be present", 
+					TestQueries.isDatabaseTablePresent(DatabaseStringUtilities.generatePictureTableName("Books")));
 		} catch (DatabaseWrapperOperationException e) {
 			fail("Creation of album" + albumName + "failed");
 		}				
-		
-		assertTrue("Picture table should always be present", 
-				TestQueries.isDatabaseTableAvailable(DatabaseStringUtilities.generatePictureTableName("Books")));
 	}
 	
 	@Test

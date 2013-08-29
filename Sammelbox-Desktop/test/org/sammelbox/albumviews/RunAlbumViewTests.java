@@ -75,7 +75,7 @@ public class RunAlbumViewTests {
 				
 				assertTrue("There should be two books about programming languages", AlbumItemStore.getAllAlbumItems().size() == 2);
 			} else {
-				
+				// FIXME why is this else empty??!
 			}
 			
 		} catch (DatabaseWrapperOperationException e) {
