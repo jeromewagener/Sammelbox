@@ -233,7 +233,7 @@ public class AddAlbumItemTests {
 		try {
 			DatabaseOperations.createNewAlbum(albumName, columns, true);
 		} catch (DatabaseWrapperOperationException e) {
-			fail("Creation of album"+ albumName + "failed");
+			fail("Creation of album " + albumName + " failed");
 		}
 	}	
 }

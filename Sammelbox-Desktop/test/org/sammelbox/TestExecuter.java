@@ -29,6 +29,7 @@ import org.sammelbox.album.BackupRestoreTests;
 import org.sammelbox.album.CreateAlbumTests;
 import org.sammelbox.album.RemoveAlbumTests;
 import org.sammelbox.albumitems.AddAlbumItemTests;
+import org.sammelbox.albumitems.AlbumItemPictureTests;
 import org.sammelbox.albumitems.RemoveAlbumItemTests;
 import org.sammelbox.albumitems.UpdateAlbumItemTests;
 import org.sammelbox.albumviews.GeneralAlbumViewTests;
@@ -52,7 +53,8 @@ import org.sammelbox.searching.QuickSearchTests;
 	AddAlbumItemTests.class,
 	RemoveAlbumItemTests.class,
 	UpdateAlbumItemTests.class,
-
+	AlbumItemPictureTests.class,
+	
 	GeneralAlbumViewTests.class,
 	ModifyAlbumViewTests.class,
 	RunAlbumViewTests.class,
@@ -70,7 +72,7 @@ public class TestExecuter {
 	public static final String PATH_TO_TEST_PICTURE_1 = 
 			System.getProperty("user.dir") + File.separatorChar + "res" + 
 					File.separator + "graphics"+
-					File.separatorChar + "placeholder1.png";
+					File.separatorChar + "placeholder.png";
 	
 	public static final String PATH_TO_TEST_PICTURE_2 = 
 			System.getProperty("user.dir") + File.separatorChar + "res" + 

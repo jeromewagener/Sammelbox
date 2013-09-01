@@ -30,12 +30,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class AlbumItem {
-	private final static Long ITEM_ID_UNDEFINED = Long.MAX_VALUE;
 	private final static Logger LOGGER = LoggerFactory.getLogger(AlbumItem.class);
+	public final static Long ITEM_ID_UNDEFINED = Long.MIN_VALUE;
 	
 	protected long itemId = ITEM_ID_UNDEFINED;
 	protected String albumName = "";
-	protected List<ItemField> fields;
+	protected List<ItemField> itemFields;
 	protected List<AlbumItemPicture> albumItemPictures;
 	protected UUID contentVersion;
 	
@@ -45,7 +45,7 @@ public class AlbumItem {
 	 */
 	public AlbumItem(String albumName) {
 		this.albumName = albumName;
-		fields = new LinkedList<ItemField>();
+		itemFields = new LinkedList<ItemField>();
 	}
 
 	/**
@@ -56,7 +56,7 @@ public class AlbumItem {
 	 */
 	public AlbumItem(String albumName, List<ItemField> itemFields) {
 		this.albumName = albumName;
-		fields = itemFields;
+		this.itemFields = itemFields;
 		
 		for (ItemField itemField : itemFields) {
 			if (itemField.getName().equals(DatabaseConstants.ID_COLUMN_NAME)) {
@@ -83,7 +83,12 @@ public class AlbumItem {
 	}
 	
 	public long getItemID() {
-		return getField(DatabaseConstants.ID_COLUMN_NAME).getValue();
+		ItemField albumItemIdField = getField(DatabaseConstants.ID_COLUMN_NAME);
+		if (albumItemIdField == null) {
+			return AlbumItem.ITEM_ID_UNDEFINED;
+		}
+		
+		return albumItemIdField.getValue();
 	}
 	
 	/**
@@ -93,7 +98,7 @@ public class AlbumItem {
 	 * @return The itemField with the specified name or null if not found.
 	 */
 	public ItemField getField(String fieldName) {
-		for (ItemField itemField : fields) {
+		for (ItemField itemField : itemFields) {
 			if (itemField.getName().equals(fieldName)) {
 				return itemField;
 			}
@@ -108,7 +113,7 @@ public class AlbumItem {
 	 * @return The itemField with the specified type or null if not found
 	 */
 	public ItemField getField(FieldType fieldType) {
-		for (ItemField itemField : fields) {
+		for (ItemField itemField : itemFields) {
 			if (itemField.getType().equals(fieldType)) {
 				return itemField;
 			}
@@ -123,7 +128,7 @@ public class AlbumItem {
 	 * @param value A java object representing the value of this field
 	 */
 	public void setFieldValue(String fieldName, Object value) {
-		for (ItemField itemField : fields) {
+		for (ItemField itemField : itemFields) {
 			if (itemField.getName().equals(fieldName)) {
 				itemField.setValue(value);
 			} else if (itemField.getName().equals(DatabaseConstants.ID_COLUMN_NAME)) {
@@ -138,7 +143,7 @@ public class AlbumItem {
 	 * @return The requested field.
 	 */
 	public ItemField getField(int fieldIndex) {
-		return fields.get(fieldIndex);
+		return itemFields.get(fieldIndex);
 	}
 	
 	/**
@@ -146,7 +151,7 @@ public class AlbumItem {
 	 * @return A Java List interface of ItemFields providing access to all fields.
 	 */
 	public List<ItemField> getFields() {
-		return fields;
+		return itemFields;
 	}
 
 	/**
@@ -155,7 +160,7 @@ public class AlbumItem {
 	 * @param fields A Java List interface of ItemFields specifying the fields of this item. 
 	 */
 	public void setFields(List<ItemField> fields) {
-		this.fields = fields;
+		this.itemFields = fields;
 		
 		for (ItemField itemField : fields) {
 			if (itemField.getName().equals(DatabaseConstants.ID_COLUMN_NAME)) {
@@ -170,7 +175,7 @@ public class AlbumItem {
 	 * @return True if all fields are valid according to ItemField.isValid(), false otherwise.
 	 */
 	public boolean areFieldsValid() {
-		for (ItemField itemField : fields) {
+		for (ItemField itemField : itemFields) {
 			if (!itemField.isValid()) {
 				return false;
 			}
@@ -187,7 +192,7 @@ public class AlbumItem {
 	 * greater importance.
 	 */
 	public void addField(String fieldName,  FieldType type, Object value, boolean quickSearchable) {
-		fields.add(new ItemField(fieldName, type, value, quickSearchable));
+		itemFields.add(new ItemField(fieldName, type, value, quickSearchable));
 		
 		if (fieldName.equals(DatabaseConstants.ID_COLUMN_NAME)) {
 			itemId = (Long) value;
@@ -196,13 +201,13 @@ public class AlbumItem {
 	
 	/**
 	 * Adds a field without the need to provide a list of all fields and manipulate them outside of the item class. The field 
-	 * won't be availble for the quicksearch feature. A convenience method.
+	 * won't be available for the quicksearch feature. A convenience method.
 	 * @param fieldName The field name under which the field will be stored. Should be unique among all fields.
 	 * @param type The FieldType of the field. IDs and Picture types should be used with care, due to internal use and special format.
 	 * @param value The Java object representing the value of the field. Must be compliant with the specified type.
 	 */
 	public void addField(String fieldName,  FieldType type, Object value) {
-		fields.add(new ItemField(fieldName, type, value));
+		itemFields.add(new ItemField(fieldName, type, value));
 	
 		if (fieldName.equals(DatabaseConstants.ID_COLUMN_NAME)) {
 			itemId = (Long) value;
@@ -215,7 +220,7 @@ public class AlbumItem {
 	 * The first index starts at 0, the next is 1 etc..
 	 */
 	public void removeField(int fieldIndex) {
-		fields.remove(fieldIndex);
+		itemFields.remove(fieldIndex);
 	}
 	
 	/**
@@ -225,24 +230,24 @@ public class AlbumItem {
 	 */
 	public void removeField(MetaItemField metaItemField) {
 		ItemField toRemove = null;
-		for (ItemField itemField : fields) {
+		for (ItemField itemField : itemFields) {
 			 MetaItemField tempMetaItemField = new MetaItemField(itemField.getName(), itemField.getType(), itemField.isQuickSearchable());	
 			if (tempMetaItemField.equals(metaItemField)) {
 				toRemove = itemField;
 			}
 		}
 		if (toRemove != null) {
-			fields.remove(toRemove);
+			itemFields.remove(toRemove);
 		}
 	}
 	
 	/**
-	 * Renames a field. Currently type changes are not permitted and wioll be ignored.
-	 * @param oldMetaItemField The metadata of the field before the rename. 
-	 * @param newMetaItemField The metadata of the field after the rename.
+	 * Renames a field. Currently type changes are not permitted and will be ignored.
+	 * @param oldMetaItemField The meta data of the field before the rename. 
+	 * @param newMetaItemField The meta data of the field after the rename.
 	 */
 	public void renameField(MetaItemField oldMetaItemField, MetaItemField newMetaItemField) {
-		for (ItemField itemField : fields) {
+		for (ItemField itemField : itemFields) {
 			 MetaItemField tempMetaItemField = new MetaItemField(itemField.getName(), itemField.getType(), itemField.isQuickSearchable());	
 			if (tempMetaItemField.equals(oldMetaItemField)) {
 				itemField.setName(newMetaItemField.getName());
@@ -257,7 +262,7 @@ public class AlbumItem {
 	 */
 	public void reorderField(MetaItemField metaItemField, MetaItemField moveAfterField) {
 		ItemField toMove = null;
-		for (ItemField itemField : fields) {
+		for (ItemField itemField : itemFields) {
 			MetaItemField tempMetaItemField = new MetaItemField(itemField.getName(), itemField.getType());	
 			if (tempMetaItemField.equals(metaItemField)) {
 				toMove = itemField;
@@ -265,13 +270,13 @@ public class AlbumItem {
 		}
 		
 		if (moveAfterField == null){
-			moveAfterField = fields.get(0);
+			moveAfterField = itemFields.get(0);
 		}
 		
-		int moveAfterIndex = fields.indexOf(moveAfterField);
+		int moveAfterIndex = itemFields.indexOf(moveAfterField);
 		if (toMove != null && moveAfterIndex != -1) {
-			fields.remove(toMove);
-			fields.add(moveAfterIndex<=fields.size() ? moveAfterIndex : fields.size()-1, toMove);
+			itemFields.remove(toMove);
+			itemFields.add(moveAfterIndex<=itemFields.size() ? moveAfterIndex : itemFields.size()-1, toMove);
 		}
 	}
 	
@@ -280,7 +285,7 @@ public class AlbumItem {
 	 * @param itemField The field specifying the field to be deleted. A equal test will be performed to locate the element if present. 
 	 */
 	public void removeField(ItemField itemField) {
-		fields.remove(itemField);
+		itemFields.remove(itemField);
 	}
 	
 	/**
@@ -288,7 +293,7 @@ public class AlbumItem {
 	 * @return true if all fields are valid, false otherwise.
 	 */
 	public boolean isValid() {
-		for (ItemField field : fields) {
+		for (ItemField field : itemFields) {
 			if (!field.isValid()) {
 				LOGGER.error("{}  is not valid!", field);
 				return false;
@@ -298,7 +303,7 @@ public class AlbumItem {
 	}
 
 	/**
-	 * Getter for the album name formatted for low level db interaction.
+	 * Getter for the album name formatted for low level database interaction.
 	 * @return The string representing the properly formatted album name.
 	 */
 	public String getDatabaseAlbumName() {
@@ -306,7 +311,7 @@ public class AlbumItem {
 	}
 	
 	/**
-	 * Getter for the album name formatted for low level db interaction.
+	 * Getter for the album name formatted for low level database interaction.
 	 * @param FieldName The field name.
 	 * @return The string representing the properly formatted field name.
 	 */
@@ -322,7 +327,7 @@ public class AlbumItem {
 		this.contentVersion = contentVersion;
 	}
 	
-	/** Loads the pictures associated with this album item from the database.*/
+	/** Loads the pictures associated with this album item from the database. */
 	public void loadPicturesFromDatabase() {
 		try {
 			setPictures(DatabaseOperations.getAlbumItemPictures(albumName, itemId));
@@ -337,8 +342,7 @@ public class AlbumItem {
 	}
 	
 	/** Returns the list of pictures associated with the album item
-	 * @return the list of pictures associated with the album item, or null if pictures are not supported by the album
-	 * */
+	 * @return the list of pictures associated with the album item, or null if pictures are not supported by the album */
 	public List<AlbumItemPicture> getPictures() {
 		if (albumItemPictures == null) {
 			loadPicturesFromDatabase();
@@ -348,8 +352,8 @@ public class AlbumItem {
 	}
 	
 	/** Returns the first picture associated with the album item 
-	 * @return the first picture associated with the album item, or null if pictures are not supported by the album
-	 * */
+	 * @return the first picture associated with the album item, or null if 
+	 * A) no picture is associated with the album item, B) pictures are generally not supported by the album */
 	public AlbumItemPicture getFirstPicture() {
 		if (albumItemPictures == null) {
 			loadPicturesFromDatabase();
