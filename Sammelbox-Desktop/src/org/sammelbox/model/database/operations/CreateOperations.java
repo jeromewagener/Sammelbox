@@ -366,12 +366,17 @@ public final class CreateOperations {
 		String savepointName = DatabaseIntegrityManager.createSavepoint();
 	
 		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(sb.toString())){
-			long idOfAddedItem = -1;
-
+			long idOfAddedItem = albumItem.getItemID() != AlbumItem.ITEM_ID_UNDEFINED ? albumItem.getItemID() : -1;
+			
 			// Replace the wildcard character '?' by the real type values
 			int parameterIndex = 1;
 			for (ItemField itemField : albumItem.getFields()) {	
 				String name = itemField.getName();
+				
+				if (itemField.getType().equals(FieldType.ID) && idOfAddedItem != AlbumItem.ITEM_ID_UNDEFINED) {
+					HelperOperations.setValueToPreparedStatement(preparedStatement, parameterIndex, itemField, albumItem.getAlbumName());
+				}
+				
 				if (!name.equalsIgnoreCase(DatabaseConstants.TYPE_INFO_COLUMN_NAME)) {					
 					HelperOperations.setValueToPreparedStatement(preparedStatement, parameterIndex, itemField, albumItem.getAlbumName());
 					parameterIndex++;
@@ -381,13 +386,16 @@ public final class CreateOperations {
 
 			// Retrieves the generated key used in the new  album item
 			preparedStatement.executeUpdate();
-			try(ResultSet generatedKeys = preparedStatement.getGeneratedKeys();) {
-				if (generatedKeys.next()) {
-					idOfAddedItem = generatedKeys.getLong(1);
+			
+			if (albumItem.getItemID() == AlbumItem.ITEM_ID_UNDEFINED ) {
+				try(ResultSet generatedKeys = preparedStatement.getGeneratedKeys();) {
+					if (generatedKeys.next()) {
+						idOfAddedItem = generatedKeys.getLong(1);
+					}
+				} catch (SQLException sqlEx) {
+					DatabaseIntegrityManager.rollbackToSavepoint(savepointName);
+					throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE, sqlEx);
 				}
-			} catch (SQLException sqlEx) {
-				DatabaseIntegrityManager.rollbackToSavepoint(savepointName);
-				throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE, sqlEx);
 			}
 			
 			// If possible (and demanded) store picture links

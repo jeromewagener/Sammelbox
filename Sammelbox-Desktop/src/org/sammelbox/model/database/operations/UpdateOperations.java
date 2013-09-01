@@ -181,10 +181,6 @@ public final class UpdateOperations {
 			DeleteOperations.dropTable(DatabaseStringUtilities.generateTableName(albumName));
 			DeleteOperations.dropTable(DatabaseStringUtilities.generateTypeInfoTableName(albumName));
 
-			// the following three columns are automatically created by createNewAlbumTable
-			newFields = removeFieldFromMetaItemList(new MetaItemField("id", FieldType.ID), newFields);
-			newFields = removeFieldFromMetaItemList(new MetaItemField(DatabaseConstants.TYPE_INFO_COLUMN_NAME, FieldType.ID), newFields);
-
 			// Create the new table pointing to new typeinfo
 			CreateOperations.createNewAlbumTable(newFields, albumName, 
 					DatabaseStringUtilities.encloseNameWithQuotes(DatabaseStringUtilities.generateTableName(albumName)), hasPictureField);

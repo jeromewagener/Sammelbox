@@ -86,6 +86,10 @@ public final class HelperOperations {
 				StarRating starRating = field.getValue();
 				preparedStatement.setInt(parameterIndex, starRating.getIntegerValue());		
 				break;
+			case ID:
+				Long longer = field.getValue();
+				preparedStatement.setLong(parameterIndex, longer);		
+				break;
 			case INTEGER: 
 				Integer	integer = field.getValue();
 				preparedStatement.setString(parameterIndex, integer.toString());		
