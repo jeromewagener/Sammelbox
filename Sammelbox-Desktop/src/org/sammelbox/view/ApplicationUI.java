@@ -20,7 +20,6 @@ package org.sammelbox.view;
 
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
-import java.awt.HeadlessException;
 import java.util.HashMap;
 
 import org.eclipse.swt.SWT;
@@ -96,16 +95,6 @@ public final class ApplicationUI implements Observer {
 
 	public void unregisterFromObservables() {
 		EventObservable.unregisterObserver(instance);
-	}
-	
-	private static int getNumberOfScreens() {
-		try {
-            GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
-            return env.getScreenDevices().length;
-        } catch (HeadlessException e) {
-            LOGGER.warn("Couldn't determine the number of screens. Assuming single screen.");
-            return 1;
-        }
 	}
 	
 	/** This method initializes the main user interface. This involves the creation of different sub-composites

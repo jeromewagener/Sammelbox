@@ -92,7 +92,7 @@ public final class HelperOperations {
 				break;
 			case INTEGER: 
 				Integer	integer = field.getValue();
-				preparedStatement.setString(parameterIndex, integer.toString());		
+				preparedStatement.setInt(parameterIndex, integer);		
 				break;
 			default:
 				break;
