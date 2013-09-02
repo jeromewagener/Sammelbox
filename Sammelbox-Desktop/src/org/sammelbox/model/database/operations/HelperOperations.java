@@ -58,8 +58,9 @@ public final class HelperOperations {
 		try {
 			switch (field.getType()) {
 			case TEXT: 
+				// We don't want whitespaces at the beginning or end of the string
 				String text = field.getValue();
-				preparedStatement.setString(parameterIndex, text);		
+				preparedStatement.setString(parameterIndex, text.trim());		
 				break;
 			case DECIMAL: 
 				Double real = field.getValue();
