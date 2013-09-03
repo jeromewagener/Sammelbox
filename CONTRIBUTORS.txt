@@ -1,1 +1,2 @@
+// Originally developed by Jérôme Wagener & Paul Bicheler
 // No one has contributed so far
