@@ -56,7 +56,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class AlterAlbumSidepane {
-	private final static Logger LOGGER = LoggerFactory.getLogger(AlterAlbumSidepane.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(AlterAlbumSidepane.class);
 	
 	private AlterAlbumSidepane() {
 		// use build method instead

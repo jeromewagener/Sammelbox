@@ -261,9 +261,9 @@ public class DatabaseIntegrityManager {
 				File.separator + "PERIODICAL_BACKUP_" + programVersion + "_"; // separator for the timestamp	
 	
 		List<File> previousAutoSaveList = getAllAutoSaves();
-		if(DatabaseIntegrityManager.autoSaveLimit<1) {			
+		if (DatabaseIntegrityManager.autoSaveLimit < 1) {			
 			return;
-		};
+		}
 	
 		if (previousAutoSaveList.isEmpty()) {
 			// When no changes were made then the timestamp is the current time

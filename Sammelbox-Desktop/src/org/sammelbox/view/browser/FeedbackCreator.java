@@ -32,7 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class FeedbackCreator {
-	private final static Logger LOGGER = LoggerFactory.getLogger(FeedbackCreator.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(FeedbackCreator.class);
 	
 	private FeedbackCreator() {
 	}

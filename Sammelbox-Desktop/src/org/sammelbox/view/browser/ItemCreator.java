@@ -39,7 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class ItemCreator {
-	private final static Logger LOGGER = LoggerFactory.getLogger(ItemCreator.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ItemCreator.class);
 	
 	private ItemCreator() {
 	}

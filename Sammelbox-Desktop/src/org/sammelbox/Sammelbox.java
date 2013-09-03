@@ -37,7 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class Sammelbox {
-	private final static Logger LOGGER = LoggerFactory.getLogger(Sammelbox.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(Sammelbox.class);
 	
 	private Sammelbox() {
 		// Sammelbox is launched using the main method

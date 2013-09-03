@@ -38,7 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class WelcomePageManager {
-	private final static Logger LOGGER = LoggerFactory.getLogger(WelcomePageManager.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(WelcomePageManager.class);
 	private static Map<String, Integer> albumAndViewsToClicks;
 	private static Map<String, Long> albumToLastModified;
 	

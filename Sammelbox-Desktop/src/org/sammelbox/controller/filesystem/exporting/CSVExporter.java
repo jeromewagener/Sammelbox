@@ -33,7 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class CSVExporter {
-	private final static Logger LOGGER = LoggerFactory.getLogger(CSVExporter.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(CSVExporter.class);
 	
 	private CSVExporter() {
 	}

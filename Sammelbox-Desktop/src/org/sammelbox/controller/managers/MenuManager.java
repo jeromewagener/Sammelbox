@@ -49,7 +49,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class MenuManager {
-	private final static Logger LOGGER = LoggerFactory.getLogger(ApplicationUI.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationUI.class);
 
 	/** This method creates and initializes the menu for the main user interface
 	 * @param shell the shell used to create the user interface */
@@ -258,7 +258,7 @@ public class MenuManager {
 							AlbumViewManager.removeAlbumViewsFromAlbum(ApplicationUI.getSelectedAlbum());
 							DatabaseOperations.removeAlbumAndAlbumPictures(ApplicationUI.getSelectedAlbum());
 							BrowserFacade.showAlbumDeletedPage(ApplicationUI.getSelectedAlbum());
-							GuiController.getGuiState().setSelectedAlbum(GuiController.getGuiState().NOALBUMSELECTED);
+							GuiController.getGuiState().setSelectedAlbum(GuiController.getGuiState().NO_ALBUM_SELECTED);
 							ApplicationUI.refreshAlbumList();
 						} catch (DatabaseWrapperOperationException ex) {
 							LOGGER.error("A database error occured while removing the following album: '" + ApplicationUI.getSelectedAlbum() + "'", ex);

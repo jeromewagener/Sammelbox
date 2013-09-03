@@ -22,7 +22,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 public class XMLStorageWrapper {
-	private final static Logger LOGGER = LoggerFactory.getLogger(XMLStorageWrapper.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(XMLStorageWrapper.class);
 	
 	private static String getValue(String tag, Element element) {
 		NodeList nodes = element.getElementsByTagName(tag).item(0).getChildNodes();

@@ -30,8 +30,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class AlbumItem {
-	private final static Logger LOGGER = LoggerFactory.getLogger(AlbumItem.class);
-	public final static Long ITEM_ID_UNDEFINED = Long.MIN_VALUE;
+	private static final Logger LOGGER = LoggerFactory.getLogger(AlbumItem.class);
+	public static final Long ITEM_ID_UNDEFINED = Long.MIN_VALUE;
 	
 	protected long itemId = ITEM_ID_UNDEFINED;
 	protected String albumName = "";

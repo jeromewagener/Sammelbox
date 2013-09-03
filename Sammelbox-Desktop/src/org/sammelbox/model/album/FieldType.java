@@ -60,6 +60,7 @@ public enum FieldType {
 		switch (this) {
 		case ID :
 			res = "INTEGER";
+			break;
 		case TEXT:
 			res = "TEXT";
 			break;
@@ -84,7 +85,7 @@ public enum FieldType {
 		case INTEGER:
 			res = "INTEGER";
 			break;
-		// Default value is never reached, it would result in a null pointer exception.
+		// Default value is never reached as it would result in a null pointer exception.
 		// However method must return something and the switch should have a default case.
 		default: 
 			res = "TEXT";

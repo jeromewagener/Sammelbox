@@ -64,11 +64,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class ApplicationUI implements Observer {
-	private final static Logger LOGGER = LoggerFactory.getLogger(ApplicationUI.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationUI.class);
 	/** A reference to the main display */
-	private final static Display DISPLAY = new Display();
+	private static final Display DISPLAY = new Display();
 	/** A reference to the main shell */
-	private final static Shell SHELL = new Shell(DISPLAY);
+	private static final Shell SHELL = new Shell(DISPLAY);
 	
 	/** A reference to the SWT list containing all available albums */
 	private static List albumList;
@@ -79,7 +79,8 @@ public final class ApplicationUI implements Observer {
 	
 	/** A reference to a composite being part of the general user interface */
 	private static Composite threePanelComposite = null, upperLeftSubComposite = null, lowerLeftSubComposite = null, 
-			leftComposite = null, rightComposite = null, centerComposite = null, statusComposite = null, toolbarComposite = null;
+			leftComposite = null, rightComposite = null, centerComposite = null, statusComposite = null;
+	private static ToolbarComposite toolbarComposite = null;
 	/** A reference to the SWT browser in charge of presenting album items */
 	private static Browser albumItemBrowser;
 	/** A reference to the SWT album item browser listener*/
@@ -88,6 +89,22 @@ public final class ApplicationUI implements Observer {
 	private static PanelType currentRightPanelType = PanelType.EMPTY;
 	/** An instance in order to register as an observer to event observable */
 	private static ApplicationUI instance = null;
+	
+	/** Defines the panel size for the different panel types */
+	private static HashMap<PanelType, Integer> panelTypeToPixelSize = new HashMap<PanelType, Integer>() {
+		private static final long serialVersionUID = 1L;	{
+			put(PanelType.EMPTY, UIConstants.RIGHT_PANEL_NO_WIDTH);
+			put(PanelType.ADD_ALBUM, UIConstants.RIGHT_PANEL_LARGE_WIDTH);
+			put(PanelType.ADD_ENTRY, UIConstants.RIGHT_PANEL_LARGE_WIDTH);
+			put(PanelType.ADVANCED_SEARCH, UIConstants.RIGHT_PANEL_LARGE_WIDTH);
+			put(PanelType.ALTER_ALBUM, UIConstants.RIGHT_PANEL_LARGE_WIDTH);
+			put(PanelType.SYNCHRONIZATION, UIConstants.RIGHT_PANEL_MEDIUM_WIDTH);
+			put(PanelType.UPDATE_ENTRY, UIConstants.RIGHT_PANEL_LARGE_WIDTH);
+			put(PanelType.HELP, UIConstants.RIGHT_PANEL_SMALL_WIDTH);
+			put(PanelType.SETTINGS, UIConstants.RIGHT_PANEL_LARGE_WIDTH);
+			put(PanelType.IMPORT, UIConstants.RIGHT_PANEL_LARGE_WIDTH);
+		}
+	};
 	
 	private ApplicationUI() {
 		EventObservable.registerObserver(this);
@@ -266,21 +283,6 @@ public final class ApplicationUI implements Observer {
 		lowerLeftSubComposite.getParent().layout();
 	}
 
-	public static HashMap<PanelType, Integer> panelTypeToPixelSize = new HashMap<PanelType, Integer>() {
-		private static final long serialVersionUID = 1L;	{
-			put(PanelType.EMPTY, UIConstants.RIGHT_PANEL_NO_WIDTH);
-			put(PanelType.ADD_ALBUM, UIConstants.RIGHT_PANEL_LARGE_WIDTH);
-			put(PanelType.ADD_ENTRY, UIConstants.RIGHT_PANEL_LARGE_WIDTH);
-			put(PanelType.ADVANCED_SEARCH, UIConstants.RIGHT_PANEL_LARGE_WIDTH);
-			put(PanelType.ALTER_ALBUM, UIConstants.RIGHT_PANEL_LARGE_WIDTH);
-			put(PanelType.SYNCHRONIZATION, UIConstants.RIGHT_PANEL_MEDIUM_WIDTH);
-			put(PanelType.UPDATE_ENTRY, UIConstants.RIGHT_PANEL_LARGE_WIDTH);
-			put(PanelType.HELP, UIConstants.RIGHT_PANEL_SMALL_WIDTH);
-			put(PanelType.SETTINGS, UIConstants.RIGHT_PANEL_LARGE_WIDTH);
-			put(PanelType.IMPORT, UIConstants.RIGHT_PANEL_LARGE_WIDTH);
-		}
-	};
-
 	public static void resizeRightCompositeTo(int pixels) {
 		GridData layoutData = new GridData(GridData.FILL_BOTH);
 		layoutData.grabExcessHorizontalSpace = false;
@@ -379,7 +381,7 @@ public final class ApplicationUI implements Observer {
 		
 		ApplicationUI.getViewList().setEnabled(AlbumViewManager.hasAlbumViewsAttached(albumName));
 		EventObservable.addEventToQueue(SammelboxEvent.ALBUM_SELECTED);
-		ToolbarComposite.enableAlbumButtons(albumName);
+		toolbarComposite.enableAlbumButtons(albumName);
 		
 		return true;
 	}

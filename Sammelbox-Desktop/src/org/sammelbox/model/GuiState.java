@@ -26,7 +26,7 @@ public class GuiState {
 	private String quickSearchTerms = null;
 	private boolean isViewDetailed = SettingsManager.getSettings().isDetailedViewDefault();
 	/** This string is used to de-select an album by passing it to {@link #setSelectedAlbum(String)} */
-	public final String NOALBUMSELECTED = null; 
+	public static final String NO_ALBUM_SELECTED = null; 
 	
 	public GuiState() {
 	}

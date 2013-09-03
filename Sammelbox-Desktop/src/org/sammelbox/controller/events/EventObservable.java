@@ -27,7 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class EventObservable {
-	private final static Logger LOGGER = LoggerFactory.getLogger(EventObservable.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(EventObservable.class);
 	
 	private static List<Observer> observers = new ArrayList<Observer>();
 	private static Queue<SammelboxEvent> sammelboxEvents = new LinkedList<SammelboxEvent>();

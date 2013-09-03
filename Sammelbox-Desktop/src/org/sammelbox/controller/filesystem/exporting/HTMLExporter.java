@@ -33,7 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class HTMLExporter {
-	private final static Logger LOGGER = LoggerFactory.getLogger(HTMLExporter.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(HTMLExporter.class);
 	
 	private HTMLExporter() {
 	}

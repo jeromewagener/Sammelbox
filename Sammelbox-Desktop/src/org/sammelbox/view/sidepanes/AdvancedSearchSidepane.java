@@ -60,7 +60,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class AdvancedSearchSidepane {
-	private final static Logger LOGGER = LoggerFactory.getLogger(AdvancedSearchSidepane.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(AdvancedSearchSidepane.class);
 	
 	private AdvancedSearchSidepane() {
 		// use build method instead

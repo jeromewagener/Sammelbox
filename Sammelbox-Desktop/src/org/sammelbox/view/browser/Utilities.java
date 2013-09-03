@@ -35,7 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Utilities {
-	private final static Logger LOGGER = LoggerFactory.getLogger(Utilities.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(Utilities.class);
 	
 	/** The anchor to which a jump is performed as soon as the page is fully loaded. 
 	 * This field is used via the set and get methods by the browser progress listener */

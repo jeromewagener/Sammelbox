@@ -49,7 +49,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class BrowserListener implements LocationListener, ProgressListener, MenuDetectListener {
-	private final static Logger LOGGER = LoggerFactory.getLogger(BrowserListener.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(BrowserListener.class);
 	
 	/** The parent composite to which this listener belongs to */
 	private Composite parentComposite;

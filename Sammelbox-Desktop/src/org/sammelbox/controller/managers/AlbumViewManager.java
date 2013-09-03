@@ -32,7 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class AlbumViewManager {
-	private final static Logger LOGGER = LoggerFactory.getLogger(AlbumViewManager.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(AlbumViewManager.class);
 	private static Map<String, List<AlbumView>> albumNamesToAlbumViews = new HashMap<String, List<AlbumView>>();
 		
 	/** Initializes album views without notifying any attached observers */

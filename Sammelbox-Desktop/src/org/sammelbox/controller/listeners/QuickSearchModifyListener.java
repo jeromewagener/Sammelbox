@@ -31,7 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class QuickSearchModifyListener implements ModifyListener {
-	private final static Logger LOGGER = LoggerFactory.getLogger(QuickSearchModifyListener.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(QuickSearchModifyListener.class);
 	
 	@Override
 	/** This method launches a quick-search for the entered keywords if an album has been selected*/

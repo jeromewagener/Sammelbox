@@ -199,7 +199,7 @@ public final class QuickControlSidepane {
 							DatabaseOperations.removeAlbumAndAlbumPictures(ApplicationUI.getSelectedAlbum());
 							AlbumViewManager.removeAlbumViewsFromAlbum(ApplicationUI.getSelectedAlbum());
 							BrowserFacade.showAlbumDeletedPage(ApplicationUI.getSelectedAlbum());
-							GuiController.getGuiState().setSelectedAlbum(GuiController.getGuiState().NOALBUMSELECTED);
+							GuiController.getGuiState().setSelectedAlbum(GuiController.getGuiState().NO_ALBUM_SELECTED);
 							ApplicationUI.refreshAlbumList();
 						} catch (DatabaseWrapperOperationException ex) {
 							LOGGER.error("A database error occured while removing the following album: '" + ApplicationUI.getSelectedAlbum() + "'", ex);

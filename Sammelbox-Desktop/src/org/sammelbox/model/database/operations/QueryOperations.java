@@ -323,7 +323,7 @@ public final class QueryOperations {
 						DatabaseStringUtilities.transformColumnNameToSelectQueryName(DatabaseConstants.ORIGINAL_PICTURE_FILE_NAME_IN_PICTURE_TABLE) + ", " +
 						DatabaseStringUtilities.transformColumnNameToSelectQueryName(DatabaseConstants.ALBUM_ITEM_ID_REFERENCE_IN_PICTURE_TABLE) +
 				   " FROM " + DatabaseStringUtilities.encloseNameWithQuotes(DatabaseStringUtilities.generatePictureTableName(albumName)) +
-				   " WHERE " + DatabaseStringUtilities.transformColumnNameToSelectQueryName(DatabaseConstants.ALBUM_ITEM_ID_REFERENCE_IN_PICTURE_TABLE) + " = " + String.valueOf(albumItemID);
+				   " WHERE " + DatabaseStringUtilities.transformColumnNameToSelectQueryName(DatabaseConstants.ALBUM_ITEM_ID_REFERENCE_IN_PICTURE_TABLE) + " = " + albumItemID;
 			
 			try (Statement statement = ConnectionManager.getConnection().createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
 				 ResultSet rs = statement.executeQuery(picturesQuery);) {			

@@ -319,7 +319,7 @@ public final class UpdateOperations {
 	}
 	
 	static void appendNewAlbumField(String albumName, MetaItemField metaItemField) throws DatabaseWrapperOperationException {
-		if (metaItemField.getType().equals(FieldType.ID) || metaItemField == null 
+		if (metaItemField == null || metaItemField.getType().equals(FieldType.ID) 
 				|| !QueryOperations.isItemFieldNameAvailable(albumName, metaItemField.getName())) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE);
 		}

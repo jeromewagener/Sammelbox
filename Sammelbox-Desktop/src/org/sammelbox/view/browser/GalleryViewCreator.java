@@ -35,7 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class GalleryViewCreator {
-	private final static Logger LOGGER = LoggerFactory.getLogger(GalleryViewCreator.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(GalleryViewCreator.class);
 	
 	private GalleryViewCreator() {
 	}

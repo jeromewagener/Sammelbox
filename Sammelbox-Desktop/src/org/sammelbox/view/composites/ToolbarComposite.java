@@ -51,20 +51,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ToolbarComposite extends Composite implements Observer {
-	private final static Logger LOGGER = LoggerFactory.getLogger(ToolbarComposite.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ToolbarComposite.class);
 	
-	private static Composite toolbarComposite = null;
-	private static Image home = null, addAlbum = null, addEntry = null,
+	private Composite toolbarComposite = null;
+	private Image home = null, addAlbum = null, addEntry = null,
 			detailedView = null, pictureView = null, search = null,
 			sync = null, help = null;
-	private static Image homeActive = null, addAlbumActive = null,
+	private Image homeActive = null, addAlbumActive = null,
 			addEntryActive = null, searchActive = null, syncActive = null,
 			helpActive = null;
-	private static Button homeBtn = null, addAlbumBtn = null, addEntryBtn = null,
+	private Button homeBtn = null, addAlbumBtn = null, addEntryBtn = null,
 			toggleViewBtn = null, searchBtn = null, syncBtn = null, helpBtn = null;
-	private static PanelType lastSelectedPanelType = PanelType.EMPTY;
+	private PanelType lastSelectedPanelType = PanelType.EMPTY;
 
-	private static void disableActiveButtons() {
+	private void disableActiveButtons() {
 		homeBtn.setImage(home);
 		addAlbumBtn.setImage(addAlbum);
 		addEntryBtn.setImage(addEntry);
@@ -74,7 +74,7 @@ public class ToolbarComposite extends Composite implements Observer {
 		helpBtn.setImage(help);
 	}
 	
-	private static void setButtonsWhenNoAlbumIsSelected() {
+	private void setButtonsWhenNoAlbumIsSelected() {
 		homeBtn.setEnabled(true);
 		addAlbumBtn.setEnabled(true);
 		addEntryBtn.setEnabled(false);
@@ -455,7 +455,7 @@ public class ToolbarComposite extends Composite implements Observer {
 		}
 	}
 
-	public static void enableAlbumButtons(String albumName) {
+	public void enableAlbumButtons(String albumName) {
 		homeBtn.setImage(home);
 		addEntryBtn.setEnabled(true);
 
