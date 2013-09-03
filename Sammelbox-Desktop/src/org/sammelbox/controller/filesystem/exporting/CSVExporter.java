@@ -39,7 +39,7 @@ public class CSVExporter {
 	}
 	
 	public static void exportVisibleItems(String filepath) {
-		List<AlbumItem> visibleAlbumItems = AlbumItemStore.getAllVisibleAlbumItems();
+		List<AlbumItem> visibleAlbumItems = AlbumItemStore.getAllAlbumItems();
 		
 		StringBuilder headerBuilder = new StringBuilder();
 		StringBuilder dataBuilder = new StringBuilder();

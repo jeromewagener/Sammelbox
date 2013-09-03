@@ -111,10 +111,6 @@ public final class AlbumItemStore {
 		return stopIndex >= albumItems.size() - 1;
 	}
 
-	public static List<AlbumItem> getAllVisibleAlbumItems() {
-		return getAlbumItems(getStopIndex());
-	}
-
 	public static AlbumItem getAlbumItem(long albumItemId) {
 		for (AlbumItem albumItem : albumItems) {
 			if (albumItem.getItemID() == albumItemId) {
