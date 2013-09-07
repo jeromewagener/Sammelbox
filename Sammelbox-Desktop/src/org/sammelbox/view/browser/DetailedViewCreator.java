@@ -38,7 +38,7 @@ public final class DetailedViewCreator {
 		}
 		
 		// Builders for efficient html creation
-		StringBuilder albumItemTableRowHtml = new StringBuilder();
+		StringBuilder albumItemDetailDivContainers = new StringBuilder();
 		StringBuilder htmlDataColumnContent = new StringBuilder();
 		StringBuilder htmlPictureColumnContent = new StringBuilder();
 
@@ -47,13 +47,13 @@ public final class DetailedViewCreator {
 			htmlDataColumnContent.delete(0, htmlDataColumnContent.length());
 			htmlPictureColumnContent.delete(0, htmlPictureColumnContent.length());
 
-			ItemCreator.addAlbumItemTableRow(albumItem, htmlDataColumnContent, htmlPictureColumnContent, albumItemTableRowHtml);
+			DetailedItemCreator.addImageAndDetailContainer(albumItem, htmlDataColumnContent, htmlPictureColumnContent, albumItemDetailDivContainers);
 		}
 
 		// If no album items have been found
 		if (htmlDataColumnContent.length() == 0 && htmlPictureColumnContent.length() == 0) {
-			albumItemTableRowHtml.delete(0, albumItemTableRowHtml.length());
-			albumItemTableRowHtml.append(
+			albumItemDetailDivContainers.delete(0, albumItemDetailDivContainers.length());
+			albumItemDetailDivContainers.append(
 	          "<tr><td><div>" + 
 	            "<h3>" + 
 	              Translator.get(DictKeys.BROWSER_NO_ITEMS_FOUND, GuiController.getGuiState().getSelectedAlbum()) + 
@@ -65,17 +65,17 @@ public final class DetailedViewCreator {
 		// Create final page html
 		String finalPageAsHtml = 
 				"<!DOCTYPE HTML>" +
-				"  <html>" +
-				"    <head>" +
-				"      <title>sammelbox.org</title>" +
-				"      <meta " + UIConstants.META_PARAMS + ">" + 
-				"      <link rel=stylesheet href=\"" + UIConstants.STYLE_CSS + "\" />" +
-				"      <script src=\"" + UIConstants.EFFECTS_JS + "\"></script>" +
-				"    </head>" +
-				"    <body style=\"background-color:#ffffff;font-family:" +  Utilities.getDefaultSystemFont() + ";margin:0\">" +
-				"      <table width=95% style=\"margin:15px;\" id=\"albumItems\" border=0>" + albumItemTableRowHtml + "</table>" +
-				"    </body>" +
-				"  </html>";
+				"<html>" +
+				  "<head>" +
+				    "<title>sammelbox.org</title>" +
+				    "<meta " + UIConstants.META_PARAMS + ">" + 
+				    "<link rel=stylesheet href=\"" + UIConstants.STYLE_CSS + "\" />" +
+				    "<script src=\"" + UIConstants.EFFECTS_JS + "\"></script>" +
+				  "</head>" +
+				  "<body>" + // TODO extract to dynamic CSS  style=\"font-family:" +  Utilities.getDefaultSystemFont() + "\">
+				    "<div id=\"albumItems\">" + albumItemDetailDivContainers + "</div>" +
+				  "</body>" +
+				"</html>";
 		
 		browser.setText(finalPageAsHtml);		
 		Utilities.setLastPageAsHtml(finalPageAsHtml);		

@@ -38,53 +38,30 @@ import org.sammelbox.view.ApplicationUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class ItemCreator {
-	private static final Logger LOGGER = LoggerFactory.getLogger(ItemCreator.class);
+public final class DetailedItemCreator {
+	private static final Logger LOGGER = LoggerFactory.getLogger(DetailedItemCreator.class);
 	
-	private ItemCreator() {
+	private DetailedItemCreator() {
 	}
 	
-	static String getAlbumItemTableRowHtml(AlbumItem albumItem) {
-		return getAlbumItemTableRowHtml(albumItem, true);
+	static String getImageAndDetailContainer(AlbumItem albumItem) {
+		return getImageAndDetailContainer(albumItem, true);
 	}
 	
-	static String getAlbumItemTableRowHtml(AlbumItem albumItem, boolean showUpdateAndRemoveButtons) {
+	static String getImageAndDetailContainer(AlbumItem albumItem, boolean showUpdateAndRemoveButtons) {
 		StringBuilder htmlDataColumnContent = new StringBuilder();
 		StringBuilder htmlPictureColumnContent = new StringBuilder();
 		StringBuilder albumItemTableRowHtml = new StringBuilder();
-		addAlbumItemTableRow(albumItem, htmlDataColumnContent, htmlPictureColumnContent, albumItemTableRowHtml, showUpdateAndRemoveButtons);
+		addImageAndDetailContainer(albumItem, htmlDataColumnContent, htmlPictureColumnContent, albumItemTableRowHtml, showUpdateAndRemoveButtons);
 
 		return albumItemTableRowHtml.toString();
 	}
 
-	static String getAlbumItemDivContainerHtml(AlbumItem albumItem) {
-		StringBuilder htmlBuilder = new StringBuilder();
-		addAlbumItemDivContainer(albumItem, htmlBuilder);
-
-		return htmlBuilder.toString();
-	}
-
-	static void addAlbumItemTableRow(AlbumItem albumItem, StringBuilder htmlDataColumnContent, StringBuilder htmlPictureColumnContent, StringBuilder albumItemTableRowHtml) {
-		addAlbumItemTableRow(albumItem, htmlDataColumnContent, htmlPictureColumnContent, albumItemTableRowHtml, true);
+	static void addImageAndDetailContainer(AlbumItem albumItem, StringBuilder htmlDataColumnContent, StringBuilder htmlPictureColumnContent, StringBuilder albumItemTableRowHtml) {
+		addImageAndDetailContainer(albumItem, htmlDataColumnContent, htmlPictureColumnContent, albumItemTableRowHtml, true);
 	}
 	
-	private static String getThumbnailForFirstPicture(AlbumItem albumItem) {
-		return ((albumItem.getFirstPicture() != null) ? albumItem.getFirstPicture().getThumbnailPicturePath() : FileSystemLocations.getPlaceholderPNG());
-	}
-	
-	static void addAlbumItemDivContainer(AlbumItem albumItem, StringBuilder htmlBuilder) {
-		htmlBuilder.append(
-				"<div id=\"imageId" + albumItem.getItemID() + "\" " +
-				"    class=\"pictureContainer\" " +
-				"    onMouseOver=\"parent.location.href=&quot;show:///details=" + albumItem.getItemID() + "&quot;\" " +
-				"    onClick=\"parent.location.href=&quot;show:///detailsComposite=" + albumItem.getItemID() + "&quot;\">" +
-                "  <div class=\"innerPictureContainer\">" +
-		        "    <img src=\"" + getThumbnailForFirstPicture(albumItem) + "\">" +
-                "  </div>" +
-                "</div>");
-	}
-	
-	static void addAlbumItemTableRow(AlbumItem albumItem, StringBuilder htmlDataColumnContent, StringBuilder htmlPictureColumnContent, 
+	static void addImageAndDetailContainer(AlbumItem albumItem, StringBuilder htmlDataColumnContent, StringBuilder htmlPictureColumnContent, 
 			StringBuilder albumItemTableRowHtml, boolean showUpdateAndRemoveButtons) {
 		
 		// the id of the current album item
@@ -133,78 +110,58 @@ public final class ItemCreator {
 			List<AlbumItemPicture> pictures = albumItem.getPictures();
 			if (DatabaseOperations.isPictureAlbum(ApplicationUI.getSelectedAlbum()) || !pictures.isEmpty()) {
 				
-				htmlPictureColumnContent.append(
-						"<table border=0>" +
-						"  <tr>" +
-						"    <td align=center width=200 height=200>" +
-								getMainPictureHtml(id, pictures) +
-						"    </td>" +
-						"  </tr>" +
-						"  <tr>" +
-						"    <td>" +
-						"      <div style=\"max-width:200px;\">" +
-								getAlternativePicturesHtml(id, pictures) +
-						"      </div>" + 
-						"    </td>" +
-						"  </tr>" + 
-						"</table>");
+				htmlPictureColumnContent.append(			
+		               "<div class=\"mainPictureWrapper\">" + getMainPictureHtml(id, pictures) + "</div>" +
+		               "<div>" + getAlternativePicturesHtml(id, pictures) + "</div>");
 			}
 		} catch (DatabaseWrapperOperationException ex) {
 			LOGGER.error("An issue regarding the album item picture occured", ex);
 		}
 
 		if (showUpdateAndRemoveButtons) {
-			htmlDataColumnContent.append(getUpdateRemoveButtonsHtml(id));
-		}	
-
-		
-		// set the picture column with only if there is also a picture
-		String widthParameter = "";
-		if (htmlPictureColumnContent.length() != 0) {
-			widthParameter = "width=200px";
+			htmlDataColumnContent.append(getUpdateRemoveButtonsForm(id));
 		}
 		
-		albumItemTableRowHtml.append("<tr id=\"albumId" + id + "\">" +
-				                     "  <td " + widthParameter + ">" + htmlPictureColumnContent + "</td>" +
-				                     "    <td bgcolor=" + Utilities.getBackgroundColorOfWidgetInHex() + ">" + 
-				                     "       <div style=\"margin:20px\">" + htmlDataColumnContent + "</div>" + 
-				                     "    </td>" +
-				                     "  </tr>" +
-				                     "  <tr>" +
-				                     "    <td height=\"20\" colspan=\"2\">" +
-				                     "  </td>" +
-				                     "</tr>");		
+		albumItemTableRowHtml.append(		
+					"<div id=\"albumId" + id + "\" class=\"albumItem\">" +
+					  "<div class=\"albumItemPictures\">" +
+							htmlPictureColumnContent +
+					  "</div>" +
+					  "<div class=\"details\" style=\"background-color:" + Utilities.getBackgroundColorOfWidgetInHex() + "\">" +
+					  		htmlDataColumnContent +
+					  "</div>" +
+					"</div>");
 	}
 	
-	private static String getUpdateRemoveButtonsHtml(long id) {
-		return "<form style=\"margin-top:10px\">" +
-		       "  <input type=\"button\" " +
-			   "         onclick=parent.location.href=\"show:///updateComposite=" + id + "\" " +
-			   "         value=\"" + Translator.get(DictKeys.BROWSER_UPDATE) + "\">" +
-		       "  <input type=\"button\" " +
-			   "    onclick=parent.location.href=\"show:///deleteComposite=" + id + "\" " +
-		       "    value=\"" + Translator.get(DictKeys.BROWSER_DELETE) + "\">" +
+	private static String getUpdateRemoveButtonsForm(long id) {
+		return "<form class=\"buttonWrapper\">" +
+		         "<input type=\"button\" " +
+			       "onclick=\"parent.location.href=&quot;show:///updateComposite=" + id + "&quot;\" " +
+			       "value=\"" + Translator.get(DictKeys.BROWSER_UPDATE) + "\">" +
+		         "<input type=\"button\" " +
+			       "onclick=\"parent.location.href=&quot;show:///deleteComposite=" + id + "&quot;\" " +
+		           "value=\"" + Translator.get(DictKeys.BROWSER_DELETE) + "\">" +
 		       "</form>";
 	}
 	
 	private static String getFieldNameAndValueLine(String fieldName, String value) {
-		return "<span class=\"boldy\"> " + Utilities.escapeHtmlString(fieldName) + "</span> : " + value + "<br>"; 
+		return "<span class=\"field\"> " + Utilities.escapeHtmlString(fieldName) + "</span> : " + value + "<br>"; 
 	}
 	
 	private static String getFieldNameAndStars(String fieldName, StarRating rating) {
 		if (rating.equals(StarRating.ONE_STAR)) {
-			return "<span class=\"boldy\"> " + Utilities.escapeHtmlString(fieldName) + "</span><img height=20 src=" + FileSystemLocations.getOneStarPNG() + "><br>";
+			return "<span class=\"field\"> " + Utilities.escapeHtmlString(fieldName) + "</span><img alt=\"\" height=\"20\" src=\"" + FileSystemLocations.getOneStarPNG() + "\"><br>";
 		} else if (rating.equals(StarRating.TWO_STARS)) {
-			return "<span class=\"boldy\"> " + Utilities.escapeHtmlString(fieldName) + "</span><img height=20 src=" + FileSystemLocations.getTwoStarsPNG() + "><br>";
+			return "<span class=\"field\"> " + Utilities.escapeHtmlString(fieldName) + "</span><img alt=\"\" height=\"20\" src=\"" + FileSystemLocations.getTwoStarsPNG() + "\"><br>";
 		} else if (rating.equals(StarRating.THREE_STARS)) {
-			return "<span class=\"boldy\"> " + Utilities.escapeHtmlString(fieldName) + "</span><img height=20 src=" + FileSystemLocations.getThreeStarsPNG() + "><br>";
+			return "<span class=\"field\"> " + Utilities.escapeHtmlString(fieldName) + "</span><img alt=\"\" height=\"20\" src=\"" + FileSystemLocations.getThreeStarsPNG() + "\"><br>";
 		} else if (rating.equals(StarRating.FOUR_STARS)) {
-			return "<span class=\"boldy\"> " + Utilities.escapeHtmlString(fieldName) + "</span><img height=20 src=" + FileSystemLocations.getFourStarsPNG() + "><br>";
+			return "<span class=\"field\"> " + Utilities.escapeHtmlString(fieldName) + "</span><img alt=\"\" height=\"20\" src=\"" + FileSystemLocations.getFourStarsPNG() + "\"><br>";
 		} else if (rating.equals(StarRating.FIVE_STARS)) {
-			return "<span class=\"boldy\"> " + Utilities.escapeHtmlString(fieldName) + "</span><img height=20 src=" + FileSystemLocations.getFiveStarsPNG() + "><br>";
+			return "<span class=\"field\"> " + Utilities.escapeHtmlString(fieldName) + "</span><img alt=\"\" height=\"20\" src=\"" + FileSystemLocations.getFiveStarsPNG() + "\"><br>";
 		}
 		
-		return "<span class=\"boldy\"> " + Utilities.escapeHtmlString(fieldName) + "</span><img height=20 src=" + FileSystemLocations.getZeroStarsPNG() + "><br>";
+		return "<span class=\"field\"> " + Utilities.escapeHtmlString(fieldName) + "</span><img alt=\"\" height=\"20\" src=\"" + FileSystemLocations.getZeroStarsPNG() + "\"><br>";
 	}
 	
 	private static String getAlternativePicturesHtml(long id, List<AlbumItemPicture> pictures) {
@@ -214,11 +171,11 @@ public final class ItemCreator {
 			for(AlbumItemPicture picture : pictures) {
 				String escapedJavascriptFilePath = Utilities.escapeBackslashesInFilePath(picture.getThumbnailPicturePath());
 				htmlBuilder.append(
-					"<div align=center style=\"display:inline; min-width:40px; width:auto; width:40px\">" +
-					"  <a onClick=showBigPicture(\"imageId" + id + "\") " +
-					"     onMouseOver=\"change(&quot;imageId" + id + "&quot;, &quot;" + escapedJavascriptFilePath + "&quot;)\">" +
-				    "    <img onMouseOver=this.style.cursor=\"pointer\" style=\"max-width:40px; max-height:40px;\" src=\"" + escapedJavascriptFilePath + "\">" +
-				    "  </a>" +
+					"<div class=\"thumbnailWrapper\">" +
+					  "<a onClick=\"showBigPicture(&quot;imageId" + id + "&quot;)\" " +
+					     "onMouseOver=\"change(&quot;imageId" + id + "&quot;, &quot;" + escapedJavascriptFilePath + "&quot;)\">" +
+				        "<img alt=\"\" onMouseOver=\"this.style.cursor=&quot;pointer&quot;\" class=\"thumbnailPicture\" src=\"" + escapedJavascriptFilePath + "\">" +
+				      "</a>" +
 				    "</div>");
 			}
 		}
@@ -229,17 +186,18 @@ public final class ItemCreator {
 	private static String getMainPictureHtml(long id, List<AlbumItemPicture> albumItemPictures) {
 		// Initialize with placeholder
 		String mainPictureHtml = "<img id=\"imageId" + id + "\" " +
-				 				 "     style=\"max-width:195px; max-height:195px;\"" +
-				 				 "     src=\"" + FileSystemLocations.getPlaceholderPNG() + "\">";
+								 " alt=\"\"" +
+				 				 " class=\"mainPicture\"" +
+				 				 " src=\"" + FileSystemLocations.getPlaceholderPNG() + "\">";
 		
 		// Use primary image if available
 		if (!albumItemPictures.isEmpty()) {
 			mainPictureHtml = "<img id=\"imageId" + id + "\" " +
-							  "     style=\"max-width:195px; " +
-							  "     max-height:195px;\" " +
-							  "     src=\"" + albumItemPictures.get(0).getThumbnailPicturePath() + "\" " +
-							  "     onMouseOver=changeCursorToHand(\"imageId" + id + "\") " +
-							  "     onClick=showBigPicture(\"imageId" + id + "\")>";
+					          " alt=\"\"" +
+							  " class=\"mainPicture\"" +
+							  " src=\"" + albumItemPictures.get(0).getThumbnailPicturePath() + "\"" +
+							  " onMouseOver=\"changeCursorToHand(&quot;imageId" + id + "&quot;)\"" +
+							  " onClick=\"showBigPicture(&quot;imageId" + id + "&quot;)\">";
 		}
 		
 		return mainPictureHtml;

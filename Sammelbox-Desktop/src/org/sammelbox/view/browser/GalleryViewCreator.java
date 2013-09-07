@@ -73,26 +73,27 @@ public final class GalleryViewCreator {
 			}
 			
 			galleryItemHtmlBuilder.append("<div id=\"imageId" + id + "\" " +
-					                      "     class=\"pictureContainer\" " +
-					                      "     onMouseOver=\"parent.location.href=&quot;show:///details=" + id + "&quot;\" " +
-					                      "		onClick=\"parent.location.href=&quot;show:///detailsComposite=" + id + "&quot;\">");
-			galleryItemHtmlBuilder.append("  <div class=\"innerPictureContainer\">");
-			galleryItemHtmlBuilder.append("    <img src=\"" + picturePath + "\">");
-			galleryItemHtmlBuilder.append("  </div>");
+					                         " class=\"pictureContainer\" " +
+					                         " onMouseOver=\"parent.location.href=&quot;show:///details=" + id + "&quot;\" " +
+					                         " onClick=\"parent.location.href=&quot;show:///detailsComposite=" + id + "&quot;\">");
+			galleryItemHtmlBuilder.append("<div class=\"innerPictureContainer\">");
+			galleryItemHtmlBuilder.append("<img alt=\"\" src=\"" + picturePath + "\">");
+			galleryItemHtmlBuilder.append("</div>");
 			galleryItemHtmlBuilder.append("</div>");
 		}
 
 		String finalPageAsHtml = "<!DOCTYPE HTML>" +
-								 "  <html>" +
-								 "    <head>" +
-								 "      <title>sammelbox.org</title>" +
-								 "      <meta " + UIConstants.META_PARAMS + ">" + 
-								 "      <link rel=stylesheet href=\"" + UIConstants.STYLE_CSS + "\" />" +
-								 "      <script src=\"" + UIConstants.EFFECTS_JS + "\"></script>" +
-								 "    </head>" +
-								 "    <body style=\"background-color:#ffffff;font-family:" +  Utilities.getDefaultSystemFont() + "\">" +
-								 "       <div id=\"albumItems\">" + galleryItemHtmlBuilder.toString() + "</div>" +
-								 "    </body>";
+								   "<html>" +
+								     "<head>" +
+								       "<title>sammelbox.org</title>" +
+								       "<meta " + UIConstants.META_PARAMS + ">" + 
+								       "<link rel=stylesheet href=\"" + UIConstants.STYLE_CSS + "\" />" +
+								       "<script src=\"" + UIConstants.EFFECTS_JS + "\"></script>" +
+								     "</head>" +
+								     "<body style=\"background-color:#ffffff;font-family:" +  Utilities.getDefaultSystemFont() + "\">" +
+								       "<div id=\"albumItems\">" + galleryItemHtmlBuilder.toString() + "</div>" +
+								     "</body>" +
+								   "</html>";
 				
 		browser.setText(finalPageAsHtml);
 		Utilities.setLastPageAsHtml(finalPageAsHtml);

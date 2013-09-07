@@ -480,7 +480,7 @@ public class ToolbarComposite extends Composite implements Observer {
 
 		GuiController.getGuiState().setViewDetailed(
 				SettingsManager.getSettings().isDetailedViewDefault());
-		BrowserFacade.rerunLastQuery();
+		//BrowserFacade.rerunLastQuery(); FIXME ???
 		searchBtn.setEnabled(true);
 	}
 }

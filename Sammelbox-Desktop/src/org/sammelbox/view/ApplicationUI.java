@@ -63,7 +63,7 @@ import org.sammelbox.view.various.PanelType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class ApplicationUI implements Observer {
+public final class ApplicationUI implements Observer {	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationUI.class);
 	/** A reference to the main display */
 	private static final Display DISPLAY = new Display();
@@ -370,13 +370,13 @@ public final class ApplicationUI implements Observer {
 			return false;
 		}
 	
-		ApplicationUI.getQuickSearchTextField().setText("");
+		//ApplicationUI.getQuickSearchTextField().setText(""); FIXME reenable
 		try {
 			ApplicationUI.getQuickSearchTextField().setEnabled(DatabaseOperations.isAlbumQuicksearchable(albumName));
 		} catch (DatabaseWrapperOperationException ex) {
 			LOGGER.error("An error occured while enabling the quick search field", ex);
 		}
-
+		
 		BrowserFacade.performBrowserQueryAndShow(QueryBuilder.createSelectStarQuery(albumName));
 		
 		ApplicationUI.getViewList().setEnabled(AlbumViewManager.hasAlbumViewsAttached(albumName));

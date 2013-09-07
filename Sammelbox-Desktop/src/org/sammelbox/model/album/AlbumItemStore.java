@@ -31,7 +31,7 @@ import org.sammelbox.view.composites.StatusBarComposite;
 
 public final class AlbumItemStore {
 	private static final String SAMPLE = "Sample";
-	private static final int DEFAULT_STOP_INDEX_INCREASE_AMOUNT = 10;
+	private static final int DEFAULT_STOP_INDEX_INCREASE_AMOUNT = 0;
 	private static final int DEFAULT_STOP_INDEX = 50;
 	
 	private static List<AlbumItem> albumItems = new ArrayList<AlbumItem>();

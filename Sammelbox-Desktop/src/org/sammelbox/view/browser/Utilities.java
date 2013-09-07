@@ -170,7 +170,7 @@ public class Utilities {
 				for (AlbumItem albumItem : (AlbumItemStore.getAlbumItemsInRange(
 						AlbumItemStore.getPreviousStopIndex() + 1, AlbumItemStore.getStopIndex())))
 				{
-					rows.append(ItemCreator.getAlbumItemTableRowHtml(albumItem));
+					rows.append(DetailedItemCreator.getImageAndDetailContainer(albumItem));
 				}
 
 
@@ -194,7 +194,7 @@ public class Utilities {
 				for (AlbumItem albumItem : (AlbumItemStore.getAlbumItemsInRange(
 						AlbumItemStore.getPreviousStopIndex() + 1, AlbumItemStore.getStopIndex())))
 				{					
-					divs.append(ItemCreator.getAlbumItemDivContainerHtml(albumItem));
+					divs.append(GalleryItemCreator.getImageContainer(albumItem));
 				}
 
 				String javascript = "var div = document.getElementById('albumItems'); " +

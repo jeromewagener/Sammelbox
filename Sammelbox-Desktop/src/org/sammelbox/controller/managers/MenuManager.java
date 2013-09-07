@@ -28,10 +28,12 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.sammelbox.controller.GuiController;
+import org.sammelbox.controller.filesystem.FileSystemAccessWrapper;
 import org.sammelbox.controller.filesystem.exporting.CSVExporter;
 import org.sammelbox.controller.filesystem.exporting.HTMLExporter;
 import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
+import org.sammelbox.model.GuiState;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 import org.sammelbox.model.database.operations.DatabaseOperations;
 import org.sammelbox.view.ApplicationUI;
@@ -258,7 +260,7 @@ public class MenuManager {
 							AlbumViewManager.removeAlbumViewsFromAlbum(ApplicationUI.getSelectedAlbum());
 							DatabaseOperations.removeAlbumAndAlbumPictures(ApplicationUI.getSelectedAlbum());
 							BrowserFacade.showAlbumDeletedPage(ApplicationUI.getSelectedAlbum());
-							GuiController.getGuiState().setSelectedAlbum(GuiController.getGuiState().NO_ALBUM_SELECTED);
+							GuiController.getGuiState().setSelectedAlbum(GuiState.NO_ALBUM_SELECTED);
 							ApplicationUI.refreshAlbumList();
 						} catch (DatabaseWrapperOperationException ex) {
 							LOGGER.error("A database error occured while removing the following album: '" + ApplicationUI.getSelectedAlbum() + "'", ex);
@@ -304,6 +306,32 @@ public class MenuManager {
 		Menu helpMenu = new Menu(menu);
 		helpItem.setMenu(helpMenu);
 
+		MenuItem debugMenuItem = new MenuItem(helpMenu, SWT.CASCADE);
+		debugMenuItem.setText(Translator.toBeTranslated("Debugging"));		
+		Menu debugSubMenu = new Menu(menu.getShell(), SWT.DROP_DOWN);
+		debugMenuItem.setMenu(debugSubMenu);
+		
+		MenuItem dumpHTML = new MenuItem(debugSubMenu, SWT.NONE);
+		dumpHTML.setText(Translator.toBeTranslated("Dump HTML"));
+		dumpHTML.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				FileDialog saveFileDialog = new FileDialog(ApplicationUI.getShell(), SWT.SAVE);
+				saveFileDialog.setText(Translator.toBeTranslated("Dump HTML"));
+				saveFileDialog.setFilterPath(System.getProperty("user.home"));
+				String[] filterExt = { "*.html" };
+				saveFileDialog.setFilterExtensions(filterExt);
+				
+				String filepath = saveFileDialog.open();
+				if (filepath != null) {
+					FileSystemAccessWrapper.writeToFile(ApplicationUI.getAlbumItemBrowser().getText(), filepath);
+				}
+			}
+		});
+
+		
+		new MenuItem(helpMenu, SWT.SEPARATOR);
+		
 		MenuItem helpContentsMenu = new MenuItem(helpMenu, SWT.NONE);
 		helpContentsMenu.setText(Translator.get(DictKeys.MENU_HELP_CONTENTS));
 		helpContentsMenu.addSelectionListener(new SelectionAdapter() {

@@ -1,12 +1,14 @@
 body {
-	font-family: Verdana, Liberation, Arial;
+	font-family: Verdana, Ubuntu, Arial;
+   margin:0;
+   width:100%;
 }
 
 .highlight {
 	background-color:orange;
 }
 
-.boldy {
+.field {
 	font-weight: bold;
 }
 
@@ -40,3 +42,50 @@ body {
 	border: 3px solid orange;
 	border-radius: 30px 30px 30px 30px;
 }
+
+#albumItems {
+   style="padding:15px;
+   width:100%;"
+}
+
+.albumItem {
+   width:100%;
+   float:left;
+}
+
+.albumItemPictures {
+   width:200px;
+   float:left;
+   padding:15px;
+}
+
+.mainPictureWrapper {
+   width:200px;
+   height:200px;
+}
+
+.mainPicture {
+   max-width:195px;
+   max-height:195px;
+}
+
+.thumbnailWrapper {
+   display:inline;
+   width:40px;
+}
+
+.thumbnailPicture {
+   max-width:40px;
+   max-height:40px;
+}
+
+.details {
+   padding:15px;
+   overflow:hidden;
+   background-color:#f2f1f0; /** Create another css file where this is retrieved dynamically */
+}
+
+.buttonWrapper {
+   padding:10px;
+}
+

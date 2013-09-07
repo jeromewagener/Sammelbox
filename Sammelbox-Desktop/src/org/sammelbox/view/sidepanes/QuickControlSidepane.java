@@ -39,6 +39,7 @@ import org.sammelbox.controller.listeners.QuickSearchModifyListener;
 import org.sammelbox.controller.managers.AlbumManager;
 import org.sammelbox.controller.managers.AlbumViewManager;
 import org.sammelbox.controller.managers.WelcomePageManager;
+import org.sammelbox.model.GuiState;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 import org.sammelbox.model.database.operations.DatabaseOperations;
 import org.sammelbox.view.ApplicationUI;
@@ -199,7 +200,7 @@ public final class QuickControlSidepane {
 							DatabaseOperations.removeAlbumAndAlbumPictures(ApplicationUI.getSelectedAlbum());
 							AlbumViewManager.removeAlbumViewsFromAlbum(ApplicationUI.getSelectedAlbum());
 							BrowserFacade.showAlbumDeletedPage(ApplicationUI.getSelectedAlbum());
-							GuiController.getGuiState().setSelectedAlbum(GuiController.getGuiState().NO_ALBUM_SELECTED);
+							GuiController.getGuiState().setSelectedAlbum(GuiState.NO_ALBUM_SELECTED);
 							ApplicationUI.refreshAlbumList();
 						} catch (DatabaseWrapperOperationException ex) {
 							LOGGER.error("A database error occured while removing the following album: '" + ApplicationUI.getSelectedAlbum() + "'", ex);

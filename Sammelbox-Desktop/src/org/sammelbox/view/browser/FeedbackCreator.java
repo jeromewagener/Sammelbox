@@ -49,7 +49,7 @@ public final class FeedbackCreator {
 				ApplicationUI.getAlbumItemBrowser().setText(
 						generateItemAddedOrUpdatedFeedbackConstruct(
 								Translator.get(DictKeys.BROWSER_ITEM_UPDATED),
-								ItemCreator.getAlbumItemTableRowHtml(updatedAlbumItem)));
+								DetailedItemCreator.getImageAndDetailContainer(updatedAlbumItem)));
 			}
 		} catch (DatabaseWrapperOperationException ex) {
 			LOGGER.error("An error occured while fetching the album item #" + albumItemId + " in the album: " + 
@@ -66,7 +66,7 @@ public final class FeedbackCreator {
 				ApplicationUI.getAlbumItemBrowser().setText(
 						generateItemAddedOrUpdatedFeedbackConstruct(
 								Translator.get(DictKeys.BROWSER_ITEM_ADDED),
-								ItemCreator.getAlbumItemTableRowHtml(addedAlbumItem)));
+								DetailedItemCreator.getImageAndDetailContainer(addedAlbumItem)));
 			}
 		} catch (DatabaseWrapperOperationException ex) {
 			LOGGER.error("An error occured while fetching the album item #" + albumItemId + " in the album: " + 
@@ -123,7 +123,7 @@ public final class FeedbackCreator {
 		       "      <h3>" + title + "</h3>" +
 		       "      <h4>" + subTitle + "</h4>" +
 		       "      <hr noshade size=\"1\">" +
-		       "      <table>" + ItemCreator.getAlbumItemTableRowHtml(albumItem, false) + "</table>" +
+		       "      <table>" + DetailedItemCreator.getImageAndDetailContainer(albumItem, false) + "</table>" +
 		       "      <hr noshade size=\"1\">" +
 		       "      <ul>" + getAlterationsAsListItems() + "</ul>" +
 		       "    </body>" +
