@@ -166,7 +166,10 @@ public final class BasicAlbumItemSidepane {
 				});
 
 				if (loadDataIntoFields) {
-					textText.setText((String) albumItem.getField(fieldName).getValue());
+					String text = albumItem.getField(fieldName).getValue();
+					if (text != null) {
+						textText.setText(text);
+					}
 				}
 
 				textText.setData("FieldType", FieldType.TEXT);

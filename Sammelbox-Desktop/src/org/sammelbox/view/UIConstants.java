@@ -49,5 +49,6 @@ public class UIConstants {
 	public static final String SHOW_DETAILS = "show:///details=";
 	public static final String SHOW_DETAILS_COMPOSITE = "show:///detailsComposite=";
 	public static final String ADD_ADDITIONAL_ALBUM_ITEMS = "show:///addAdditionalAlbumItems";
-	public static final String SHOW_DETAILS_VIEW_OF_ALBUM = "show:///showDetailsViewOfAlbum";
+	public static final String SHOW_DETAILS_VIEW_OF_ALBUM = "show:///showDetails=";
+	public static final String BROWSER_RESIZED = "show:///browserResized";
 }

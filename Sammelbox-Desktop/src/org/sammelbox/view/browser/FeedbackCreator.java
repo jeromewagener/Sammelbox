@@ -48,6 +48,7 @@ public final class FeedbackCreator {
 			if (updatedAlbumItem != null) {
 				ApplicationUI.getAlbumItemBrowser().setText(
 						generateItemAddedOrUpdatedFeedbackConstruct(
+								albumItemId,
 								Translator.get(DictKeys.BROWSER_ITEM_UPDATED),
 								DetailedItemCreator.getImageAndDetailContainer(updatedAlbumItem)));
 			}
@@ -65,6 +66,7 @@ public final class FeedbackCreator {
 			if (addedAlbumItem != null) {
 				ApplicationUI.getAlbumItemBrowser().setText(
 						generateItemAddedOrUpdatedFeedbackConstruct(
+								albumItemId,
 								Translator.get(DictKeys.BROWSER_ITEM_ADDED),
 								DetailedItemCreator.getImageAndDetailContainer(addedAlbumItem)));
 			}
@@ -74,23 +76,23 @@ public final class FeedbackCreator {
 		}
 	}
 	
-	private static String generateItemAddedOrUpdatedFeedbackConstruct(String title, String addedOrUpdatedItemAsHtmlTableRowItem) {
+	private static String generateItemAddedOrUpdatedFeedbackConstruct(long albumItemId, String title, String addOrUpdatedItemContainer) {
 		return 	"<!DOCTYPE HTML>" +
 				"  <html>" +
 				"    <head>" +
 				"      <meta " + UIConstants.META_PARAMS + ">" +
-				"      <link rel=stylesheet href=\"" + UIConstants.STYLE_CSS + "\" />" +
+				"      <link rel=stylesheet href=\"" + UIConstants.STYLE_CSS + "\"/>" +
 				"      <script src=\"" + UIConstants.EFFECTS_JS + "\"></script>" +
 				"    </head>" +
 				"    <body bgcolor=white>" +
 				"      <font face=\"" + Utilities.getDefaultSystemFont() + "\">" +
 				"        <h3>" + title + "</h3>" +
-				"          <table id=\"albumItems\" border=0>" + addedOrUpdatedItemAsHtmlTableRowItem + "</table>" +
+				         addOrUpdatedItemContainer +
 				"      </font>" +
 				"      <br>" +
 				"      <form>" +
-				"        <input type=\"button\" " +
-				"               onclick=parent.location.href=\"show:///showDetailsViewOfAlbum\" " +
+				"        <input type=\"button\"" +
+				"               onclick=parent.location.href=\"" + UIConstants.SHOW_DETAILS_VIEW_OF_ALBUM + albumItemId + "\"" +
 				"               value=\"" + Translator.get(DictKeys.BROWSER_BACK_TO_ALBUM) + "\">" +
 				"      </form>" +
 				"    </body>" +

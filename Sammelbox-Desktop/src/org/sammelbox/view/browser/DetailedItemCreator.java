@@ -62,7 +62,7 @@ public final class DetailedItemCreator {
 	}
 	
 	static void addImageAndDetailContainer(AlbumItem albumItem, StringBuilder htmlDataColumnContent, StringBuilder htmlPictureColumnContent, 
-			StringBuilder albumItemTableRowHtml, boolean showUpdateAndRemoveButtons) {
+			StringBuilder albumItems, boolean showUpdateAndRemoveButtons) {
 		
 		// the id of the current album item
 		long id = -1;	
@@ -122,15 +122,15 @@ public final class DetailedItemCreator {
 			htmlDataColumnContent.append(getUpdateRemoveButtonsForm(id));
 		}
 		
-		albumItemTableRowHtml.append(		
-					"<div id=\"albumId" + id + "\" class=\"albumItem\">" +
-					  "<div class=\"albumItemPictures\">" +
-							htmlPictureColumnContent +
-					  "</div>" +
-					  "<div class=\"details\" style=\"background-color:" + Utilities.getBackgroundColorOfWidgetInHex() + "\">" +
-					  		htmlDataColumnContent +
-					  "</div>" +
-					"</div>");
+		albumItems.append(		
+			"<div id=\"albumId" + id + "\" class=\"albumItem\">" +
+			  "<div class=\"albumItemPictures\">" +
+					htmlPictureColumnContent +
+			  "</div>" +
+			  "<div class=\"details\">" +
+			  		htmlDataColumnContent +
+			  "</div>" +
+			"</div>");
 	}
 	
 	private static String getUpdateRemoveButtonsForm(long id) {

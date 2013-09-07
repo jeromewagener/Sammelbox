@@ -31,8 +31,10 @@ import org.sammelbox.view.composites.StatusBarComposite;
 
 public final class AlbumItemStore {
 	private static final String SAMPLE = "Sample";
-	private static final int DEFAULT_STOP_INDEX_INCREASE_AMOUNT = 0;
-	private static final int DEFAULT_STOP_INDEX = 50;
+	private static final int DEFAULT_STOP_INDEX_INCREASE_AMOUNT = 30;
+	// TODO Temporarily disable the dynamic addition by loading all available album items immediately
+	// Reevaluate this sometime in the future..
+	private static final int DEFAULT_STOP_INDEX = Integer.MAX_VALUE;
 	
 	private static List<AlbumItem> albumItems = new ArrayList<AlbumItem>();
 	private static int stopIndex = DEFAULT_STOP_INDEX;

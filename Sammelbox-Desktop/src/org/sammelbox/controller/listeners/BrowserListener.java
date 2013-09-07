@@ -83,8 +83,8 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 
 			ApplicationUI.changeRightCompositeTo(PanelType.UPDATE_ENTRY,
 					UpdateAlbumItemSidepane.build(parentComposite, ApplicationUI.getSelectedAlbum(), Long.parseLong(id)));
-			BrowserFacade.jumpToAnchor(BrowserFacade.getAnchorForAlbumItemId(Integer.parseInt(id)));
-
+			BrowserFacade.setFutureJumpAnchor(BrowserFacade.getAnchorForAlbumItemId(Long.parseLong(id)));
+			
 			// Do not change the page
 			event.doit = false;
 
@@ -178,10 +178,19 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 
 			// Do not change the page
 			event.doit = false;
-		} else if (event.location.equals(UIConstants.SHOW_DETAILS_VIEW_OF_ALBUM)) {
-			BrowserFacade.performBrowserQueryAndShow(QueryBuilder.createSelectStarQuery(ApplicationUI.getSelectedAlbum()));
+		} else if (event.location.startsWith(UIConstants.SHOW_DETAILS_VIEW_OF_ALBUM)) {
+			String albumItemId = event.location.substring(UIConstants.SHOW_DETAILS_VIEW_OF_ALBUM.length());
 			
-			ApplicationUI.changeRightCompositeTo(PanelType.EMPTY, EmptySidepane.build(ApplicationUI.getThreePanelComposite()));
+			BrowserFacade.performBrowserQueryAndShow(QueryBuilder.createSelectStarQuery(ApplicationUI.getSelectedAlbum()));
+			BrowserFacade.setFutureJumpAnchor(BrowserFacade.getAnchorForAlbumItemId(Long.parseLong(albumItemId)));
+			
+			ApplicationUI.changeRightCompositeTo(PanelType.EMPTY, EmptySidepane.build(ApplicationUI.getThreePanelComposite()));	
+			
+			// Do not change the page
+			event.doit = false;
+		} else if (event.location.equals(UIConstants.BROWSER_RESIZED)) {
+			BrowserFacade.jumpToAnchor(BrowserFacade.getFutureJumpAnchor());
+			
 			// Do not change the page
 			event.doit = false;
 		}
@@ -189,12 +198,23 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 
 	@Override
 	public void changed(ProgressEvent event) {
+		if (event.current == event.total) {
+			String anchor = BrowserFacade.getFutureJumpAnchor();
+			
+			if (anchor != null) { //TODO this should never be null, use a defined value instead
+				BrowserFacade.jumpToAnchor(BrowserFacade.getFutureJumpAnchor());
+			}
+		}
 	}
 
 	@Override
 	/** As soon as a page is completely loaded, it is possible to jump to a previously defined anchor */
 	public void completed(ProgressEvent event) {
-		BrowserFacade.jumpToAnchor(BrowserFacade.getFutureJumpAnchor());
+		String anchor = BrowserFacade.getFutureJumpAnchor();
+
+		if (anchor != null) { //TODO this should never be null, use a defined value instead
+			BrowserFacade.jumpToAnchor(BrowserFacade.getFutureJumpAnchor());
+		}
 	}
 
 	@Override
