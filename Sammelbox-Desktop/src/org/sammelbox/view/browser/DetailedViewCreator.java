@@ -58,10 +58,10 @@ public final class DetailedViewCreator {
 	            "<h3>" + 
 	              Translator.get(DictKeys.BROWSER_NO_ITEMS_FOUND, GuiController.getGuiState().getSelectedAlbum()) + 
 	            "</h3>" + 
-	             Translator.get(DictKeys.BROWSER_NO_ITEMS_FOUND_EXPLANATION) + 
+	            "<p>" + Translator.get(DictKeys.BROWSER_NO_ITEMS_FOUND_EXPLANATION) + "</p>" +
 	          "</div></td></tr>"); 
 		}
-
+		
 		// Create final page html
 		String finalPageAsHtml = 
 				"<!DOCTYPE HTML>" +
@@ -73,7 +73,8 @@ public final class DetailedViewCreator {
 				    "<script src=\"" + UIConstants.EFFECTS_JS + "\"></script>" +
 				  "</head>" +
 				  "<body>" + // TODO extract to dynamic CSS  style=\"font-family:" +  Utilities.getDefaultSystemFont() + "\">
-				    "<div id=\"albumItems\">" + albumItemDetailDivContainers + "</div>" +
+				    "<h2>" + GuiController.getGuiState().getSelectedAlbum() + " - " + GuiController.getGuiState().getSelectedView() + "</h2>" +
+				  	"<div id=\"albumItems\">" + albumItemDetailDivContainers + "</div>" +
 				  "</body>" +
 				"</html>";
 		

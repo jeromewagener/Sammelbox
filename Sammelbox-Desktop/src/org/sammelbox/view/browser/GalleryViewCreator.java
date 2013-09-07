@@ -21,6 +21,7 @@ package org.sammelbox.view.browser;
 import java.util.List;
 
 import org.eclipse.swt.browser.Browser;
+import org.sammelbox.controller.GuiController;
 import org.sammelbox.controller.filesystem.FileSystemLocations;
 import org.sammelbox.model.album.AlbumItem;
 import org.sammelbox.model.album.AlbumItemPicture;
@@ -91,6 +92,7 @@ public final class GalleryViewCreator {
 								       "<script src=\"" + UIConstants.EFFECTS_JS + "\"></script>" +
 								     "</head>" +
 								     "<body style=\"background-color:#ffffff;font-family:" +  Utilities.getDefaultSystemFont() + "\">" +
+								       "<h2>" + GuiController.getGuiState().getSelectedAlbum() + " - " + GuiController.getGuiState().getSelectedView() + "</h2>" +
 								       "<div id=\"albumItems\">" + galleryItemHtmlBuilder.toString() + "</div>" +
 								     "</body>" +
 								   "</html>";
