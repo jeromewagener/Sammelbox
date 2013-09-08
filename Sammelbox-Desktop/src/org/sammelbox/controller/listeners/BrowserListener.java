@@ -1,6 +1,6 @@
 /** -----------------------------------------------------------------
  *    Sammelbox: Collection Manager - A free and open-source collection manager for Windows & Linux
- *    Copyright (C) 2011 Jérôme Wagener & Paul Bicheler
+ *    Copyright (C) 2011 Jerome Wagener & Paul Bicheler
  *
  *    This program is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class BrowserListener implements LocationListener, ProgressListener, MenuDetectListener {
-	private static final Logger LOGGER = LoggerFactory.getLogger(BrowserListener.class);
+	private static final Logger logger = LoggerFactory.getLogger(BrowserListener.class);
 	
 	/** The parent composite to which this listener belongs to */
 	private Composite parentComposite;
@@ -102,9 +102,9 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 					AlbumItem albumItemToBeDeleted = DatabaseOperations.getAlbumItem(ApplicationUI.getSelectedAlbum(), Long.parseLong(id));
 					DatabaseOperations.deleteAlbumItem(albumItemToBeDeleted);
 				} catch (NumberFormatException nfe) {
-					LOGGER.error("Couldn't parse the following id: '" + id + "'", nfe);
+					logger.error("Couldn't parse the following id: '" + id + "'", nfe);
 				} catch (DatabaseWrapperOperationException ex) {
-					LOGGER.error("A database error occured while deleting the album item #" + id + " from the album '" + 
+					logger.error("A database error occured while deleting the album item #" + id + " from the album '" + 
 										ApplicationUI.getSelectedAlbum() + "'", ex);
 				}
 				BrowserFacade.performBrowserQueryAndShow(QueryBuilder.createSelectStarQuery(ApplicationUI.getSelectedAlbum()));
@@ -119,13 +119,13 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 
 			String[] pathAndIdArray = pathAndIdString.split("\\?");
 
-			BrowserFacade.showPicture(pathAndIdArray[0], Long.parseLong(pathAndIdArray[1].replace("imageId", "")));
+			BrowserFacade.showImageViewer(pathAndIdArray[0], Long.parseLong(pathAndIdArray[1].replace("imageId", "")));
 			BrowserFacade.setFutureJumpAnchor(pathAndIdArray[1]);
 
 			// Do not change the page
 			event.doit = false;
 		} else if (event.location.startsWith(UIConstants.SHOW_LAST_PAGE)) {
-			BrowserFacade.goBackToLastPage();
+			BrowserFacade.returnFromImageViewer();
 
 			// Do not change the page
 			event.doit = false;
@@ -149,9 +149,9 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 				
 				StatusBarComposite.getInstance(ApplicationUI.getShell()).writeStatus(sb.toString());
 			} catch (NumberFormatException nfe) {
-				LOGGER.error("Couldn't parse the following id: '" + id + "'", nfe);
+				logger.error("Couldn't parse the following id: '" + id + "'", nfe);
 			} catch (DatabaseWrapperOperationException ex) {
-				LOGGER.error("A database related error occured: \n Stacktrace: ", ex);
+				logger.error("A database related error occured: \n Stacktrace: ", ex);
 			}
 
 			// Do not change the page

@@ -64,11 +64,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class ApplicationUI implements Observer {	
-	private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationUI.class);
+	private static final Logger logger = LoggerFactory.getLogger(ApplicationUI.class);
 	/** A reference to the main display */
-	private static final Display DISPLAY = new Display();
+	private static final Display display = new Display();
 	/** A reference to the main shell */
-	private static final Shell SHELL = new Shell(DISPLAY);
+	private static final Shell shell = new Shell(display);
 	
 	/** A reference to the SWT list containing all available albums */
 	private static List albumList;
@@ -217,7 +217,7 @@ public final class ApplicationUI implements Observer {
 		// SWT display management
 		shell.pack();
 
-		Rectangle displayClientArea = DISPLAY.getPrimaryMonitor().getClientArea();
+		Rectangle displayClientArea = display.getPrimaryMonitor().getClientArea();
 		if (maximizeShellOnStartUp(displayClientArea.width, displayClientArea.height)){
 			shell.setMaximized(true);
 		}
@@ -227,17 +227,17 @@ public final class ApplicationUI implements Observer {
 		selectDefaultAndShowWelcomePage();		
 
 		while (!shell.isDisposed()) {
-			if (!DISPLAY.readAndDispatch()) {
-				DISPLAY.sleep();
+			if (!display.readAndDispatch()) {
+				display.sleep();
 			}
 		}
 
-		DISPLAY.dispose();
+		display.dispose();
 	
 		try {
 			DatabaseIntegrityManager.backupAutoSave();
 		} catch (DatabaseWrapperOperationException e) {
-			LOGGER.error("Couldn't create an auto save of the database file", e);
+			logger.error("Couldn't create an auto save of the database file", e);
 		}
 	}
 
@@ -365,18 +365,20 @@ public final class ApplicationUI implements Observer {
 				 break;
 			 }
 		}
-		if (!albumSelectionIsInSync){
-			LOGGER.error("The album list does not contain the album that is supposed to be selected");
+		
+		if (!albumSelectionIsInSync) {
+			logger.error("The album list does not contain the album that is supposed to be selected");
 			return false;
 		}
 	
 		if (!ApplicationUI.getQuickSearchTextField().getText().isEmpty()) {
 			ApplicationUI.getQuickSearchTextField().setText("");
 		}
+		
 		try {
 			ApplicationUI.getQuickSearchTextField().setEnabled(DatabaseOperations.isAlbumQuicksearchable(albumName));
 		} catch (DatabaseWrapperOperationException ex) {
-			LOGGER.error("An error occured while enabling the quick search field", ex);
+			logger.error("An error occured while enabling the quick search field", ex);
 		}
 		
 		BrowserFacade.performBrowserQueryAndShow(QueryBuilder.createSelectStarQuery(albumName));
@@ -434,7 +436,7 @@ public final class ApplicationUI implements Observer {
 	}
 
 	public static Shell getShell() {
-		return SHELL;
+		return shell;
 	}
 	
 	/**
@@ -458,6 +460,9 @@ public final class ApplicationUI implements Observer {
 			}
 		} else if (event.equals(SammelboxEvent.ALBUM_SELECTED)) {			
 			viewList.setItems(AlbumViewManager.getAlbumViewNamesArray(GuiController.getGuiState().getSelectedAlbum()));
+			BrowserFacade.resetFutureJumpAnchor();
+		} else if (event.equals(SammelboxEvent.ALBUM_VIEW_SELECTED)) {
+			BrowserFacade.resetFutureJumpAnchor();
 		} else if (event.equals(SammelboxEvent.ALBUM_VIEW_LIST_UPDATED)) {
 			viewList.removeAll();
 
@@ -486,16 +491,18 @@ public final class ApplicationUI implements Observer {
 	}
 	
 	private static Rectangle getPrimaryScreenClientArea() {
-		Monitor primaryMonitorBySwt = DISPLAY.getPrimaryMonitor();
+		Monitor primaryMonitorBySwt = display.getPrimaryMonitor();
 		Rectangle primaryMonitorClientAreaBySwt = primaryMonitorBySwt.getClientArea();
 		GraphicsDevice[]screens =  GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
 		  for (GraphicsDevice screen : screens) {
 			  if (isPrimaryMonitor(screen)) {
 				  // Cut off any excess area such as OS task-bars. 
-				 Rectangle primaryScreenBoundsByJava = new Rectangle(	screen.getDefaultConfiguration().getBounds().x,
-																	   	screen.getDefaultConfiguration().getBounds().y,
-																	   	screen.getDefaultConfiguration().getBounds().width,
-																		screen.getDefaultConfiguration().getBounds().height);
+				  Rectangle primaryScreenBoundsByJava = new Rectangle(	
+						screen.getDefaultConfiguration().getBounds().x,
+					   	screen.getDefaultConfiguration().getBounds().y,
+					   	screen.getDefaultConfiguration().getBounds().width,
+						screen.getDefaultConfiguration().getBounds().height);
+				 
 				  return primaryMonitorClientAreaBySwt.intersection(primaryScreenBoundsByJava);				 
 			  } 			 
 		  }

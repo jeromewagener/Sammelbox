@@ -33,6 +33,8 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Text;
 import org.sammelbox.controller.GuiController;
+import org.sammelbox.controller.events.EventObservable;
+import org.sammelbox.controller.events.SammelboxEvent;
 import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.controller.listeners.QuickSearchModifyListener;
@@ -50,7 +52,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class QuickControlSidepane {
-	private static final Logger LOGGER = LoggerFactory.getLogger(QuickControlSidepane.class);
+	private static final Logger logger = LoggerFactory.getLogger(QuickControlSidepane.class);
 	
 	private QuickControlSidepane() {
 		// use build method instead
@@ -203,7 +205,7 @@ public final class QuickControlSidepane {
 							GuiController.getGuiState().setSelectedAlbum(GuiState.NO_ALBUM_SELECTED);
 							ApplicationUI.refreshAlbumList();
 						} catch (DatabaseWrapperOperationException ex) {
-							LOGGER.error("A database error occured while removing the following album: '" + ApplicationUI.getSelectedAlbum() + "'", ex);
+							logger.error("A database error occured while removing the following album: '" + ApplicationUI.getSelectedAlbum() + "'", ex);
 						}
 					}
 				}
@@ -219,6 +221,7 @@ public final class QuickControlSidepane {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {				
 				GuiController.getGuiState().setSelectedView(viewList.getItem(viewList.getSelectionIndex()));
+				EventObservable.addEventToQueue(SammelboxEvent.ALBUM_VIEW_SELECTED);
 				
 				BrowserFacade.performBrowserQueryAndShow(AlbumViewManager.getSqlQueryByViewName(
 						GuiController.getGuiState().getSelectedAlbum(), GuiController.getGuiState().getSelectedView()));

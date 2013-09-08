@@ -1,6 +1,6 @@
 /** -----------------------------------------------------------------
  *    Sammelbox: Collection Manager - A free and open-source collection manager for Windows & Linux
- *    Copyright (C) 2011 Jérôme Wagener & Paul Bicheler
+ *    Copyright (C) 2011 Jerome Wagener & Paul Bicheler
  *
  *    This program is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -28,16 +28,17 @@ public final class BrowserFacade {
 	private BrowserFacade() {
 	}
 	
+	public static void showAlbum() { Utilities.showAlbum(ApplicationUI.getAlbumItemBrowser()); }
 	public static void loadWelcomePage() { WelcomePageCreator.loadWelcomePage(); }
-	public static void rerunLastQuery() { Utilities.performLastQuery(ApplicationUI.getAlbumItemBrowser()); }
 	public static void loadHelpPage() { Utilities.loadHelpPage(); }
 	public static String getAnchorForAlbumItemId(long anchorId) { return Utilities.getAnchorForAlbumItemId(anchorId); }
 	public static void jumpToAnchor(String anchor) { Utilities.jumpToAnchor(anchor); }
 	public static void performBrowserQueryAndShow(String sqlQuery) { Utilities.performBrowserQueryAndShow(ApplicationUI.getAlbumItemBrowser(), sqlQuery); }
-	public static void showPicture(String pathToPicture, long albumItemId) { PictureViewCreator.showPicture(albumItemId); }
+	public static void showImageViewer(String pathToPicture, long albumItemId) { PictureViewCreator.showPicture(albumItemId); }
+	public static void resetFutureJumpAnchor() {Utilities.setFutureJumpAnchor(Utilities.NO_ANCHOR);}
 	public static void setFutureJumpAnchor(String futureJumpAnchor) { Utilities.setFutureJumpAnchor(futureJumpAnchor); }
 	public static String getFutureJumpAnchor() { return Utilities.getFutureJumpAnchor(); }
-	public static void goBackToLastPage() { Utilities.goBackToLastPage(); }
+	public static void returnFromImageViewer() { Utilities.returnFromImageViewer(); }
 	public static void addAdditionalAlbumItems() { Utilities.addAdditionalAlbumItems(); }
 	public static void showResultSet(AlbumItemResultSet resultSet) { Utilities.showResultSet(ApplicationUI.getAlbumItemBrowser(), resultSet); }
 	public static void loadHtmlFromInputStream(InputStream fileInputStream) { Utilities.loadHtmlPage(ApplicationUI.getAlbumItemBrowser(), fileInputStream); }

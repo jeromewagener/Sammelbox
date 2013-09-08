@@ -1,6 +1,6 @@
 /** -----------------------------------------------------------------
  *    Sammelbox: Collection Manager - A free and open-source collection manager for Windows & Linux
- *    Copyright (C) 2011 Jérôme Wagener & Paul Bicheler
+ *    Copyright (C) 2011 Jerome Wagener & Paul Bicheler
  *
  *    This program is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -35,11 +35,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Utilities {
-	private static final Logger LOGGER = LoggerFactory.getLogger(Utilities.class);
-	
+	public static final String NO_ANCHOR = "";
+	private static final Logger logger = LoggerFactory.getLogger(Utilities.class);
+		
 	/** The anchor to which a jump is performed as soon as the page is fully loaded. 
 	 * This field is used via the set and get methods by the browser progress listener */
-	private static String futureJumpAnchor = null;
+	private static String futureJumpAnchor = NO_ANCHOR;
 	/** The background color of the application widgets in html hex */
 	private static String backgroundColorOfWidgetInHex = null;
 	/** The default system font */
@@ -60,12 +61,8 @@ public class Utilities {
 		try {
 			AlbumItemStore.reinitializeStore(DatabaseOperations.executeSQLQuery(sqlQuery));
 		} catch (DatabaseWrapperOperationException ex) {
-			LOGGER.error("An error occured while reinitializing the album item store using the following SQL query (" + sqlQuery + ")", ex);
+			logger.error("An error occured while reinitializing the album item store using the following SQL query (" + sqlQuery + ")", ex);
 		}
-		showAlbum(browser);
-	}
-
-	static void performLastQuery(Browser browser) {
 		showAlbum(browser);
 	}
 
@@ -73,7 +70,7 @@ public class Utilities {
 		try {
 			AlbumItemStore.reinitializeStore(albumItemResultSet);
 		} catch (DatabaseWrapperOperationException ex) {
-			LOGGER.error("Could not reinitialize album item store", ex);
+			logger.error("Could not reinitialize album item store", ex);
 		}
 		showAlbum(browser);
 	}
@@ -97,10 +94,12 @@ public class Utilities {
 	 * must be used. By using this method the browser progress listener will execute the
 	 * jump as soon as the document is completely loaded */
 	static void jumpToAnchor(String anchor) {
-		ApplicationUI.getAlbumItemBrowser().execute("window.location.hash=\"" + anchor + "\"");
+		if (!anchor.equals(NO_ANCHOR)) {
+			ApplicationUI.getAlbumItemBrowser().execute("window.location.hash=\"" + anchor + "\"");
+		}
 	}
 
-	static void goBackToLastPage() {
+	static void returnFromImageViewer() {
 		if (lastPageAsHtml != null) {
 			ApplicationUI.getAlbumItemBrowser().setText(lastPageAsHtml);
 		}

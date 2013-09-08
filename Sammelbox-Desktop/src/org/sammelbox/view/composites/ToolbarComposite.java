@@ -1,6 +1,6 @@
 /** -----------------------------------------------------------------
  *    Sammelbox: Collection Manager - A free and open-source collection manager for Windows & Linux
- *    Copyright (C) 2011 Jérôme Wagener & Paul Bicheler
+ *    Copyright (C) 2011 Jerome Wagener & Paul Bicheler
  *
  *    This program is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -51,7 +51,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ToolbarComposite extends Composite implements Observer {
-	private static final Logger LOGGER = LoggerFactory.getLogger(ToolbarComposite.class);
+	private static final Logger logger = LoggerFactory.getLogger(ToolbarComposite.class);
 	
 	private Composite toolbarComposite = null;
 	private Image home = null, addAlbum = null, addEntry = null,
@@ -251,14 +251,13 @@ public class ToolbarComposite extends Composite implements Observer {
 
 		addEntryBtn.addMouseListener(new MouseListener() {
 			@Override
-			public void mouseUp(MouseEvent arg0) {
-				BrowserFacade.rerunLastQuery();
-				
+			public void mouseUp(MouseEvent arg0) {				
 				if (!ApplicationUI.isAlbumSelectedAndShowMessageIfNot()) {
 					return;
 				}
-				if (ApplicationUI.getCurrentRightPanelType() != PanelType.ADD_ENTRY) {
-					ApplicationUI.changeRightCompositeTo(PanelType.ADD_ALBUM,
+				
+				if (ApplicationUI.getCurrentRightPanelType() != PanelType.ADD_ENTRY) {					
+					ApplicationUI.changeRightCompositeTo(PanelType.ADD_ENTRY,
 							AddAlbumItemSidepane.build(
 									ApplicationUI.getThreePanelComposite(),
 									ApplicationUI.getSelectedAlbum()));
@@ -270,7 +269,7 @@ public class ToolbarComposite extends Composite implements Observer {
 					addEntryBtn.setImage(addEntryActive);
 					ApplicationUI.setCurrentRightPanelType(PanelType.ADD_ENTRY);
 					lastSelectedPanelType = PanelType.ADD_ENTRY;
-				} else {
+				} else {					
 					ApplicationUI.changeRightCompositeTo(PanelType.EMPTY,
 							EmptySidepane.build(ApplicationUI
 									.getThreePanelComposite()));
@@ -304,7 +303,7 @@ public class ToolbarComposite extends Composite implements Observer {
 					GuiController.getGuiState().setViewDetailed(true);
 				}
 				
-				BrowserFacade.rerunLastQuery();
+				BrowserFacade.showAlbum();
 			}
 
 			@Override
@@ -319,11 +318,10 @@ public class ToolbarComposite extends Composite implements Observer {
 		searchBtn.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseUp(MouseEvent arg0) {
-				BrowserFacade.rerunLastQuery();
-				
 				if (!ApplicationUI.isAlbumSelectedAndShowMessageIfNot()) {
 					return;
 				}
+				
 				if (ApplicationUI.getCurrentRightPanelType() != PanelType.ADVANCED_SEARCH) {
 					ApplicationUI.changeRightCompositeTo(PanelType.ADVANCED_SEARCH,
 							AdvancedSearchSidepane.build(
@@ -475,7 +473,7 @@ public class ToolbarComposite extends Composite implements Observer {
 				toggleViewBtn.setEnabled(false);
 			}
 		} catch (DatabaseWrapperOperationException ex) {
-			LOGGER.error("An error occured while checking whether the following album contains pictures: '" + albumName + "'", ex);
+			logger.error("An error occured while checking whether the following album contains pictures: '" + albumName + "'", ex);
 		}
 
 		GuiController.getGuiState().setViewDetailed(
