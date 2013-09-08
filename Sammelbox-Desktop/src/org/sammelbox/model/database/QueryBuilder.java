@@ -1,6 +1,6 @@
 /** -----------------------------------------------------------------
  *    Sammelbox: Collection Manager - A free and open-source collection manager for Windows & Linux
- *    Copyright (C) 2011 Jérôme Wagener & Paul Bicheler
+ *    Copyright (C) 2011 Jerome Wagener & Paul Bicheler
  *
  *    This program is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -19,9 +19,11 @@
 package org.sammelbox.model.database;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.model.album.FieldType;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 import org.sammelbox.model.database.operations.DatabaseOperations;
@@ -30,167 +32,82 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class QueryBuilder {
-	private static final Logger LOGGER = LoggerFactory.getLogger(QueryBuilder.class);
-	
-	/** A singleton instance of the QueryBuilder class */
-	private static QueryBuilder instance = null;
-	
-	/** This method either creates & returns the singleton instance, or if already created, simply returns it */
-	private static QueryBuilder getInstance() {
-		if (instance == null) {
-			instance = new QueryBuilder();
-		}
-		return instance;
-	}
+	private static final Logger logger = LoggerFactory.getLogger(QueryBuilder.class);
 	
 	/** A private default constructor to forbid the creation of multiple instances */
 	private QueryBuilder() {}
+	private static final QueryBuilder instance = new QueryBuilder();
 	
-	/** All available query operators together with some utility functions */
-	public enum QueryOperator {
-		EQUALS,
-		NOT_EQUALS,
-		LIKE,
-		SMALLER_THAN, 
-		SMALLER_OR_EQUAL_THAN, 
-		BIGGER_THAN,
-		BIGGER_OR_EQUAL_THAN,
-		DATE_EQUALS,
-		DATE_BEFORE,
-		DATE_BEFORE_OR_EQUAL,
-		DATE_AFTER_OR_EQUAL,
-		DATE_AFTER;
-		
-		/** Returns all operators suited for text queries 
-		 * @return an string array containing all operators suited for text queries */
-		public static String[] toTextOperatorStringArray() {
-			return new String[] { 	
-					"=",
-					"!=",
-					"like"
-			};
-		}
-		
-		/** Returns all operators suited for number queries 
-		 * @return an string array containing all operators suited for number queries */
-		public static String[] toNumberOperatorStringArray() {
-			return new String[] { 	
-					"=",
-					"<",
-					"<=",
-					">",
-					">="
-			};
-		}
-		
-		/** Returns all operators suited for date queries 
-		 * @return an string array containing all operators suited for date queries */
-		public static String[] toDateOperatorStringArray() {
-			return new String[] { 	
-					"equals",
-					"before",
-					"before or equals",
-					"after or equals",
-					"after"
-			};
-		}
-		
-		/** Returns all operators suited for yes/no queries 
-		 * @return an string array containing all operators suited for yes/no queries */
-		public static String[] toYesNoOperatorStringArray() {
-			return new String[] { 	
-					"="
-			};
-		}
-		
-		/** Transform a QueryOperator to the corresponding SQL operator
-		 * @param queryOperator the QueryOperator to be transformed
-		 * @return a string with the corresponding SQL operator */
-		public static String toSQLOperator(QueryOperator queryOperator) {
-			if (queryOperator.equals(QueryOperator.EQUALS)) {
-				return "=";
-			}
-			else if (queryOperator.equals(QueryOperator.NOT_EQUALS)) {
-				return "!=";
-			}
-			else if (queryOperator.equals(QueryOperator.LIKE)) {
-				return "like";
-			}
-			else if (queryOperator.equals(QueryOperator.SMALLER_THAN)) {
-				return "<";
-			}
-			else if (queryOperator.equals(QueryOperator.SMALLER_OR_EQUAL_THAN)) {
-				return "<=";
-			}
-			else if (queryOperator.equals(QueryOperator.BIGGER_THAN)) {
-				return ">";
-			}
-			else if (queryOperator.equals(QueryOperator.BIGGER_OR_EQUAL_THAN)) {
-				return ">=";
-			} 
-			else if (queryOperator.equals(QueryOperator.DATE_EQUALS)) {
-				return "=";
-			} 
-			else if (queryOperator.equals(QueryOperator.DATE_BEFORE)) {
-				return "<";
-			} 
-			else if (queryOperator.equals(QueryOperator.DATE_BEFORE_OR_EQUAL)) {
-				return "<=";
-			} 
-			else if (queryOperator.equals(QueryOperator.DATE_AFTER_OR_EQUAL)) {
-				return ">";
-			}
+	private static final Map<String, String> searchToSQLOperators;
+    static {
+        Map<String, String> mySearchToSQLOperators = new HashMap<String, String>();
 
-			return null;
-		}
-
-		/** Transform a SQL operator string into a QueryOperator
-		 * @param fieldOperator a string containing a field operator
-		 * @return a QueryOperator transformation of the field operator */
-		public static QueryOperator toQueryOperator(String fieldOperator) {
-			if (fieldOperator.equals("=")) {
-				return QueryOperator.EQUALS;
-			}
-			else if (fieldOperator.equals("!=")) {
-				return QueryOperator.NOT_EQUALS;
-			}
-			else if (fieldOperator.equals("like")) {
-				return QueryOperator.LIKE;
-			}
-			else if (fieldOperator.equals("<")) {
-				return QueryOperator.SMALLER_THAN;
-			}
-			else if (fieldOperator.equals("<=")) {
-				return QueryOperator.SMALLER_OR_EQUAL_THAN;
-			}
-			else if (fieldOperator.equals(">")) {
-				return QueryOperator.BIGGER_THAN;
-			}
-			else if (fieldOperator.equals(">=")) {
-				return QueryOperator.BIGGER_OR_EQUAL_THAN;
-			}
-			else if (fieldOperator.equals("equals")) {
-				return QueryOperator.DATE_EQUALS;
-			}
-			else if (fieldOperator.equals("before")) {
-				return QueryOperator.DATE_BEFORE;
-			}
-			else if (fieldOperator.equals("before or equals")) {
-				return QueryOperator.DATE_BEFORE_OR_EQUAL;
-			}
-			else if (fieldOperator.equals("after or equals")) {
-				return QueryOperator.DATE_AFTER_OR_EQUAL;
-			}
-			else if (fieldOperator.equals("after")) {
-				return QueryOperator.DATE_AFTER;
-			}
-			else if (fieldOperator.equals("after")) {
-				return QueryOperator.DATE_AFTER;
-			}
-			else {
-				return null;
-			}
-		}
+        mySearchToSQLOperators.put(Translator.toBeTranslated("equals"), QueryOperator.EQUALS.toSqlOperator());
+        mySearchToSQLOperators.put(Translator.toBeTranslated("not equals"), QueryOperator.NOT_EQUALS.toSqlOperator());
+        mySearchToSQLOperators.put(Translator.toBeTranslated("contains"), QueryOperator.LIKE.toSqlOperator());
+        mySearchToSQLOperators.put(Translator.toBeTranslated("smaller or equal"), QueryOperator.SMALLER_OR_EQUAL.toSqlOperator());
+        mySearchToSQLOperators.put(Translator.toBeTranslated("smaller"), QueryOperator.SMALLER.toSqlOperator());
+        mySearchToSQLOperators.put(Translator.toBeTranslated("bigger than"), QueryOperator.BIGGER.toSqlOperator());
+        mySearchToSQLOperators.put(Translator.toBeTranslated("bigger or equal"), QueryOperator.BIGGER_OR_EQUAL.toSqlOperator());
+        mySearchToSQLOperators.put(Translator.toBeTranslated("before"), QueryOperator.DATE_BEFORE.toSqlOperator());
+        mySearchToSQLOperators.put(Translator.toBeTranslated("before or equal"), QueryOperator.DATE_BEFORE_OR_EQUAL.toSqlOperator());
+        mySearchToSQLOperators.put(Translator.toBeTranslated("after or equal"), QueryOperator.DATE_AFTER_OR_EQUAL.toSqlOperator());
+        mySearchToSQLOperators.put(Translator.toBeTranslated("after"), QueryOperator.DATE_AFTER.toSqlOperator());
+        
+        searchToSQLOperators = Collections.unmodifiableMap(mySearchToSQLOperators);
+    }
+	
+    public static QueryOperator getQueryOperator(String searchOperator) {
+    	return QueryOperator.valueOfSQL(searchToSQLOperators.get(searchOperator));
+    }
+    
+	/** Returns all natural language operators suited for text queries 
+	 * @return a string array containing all natural language operators suited for text queries */
+	public static String[] toTextOperatorStringArray() {
+		return new String[] { 	
+			Translator.toBeTranslated("equals"),
+			Translator.toBeTranslated("not equals"),
+			Translator.toBeTranslated("contains")
+		};
+	}
+		
+	/** Returns all natural language operators suited for number queries 
+	 * @return a string array containing all natural language operators suited for number queries */
+	public static String[] toNumberOperatorStringArray() {
+		return new String[] { 	
+			Translator.toBeTranslated("equals"),
+			Translator.toBeTranslated("smaller"),
+			Translator.toBeTranslated("smaller or equal"),
+			Translator.toBeTranslated("bigger"),
+			Translator.toBeTranslated("bigger or equal")
+		};
+	}
+		
+	/** Returns all operators suited for date queries 
+	 * @return an string array containing all operators suited for date queries */
+	public static String[] toDateOperatorStringArray() {			
+		return new String[] { 	
+			Translator.toBeTranslated("equals"),
+			Translator.toBeTranslated("before"),
+			Translator.toBeTranslated("before or equals"),
+			Translator.toBeTranslated("after or equals"),
+			Translator.toBeTranslated("after")
+		};
+	}
+		
+	/** Returns all operators suited for yes/no queries 
+	 * @return an string array containing all operators suited for yes/no queries */
+	public static String[] toYesNoOperatorStringArray() {
+		return new String[] { 	
+			Translator.toBeTranslated("equals")
+		};
+	}
+		
+	/** Transform a search operator to the corresponding SQL operator
+	 * @param searchOperator the QueryOperator to be transformed
+	 * @return a string with the corresponding SQL operator */
+	public static String toSQLOperator(QueryOperator searchOperator) {
+		return searchOperator.toSqlOperator();
 	}
 
 	/** A helper (data) class for building queries. A query component is the combination of a field name, an operator and a value */
@@ -212,7 +129,7 @@ public final class QueryBuilder {
 	 * @param value the value which should be used for querying
 	 * @return a query component based on the provided parameters */
 	public static QueryComponent getQueryComponent(String fieldName, QueryOperator operator, String value) {
-		return getInstance().new QueryComponent(fieldName, operator, value);
+		return instance.new QueryComponent(fieldName, operator, value);
 	}
 	
 	/** This method builds a SQL query string out of multiple query components 
@@ -245,7 +162,7 @@ public final class QueryBuilder {
 		try {
 			fieldNameToFieldTypeMap = DatabaseOperations.getAlbumItemFieldNameToTypeMap(albumName);
 		} catch (DatabaseWrapperOperationException ex) {
-			LOGGER.error("Couldn't determine field types for album " + albumName, ex);
+			logger.error("Couldn't determine field types for album " + albumName, ex);
 		}
 			
 		for (int i=0; i<queryComponents.size(); i++) {	
@@ -256,18 +173,18 @@ public final class QueryBuilder {
 				if (queryComponents.get(i).operator == QueryOperator.LIKE) {
 					query.append( "(" +
 							"[" + queryComponents.get(i).fieldName + "] " + 
-							QueryOperator.toSQLOperator(queryComponents.get(i).operator) + " " + 
+							toSQLOperator(queryComponents.get(i).operator) + " " + 
 							"'%" + DatabaseStringUtilities.sanitizeSingleQuotesInAlbumItemValues(queryComponents.get(i).value) + "%')");
 				} else {
 					query.append( "(" +
 							"[" + queryComponents.get(i).fieldName + "] " + 
-							QueryOperator.toSQLOperator(queryComponents.get(i).operator) + " " + 
+							toSQLOperator(queryComponents.get(i).operator) + " " + 
 							"'" + DatabaseStringUtilities.sanitizeSingleQuotesInAlbumItemValues(queryComponents.get(i).value) + "')");
 				}
 			} else {
 				query.append( "(" +
 						"[" + queryComponents.get(i).fieldName + "] " + 
-						QueryOperator.toSQLOperator(queryComponents.get(i).operator) + " " + 
+						toSQLOperator(queryComponents.get(i).operator) + " " + 
 						queryComponents.get(i).value + ")");
 			}
 

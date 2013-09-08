@@ -1,6 +1,6 @@
 /** -----------------------------------------------------------------
  *    Sammelbox: Collection Manager - A free and open-source collection manager for Windows & Linux
- *    Copyright (C) 2011 Jérôme Wagener & Paul Bicheler
+ *    Copyright (C) 2011 Jerome Wagener & Paul Bicheler
  *
  *    This program is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -50,7 +50,6 @@ import org.sammelbox.model.album.MetaItemField;
 import org.sammelbox.model.album.OptionType;
 import org.sammelbox.model.database.QueryBuilder;
 import org.sammelbox.model.database.QueryBuilder.QueryComponent;
-import org.sammelbox.model.database.QueryBuilder.QueryOperator;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 import org.sammelbox.model.database.operations.DatabaseOperations;
 import org.sammelbox.view.ApplicationUI;
@@ -60,7 +59,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class AdvancedSearchSidepane {
-	private static final Logger LOGGER = LoggerFactory.getLogger(AdvancedSearchSidepane.class);
+	private static final Logger logger = LoggerFactory.getLogger(AdvancedSearchSidepane.class);
 	
 	private AdvancedSearchSidepane() {
 		// use build method instead
@@ -93,7 +92,7 @@ public final class AdvancedSearchSidepane {
 			fieldToSearchCombo.setData("validMetaItemFields", MetaItemFieldFilter.getValidMetaItemFields(DatabaseOperations.getAlbumItemFieldNamesAndTypes(album)));
 			fieldToSearchCombo.setItems(MetaItemFieldFilter.getValidFieldNamesAsStringArray(DatabaseOperations.getAlbumItemFieldNamesAndTypes(album)));	
 		} catch (DatabaseWrapperOperationException ex) {
-			LOGGER.error("A database related error occured", ex);
+			logger.error("A database related error occured", ex);
 		}
 		Label searchOperatorLabel = new Label(innerComposite, SWT.NONE);
 		searchOperatorLabel.setText(Translator.get(DictKeys.LABEL_SEARCH_OPERATOR));
@@ -113,29 +112,29 @@ public final class AdvancedSearchSidepane {
 					for (MetaItemField metaItemField : (java.util.List<MetaItemField>) fieldToSearchCombo.getData("validMetaItemFields")) {
 						if (metaItemField.getName().equals(fieldToSearchCombo.getItem(fieldToSearchCombo.getSelectionIndex()))) {
 							if (metaItemField.getType() == FieldType.TEXT) {
-								searchOperatorCombo.setItems(QueryOperator.toTextOperatorStringArray());
+								searchOperatorCombo.setItems(QueryBuilder.toTextOperatorStringArray());
 								valueToSearchText.setText("");
 							} else if (metaItemField.getType() == FieldType.STAR_RATING) {
-								searchOperatorCombo.setItems(QueryOperator.toNumberOperatorStringArray());
+								searchOperatorCombo.setItems(QueryBuilder.toNumberOperatorStringArray());
 								valueToSearchText.setText("[0..5]");
 							} else if (metaItemField.getType() == FieldType.DECIMAL) {
-								searchOperatorCombo.setItems(QueryOperator.toNumberOperatorStringArray());
+								searchOperatorCombo.setItems(QueryBuilder.toNumberOperatorStringArray());
 								valueToSearchText.setText("");
 							} else if (metaItemField.getType() == FieldType.INTEGER) {
-								searchOperatorCombo.setItems(QueryOperator.toNumberOperatorStringArray());
+								searchOperatorCombo.setItems(QueryBuilder.toNumberOperatorStringArray());
 								valueToSearchText.setText("");
 							} else if (metaItemField.getType() == FieldType.DATE) {
-								searchOperatorCombo.setItems(QueryOperator.toDateOperatorStringArray());
+								searchOperatorCombo.setItems(QueryBuilder.toDateOperatorStringArray());
 
 								SimpleDateFormat sdfmt = new SimpleDateFormat();
 								sdfmt.applyPattern("d/M/yyyy");
 
 								valueToSearchText.setText(sdfmt.format(new Date(System.currentTimeMillis())));
 							} else if (metaItemField.getType() == FieldType.TIME) {
-								searchOperatorCombo.setItems(QueryOperator.toDateOperatorStringArray());
+								searchOperatorCombo.setItems(QueryBuilder.toDateOperatorStringArray());
 								valueToSearchText.setText("");
 							} else if (metaItemField.getType() == FieldType.OPTION) {
-								searchOperatorCombo.setItems(QueryOperator.toYesNoOperatorStringArray());
+								searchOperatorCombo.setItems(QueryBuilder.toYesNoOperatorStringArray());
 
 								searchOperatorCombo.select(0);
 								valueToSearchText.setText(
@@ -252,7 +251,7 @@ public final class AdvancedSearchSidepane {
 			fieldToSortCombo.setData("validMetaItemFields", MetaItemFieldFilter.getValidMetaItemFields(DatabaseOperations.getAlbumItemFieldNamesAndTypes(album)));
 			fieldToSortCombo.setItems(MetaItemFieldFilter.getValidFieldNamesAsStringArray(DatabaseOperations.getAlbumItemFieldNamesAndTypes(album)));
 		} catch (DatabaseWrapperOperationException ex) {
-			LOGGER.error("A database related error occured", ex);
+			logger.error("A database related error occured", ex);
 		}
 		
 		final Button sortAscendingButton = new Button(composite, SWT.RADIO);
@@ -345,7 +344,7 @@ public final class AdvancedSearchSidepane {
 
 						queryComponents.add(QueryBuilder.getQueryComponent(
 								searchQueryTable.getItem(i).getText(0),
-								QueryOperator.toQueryOperator(searchQueryTable.getItem(i).getText(1)),
+								QueryBuilder.getQueryOperator(searchQueryTable.getItem(i).getText(1)),
 								String.valueOf(dateInMilliseconds)));
 					} catch (ParseException e1) {
 						ComponentFactory.getMessageBox(
@@ -372,7 +371,7 @@ public final class AdvancedSearchSidepane {
 					if (option != null) {
 						queryComponents.add(QueryBuilder.getQueryComponent(
 								searchQueryTable.getItem(i).getText(0),
-								QueryOperator.toQueryOperator(searchQueryTable.getItem(i).getText(1)),
+								QueryBuilder.getQueryOperator(searchQueryTable.getItem(i).getText(1)),
 								option));
 					} else {
 						ComponentFactory.getMessageBox(
@@ -385,12 +384,12 @@ public final class AdvancedSearchSidepane {
 				} else {
 					queryComponents.add(QueryBuilder.getQueryComponent(
 							searchQueryTable.getItem(i).getText(0),
-							QueryOperator.toQueryOperator(searchQueryTable.getItem(i).getText(1)),
+							QueryBuilder.getQueryOperator(searchQueryTable.getItem(i).getText(1)),
 							searchQueryTable.getItem(i).getText(2)));
 				}
 			}			
 		} catch (Exception ex) {
-			LOGGER.error("A database related error occured", ex);
+			logger.error("A database related error occured", ex);
 		}
 		
 		return queryComponents;	

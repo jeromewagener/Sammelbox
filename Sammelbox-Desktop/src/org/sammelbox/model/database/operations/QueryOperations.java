@@ -46,7 +46,7 @@ import org.sammelbox.model.album.OptionType;
 import org.sammelbox.model.database.DatabaseStringUtilities;
 import org.sammelbox.model.database.QueryBuilder;
 import org.sammelbox.model.database.QueryBuilder.QueryComponent;
-import org.sammelbox.model.database.QueryBuilder.QueryOperator;
+import org.sammelbox.model.database.QueryOperator;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException.DBErrorState;
 import org.slf4j.Logger;
