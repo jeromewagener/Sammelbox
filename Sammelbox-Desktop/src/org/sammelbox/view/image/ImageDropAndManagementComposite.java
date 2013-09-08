@@ -1,6 +1,6 @@
 /** -----------------------------------------------------------------
  *    Sammelbox: Collection Manager - A free and open-source collection manager for Windows & Linux
- *    Copyright (C) 2011 Jérôme Wagener & Paul Bicheler
+ *    Copyright (C) 2011 Jerome Wagener & Paul Bicheler
  *
  *    This program is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -32,6 +32,8 @@ import org.eclipse.swt.dnd.DropTargetListener;
 import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.ImageTransfer;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -41,6 +43,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Widget;
 import org.sammelbox.controller.GuiController;
@@ -88,6 +91,41 @@ public class ImageDropAndManagementComposite extends Composite implements DropTa
 		Label dropTextLabel = new Label(this, SWT.BORDER | SWT.CENTER | SWT.VERTICAL);
 		dropTextLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		dropTextLabel.setText(Translator.get(DictKeys.LABEL_DROP_IMAGE_HERE));
+		dropTextLabel.addMouseListener(new MouseListener() {
+			
+			@Override
+			public void mouseUp(MouseEvent arg0) {
+				// cannot be used since this could be a drag event
+			}
+			
+			@Override
+			public void mouseDown(MouseEvent arg0) {
+				FileDialog openFileDialog = new FileDialog(ApplicationUI.getShell(), SWT.MULTI);
+				openFileDialog.setText(Translator.toBeTranslated("Select pictures..."));
+				openFileDialog.setFilterPath(System.getProperty("user.home"));
+				String[] filterExt = { "*.JPEG;*.jpeg;*.JPG;*.jpg;*.PNG;*.png;*.GIF;*.gif;*.BMP;*.bmp;*.ICO;*.ico;*.TIFF;*.tiff" };
+				openFileDialog.setFilterExtensions(filterExt);
+
+				String firstFile = openFileDialog.open();
+				if (firstFile != null) {
+					String selectionFolder = new File(firstFile).getParent();
+					String[] filenames = openFileDialog.getFileNames();
+					for (String filename : filenames) {
+						AlbumItemPicture picture = ImageManipulator.adaptAndStoreImageForCollector(
+								new File(selectionFolder + File.separatorChar + filename), GuiController.getGuiState().getSelectedAlbum());
+						if (picture == null) {
+							showDroppedUnsupportedFileMessageBox(filename);
+						} else {
+							pictures.add(picture);
+						}
+					}
+					refreshImageComposite();
+				}
+			}
+			
+			@Override
+			public void mouseDoubleClick(MouseEvent arg0) {}
+		});
 		addDropSupport(dropTextLabel);
 
 		imageScrolledComposite = new ScrolledComposite(this, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL );
@@ -253,11 +291,11 @@ public class ImageDropAndManagementComposite extends Composite implements DropTa
 	public void dropAccept(DropTargetEvent arg0) {	
 	}
 	
-	/** This method displays a message box informing the user of trying to drop the unsupported file.*/
-	public void showDroppedUnsupportedFileMessageBox(String filePathToUnsupportedFilegeBox){
+	/** This method displays a message box informing the user of trying to drop the unsupported file */
+	public void showDroppedUnsupportedFileMessageBox(String filePathToUnsupportedFile) {
 	    ComponentFactory.getMessageBox(getShell(), 
 	    		Translator.get(DictKeys.DIALOG_TITLE_INVALID_IMAGE_FILE_FORMAT), 
-	    		Translator.get(DictKeys.DIALOG_CONTENT_INVALID_IMAGE_FILE_FORMAT), 
+	    		Translator.get(DictKeys.DIALOG_CONTENT_INVALID_IMAGE_FILE_FORMAT, new File(filePathToUnsupportedFile).getName()), 
 	    		SWT.ICON_ERROR).open();
 	}
 }
