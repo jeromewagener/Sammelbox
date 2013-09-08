@@ -1,6 +1,6 @@
 /** -----------------------------------------------------------------
  *    Sammelbox: Collection Manager - A free and open-source collection manager for Windows & Linux
- *    Copyright (C) 2011 Jérôme Wagener & Paul Bicheler
+ *    Copyright (C) 2011 Jerome Wagener & Paul Bicheler
  *
  *    This program is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -21,12 +21,13 @@ package org.sammelbox.model;
 import org.sammelbox.controller.settings.SettingsManager;
 
 public class GuiState {
+	public static final String NO_ALBUM_SELECTED = "NO_ALBUM_SELECTED"; 
+	public static final String NO_VIEW_SELECTED = "NO_VIEW_SELECTED"; 
+	
 	private String selectedAlbum = null;
 	private String selectedView = null;
 	private String quickSearchTerms = null;
 	private boolean isViewDetailed = SettingsManager.getSettings().isDetailedViewDefault();
-	/** This string is used to de-select an album by passing it to {@link #setSelectedAlbum(String)} */
-	public static final String NO_ALBUM_SELECTED = null; 
 	
 	public GuiState() {
 	}
@@ -46,17 +47,21 @@ public class GuiState {
 		this.selectedAlbum = selectedAlbum;
 	}
 		
-	/**
-	 * Determines if an album has been selected.
-	 * @return True if the selectedAlbumName is not null and not empty. True if an album is selected.
-	 */
 	public boolean isAlbumSelected() {
-		if (getSelectedAlbum() != null && !getSelectedAlbum().isEmpty()) {
+		if (getSelectedAlbum() != null && !getSelectedAlbum().isEmpty() && !getSelectedAlbum().equals(NO_ALBUM_SELECTED)) {
 			return true;
 		}
 		return false;
 	}
 
+	public boolean isViewSelected() {
+		if (getSelectedView() != null && !getSelectedView().isEmpty() && !getSelectedView().equals(NO_VIEW_SELECTED)) {
+			return true;
+		}
+		
+		return false;
+	}
+	
 	public String getSelectedView() {
 		return selectedView;
 	}

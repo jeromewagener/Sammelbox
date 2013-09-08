@@ -1,6 +1,6 @@
 /** -----------------------------------------------------------------
  *    Sammelbox: Collection Manager - A free and open-source collection manager for Windows & Linux
- *    Copyright (C) 2011 Jérôme Wagener & Paul Bicheler
+ *    Copyright (C) 2011 Jerome Wagener & Paul Bicheler
  *
  *    This program is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -83,19 +83,26 @@ public final class GalleryViewCreator {
 			galleryItemHtmlBuilder.append("</div>");
 		}
 
-		String finalPageAsHtml = "<!DOCTYPE HTML>" +
-								   "<html>" +
-								     "<head>" +
-								       "<title>sammelbox.org</title>" +
-								       "<meta " + UIConstants.META_PARAMS + ">" + 
-								       "<link rel=stylesheet href=\"" + UIConstants.STYLE_CSS + "\" />" +
-								       "<script src=\"" + UIConstants.EFFECTS_JS + "\"></script>" +
-								     "</head>" +
-								     "<body style=\"background-color:#ffffff;font-family:" +  Utilities.getDefaultSystemFont() + "\">" +
-								       "<h2>" + GuiController.getGuiState().getSelectedAlbum() + " - " + GuiController.getGuiState().getSelectedView() + "</h2>" +
-								       "<div id=\"albumItems\">" + galleryItemHtmlBuilder.toString() + "</div>" +
-								     "</body>" +
-								   "</html>";
+		// Build header using album name. Include view name if appropriated
+		String collectionHeader = GuiController.getGuiState().getSelectedAlbum();
+		if (GuiController.getGuiState().isViewSelected()) {
+			collectionHeader += " - " + GuiController.getGuiState().getSelectedView();
+		}
+		
+		String finalPageAsHtml = 
+		   "<!DOCTYPE HTML>" +
+		   "<html>" +
+		     "<head>" +
+		       "<title>sammelbox.org</title>" +
+		       "<meta " + UIConstants.META_PARAMS + ">" + 
+		       "<link rel=stylesheet href=\"" + UIConstants.STYLE_CSS + "\" />" +
+		       "<script src=\"" + UIConstants.EFFECTS_JS + "\"></script>" +
+		     "</head>" +
+		     "<body style=\"background-color:#ffffff;font-family:" +  Utilities.getDefaultSystemFont() + "\">" +
+		       "<h2>" + collectionHeader + "</h2>" +
+		       "<div id=\"albumItems\">" + galleryItemHtmlBuilder.toString() + "</div>" +
+		     "</body>" +
+		   "</html>";
 				
 		browser.setText(finalPageAsHtml);
 		Utilities.setLastPageAsHtml(finalPageAsHtml);

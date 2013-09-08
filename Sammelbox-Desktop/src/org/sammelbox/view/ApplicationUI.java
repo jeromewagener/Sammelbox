@@ -1,6 +1,6 @@
 /** -----------------------------------------------------------------
  *    Sammelbox: Collection Manager - A free and open-source collection manager for Windows & Linux
- *    Copyright (C) 2011 Jérôme Wagener & Paul Bicheler
+ *    Copyright (C) 2011 Jerome Wagener & Paul Bicheler
  *
  *    This program is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -370,7 +370,9 @@ public final class ApplicationUI implements Observer {
 			return false;
 		}
 	
-		//ApplicationUI.getQuickSearchTextField().setText(""); FIXME reenable
+		if (!ApplicationUI.getQuickSearchTextField().getText().isEmpty()) {
+			ApplicationUI.getQuickSearchTextField().setText("");
+		}
 		try {
 			ApplicationUI.getQuickSearchTextField().setEnabled(DatabaseOperations.isAlbumQuicksearchable(albumName));
 		} catch (DatabaseWrapperOperationException ex) {

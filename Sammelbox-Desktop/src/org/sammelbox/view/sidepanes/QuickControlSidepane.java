@@ -1,6 +1,6 @@
 /** -----------------------------------------------------------------
  *    Sammelbox: Collection Manager - A free and open-source collection manager for Windows & Linux
- *    Copyright (C) 2011 Jérôme Wagener & Paul Bicheler
+ *    Copyright (C) 2011 Jerome Wagener & Paul Bicheler
  *
  *    This program is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -218,8 +218,10 @@ public final class QuickControlSidepane {
 
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {				
+				GuiController.getGuiState().setSelectedView(viewList.getItem(viewList.getSelectionIndex()));
+				
 				BrowserFacade.performBrowserQueryAndShow(AlbumViewManager.getSqlQueryByViewName(
-						GuiController.getGuiState().getSelectedAlbum(), viewList.getItem(viewList.getSelectionIndex())));
+						GuiController.getGuiState().getSelectedAlbum(), GuiController.getGuiState().getSelectedView()));
 
 				WelcomePageManager.increaseClickCountForAlbumOrView(viewList.getItem(viewList.getSelectionIndex()));
 			}

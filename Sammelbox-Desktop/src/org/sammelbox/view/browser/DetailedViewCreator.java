@@ -1,6 +1,6 @@
 /** -----------------------------------------------------------------
  *    Sammelbox: Collection Manager - A free and open-source collection manager for Windows & Linux
- *    Copyright (C) 2011 Jérôme Wagener & Paul Bicheler
+ *    Copyright (C) 2011 Jerome Wagener & Paul Bicheler
  *
  *    This program is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -62,6 +62,12 @@ public final class DetailedViewCreator {
 	          "</div></td></tr>"); 
 		}
 		
+		// Build header using album name. Include view name if appropriated
+		String collectionHeader = GuiController.getGuiState().getSelectedAlbum();
+		if (GuiController.getGuiState().isViewSelected()) {
+			collectionHeader += " - " + GuiController.getGuiState().getSelectedView();
+		}
+		
 		// Create final page html
 		String finalPageAsHtml = 
 				"<!DOCTYPE HTML>" +
@@ -73,7 +79,7 @@ public final class DetailedViewCreator {
 				    "<script src=\"" + UIConstants.EFFECTS_JS + "\"></script>" +
 				  "</head>" +
 				  "<body>" + // TODO extract to dynamic CSS  style=\"font-family:" +  Utilities.getDefaultSystemFont() + "\">
-				    "<h2>" + GuiController.getGuiState().getSelectedAlbum() + " - " + GuiController.getGuiState().getSelectedView() + "</h2>" +
+				    "<h2>" + collectionHeader + "</h2>" +
 				  	"<div id=\"albumItems\">" + albumItemDetailDivContainers + "</div>" +
 				  "</body>" +
 				"</html>";
