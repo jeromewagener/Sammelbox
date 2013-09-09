@@ -1,3 +1,9 @@
+a:link { text-decoration:none; color:#4183d0; }
+a:visited { text-decoration:none; color:#4183d0; }
+a:hover { text-decoration:underline; color:#4183d0; }
+a:active { text-decoration:none; color:#4183d0; }
+a:focus { text-decoration:none; color:#4183d0; }
+
 body {
 	font-family: Verdana, Ubuntu, Arial;
    margin:0;

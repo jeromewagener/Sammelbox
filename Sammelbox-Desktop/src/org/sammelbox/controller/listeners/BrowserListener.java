@@ -18,6 +18,10 @@
 
 package org.sammelbox.controller.listeners;
 
+import java.awt.Desktop;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
@@ -190,6 +194,28 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 			event.doit = false;
 		} else if (event.location.equals(UIConstants.BROWSER_RESIZED)) {
 			BrowserFacade.jumpToAnchor(BrowserFacade.getFutureJumpAnchor());
+			
+			// Do not change the page
+			event.doit = false;
+		} else if (event.location.startsWith(UIConstants.SHOW_URL)) {
+			String url = event.location.substring(UIConstants.SHOW_URL.length());
+			
+			if (!url.startsWith("http://")) {
+				url = "http://" + url;
+			}
+			
+			try {
+		        if (Desktop.isDesktopSupported()) {
+		            // should work on Windows based systems
+		            Desktop.getDesktop().browse(new URI(url));
+		        } else {
+		            // show work on Linux based systems
+		            Runtime runtime = Runtime.getRuntime();
+		            runtime.exec("xdg-open " + url);
+		        }
+			} catch (IOException | URISyntaxException ex) {
+				logger.error("An error occured while opening the following URL: " + url, ex);
+			}
 			
 			// Do not change the page
 			event.doit = false;

@@ -1,6 +1,6 @@
 /** -----------------------------------------------------------------
  *    Sammelbox: Collection Manager - A free and open-source collection manager for Windows & Linux
- *    Copyright (C) 2011 Jérôme Wagener & Paul Bicheler
+ *    Copyright (C) 2011 Jerome Wagener & Paul Bicheler
  *
  *    This program is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -51,4 +51,5 @@ public class UIConstants {
 	public static final String ADD_ADDITIONAL_ALBUM_ITEMS = "show:///addAdditionalAlbumItems";
 	public static final String SHOW_DETAILS_VIEW_OF_ALBUM = "show:///showDetails=";
 	public static final String BROWSER_RESIZED = "show:///browserResized";
+	public static final String SHOW_URL = "show:///url=";
 }

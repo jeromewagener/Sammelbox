@@ -1,6 +1,6 @@
 /** -----------------------------------------------------------------
  *    Sammelbox: Collection Manager - A free and open-source collection manager for Windows & Linux
- *    Copyright (C) 2011 Jérôme Wagener & Paul Bicheler
+ *    Copyright (C) 2011 Jerome Wagener & Paul Bicheler
  *
  *    This program is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class DetailedItemCreator {
-	private static final Logger LOGGER = LoggerFactory.getLogger(DetailedItemCreator.class);
+	private static final Logger logger = LoggerFactory.getLogger(DetailedItemCreator.class);
 	
 	private DetailedItemCreator() {
 	}
@@ -102,7 +102,7 @@ public final class DetailedItemCreator {
 			} else if (fieldItem.getType().equals(FieldType.STAR_RATING)) {
 				htmlDataColumnContent.append(getFieldNameAndStars(fieldItem.getName(), (StarRating) fieldItem.getValue()));
 			} else if (fieldItem.getType().equals(FieldType.URL)) {
-				htmlDataColumnContent.append(getFieldNameAndValueLine(fieldItem.getName(), ((String) fieldItem.getValue())));
+				htmlDataColumnContent.append(getUrlNameAndLocationLine(fieldItem.getName(), ((String) fieldItem.getValue())));
 			}
 		}
 				
@@ -115,7 +115,7 @@ public final class DetailedItemCreator {
 		               "<div>" + getAlternativePicturesHtml(id, pictures) + "</div>");
 			}
 		} catch (DatabaseWrapperOperationException ex) {
-			LOGGER.error("An issue regarding the album item picture occured", ex);
+			logger.error("An issue regarding the album item picture occured", ex);
 		}
 
 		if (showUpdateAndRemoveButtons) {
@@ -146,6 +146,10 @@ public final class DetailedItemCreator {
 	
 	private static String getFieldNameAndValueLine(String fieldName, String value) {
 		return "<span class=\"field\"> " + Utilities.escapeHtmlString(fieldName) + "</span> : " + value + "<br>"; 
+	}
+	
+	private static String getUrlNameAndLocationLine(String fieldName, String value) {
+		return "<span class=\"field\"> " + Utilities.escapeHtmlString(fieldName) + "</span> : <a href=\"show:///url=" + value + "\">" + value + "</a><br>";
 	}
 	
 	private static String getFieldNameAndStars(String fieldName, StarRating rating) {
