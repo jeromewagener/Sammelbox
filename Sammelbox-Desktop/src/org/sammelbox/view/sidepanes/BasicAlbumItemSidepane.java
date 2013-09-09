@@ -25,6 +25,8 @@ import java.util.Calendar;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -279,14 +281,41 @@ public final class BasicAlbumItemSidepane {
 			case DATE:
 				ComponentFactory.getSmallBoldItalicLabel(basicAlbumItemComposite, fieldName + ":");
 
-				DateTime datePicker = new DateTime(basicAlbumItemComposite, SWT.BORDER | SWT.DATE | SWT.DROP_DOWN);
-				datePicker.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
-
+				Composite dateComposite = new Composite(basicAlbumItemComposite, SWT.NULL);
+				dateComposite.setLayout(new RowLayout(SWT.HORIZONTAL));
+				dateComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+				dateComposite.setData("FieldType", FieldType.DATE);
+				dateComposite.setData("FieldName", fieldName);
+				
+				final Button enableDateButton = new Button(dateComposite, SWT.CHECK);
+				enableDateButton.setSelection(true);
+				enableDateButton.setText("");
+								
+				final DateTime datePicker = new DateTime(dateComposite, SWT.BORDER | SWT.DATE | SWT.DROP_DOWN);
+				
+				enableDateButton.addMouseListener(new MouseListener() {
+					@Override
+					public void mouseUp(MouseEvent arg0) {
+						datePicker.setEnabled(enableDateButton.getSelection());
+					}
+					
+					@Override
+					public void mouseDown(MouseEvent arg0) {}
+					
+					@Override
+					public void mouseDoubleClick(MouseEvent arg0) {}
+				});
+				
 				if (loadDataIntoFields) {
 					Date date = albumItem.getField(fieldName).getValue();
-					Calendar calendarForDate = Calendar.getInstance();
-					calendarForDate.setTimeInMillis(date.getTime());
-					datePicker.setDate(calendarForDate.get(Calendar.YEAR), calendarForDate.get(Calendar.MONTH), calendarForDate.get(Calendar.DAY_OF_MONTH));
+					if (date != null) {
+						Calendar calendarForDate = Calendar.getInstance();
+						calendarForDate.setTimeInMillis(date.getTime());
+						datePicker.setDate(calendarForDate.get(Calendar.YEAR), calendarForDate.get(Calendar.MONTH), calendarForDate.get(Calendar.DAY_OF_MONTH));
+					} else {
+						enableDateButton.setSelection(false);
+						datePicker.setEnabled(false);
+					}
 				}
 
 				datePicker.setData("FieldType", FieldType.DATE);
@@ -470,15 +499,30 @@ public final class BasicAlbumItemSidepane {
 									(FieldType) text.getData("FieldType"),
 									integer);
 						} else if (fieldType.equals(FieldType.DATE)) {
-							DateTime dateTime = (DateTime) control;
-
-							Calendar calendar = Calendar.getInstance();
-							calendar.set(dateTime.getYear(), dateTime.getMonth(), dateTime.getDay());
-
-							albumItem.addField(
-									(String) dateTime.getData("FieldName"),
-									(FieldType) dateTime.getData("FieldType"),
-									new Date(calendar.getTimeInMillis()));
+							Composite dateComposite = (Composite) control;
+							
+							for (Control dateControl : dateComposite.getChildren()) {
+								if (dateControl.getData("FieldType") != null && 
+										((FieldType) dateControl.getData("FieldType")).equals(FieldType.DATE)) {								
+									
+									DateTime dateTime = (DateTime) dateControl;
+									
+									if (!dateTime.getEnabled()) {
+										albumItem.addField(
+												(String) dateTime.getData("FieldName"),
+												(FieldType) dateTime.getData("FieldType"),
+												null);
+									} else {
+										Calendar calendar = Calendar.getInstance();
+										calendar.set(dateTime.getYear(), dateTime.getMonth(), dateTime.getDay());
+			
+										albumItem.addField(
+												(String) dateTime.getData("FieldName"),
+												(FieldType) dateTime.getData("FieldType"),
+												new Date(calendar.getTimeInMillis()));
+									}
+								}
+							}
 						} else if (fieldType.equals(FieldType.STAR_RATING)) {							
 							Combo combo = (Combo) control;
 							

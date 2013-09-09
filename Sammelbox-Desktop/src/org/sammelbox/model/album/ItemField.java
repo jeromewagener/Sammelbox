@@ -123,7 +123,9 @@ public class ItemField extends MetaItemField {
 			return (value instanceof Double);
 
 		case DATE:
-			return (value instanceof Date);
+			// date is an special case where the value 
+			// can be null if the date is unknown
+			return value == null || (value instanceof Date);
 			
 		case TIME:
 			return (value instanceof Time);
