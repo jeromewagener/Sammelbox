@@ -2,6 +2,7 @@ package org.sammelbox.view.browser;
 
 import org.sammelbox.controller.filesystem.FileSystemLocations;
 import org.sammelbox.model.album.AlbumItem;
+import org.sammelbox.view.UIConstants;
 
 public final class GalleryItemCreator {
 	private GalleryItemCreator() {
@@ -22,8 +23,8 @@ public final class GalleryItemCreator {
 		htmlBuilder.append(
 				"<div id=\"imageId" + albumItem.getItemID() + "\" " +
 				     "class=\"pictureContainer\" " +
-				     "onMouseOver=\"parent.location.href=&quot;show:///details=" + albumItem.getItemID() + "&quot;\" " +
-				     "onClick=\"parent.location.href=&quot;show:///detailsComposite=" + albumItem.getItemID() + "&quot;\">" +
+				     "onMouseOver=\"parent.location.href=&quot;" + UIConstants.SHOW_DETAILS  + albumItem.getItemID() + "&quot;\" " +
+				     "onClick=\"parent.location.href=&quot;" + UIConstants.SHOW_UPDATE_ENTRY_COMPOSITE  + albumItem.getItemID() + "&quot;\">" +
                    "<div class=\"innerPictureContainer\">" +
 		              "<img src=\"" + getThumbnailForFirstPicture(albumItem) + "\">" +
                    "</div>" +

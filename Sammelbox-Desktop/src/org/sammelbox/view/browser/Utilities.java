@@ -95,7 +95,8 @@ public class Utilities {
 	 * jump as soon as the document is completely loaded */
 	static void jumpToAnchor(String anchor) {
 		if (!anchor.equals(NO_ANCHOR)) {
-			ApplicationUI.getAlbumItemBrowser().execute("window.location.hash=\"" + anchor + "\"");
+			String javaScriptScrollToSnippet = "document.getElementById(\"" + anchor + "\").scrollIntoView(true)";
+			ApplicationUI.getAlbumItemBrowser().execute(javaScriptScrollToSnippet);
 		}
 	}
 

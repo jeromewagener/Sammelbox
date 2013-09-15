@@ -81,8 +81,8 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 	 * is executed. (E.g. opening a new composite) 
 	 * @param event the location event used to identify the new location */
 	public void changing(LocationEvent event) {		
-		if (event.location.startsWith(UIConstants.SHOW_UPDATE_COMPOSITE)) {
-			String id = event.location.substring(UIConstants.SHOW_UPDATE_COMPOSITE.length());
+		if (event.location.startsWith(UIConstants.SHOW_UPDATE_ENTRY_COMPOSITE)) {
+			String id = event.location.substring(UIConstants.SHOW_UPDATE_ENTRY_COMPOSITE.length());
 			removeQuestionMarkAtTheEndIfPresent(id);
 
 			ApplicationUI.changeRightCompositeTo(PanelType.UPDATE_ENTRY,
@@ -92,8 +92,8 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 			// Do not change the page
 			event.doit = false;
 
-		} else if (event.location.startsWith(UIConstants.SHOW_DELETE_COMPOSITE)) {
-			String id = event.location.substring(UIConstants.SHOW_DELETE_COMPOSITE.length());
+		} else if (event.location.startsWith(UIConstants.DELETE_ENTRY)) {
+			String id = event.location.substring(UIConstants.DELETE_ENTRY.length());
 			removeQuestionMarkAtTheEndIfPresent(id);
 		
 			MessageBox messageBox = ComponentFactory.getMessageBox(parentComposite.getShell(),
@@ -160,17 +160,6 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 
 			// Do not change the page
 			event.doit = false;
-		} else if (event.location.startsWith(UIConstants.SHOW_DETAILS_COMPOSITE)) {
-			String id = event.location.substring(UIConstants.SHOW_DETAILS_COMPOSITE.length());
-			removeQuestionMarkAtTheEndIfPresent(id);
-
-			ApplicationUI.changeRightCompositeTo(PanelType.UPDATE_ENTRY,
-					UpdateAlbumItemSidepane.build(parentComposite, ApplicationUI.getSelectedAlbum(), Long.parseLong(id)));
-
-			BrowserFacade.jumpToAnchor(BrowserFacade.getAnchorForAlbumItemId(Long.parseLong(id)));
-
-			// Do not change the page
-			event.doit = false;
 		} else if (event.location.startsWith("file:///")) {
 			if (event.location.contains(".collector/app-data/loading.html")) {
 				event.doit = true;
@@ -224,13 +213,13 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 
 	@Override
 	public void changed(ProgressEvent event) {
-		if (event.current == event.total) {
-			String anchor = BrowserFacade.getFutureJumpAnchor();
-			
-			if (anchor != null) { //TODO this should never be null, use a defined value instead
-				BrowserFacade.jumpToAnchor(BrowserFacade.getFutureJumpAnchor());
-			}
-		}
+//		if (event.current == event.total) {
+//			String anchor = BrowserFacade.getFutureJumpAnchor();
+//			
+//			if (anchor != null) { //TODO this should never be null, use a defined value instead
+//				BrowserFacade.jumpToAnchor(BrowserFacade.getFutureJumpAnchor());
+//			}
+//		}
 	}
 
 	@Override

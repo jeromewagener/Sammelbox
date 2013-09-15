@@ -65,7 +65,7 @@
    /** Add resize listener */
 
    window.onresize = function() {
-      parent.location.href="show:///browserResized";
+      window.location.href="show:///browserResized";
    }
 
    /*** Maximizes the given image to the window size. However, if the image is smaller
