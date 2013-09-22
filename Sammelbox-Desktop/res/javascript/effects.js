@@ -71,17 +71,19 @@
    /*** Maximizes the given image to the window size. However, if the image is smaller
       than the window, the image will not be stretched! ***/
 
-   function maximizeImageSize(imageId, xOffset, yOffset) {
-      document.getElementById(imageId).style.width = 'auto';
-      document.getElementById(imageId).style.height = 'auto';
+   function maximizeImageSize(imageId, xOffset, yOffset) {     
+      document.getElementById(imageId).setAttribute("style",'width:auto');
+      document.getElementById(imageId).setAttribute("style",'height:auto');
       
       if ((window.innerHeight < document.getElementById(imageId).naturalHeight)
          || (window.innerWidth < document.getElementById(imageId).naturalWidth))
       {
-         if (document.getElementById(imageId).naturalWidth > document.getElementById(imageId).naturalHeight) {
-            document.getElementById(imageId).style.width = window.innerWidth - xOffset;
+         if (document.getElementById(imageId).naturalWidth > document.getElementById(imageId).naturalHeight) {    
+         	newWidth = window.innerWidth - xOffset;        
+             document.getElementById(imageId).setAttribute("style",'width:' + newWidth + 'px');
          } else {
-            document.getElementById(imageId).style.height = window.innerHeight - yOffset;         
+         	newHeight = window.innerHeight - yOffset;
+            document.getElementById(imageId).setAttribute("style",'height:' + newHeight + 'px');
          }
       }
    }
