@@ -125,7 +125,7 @@ public final class FeedbackCreator {
 		       "      <h3>" + title + "</h3>" +
 		       "      <h4>" + subTitle + "</h4>" +
 		       "      <hr noshade size=\"1\">" +
-		       "      <table>" + DetailedItemCreator.getImageAndDetailContainer(albumItem, false) + "</table>" +
+		       "      " + DetailedItemCreator.getImageAndDetailContainer(albumItem, false) +
 		       "      <hr noshade size=\"1\">" +
 		       "      <ul>" + getAlterationsAsListItems() + "</ul>" +
 		       "    </body>" +
