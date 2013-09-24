@@ -116,7 +116,14 @@ public final class ApplicationUI implements Observer {
 	
 	/** This method initializes the main user interface. This involves the creation of different sub-composites
 	 * @param shell the shell which should be initialized */
-	public static void initialize(final Shell shell) {				
+	public static void initialize(final Shell shell) {
+		initialize(shell, true);
+	}
+		
+	/** This method initializes the main user interface. This involves the creation of different sub-composites
+	 * @param shell the shell which should be initialized
+	 * @param showShell true if the shell should be displayed, false otherwise (for testing purposes only) */
+	public static void initialize(final Shell shell, boolean showShell) {				
 		instance = new ApplicationUI();		
 		
 		// set program icon
@@ -185,7 +192,7 @@ public final class ApplicationUI implements Observer {
 		lowerLeftSubComposite = EmptySidepane.build(leftComposite);		
 		lowerLeftSubComposite.setLayoutData(gridDataForLowerLeftComposite);
 		albumItemBrowserListener = new BrowserListener(threePanelComposite);
-		centerComposite = BrowserComposite.build(threePanelComposite, albumItemBrowserListener);
+		centerComposite = BrowserComposite.buildAndStore(threePanelComposite, albumItemBrowserListener);
 		centerComposite.setLayout(new GridLayout(1, false));
 		centerComposite.setLayoutData(gridDataForCenterComposite);
 		rightComposite = EmptySidepane.build(threePanelComposite);
@@ -221,19 +228,21 @@ public final class ApplicationUI implements Observer {
 		if (maximizeShellOnStartUp(displayClientArea.width, displayClientArea.height)){
 			shell.setMaximized(true);
 		}
-				
-		shell.open();
-
-		selectDefaultAndShowWelcomePage();		
-
-		while (!shell.isDisposed()) {
-			if (!display.readAndDispatch()) {
-				display.sleep();
-			}
-		}
-
-		display.dispose();
+		
+		if (showShell) {
+			shell.open();
 	
+			selectDefaultAndShowWelcomePage();		
+	
+			while (!shell.isDisposed()) {
+				if (!display.readAndDispatch()) {
+					display.sleep();
+				}
+			}
+	
+			display.dispose();
+		}
+		
 		try {
 			DatabaseIntegrityManager.backupAutoSave();
 		} catch (DatabaseWrapperOperationException e) {

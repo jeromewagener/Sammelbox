@@ -1,6 +1,6 @@
 /** -----------------------------------------------------------------
  *    Sammelbox: Collection Manager - A free and open-source collection manager for Windows & Linux
- *    Copyright (C) 2011 Jérôme Wagener & Paul Bicheler
+ *    Copyright (C) 2011 Jerome Wagener & Paul Bicheler
  *
  *    This program is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -38,8 +38,10 @@ import org.sammelbox.albumviews.RunAlbumViewTests;
 import org.sammelbox.controller.filesystem.FileSystemAccessWrapper;
 import org.sammelbox.controller.filesystem.FileSystemLocations;
 import org.sammelbox.controller.managers.ConnectionManager;
+import org.sammelbox.importing.CSVImportTests;
 import org.sammelbox.searching.AdvancedSearchTests;
 import org.sammelbox.searching.QuickSearchTests;
+import org.sammelbox.sidepanes.SidepaneCreationTests;
 
 @RunWith(Suite.class)
 
@@ -60,8 +62,11 @@ import org.sammelbox.searching.QuickSearchTests;
 	RunAlbumViewTests.class,
 	
 	AdvancedSearchTests.class,
-	QuickSearchTests.class
-	})
+	QuickSearchTests.class,
+	
+	CSVImportTests.class,
+	SidepaneCreationTests.class
+})
 
 public class TestExecuter {
 	public static final String PATH_TO_TEST_CBK = 

@@ -31,11 +31,11 @@ public final class BrowserComposite {
 		// use build method instead
 	}
 	
-	/** Returns a browser composite which is used to render HTML.
+	/** Returns a browser composite which is used to render HTML. A reference is managed by the ApplicationUI
 	 * @param parentComposite the parent composite
 	 * @param browserListener a class of various listeners for the browser
 	 * @return a new browser composite */
-	public static Composite build(Composite parentComposite, BrowserListener browserListener) {
+	public static Composite buildAndStore(Composite parentComposite, BrowserListener browserListener) {
 		// setup SWT browser composite
 		Composite browserComposite = new Composite(parentComposite, SWT.NONE);
 		browserComposite.setLayout(new GridLayout());
