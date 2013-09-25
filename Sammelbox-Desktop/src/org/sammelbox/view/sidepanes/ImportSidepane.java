@@ -183,13 +183,11 @@ public final class ImportSidepane {
 					importButton.setEnabled(true);
 					
 					ComponentFactory.getMessageBox(
-							importComposite, 
 							Translator.toBeTranslated("Simulation successful"), 
 							Translator.toBeTranslated("The simulation of the CSV was successful. You can now use the import button"), 
 							SWT.ICON_INFORMATION).open();
 				} catch (ImportException ex) {
 					ComponentFactory.getMessageBox(
-							importComposite, 
 							Translator.toBeTranslated("Simulation unsuccessful"), 
 							Translator.toBeTranslated("The simulation of the CSV failed due to the following reason: " + ex.getMessage()), 
 							SWT.ICON_WARNING).open();
@@ -210,7 +208,6 @@ public final class ImportSidepane {
 					}
 					
 					ComponentFactory.getMessageBox(
-							importComposite, 
 							Translator.toBeTranslated("Import successful"), 
 							Translator.toBeTranslated("The CSV file has been successfully imported"), 
 							SWT.ICON_INFORMATION).open();
@@ -218,7 +215,6 @@ public final class ImportSidepane {
 					EventObservable.addEventToQueue(SammelboxEvent.ALBUM_LIST_UPDATED);
 				} catch (ImportException ex) {
 					ComponentFactory.getMessageBox(
-							importComposite, 
 							Translator.toBeTranslated("Import unsuccessful"), 
 							Translator.toBeTranslated("The import of the CSV failed due to the following reason: " + ex.getMessage()), 
 							SWT.ERROR).open();

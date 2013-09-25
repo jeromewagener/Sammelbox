@@ -96,8 +96,7 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 			String id = event.location.substring(UIConstants.DELETE_ENTRY.length());
 			removeQuestionMarkAtTheEndIfPresent(id);
 		
-			MessageBox messageBox = ComponentFactory.getMessageBox(parentComposite.getShell(),
-					Translator.get(DictKeys.DIALOG_TITLE_DELETE_ALBUM_ITEM), 
+			MessageBox messageBox = ComponentFactory.getMessageBox(Translator.get(DictKeys.DIALOG_TITLE_DELETE_ALBUM_ITEM),
 					Translator.get(DictKeys.DIALOG_CONTENT_DELETE_ALBUM_ITEM), 
 					SWT.ICON_WARNING | SWT.YES | SWT.NO);
 

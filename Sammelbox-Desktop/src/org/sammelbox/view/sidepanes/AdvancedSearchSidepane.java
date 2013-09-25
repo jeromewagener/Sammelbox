@@ -168,8 +168,7 @@ public final class AdvancedSearchSidepane {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if ((fieldToSearchCombo.getSelectionIndex() == -1) || (searchOperatorCombo.getSelectionIndex() == -1) || valueToSearchText.getText().isEmpty()) {				
-					ComponentFactory.getMessageBox(parentComposite.getShell(),
-							Translator.get(DictKeys.DIALOG_TITLE_SELECT_QUERY_COMPONENTS),
+					ComponentFactory.getMessageBox(Translator.get(DictKeys.DIALOG_TITLE_SELECT_QUERY_COMPONENTS),
 							Translator.get(DictKeys.DIALOG_CONTENT_SELECT_QUERY_COMPONENTS),
 							SWT.ICON_WARNING | SWT.OK).open();
 				} else {
@@ -318,7 +317,6 @@ public final class AdvancedSearchSidepane {
 					}
 				} else {
 					ComponentFactory.getMessageBox(
-							parentComposite, 
 							Translator.get(DictKeys.DIALOG_TITLE_VIEW_NAME_ALREADY_USED), 
 							Translator.get(DictKeys.DIALOG_CONTENT_VIEW_NAME_ALREADY_USED), 
 							SWT.ICON_INFORMATION).open();
@@ -348,7 +346,6 @@ public final class AdvancedSearchSidepane {
 								String.valueOf(dateInMilliseconds)));
 					} catch (ParseException e1) {
 						ComponentFactory.getMessageBox(
-								parentComposite.getShell(),
 								Translator.get(DictKeys.DIALOG_TITLE_DATE_FORMAT),
 								Translator.get(DictKeys.DIALOG_CONTENT_DATE_FORMAT),
 								SWT.ICON_WARNING | SWT.OK).open();
@@ -375,7 +372,6 @@ public final class AdvancedSearchSidepane {
 								option));
 					} else {
 						ComponentFactory.getMessageBox(
-								parentComposite.getShell(),
 								Translator.get(DictKeys.DIALOG_TITLE_ENTER_OPTION),
 								Translator.get(DictKeys.DIALOG_CONTENT_ENTER_OPTION, searchQueryTable.getItem(i).getText(0)),
 								SWT.ICON_WARNING | SWT.OK).open();

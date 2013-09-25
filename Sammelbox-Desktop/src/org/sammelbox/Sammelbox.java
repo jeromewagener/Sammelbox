@@ -37,7 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class Sammelbox {
-	private static final Logger LOGGER = LoggerFactory.getLogger(Sammelbox.class);
+	private static final Logger logger = LoggerFactory.getLogger(Sammelbox.class);
 	
 	private Sammelbox() {
 		// Sammelbox is launched using the main method
@@ -49,25 +49,25 @@ public final class Sammelbox {
 			Class.forName("org.sqlite.JDBC");
 			ConnectionManager.openConnection();
 		} catch (ClassNotFoundException cnfe) {
-			LOGGER.warn("org.sqlite.JDBC couldn't be found on the classpath", cnfe);
+			logger.warn("org.sqlite.JDBC couldn't be found on the classpath", cnfe);
 		} catch (DatabaseWrapperOperationException dwoe) {
 			try {
-				LOGGER.warn("Couldn't open a database connection. Will try to open a clean connection instead.", dwoe);
+				logger.warn("Couldn't open a database connection. Will try to open a clean connection instead.", dwoe);
 				ConnectionManager.openCleanConnection();	
 			} catch (DatabaseWrapperOperationException dwoe2) {
-				LOGGER.error("The database is corrupt since opening a connection failed. " +
+				logger.error("The database is corrupt since opening a connection failed. " +
 						"Recent autosaves of the database can be found in: " + FileSystemLocations.getBackupDir(), dwoe2);
 				
-				ComponentFactory.getMessageBox(ApplicationUI.getShell(), 
-						Translator.get(DictKeys.DIALOG_TITLE_SAMMELBOX_CANT_BE_LAUNCHED), 
-						Translator.get(DictKeys.DIALOG_CONTENT_SAMMELBOX_CANT_BE_LAUNCHED), SWT.ERROR).open();
+				ComponentFactory.getMessageBox(Translator.get(DictKeys.DIALOG_TITLE_SAMMELBOX_CANT_BE_LAUNCHED), 
+						Translator.get(DictKeys.DIALOG_CONTENT_SAMMELBOX_CANT_BE_LAUNCHED), 
+						SWT.ERROR).open();
 			}			
 		}
 	}
 	
 	/** The main method initializes the database (using the constructor) and establishes the user interface */
 	public static void main(String[] args) throws ClassNotFoundException {
-		LOGGER.info("Sammelbox (build: " + BuildInformationManager.instance().getVersion() + 
+		logger.info("Sammelbox (build: " + BuildInformationManager.instance().getVersion() + 
 				" build on " + BuildInformationManager.instance().getBuildTimeStamp() + ") started");
 		try {
 			// Ensure that the folder structure including the lock file exists before locking
@@ -96,15 +96,14 @@ public final class Sammelbox {
 				fileChannel.close();
 				lockFile.close();
 			} else {
-				ComponentFactory.getMessageBox(ApplicationUI.getShell(), 
-						Translator.get(DictKeys.DIALOG_TITLE_PROGRAM_IS_RUNNING), 
+				ComponentFactory.getMessageBox(Translator.get(DictKeys.DIALOG_TITLE_PROGRAM_IS_RUNNING), 
 						Translator.get(DictKeys.DIALOG_TITLE_PROGRAM_IS_RUNNING), 
 						SWT.ICON_INFORMATION).open();
 			}
 		} catch (Exception ex) {
-			LOGGER.error("Sammelbox crashed", ex);
+			logger.error("Sammelbox crashed", ex);
 		} finally {
-			LOGGER.info("Sammelbox stopped");
+			logger.info("Sammelbox stopped");
 		}
 	}
 }

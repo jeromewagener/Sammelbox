@@ -250,7 +250,6 @@ public class MenuManager {
 			public void widgetSelected(SelectionEvent arg0) {
 				if (ApplicationUI.isAlbumSelectedAndShowMessageIfNot()) {					
 					MessageBox messageBox = ComponentFactory.getMessageBox(
-							ApplicationUI.getShell(), 
 							Translator.get(DictKeys.DIALOG_TITLE_DELETE_ALBUM), 
 							Translator.get(DictKeys.DIALOG_CONTENT_DELETE_ALBUM, ApplicationUI.getSelectedAlbum()), 
 							SWT.ICON_WARNING | SWT.YES | SWT.NO);

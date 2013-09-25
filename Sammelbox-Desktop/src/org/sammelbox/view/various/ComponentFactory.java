@@ -139,13 +139,12 @@ public class ComponentFactory {
 	}
 
 	/** Returns a messageBox
-	 * @param parentComposite The parent of the message box 
 	 * @param title The title/caption of the message box
 	 * @param text The text shown within the message box
 	 * @param style A SWT style constant (E.g. SWT.ICON_ERROR)
 	 * @return A new message box */
-	public static MessageBox getMessageBox(Composite parentComposite, String title, String text, int style) {
-		MessageBox messageBox = new MessageBox(parentComposite.getShell(), style);
+	public static MessageBox getMessageBox(String title, String text, int style) {
+		MessageBox messageBox = new MessageBox(ApplicationUI.getShell(), style);
 		messageBox.setText(title);
 		messageBox.setMessage(text);
 
@@ -160,7 +159,7 @@ public class ComponentFactory {
 	 */
 	public static void showErrorDialog(Composite parentComposite, String titleText, String messageText) {
 		int errorMessageBoxStyle = SWT.ERROR;
-		MessageBox errorMessageBox = getMessageBox(parentComposite, titleText, messageText, errorMessageBoxStyle);
+		MessageBox errorMessageBox = getMessageBox(titleText, messageText, errorMessageBoxStyle);
 		errorMessageBox.open();
 	}
 	
@@ -172,7 +171,7 @@ public class ComponentFactory {
 	 */
 	public static boolean showYesNoDialog(Composite parentComposite, String titleText, String messageText) {
 		int questionMessageBoxStyle = SWT.ICON_QUESTION |SWT.YES | SWT.NO;
-		MessageBox questionMessageBox= getMessageBox(parentComposite, titleText, messageText, questionMessageBoxStyle);
+		MessageBox questionMessageBox= getMessageBox(titleText, messageText, questionMessageBoxStyle);
 		int messageBoxResultFlag = questionMessageBox.open();
 		if ( messageBoxResultFlag  == SWT.YES) {
 			return true;

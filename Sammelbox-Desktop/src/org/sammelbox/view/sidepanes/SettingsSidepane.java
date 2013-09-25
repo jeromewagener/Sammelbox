@@ -36,7 +36,6 @@ import org.sammelbox.controller.i18n.Language;
 import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.controller.settings.SettingsManager;
 import org.sammelbox.model.settings.ApplicationSettings;
-import org.sammelbox.view.ApplicationUI;
 import org.sammelbox.view.various.ComponentFactory;
 
 public final class SettingsSidepane {
@@ -126,8 +125,7 @@ public final class SettingsSidepane {
 				SettingsManager.setApplicationSettings(appSettings);
 				
 				Translator.setLanguageManually(Language.valueOf(languageCombo.getItem(languageCombo.getSelectionIndex())));
-				ComponentFactory.getMessageBox(ApplicationUI.getShell(), 
-						Translator.get(DictKeys.DIALOG_TITLE_RESTART_NEEDED_FOR_SETTINGS), 
+				ComponentFactory.getMessageBox(Translator.get(DictKeys.DIALOG_TITLE_RESTART_NEEDED_FOR_SETTINGS), 
 						Translator.get(DictKeys.DIALOG_CONTENT_RESTART_NEEDED_FOR_SETTINGS), 
 						SWT.ICON_INFORMATION).open();
 			}

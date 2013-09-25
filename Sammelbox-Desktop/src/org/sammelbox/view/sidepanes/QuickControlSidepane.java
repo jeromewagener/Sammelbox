@@ -26,8 +26,10 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.MessageBox;
@@ -132,41 +134,55 @@ public final class QuickControlSidepane {
 				}
 			}
 		});
+		
+		albumList.addListener(SWT.MenuDetect, new Listener() {
 
-		Menu albumPopupMenu = new Menu(albumList);
-
-		MenuItem moveAlbumTop = new MenuItem(albumPopupMenu, SWT.NONE);
+			@Override
+			public void handleEvent(Event event) {				
+				if ((albumList.getItemCount() > 0) && albumList.getSelectionIndex() < 0) {
+					String firstAlbumNameInList = albumList.getItem(0);
+					ApplicationUI.setSelectedAlbum(firstAlbumNameInList);					
+				}
+			}
+		});
+		
+					
+		final Menu popupMenuForAlbumList = new Menu(albumList);		
+		albumList.setMenu(popupMenuForAlbumList);
+			
+		final MenuItem moveAlbumTop = new MenuItem(popupMenuForAlbumList, SWT.NONE);
 		moveAlbumTop.setText(Translator.get(DictKeys.DROPDOWN_MOVE_TO_TOP));
 		moveAlbumTop.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				AlbumManager.moveToFront(albumList.getSelectionIndex());
 			}
 		});
-		MenuItem moveAlbumOneUp = new MenuItem(albumPopupMenu, SWT.NONE);
+		final MenuItem moveAlbumOneUp = new MenuItem(popupMenuForAlbumList, SWT.NONE);
 		moveAlbumOneUp.setText(Translator.get(DictKeys.DROPDOWN_MOVE_ONE_UP));
 		moveAlbumOneUp.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				AlbumManager.moveOneUp(albumList.getSelectionIndex());
 			}
 		});
-		MenuItem moveAlbumOneDown = new MenuItem(albumPopupMenu, SWT.NONE);
+		final MenuItem moveAlbumOneDown = new MenuItem(popupMenuForAlbumList, SWT.NONE);
 		moveAlbumOneDown.setText(Translator.get(DictKeys.DROPDOWN_MOVE_ONE_DOWN));
 		moveAlbumOneDown.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				AlbumManager.moveOneDown(albumList.getSelectionIndex());
 			}
 		});
-		MenuItem moveAlbumBottom = new MenuItem(albumPopupMenu, SWT.NONE);
+		
+		final MenuItem moveAlbumBottom = new MenuItem(popupMenuForAlbumList, SWT.NONE);
 		moveAlbumBottom.setText(Translator.get(DictKeys.DROPDOWN_MOVE_TO_BOTTOM));
 		moveAlbumBottom.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				AlbumManager.moveToBottom(albumList.getSelectionIndex());
-			}
+			}			
 		});
 
-		new MenuItem(albumPopupMenu, SWT.SEPARATOR);
+		final MenuItem albumListPopupMenuItemSeparator1 =  new MenuItem(popupMenuForAlbumList, SWT.SEPARATOR);
 
-		MenuItem createNewAlbum = new MenuItem(albumPopupMenu, SWT.NONE);
+		final MenuItem createNewAlbum = new MenuItem(popupMenuForAlbumList, SWT.NONE);
 		createNewAlbum.setText(Translator.get(DictKeys.DROPDOWN_CREATE_NEW_ALBUM));
 		createNewAlbum.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -174,7 +190,7 @@ public final class QuickControlSidepane {
 						PanelType.ADD_ALBUM, CreateAlbumSidepane.build(ApplicationUI.getThreePanelComposite()));
 			}
 		});
-		MenuItem alterAlbum = new MenuItem(albumPopupMenu, SWT.NONE);
+		final MenuItem alterAlbum = new MenuItem(popupMenuForAlbumList, SWT.NONE);
 		alterAlbum.setText(Translator.get(DictKeys.DROPDOWN_ALTER_ALBUM));
 		alterAlbum.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -183,16 +199,14 @@ public final class QuickControlSidepane {
 								ApplicationUI.getThreePanelComposite(), ApplicationUI.getSelectedAlbum()));
 			}
 		});
+		final MenuItem albumListPopupMenuItemSeparator2 = new MenuItem(popupMenuForAlbumList, SWT.SEPARATOR);
 
-		new MenuItem(albumPopupMenu, SWT.SEPARATOR);
-
-		MenuItem removeAlbum = new MenuItem(albumPopupMenu, SWT.NONE);
+		final MenuItem removeAlbum = new MenuItem(popupMenuForAlbumList, SWT.NONE);
 		removeAlbum.setText(Translator.get(DictKeys.DROPDOWN_REMOVE));
 		removeAlbum.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {	
 				if (ApplicationUI.isAlbumSelectedAndShowMessageIfNot()) {					
 					MessageBox messageBox = ComponentFactory.getMessageBox(
-							ApplicationUI.getShell(), 
 							Translator.get(DictKeys.DIALOG_TITLE_DELETE_ALBUM), 
 							Translator.get(DictKeys.DIALOG_CONTENT_DELETE_ALBUM, ApplicationUI.getSelectedAlbum()), 
 							SWT.ICON_WARNING | SWT.YES | SWT.NO);
@@ -211,32 +225,75 @@ public final class QuickControlSidepane {
 				}
 			}
 		});
+		
+		popupMenuForAlbumList.addListener(SWT.Show, new Listener() {
 
-		albumList.setMenu(albumPopupMenu);
-
+			@Override
+			public void handleEvent(Event event) {
+				createNewAlbum.setEnabled(true);
+				boolean extraMenuItemsEnabled = true;
+				
+				if (albumList.getItemCount() == 0) {
+					extraMenuItemsEnabled = false;
+				}
+				
+				moveAlbumTop.setEnabled(extraMenuItemsEnabled);
+				moveAlbumOneDown.setEnabled(extraMenuItemsEnabled);
+				moveAlbumOneUp.setEnabled(extraMenuItemsEnabled);
+				moveAlbumBottom.setEnabled(extraMenuItemsEnabled);
+				alterAlbum.setEnabled(extraMenuItemsEnabled);
+				albumListPopupMenuItemSeparator1.setEnabled(extraMenuItemsEnabled);
+				albumListPopupMenuItemSeparator2.setEnabled(extraMenuItemsEnabled);		
+				removeAlbum.setEnabled(extraMenuItemsEnabled);
+			}
+		});			
+		
+		quickSearchText.setEnabled(false);
+		
 		viewList.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetDefaultSelected(SelectionEvent arg0) {}
 
 			@Override
-			public void widgetSelected(SelectionEvent arg0) {				
-				GuiController.getGuiState().setSelectedView(viewList.getItem(viewList.getSelectionIndex()));
+			public void widgetSelected(SelectionEvent arg0) {															
+				if (viewList.getItemCount() == 0) {
+					return;
+				} else if (viewList.getSelectionIndex() < 0) {
+					viewList.select(0);					
+				}
+				
+				String viewListItem = viewList.getItem(viewList.getSelectionIndex());
+					
+				GuiController.getGuiState().setSelectedView(viewListItem);
 				EventObservable.addEventToQueue(SammelboxEvent.ALBUM_VIEW_SELECTED);
 				
 				BrowserFacade.performBrowserQueryAndShow(AlbumViewManager.getSqlQueryByViewName(
 						GuiController.getGuiState().getSelectedAlbum(), GuiController.getGuiState().getSelectedView()));
 
 				WelcomePageManager.increaseClickCountForAlbumOrView(viewList.getItem(viewList.getSelectionIndex()));
+							
 			}
-		});
+		});			
 
-		quickSearchText.setEnabled(false);
+		Menu popupMenuForViewsList = new Menu(viewList);
+		
+		viewList.addListener(SWT.MenuDetect, new Listener() {
 
-		Menu popupMenu = new Menu(viewList);
+			@Override
+			public void handleEvent(Event event) {
+				if (!GuiController.getGuiState().isAlbumSelected()) {
+					// A view has to have a parent album. Don't do anything if no album has been selected
+					event.doit = false;
+					System.out.println("dont");
+				} else if ( (viewList.getItemCount() > 0) && (viewList.getSelectionIndex() < 0)) {
+					viewList.select(0);
+				}
+			}
+		});		
 
-		MenuItem moveTop = new MenuItem(popupMenu, SWT.NONE);
-		moveTop.setText(Translator.get(DictKeys.DROPDOWN_MOVE_TO_TOP));
-		moveTop.addSelectionListener(new SelectionAdapter() {
+		final MenuItem moveViewTop = new MenuItem(popupMenuForViewsList, SWT.NONE);
+		moveViewTop.setText(Translator.get(DictKeys.DROPDOWN_MOVE_TO_TOP));
+		moveViewTop.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (viewList.getSelectionIndex() > 0) {
 					AlbumViewManager.moveToFront(
@@ -245,9 +302,9 @@ public final class QuickControlSidepane {
 			}
 		});
 
-		MenuItem moveOneUp = new MenuItem(popupMenu, SWT.NONE);
-		moveOneUp.setText(Translator.get(DictKeys.DROPDOWN_MOVE_ONE_UP));
-		moveOneUp.addSelectionListener(new SelectionAdapter() {
+		final MenuItem moveViewOneUp = new MenuItem(popupMenuForViewsList, SWT.NONE);
+		moveViewOneUp.setText(Translator.get(DictKeys.DROPDOWN_MOVE_ONE_UP));
+		moveViewOneUp.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (viewList.getSelectionIndex() > 0) {
 					AlbumViewManager.moveOneUp(
@@ -256,9 +313,9 @@ public final class QuickControlSidepane {
 			}
 		});
 
-		MenuItem moveOneDown = new MenuItem(popupMenu, SWT.NONE);
-		moveOneDown.setText(Translator.get(DictKeys.DROPDOWN_MOVE_ONE_DOWN));
-		moveOneDown.addSelectionListener(new SelectionAdapter() {
+		final MenuItem moveViewOneDown = new MenuItem(popupMenuForViewsList, SWT.NONE);
+		moveViewOneDown.setText(Translator.get(DictKeys.DROPDOWN_MOVE_ONE_DOWN));
+		moveViewOneDown.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (viewList.getSelectionIndex() > 0) {
 					AlbumViewManager.moveOneDown(
@@ -267,9 +324,9 @@ public final class QuickControlSidepane {
 			}
 		});
 
-		MenuItem moveBottom = new MenuItem(popupMenu, SWT.NONE);
-		moveBottom.setText(Translator.get(DictKeys.DROPDOWN_MOVE_TO_BOTTOM));
-		moveBottom.addSelectionListener(new SelectionAdapter() {
+		final MenuItem moveViewBottom = new MenuItem(popupMenuForViewsList, SWT.NONE);
+		moveViewBottom.setText(Translator.get(DictKeys.DROPDOWN_MOVE_TO_BOTTOM));
+		moveViewBottom.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (viewList.getSelectionIndex() < viewList.getItemCount()-1) {
 					AlbumViewManager.moveToBottom(
@@ -278,16 +335,15 @@ public final class QuickControlSidepane {
 			}
 		});
 
-		new MenuItem(popupMenu, SWT.SEPARATOR);
+		final MenuItem viewListPopupMenuItemSeparator1 = new MenuItem(popupMenuForViewsList, SWT.SEPARATOR);
 
-		MenuItem removeSavedSearch = new MenuItem(popupMenu, SWT.NONE);
+		final MenuItem removeSavedSearch = new MenuItem(popupMenuForViewsList, SWT.NONE);
 		removeSavedSearch.setText(Translator.get(DictKeys.DROPDOWN_REMOVE));
 		removeSavedSearch.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (viewList.getSelectionIndex() >= 0) {
-					MessageBox messageBox = ComponentFactory.getMessageBox(ApplicationUI.getShell(), 
-							Translator.get(DictKeys.DIALOG_TITLE_DELETE_SAVED_SEARCH),
-							Translator.get(DictKeys.DIALOG_CONTENT_DELETE_SAVED_SEARCH, viewList.getItem(viewList.getSelectionIndex())), 
+					MessageBox messageBox = ComponentFactory.getMessageBox(Translator.get(DictKeys.DIALOG_TITLE_DELETE_SAVED_SEARCH), 
+							Translator.get(DictKeys.DIALOG_CONTENT_DELETE_SAVED_SEARCH, viewList.getItem(viewList.getSelectionIndex())),
 							SWT.ICON_WARNING | SWT.YES | SWT.NO);
 					
 					if (messageBox.open() == SWT.YES) {
@@ -298,9 +354,9 @@ public final class QuickControlSidepane {
 			}
 		});	
 
-		new MenuItem(popupMenu, SWT.SEPARATOR);
+		final MenuItem viewListPopupMenuItemSeparator2 = new MenuItem(popupMenuForViewsList, SWT.SEPARATOR);
 
-		MenuItem addSavedSearch = new MenuItem(popupMenu, SWT.NONE);
+		final MenuItem addSavedSearch = new MenuItem(popupMenuForViewsList, SWT.NONE);
 		addSavedSearch.setText(Translator.get(DictKeys.DROPDOWN_ADD_ANOTHER_SAVED_SEARCH));
 		addSavedSearch.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -311,7 +367,28 @@ public final class QuickControlSidepane {
 			}
 		});		
 
-		viewList.setMenu(popupMenu);
+		viewList.setMenu(popupMenuForViewsList);
+		
+		popupMenuForViewsList.addListener(SWT.Show, new Listener() {
+
+			@Override
+			public void handleEvent(Event event) {			
+				boolean extraMenuItemsEnabled = true;
+				
+				if (viewList.getItemCount() == 0) {
+					extraMenuItemsEnabled = false;
+				}
+				
+				moveViewTop.setEnabled(extraMenuItemsEnabled);
+				moveViewOneUp.setEnabled(extraMenuItemsEnabled);
+				moveViewOneDown.setEnabled(extraMenuItemsEnabled);
+				moveViewBottom.setEnabled(extraMenuItemsEnabled);
+				viewListPopupMenuItemSeparator1.setEnabled(extraMenuItemsEnabled);
+				viewListPopupMenuItemSeparator2.setEnabled(extraMenuItemsEnabled);
+				removeSavedSearch.setEnabled(extraMenuItemsEnabled);
+				addSavedSearch.setEnabled(true);
+			}
+		});
 
 		return quickControlComposite;
 	}

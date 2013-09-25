@@ -56,7 +56,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class CreateAlbumSidepane {
-	private static final Logger LOGGER = LoggerFactory.getLogger(CreateAlbumSidepane.class);
+	private static final Logger logger = LoggerFactory.getLogger(CreateAlbumSidepane.class);
 	
 	private CreateAlbumSidepane() {
 		// use build method instead
@@ -238,7 +238,6 @@ public final class CreateAlbumSidepane {
 			public void widgetSelected(SelectionEvent e) {
 				if (fieldNameText.getText().isEmpty()) {				
 					ComponentFactory.getMessageBox(
-							parentComposite.getShell(),
 							Translator.get(DictKeys.DIALOG_TITLE_FIELD_MUST_HAVE_NAME),
 							Translator.get(DictKeys.DIALOG_CONTENT_FIELD_MUST_HAVE_NAME),
 							SWT.ICON_WARNING | SWT.OK).open();
@@ -298,19 +297,17 @@ public final class CreateAlbumSidepane {
 				try {
 					if (!DatabaseOperations.isAlbumNameAvailable(albumName)) {
 						ComponentFactory.getMessageBox(
-								parentComposite, 
 								Translator.get(DictKeys.DIALOG_TITLE_ALBUM_NAME_ALREADY_USED), 
 								Translator.get(DictKeys.DIALOG_CONTENT_ALBUM_NAME_ALREADY_USED), 
 								SWT.ICON_INFORMATION).open();
 						return;
 					}
 				} catch (DatabaseWrapperOperationException ex) {
-					LOGGER.error("A database error occured while checking whether '" + albumName + "' is available as album name", ex);
+					logger.error("A database error occured while checking whether '" + albumName + "' is available as album name", ex);
 				}
 
 				if (!FileSystemAccessWrapper.isSAlbumNameFileSystemCompliant(albumName)) {
 					ComponentFactory.getMessageBox(
-							parentComposite,
 							Translator.get(DictKeys.DIALOG_TITLE_ALBUM_NAME_INVALID),
 							Translator.get(DictKeys.DIALOG_CONTENT_ALBUM_NAME_INVALID),
 							SWT.ICON_WARNING)
@@ -336,8 +333,7 @@ public final class CreateAlbumSidepane {
 				try {
 					DatabaseOperations.createNewAlbum(albumName, metaItemFields, willContainImages);
 				} catch (DatabaseWrapperOperationException failedDatabaseWrapperOperationException) {
-					ComponentFactory.getMessageBox(parentComposite,
-							Translator.get(DictKeys.DIALOG_TITLE_ALBUM_CREATE_ERROR), 
+					ComponentFactory.getMessageBox(Translator.get(DictKeys.DIALOG_TITLE_ALBUM_CREATE_ERROR),
 							Translator.get(DictKeys.DIALOG_CONTENT_ALBUM_CREATE_ERROR, 
 							albumName), 
 							SWT.ICON_ERROR).open();
