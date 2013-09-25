@@ -106,7 +106,7 @@ public final class CSVImporter {
 		}
 		
 		if (!isSimulation) {
-			if (pictureColumnName == NO_PICTURE_COLUMN_NAME && pictureSeparationCharacter == NO_PICTURE_SEPARATION_CHARACTER) {
+			if (NO_PICTURE_COLUMN_NAME.equals(pictureColumnName) && NO_PICTURE_SEPARATION_CHARACTER.equals(pictureSeparationCharacter)) {
 				DatabaseOperations.createNewAlbum(albumName, metaItemFields, false);
 			} else {
 				DatabaseOperations.createNewAlbum(albumName, metaItemFields, true);

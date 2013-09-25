@@ -1,6 +1,6 @@
 /** -----------------------------------------------------------------
  *    Sammelbox: Collection Manager - A free and open-source collection manager for Windows & Linux
- *    Copyright (C) 2011 Jérôme Wagener & Paul Bicheler
+ *    Copyright (C) 2011 Jerome Wagener & Paul Bicheler
  *
  *    This program is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -18,7 +18,11 @@
 
 package org.sammelbox.controller.i18n;
 
-public class DictKeys {	
+public final class DictKeys {
+	private DictKeys() {
+		// not needed
+	}
+	
 	/* Special Translation Keys */
 	public static final String TO_BE_TRANSLATED = "collector.special.TO_BE_TRANSLATED";
 	
@@ -96,8 +100,8 @@ public class DictKeys {
 	public static final String DIALOG_CONTENT_ENTER_OPTION = "collector.dialog.content.DIALOG_CONTENT_ENTER_OPTION";
 	public static final String DIALOG_TITLE_RESTART_NEEDED_FOR_SETTINGS	 = "collector.dialog.title.DIALOG_TITLE_RESTART_NEEDED_FOR_SETTINGS";
 	public static final String DIALOG_CONTENT_RESTART_NEEDED_FOR_SETTINGS = "collector.dialog.content.DIALOG_TITLE_RESTART_NEEDED_FOR_SETTINGS";
-	public static final String DIALOG_TITLE_SAMMELBOX_CANT_BE_LAUNCHED = "collector.dialog.title.SAMMELBOX_CANT_BE_LAUNCHED"; // Well this is embarrassing...
-	public static final String DIALOG_CONTENT_SAMMELBOX_CANT_BE_LAUNCHED = "collector.dialog.content.SAMMELBOX_CANT_BE_LAUNCHED"; // Unfortunately, Sammelbox is not able to access it's internal Database. However, you might want to try to restore your database from a previous backup or from a previous autosave. Please have a look at www.sammelbox.org the FAQ to find instructions on how to resolve your problem.
+	public static final String DIALOG_TITLE_SAMMELBOX_CANT_BE_LAUNCHED = "collector.dialog.title.SAMMELBOX_CANT_BE_LAUNCHED";
+	public static final String DIALOG_CONTENT_SAMMELBOX_CANT_BE_LAUNCHED = "collector.dialog.content.SAMMELBOX_CANT_BE_LAUNCHED";
 	
 	/*   Open & Save Dialogs   */
 	public static final String DIALOG_BACKUP_TO_FILE = "collector.savedialog.title.BACKUP_TO_FILE";

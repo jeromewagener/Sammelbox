@@ -1,6 +1,6 @@
 /** -----------------------------------------------------------------
  *    Sammelbox: Collection Manager - A free and open-source collection manager for Windows & Linux
- *    Copyright (C) 2011 Jérôme Wagener & Paul Bicheler
+ *    Copyright (C) 2011 Jerome Wagener & Paul Bicheler
  *
  *    This program is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -25,7 +25,9 @@ import java.util.List;
 import org.sammelbox.model.album.FieldType;
 import org.sammelbox.model.album.MetaItemField;
 
-public class MetaItemFieldFilter {
+public final class MetaItemFieldFilter {
+	private MetaItemFieldFilter() {
+	}
 	
 	/** Returns all valid MetaItemFields. Hereby valid means that only user editable fields are returned
 	 * @param metaItemFields the list of all available meta item fields

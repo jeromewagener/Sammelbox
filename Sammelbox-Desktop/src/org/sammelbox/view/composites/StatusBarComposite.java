@@ -1,6 +1,6 @@
 /** -----------------------------------------------------------------
  *    Sammelbox: Collection Manager - A free and open-source collection manager for Windows & Linux
- *    Copyright (C) 2011 Jérôme Wagener & Paul Bicheler
+ *    Copyright (C) 2011 Jerome Wagener & Paul Bicheler
  *
  *    This program is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.controller.managers.BuildInformationManager;
 import org.sammelbox.view.various.ComponentFactory;
 
-public class StatusBarComposite {
+public final class StatusBarComposite {
 	private static final int TIME_UNTIL_CLEAR_IN_MILLI_SECONDS = 10000;
 	private static StatusBarComposite instance = null;
 	private Composite statusbarComposite = null;

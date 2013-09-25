@@ -1,6 +1,6 @@
 /** -----------------------------------------------------------------
  *    Sammelbox: Collection Manager - A free and open-source collection manager for Windows & Linux
- *    Copyright (C) 2011 Jérôme Wagener & Paul Bicheler
+ *    Copyright (C) 2011 Jerome Wagener & Paul Bicheler
  *
  *    This program is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -24,8 +24,11 @@ import org.sammelbox.controller.filesystem.XMLStorageWrapper;
 import org.sammelbox.controller.i18n.Language;
 import org.sammelbox.model.settings.ApplicationSettings;
 
-public class SettingsManager {
+public final class SettingsManager {	
 	private static ApplicationSettings applicationSettings = new ApplicationSettings();
+	
+	private SettingsManager() {
+	}
 	
 	public static Language getUserDefinedLanguage() {
 		return applicationSettings.getUserDefinedLanguage();
