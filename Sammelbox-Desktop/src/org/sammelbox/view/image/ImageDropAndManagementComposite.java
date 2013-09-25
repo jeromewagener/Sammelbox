@@ -32,6 +32,8 @@ import org.eclipse.swt.dnd.DropTargetListener;
 import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.ImageTransfer;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -111,7 +113,7 @@ public class ImageDropAndManagementComposite extends Composite implements DropTa
 					String selectionFolder = new File(firstFile).getParent();
 					String[] filenames = openFileDialog.getFileNames();
 					for (String filename : filenames) {
-						AlbumItemPicture picture = ImageManipulator.adaptAndStoreImageForCollector(
+						AlbumItemPicture picture = ImageManipulator.adaptAndStoreImageForCollectorUsingApacheImaging(
 								new File(selectionFolder + File.separatorChar + filename), GuiController.getGuiState().getSelectedAlbum());
 						if (picture == null) {
 							showDroppedUnsupportedFileMessageBox(filename);
@@ -143,6 +145,13 @@ public class ImageDropAndManagementComposite extends Composite implements DropTa
 		imageScrolledComposite.setLayoutData(gridData);
 
 		addDropSupport(imageScrolledComposite);
+		
+		addDisposeListener(new DisposeListener() {			
+			@Override
+			public void widgetDisposed(DisposeEvent arg0) {
+				disposeAllChildren();				
+			}
+		});
 	}
 
 	/** This method adds drop (drag & drop) support to a given SWT widget 
@@ -163,13 +172,11 @@ public class ImageDropAndManagementComposite extends Composite implements DropTa
 	 * should be called after the creation of a ImageDropAndManagementComposite when pictures are provided, or in case a new picture 
 	 * has been added to the picture list */
 	public void refreshImageComposite() {
-		for (Control control : imageComposite.getChildren()) {
-			control.dispose();
-		}
+		disposeAllChildren();
 
 		for (final AlbumItemPicture picture : pictures) {			
 			Image originalImage = new Image(Display.getCurrent(), picture.getOriginalPicturePath());
-			Image scaledImage;
+			final Image scaledImage;
 			
 			int originalWidth = originalImage.getImageData().width;
 			int originalHeight = originalImage.getImageData().height;
@@ -181,19 +188,26 @@ public class ImageDropAndManagementComposite extends Composite implements DropTa
 				scaledImage = new Image(Display.getCurrent(), originalImage.getImageData().scaledTo(
 					100, (int) Math.round(originalImage.getImageData().height / ((double)(originalImage.getImageData().width / 100.0)))));
 			}
-
+			
 			Label pictureLabel = new Label(imageComposite, SWT.NONE);
 			pictureLabel.setImage(scaledImage);
+			pictureLabel.addDisposeListener(new DisposeListener() {				
+				@Override
+				public void widgetDisposed(DisposeEvent arg0) {
+					scaledImage.dispose();	
+				}
+			});
+			originalImage.dispose();
+
 			Button deleteButton = new Button(imageComposite, SWT.NONE);
 			deleteButton.setText(Translator.get(DictKeys.BUTTON_REMOVE));
 			deleteButton.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					pictures.remove(picture);
-
 					refreshImageComposite();
 				}
-			});
+			});					
 			
 			InputStream istream = this.getClass().getClassLoader().getResourceAsStream("graphics/arrow-up.png");
 			Image arrowUp = new Image(Display.getCurrent(),istream);
@@ -274,7 +288,7 @@ public class ImageDropAndManagementComposite extends Composite implements DropTa
 			String[] filenames = (String[]) event.data;
 			if (filenames.length > 0){
 				for (String filename : filenames) {
-					AlbumItemPicture picture = ImageManipulator.adaptAndStoreImageForCollector(
+					AlbumItemPicture picture = ImageManipulator.adaptAndStoreImageForCollectorUsingApacheImaging(
 							new File(filename), GuiController.getGuiState().getSelectedAlbum());
 					if (picture == null) {
 						showDroppedUnsupportedFileMessageBox(filename);
@@ -293,9 +307,14 @@ public class ImageDropAndManagementComposite extends Composite implements DropTa
 	
 	/** This method displays a message box informing the user of trying to drop the unsupported file */
 	public void showDroppedUnsupportedFileMessageBox(String filePathToUnsupportedFile) {
-	    ComponentFactory.getMessageBox(getShell(), 
-	    		Translator.get(DictKeys.DIALOG_TITLE_INVALID_IMAGE_FILE_FORMAT), 
+	    ComponentFactory.getMessageBox(Translator.get(DictKeys.DIALOG_TITLE_INVALID_IMAGE_FILE_FORMAT), 
 	    		Translator.get(DictKeys.DIALOG_CONTENT_INVALID_IMAGE_FILE_FORMAT, new File(filePathToUnsupportedFile).getName()), 
 	    		SWT.ICON_ERROR).open();
+	}
+	
+	public void disposeAllChildren() {
+		for (Control control : imageComposite.getChildren()) {
+			control.dispose();			
+		}
 	}
 }

@@ -18,14 +18,15 @@
 
 package org.sammelbox.view.image;
 
+import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.graphics.ImageLoader;
-import org.eclipse.swt.widgets.Display;
+import org.apache.commons.imaging.ImageFormat;
+import org.apache.commons.imaging.Imaging;
 import org.sammelbox.controller.filesystem.FileSystemAccessWrapper;
 import org.sammelbox.controller.filesystem.FileSystemLocations;
 import org.sammelbox.model.album.AlbumItemPicture;
@@ -43,17 +44,19 @@ public final class ImageManipulator {
 	
 	public ImageManipulator() {
 	}
+
 	
-	/** This method is used to copy originals, and create thumb nails, within the picture folder
+	/**This method is used to copy originals, and create thumb nails, within the picture folder. 
+	 * It uses apache imaging instead of swt which seems to leak memory.
 	 * @param pictureFile the original image
 	 * @param album the album to which the image should be assigned 
 	 * @return a picture pointing to the location of the original file and thumb nail within the album */	
-	public static AlbumItemPicture adaptAndStoreImageForCollector(File pictureFile, String album) {
+	public static AlbumItemPicture adaptAndStoreImageForCollectorUsingApacheImaging(File pictureFile, String album) {
 		try {
-			Image thumbnailImage = new Image(Display.getCurrent(), pictureFile.getCanonicalPath());
+			BufferedImage thumbnailImage = Imaging.getBufferedImage(pictureFile);
 			
-			double imageWidth = (double) thumbnailImage.getImageData().width;
-			double imageHeight = (double) thumbnailImage.getImageData().height;
+			int imageWidth 		= thumbnailImage.getWidth();
+			int imageHeight	= thumbnailImage.getHeight();
 			
 			String identifierForOriginal = UUID.randomUUID().toString();
 			String identifierForThumbnail = UUID.randomUUID().toString();
@@ -78,14 +81,16 @@ public final class ImageManipulator {
 					newHeight = MAX_HEIGHT_IN_PIXELS;
 					newWidth = (int) (MAX_HEIGHT_IN_PIXELS / imageRatio);
 				}
-
-				thumbnailImage = new Image(Display.getCurrent(), thumbnailImage.getImageData().scaledTo(newWidth, newHeight));			
+				Image resizedImage = thumbnailImage.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
+				thumbnailImage = new BufferedImage(newWidth, newHeight, thumbnailImage.getType());
+				thumbnailImage.getGraphics().drawImage(resizedImage, 0, 0 , null);
 			}
 
-			ImageLoader imageLoader = new ImageLoader();
-			imageLoader.data = new ImageData[] { thumbnailImage.getImageData() };
-			imageLoader.save(newFileLocationForThumbnail, SWT.IMAGE_PNG);
-
+			final ImageFormat format = ImageFormat.IMAGE_FORMAT_PNG;
+            final Map<String,Object> optional_params = new HashMap<String,Object>();
+            File thumbnailDestination = new File(newFileLocationForThumbnail); 
+            Imaging.writeImage(thumbnailImage, thumbnailDestination, format, optional_params);
+			
 			FileSystemAccessWrapper.copyFile(new File(pictureFile.getPath()), new File(newFileLocationForOriginal));
 						
 			return new AlbumItemPicture(newFileNameForThumbnail, newFileNameForOriginal, album, AlbumItemPicture.PICTURE_ID_UNDEFINED);
