@@ -1,6 +1,6 @@
 /** -----------------------------------------------------------------
  *    Sammelbox: Collection Manager - A free and open-source collection manager for Windows & Linux
- *    Copyright (C) 2011 Jérôme Wagener & Paul Bicheler
+ *    Copyright (C) 2011 Jerome Wagener & Paul Bicheler
  *
  *    This program is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -32,8 +32,8 @@ import org.sammelbox.model.album.OptionType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HTMLExporter {
-	private static final Logger LOGGER = LoggerFactory.getLogger(HTMLExporter.class);
+public final class HTMLExporter {
+	private static final Logger logger = LoggerFactory.getLogger(HTMLExporter.class);
 	
 	private HTMLExporter() {
 	}
@@ -109,7 +109,7 @@ public class HTMLExporter {
 								 "</html>");
 			bufferedWriter.close();
 		} catch (IOException e) {
-			LOGGER.error("An error occured while writing the HTML to its destination", e);
+			logger.error("An error occured while writing the HTML to its destination", e);
 		}
 	}
 }

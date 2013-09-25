@@ -1,6 +1,6 @@
 /** -----------------------------------------------------------------
  *    Sammelbox: Collection Manager - A free and open-source collection manager for Windows & Linux
- *    Copyright (C) 2011 Jérôme Wagener & Paul Bicheler
+ *    Copyright (C) 2011 Jerome Wagener & Paul Bicheler
  *
  *    This program is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -26,8 +26,8 @@ import org.sammelbox.controller.settings.SettingsManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Translator {
-	private static final Logger LOGGER = LoggerFactory.getLogger(Translator.class);
+public final class Translator {
+	private static final Logger logger = LoggerFactory.getLogger(Translator.class);
 	
 	private static Language language = null;
 	private static ResourceBundle languageBundle = null;
@@ -38,10 +38,10 @@ public class Translator {
 	 * The user preference has priority over the system language.
 	 * */
 	public static void setLanguageFromSettingsOrSystem() {
-		Language language = SettingsManager.getUserDefinedLanguage();
+		Language userDefinedLanguage = SettingsManager.getUserDefinedLanguage();
 		
-		if (language != Language.UNKNOWN) {
-			setLanguageManually(language);
+		if (userDefinedLanguage != Language.UNKNOWN) {
+			setLanguageManually(userDefinedLanguage);
 		} else {
 			switch (System.getProperty("user.language")) {
 			case "de":
@@ -62,7 +62,7 @@ public class Translator {
 			Translator.language = language;
 			languageBundle = ResourceBundle.getBundle(Language.getDictionaryBundle(language));
 		} catch (MissingResourceException mre) {
-			LOGGER.error("The properties file for the selected language (" + language + ") could not be found");
+			logger.error("The properties file for the selected language (" + language + ") could not be found", mre);
 		}
 	}
 	
@@ -86,7 +86,7 @@ public class Translator {
 	 * @return the string entered as parameter, with a warning prefix
 	 * */
 	public static String toBeTranslated(String stringToBeTranslated) {
-		LOGGER.warn("The following string needs to be translated: " + stringToBeTranslated);
+		logger.warn("The following string needs to be translated: " + stringToBeTranslated);
 		return get(DictKeys.TO_BE_TRANSLATED, stringToBeTranslated);
 	}
 	
@@ -107,7 +107,9 @@ public class Translator {
 				return MessageFormat.format(languageBundle.getString(key), parameters);
 			}
 		} catch (MissingResourceException mre) {
-			throw new RuntimeException("It seems that the following key (" + key + ") is not yet translated for the chosen language (" + language + ")");
+			logger.error("It seems that the following key (" + key + ") is not yet translated for the chosen language (" + language + ")", mre);
+			
+			return "";			
 		}
 	}
 }

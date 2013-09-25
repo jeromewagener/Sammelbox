@@ -1,6 +1,6 @@
 /** -----------------------------------------------------------------
  *    Sammelbox: Collection Manager - A free and open-source collection manager for Windows & Linux
- *    Copyright (C) 2011 Jérôme Wagener & Paul Bicheler
+ *    Copyright (C) 2011 Jerome Wagener & Paul Bicheler
  *
  *    This program is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ import org.sammelbox.controller.managers.WelcomePageManager;
 import org.sammelbox.view.ApplicationUI;
 import org.sammelbox.view.UIConstants;
 
-public class WelcomePageCreator {
+public final class WelcomePageCreator {
 	private static final int NUMBER_OF_FAVORITES_SHOWN = 5;
 
 	private WelcomePageCreator() {

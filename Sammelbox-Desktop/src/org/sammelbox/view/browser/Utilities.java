@@ -34,7 +34,7 @@ import org.sammelbox.view.ApplicationUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Utilities {
+public final class Utilities {
 	public static final String NO_ANCHOR = "";
 	private static final Logger logger = LoggerFactory.getLogger(Utilities.class);
 		

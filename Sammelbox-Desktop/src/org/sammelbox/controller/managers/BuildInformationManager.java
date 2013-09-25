@@ -1,6 +1,6 @@
 /** -----------------------------------------------------------------
  *    Sammelbox: Collection Manager - A free and open-source collection manager for Windows & Linux
- *    Copyright (C) 2011 Jérôme Wagener & Paul Bicheler
+ *    Copyright (C) 2011 Jerome Wagener & Paul Bicheler
  *
  *    This program is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -24,8 +24,8 @@ import java.util.ResourceBundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BuildInformationManager {
-	private static final Logger LOGGER = LoggerFactory.getLogger(BuildInformationManager.class);
+public final class BuildInformationManager {
+	private static final Logger logger = LoggerFactory.getLogger(BuildInformationManager.class);
 		
 	private static ResourceBundle buildInfoBundle = null;
 	private static BuildInformationManager instance;
@@ -34,7 +34,7 @@ public class BuildInformationManager {
 		try {
 			buildInfoBundle = ResourceBundle.getBundle("dynamic/build");
 		} catch (MissingResourceException mre) {
-			LOGGER.error("The properties file with the build information could not be found");
+			logger.error("The properties file with the build information could not be found");
 		}
 	}
 	

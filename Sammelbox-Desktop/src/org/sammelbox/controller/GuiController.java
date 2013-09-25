@@ -1,6 +1,6 @@
 /** -----------------------------------------------------------------
  *    Sammelbox: Collection Manager - A free and open-source collection manager for Windows & Linux
- *    Copyright (C) 2011 JÃ©rÃ´me Wagener & Paul Bicheler
+ *    Copyright (C) 2011 Jerome Wagener & Paul Bicheler
  *
  *    This program is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -20,8 +20,11 @@ package org.sammelbox.controller;
 
 import org.sammelbox.model.GuiState;
 
-public class GuiController {
+public final class GuiController {
 	private static GuiState guiState = new GuiState();
+	
+	private GuiController() {
+	}
 	
 	public static GuiState getGuiState() {
 		return guiState;
