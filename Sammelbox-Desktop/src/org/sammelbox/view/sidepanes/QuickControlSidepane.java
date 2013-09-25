@@ -284,7 +284,6 @@ public final class QuickControlSidepane {
 				if (!GuiController.getGuiState().isAlbumSelected()) {
 					// A view has to have a parent album. Don't do anything if no album has been selected
 					event.doit = false;
-					System.out.println("dont");
 				} else if ( (viewList.getItemCount() > 0) && (viewList.getSelectionIndex() < 0)) {
 					viewList.select(0);
 				}
