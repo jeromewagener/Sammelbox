@@ -49,6 +49,7 @@ import org.sammelbox.controller.managers.AlbumViewManager;
 import org.sammelbox.controller.managers.AlbumViewManager.AlbumView;
 import org.sammelbox.controller.managers.DatabaseIntegrityManager;
 import org.sammelbox.controller.managers.MenuManager;
+import org.sammelbox.model.GuiState;
 import org.sammelbox.model.database.QueryBuilder;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 import org.sammelbox.model.database.operations.DatabaseOperations;
@@ -364,6 +365,9 @@ public final class ApplicationUI implements Observer {
 			ApplicationUI.albumList.deselectAll();
 			return true;
 		}
+		
+		// Reset view
+		GuiController.getGuiState().setSelectedView(GuiState.NO_VIEW_SELECTED);
 		
 		int albumListItemCount = ApplicationUI.albumList.getItemCount();
 		boolean albumSelectionIsInSync = false;
