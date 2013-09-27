@@ -23,7 +23,7 @@ import java.util.List;
 
 import org.sammelbox.controller.events.EventObservable;
 import org.sammelbox.controller.events.SammelboxEvent;
-import org.sammelbox.controller.filesystem.XMLStorageWrapper;
+import org.sammelbox.controller.filesystem.XmlStorageWrapper;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 import org.sammelbox.model.database.operations.DatabaseOperations;
 import org.slf4j.Logger;
@@ -34,7 +34,7 @@ public class AlbumManager {
 	private static List<String> albums = new LinkedList<String>();
 	
 	private static void mergeDatabaseAndXmlAlbums() {
-		albums = XMLStorageWrapper.retrieveAlbums();
+		albums = XmlStorageWrapper.retrieveAlbums();
 		
 		try {
 			for (String album : DatabaseOperations.getListOfAllAlbums()) {
@@ -51,15 +51,15 @@ public class AlbumManager {
 	}
 	
 	public static void initialize() {
-		albums = XMLStorageWrapper.retrieveAlbums();
+		albums = XmlStorageWrapper.retrieveAlbums();
 		
 		mergeDatabaseAndXmlAlbums();
 		
-		XMLStorageWrapper.storeAlbums(albums);
+		XmlStorageWrapper.storeAlbums(albums);
 	}
 	
 	public static List<String> getAlbums() {
-		albums = XMLStorageWrapper.retrieveAlbums();
+		albums = XmlStorageWrapper.retrieveAlbums();
 		
 		mergeDatabaseAndXmlAlbums();
 		
@@ -67,7 +67,7 @@ public class AlbumManager {
 	}
 	
 	private static void storeAlbums() {
-		XMLStorageWrapper.storeAlbums(albums);
+		XmlStorageWrapper.storeAlbums(albums);
 	}
 	
 	public static void setAlbums(List<String> albums) {

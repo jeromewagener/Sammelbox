@@ -1,6 +1,6 @@
 /** -----------------------------------------------------------------
  *    Sammelbox: Collection Manager - A free and open-source collection manager for Windows & Linux
- *    Copyright (C) 2011 Jérôme Wagener & Paul Bicheler
+ *    Copyright (C) 2011 Jerome Wagener & Paul Bicheler
  *
  *    This program is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -113,25 +113,21 @@ public class FileSystemAccessWrapper {
 	 * @param resourceName the name of the resource to be extracted 
 	 * @param outputResourcePath the absolute location to which the resource should be extracted */
 	private static void extractResourceToFile(String resourceName, String outputResourcePath) {
-		try {
-			File resource = new File(outputResourcePath);
-			
-			if (!resource.exists() || OVERWRITE_EXISITING_FILES) {			
-				InputStream istream = FileSystemAccessWrapper.class.getClassLoader().getResourceAsStream(resourceName);
-				OutputStream ostream = new FileOutputStream(outputResourcePath);
-	
+		File resource = new File(outputResourcePath);
+		
+		if (!resource.exists() || OVERWRITE_EXISITING_FILES) {			
+			try (InputStream istream = FileSystemAccessWrapper.class.getClassLoader().getResourceAsStream(resourceName);
+				 OutputStream ostream = new FileOutputStream(outputResourcePath);)
+			{
 				byte buffer[] = new byte[1024];
 				int length;
-				
-				while((length=istream.read(buffer)) > 0) {
+
+				while ((length=istream.read(buffer)) > 0) {
 					ostream.write(buffer, 0, length);
 				}
-				
-				ostream.close();
-				istream.close();
+			} catch (IOException ioe) {
+				LOGGER.error("An error occured while extracting the resource (" + resourceName + ") to " + outputResourcePath, ioe);
 			}
-		} catch (Exception ex) {
-			LOGGER.error("An error occured while extracting the resource (" + resourceName + ") to " + outputResourcePath, ex);
 		}
 	}
 
@@ -207,16 +203,17 @@ public class FileSystemAccessWrapper {
 	}
 
 	public static void copyFile(File sourceLocation , File targetLocation) throws IOException {
-		InputStream in = new FileInputStream(sourceLocation);
-		OutputStream out = new FileOutputStream(targetLocation);
-
-		byte[] buf = new byte[1024];
-		int len;
-		while ((len = in.read(buf)) > 0) {
-			out.write(buf, 0, len);
+		try (InputStream in = new FileInputStream(sourceLocation);
+			 OutputStream out = new FileOutputStream(targetLocation);)
+		{
+			byte[] buf = new byte[1024];
+			int len;
+			while ((len = in.read(buf)) > 0) {
+				out.write(buf, 0, len);
+			}
+		} catch (IOException ioe) {
+			LOGGER.error("An error occured while copying the file", ioe);
 		}
-		in.close();
-		out.close();
 	}
 	
 	/**
@@ -263,9 +260,9 @@ public class FileSystemAccessWrapper {
 			if (files[i].isDirectory()) {
 				String zipFolderPath = parentName;
 				if (parentName.isEmpty()) {
-					zipFolderPath = files[i].getName() + "/";//File.separatorChar;	
+					zipFolderPath = files[i].getName() + "/";
 				} else {
-					zipFolderPath += files[i].getName() + "/";// File.separatorChar;
+					zipFolderPath += files[i].getName() + "/";
 				}
 				addDirectory(zipOutputStream, zipFolderPath, files[i]);
 				continue;
@@ -333,18 +330,19 @@ public class FileSystemAccessWrapper {
 
 					destinationParent.mkdirs();
 
-					FileOutputStream fileOutputStream = new FileOutputStream(destFile);
-					InputStream inputStream = zipFile.getInputStream(entry);
-
-					// Copy the bits from inputStream to fileOutputStream
-					byte[] buf = new byte[1024];
-					int len;
-
-					while ((len = inputStream.read(buf)) > 0) {
-						fileOutputStream.write(buf, 0, len);
+					try (FileOutputStream fileOutputStream = new FileOutputStream(destFile);
+						 InputStream inputStream = zipFile.getInputStream(entry);) {
+	
+						// Copy the bits from inputStream to fileOutputStream
+						byte[] buf = new byte[1024];
+						int len;
+	
+						while ((len = inputStream.read(buf)) > 0) {
+							fileOutputStream.write(buf, 0, len);
+						}
+					} catch (IOException ioe) {
+						LOGGER.error("An error occured while unzipping " + zipLocation + " to " + folderLocation, ioe);
 					}
-
-					fileOutputStream.close();
 				}
 			}
 			

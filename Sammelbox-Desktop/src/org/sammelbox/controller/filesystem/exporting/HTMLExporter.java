@@ -33,7 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class HTMLExporter {
-	private static final Logger logger = LoggerFactory.getLogger(HTMLExporter.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(HTMLExporter.class);
 	
 	private HTMLExporter() {
 	}
@@ -109,7 +109,7 @@ public final class HTMLExporter {
 								 "</html>");
 			bufferedWriter.close();
 		} catch (IOException e) {
-			logger.error("An error occured while writing the HTML to its destination", e);
+			LOGGER.error("An error occured while writing the HTML to its destination", e);
 		}
 	}
 }

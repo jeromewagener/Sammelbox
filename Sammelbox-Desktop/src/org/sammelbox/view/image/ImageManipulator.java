@@ -1,6 +1,6 @@
 /** -----------------------------------------------------------------
  *    Sammelbox: Collection Manager - A free and open-source collection manager for Windows & Linux
- *    Copyright (C) 2011 Jérôme Wagener & Paul Bicheler
+ *    Copyright (C) 2011 Jerome Wagener & Paul Bicheler
  *
  *    This program is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -21,11 +21,14 @@ package org.sammelbox.view.image;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 import org.apache.commons.imaging.ImageFormat;
+import org.apache.commons.imaging.ImageReadException;
+import org.apache.commons.imaging.ImageWriteException;
 import org.apache.commons.imaging.Imaging;
 import org.sammelbox.controller.filesystem.FileSystemAccessWrapper;
 import org.sammelbox.controller.filesystem.FileSystemLocations;
@@ -47,7 +50,7 @@ public final class ImageManipulator {
 
 	
 	/**This method is used to copy originals, and create thumb nails, within the picture folder. 
-	 * It uses apache imaging instead of swt which seems to leak memory.
+	 * It uses Apache imaging instead of SWT which seems to leak memory.
 	 * @param pictureFile the original image
 	 * @param album the album to which the image should be assigned 
 	 * @return a picture pointing to the location of the original file and thumb nail within the album */	
@@ -55,7 +58,7 @@ public final class ImageManipulator {
 		try {
 			BufferedImage thumbnailImage = Imaging.getBufferedImage(pictureFile);
 			
-			int imageWidth 		= thumbnailImage.getWidth();
+			int imageWidth = thumbnailImage.getWidth();
 			int imageHeight	= thumbnailImage.getHeight();
 			
 			String identifierForOriginal = UUID.randomUUID().toString();
@@ -73,11 +76,11 @@ public final class ImageManipulator {
 				double imageRatio = 0.0;
 
 				if (imageWidth >= imageHeight) {
-					imageRatio = imageWidth / imageHeight;
+					imageRatio = ((double) imageWidth / (double) imageHeight);
 					newWidth = MAX_WIDTH_IN_PIXELS;
 					newHeight = (int) (MAX_WIDTH_IN_PIXELS / imageRatio);
 				} else {
-					imageRatio = imageHeight / imageWidth;
+					imageRatio = ((double) imageHeight / (double) imageWidth);
 					newHeight = MAX_HEIGHT_IN_PIXELS;
 					newWidth = (int) (MAX_HEIGHT_IN_PIXELS / imageRatio);
 				}
@@ -87,15 +90,15 @@ public final class ImageManipulator {
 			}
 
 			final ImageFormat format = ImageFormat.IMAGE_FORMAT_PNG;
-            final Map<String,Object> optional_params = new HashMap<String,Object>();
+            final Map<String,Object> optionalParams = new HashMap<String,Object>();
             File thumbnailDestination = new File(newFileLocationForThumbnail); 
-            Imaging.writeImage(thumbnailImage, thumbnailDestination, format, optional_params);
+            Imaging.writeImage(thumbnailImage, thumbnailDestination, format, optionalParams);
 			
 			FileSystemAccessWrapper.copyFile(new File(pictureFile.getPath()), new File(newFileLocationForOriginal));
 						
 			return new AlbumItemPicture(newFileNameForThumbnail, newFileNameForOriginal, album, AlbumItemPicture.PICTURE_ID_UNDEFINED);
 			
-		} catch (Exception ex) {
+		} catch (IOException | ImageReadException | ImageWriteException ex) {
 			LOGGER.error("An error occured while manipulating an image", ex);
 		}
 		

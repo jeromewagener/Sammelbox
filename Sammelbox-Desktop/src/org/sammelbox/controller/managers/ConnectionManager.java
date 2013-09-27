@@ -1,6 +1,6 @@
 /** -----------------------------------------------------------------
  *    Sammelbox: Collection Manager - A free and open-source collection manager for Windows & Linux
- *    Copyright (C) 2011 Jérôme Wagener & Paul Bicheler
+ *    Copyright (C) 2011 Jerome Wagener & Paul Bicheler
  *
  *    This program is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ public class ConnectionManager {
 	 * Opens the default connection for the FileSystemAccessWrapper.DATABASE database. Only opens a new connection if none is currently open.
 	 * @throws DatabaseWrapperOperationException 
 	 */
-	public static void openConnection() throws DatabaseWrapperOperationException {
+	public static synchronized void openConnection() throws DatabaseWrapperOperationException {
 		// Catch the internal SQL exception to give a definite state on the database connection using the collector exceptions
 		// This hides all internal SQL exceptions
 		try {
@@ -76,7 +76,7 @@ public class ConnectionManager {
 	 * Tries to close the database connection. If the connection is closed or null calling this method has no effect.
 	 * @throws DatabaseWrapperOperationException
 	 */
-	public static void closeConnection() throws DatabaseWrapperOperationException {
+	public static synchronized void closeConnection() throws DatabaseWrapperOperationException {
 		try {
 			if (ConnectionManager.connection != null && !ConnectionManager.connection.isClosed()) {
 				ConnectionManager.connection.close();
@@ -90,7 +90,7 @@ public class ConnectionManager {
 	/**
 	 * Test if the connection is open and ready to be used. 
 	 */
-	public static boolean isConnectionReady() {
+	public static synchronized boolean isConnectionReady() {
 		try {
 			// Querying all albums should be successful on all working databases, independently of how many albums are stored.
 			// If not, (e.g. due to connection problems) or missing albums, indicate the failure
@@ -112,7 +112,7 @@ public class ConnectionManager {
 	 * If the connection is unexpectedly in a usable state it, this is a no-operation.
 	 * @throws DatabaseWrapperOperationException 
 	 */
-	public static void openCleanConnection() throws DatabaseWrapperOperationException {
+	public static synchronized void openCleanConnection() throws DatabaseWrapperOperationException {
 		if (isConnectionReady() == true) {
 			return;
 		}
@@ -156,7 +156,7 @@ public class ConnectionManager {
 	 * Gets the connection.
 	 * @return A valid connection or null if not properly initialized.
 	 */
-	public static Connection getConnection() {
+	public static synchronized Connection getConnection() {
 		return connection;
 	}
 

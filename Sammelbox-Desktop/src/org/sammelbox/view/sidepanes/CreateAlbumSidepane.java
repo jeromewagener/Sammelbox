@@ -1,6 +1,6 @@
 /** -----------------------------------------------------------------
  *    Sammelbox: Collection Manager - A free and open-source collection manager for Windows & Linux
- *    Copyright (C) 2011 Jérôme Wagener & Paul Bicheler
+ *    Copyright (C) 2011 Jerome Wagener & Paul Bicheler
  *
  *    This program is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -56,7 +56,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class CreateAlbumSidepane {
-	private static final Logger logger = LoggerFactory.getLogger(CreateAlbumSidepane.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(CreateAlbumSidepane.class);
 	
 	private CreateAlbumSidepane() {
 		// use build method instead
@@ -303,7 +303,7 @@ public final class CreateAlbumSidepane {
 						return;
 					}
 				} catch (DatabaseWrapperOperationException ex) {
-					logger.error("A database error occured while checking whether '" + albumName + "' is available as album name", ex);
+					LOGGER.error("A database error occured while checking whether '" + albumName + "' is available as album name", ex);
 				}
 
 				if (!FileSystemAccessWrapper.isSAlbumNameFileSystemCompliant(albumName)) {

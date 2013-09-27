@@ -25,7 +25,7 @@ import java.util.Map;
 
 import org.sammelbox.controller.events.EventObservable;
 import org.sammelbox.controller.events.SammelboxEvent;
-import org.sammelbox.controller.filesystem.XMLStorageWrapper;
+import org.sammelbox.controller.filesystem.XmlStorageWrapper;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 import org.sammelbox.model.database.operations.DatabaseOperations;
 import org.slf4j.Logger;
@@ -120,11 +120,11 @@ public class AlbumViewManager {
 	}
 	
 	private static void storeViews() {
-		XMLStorageWrapper.storeViews(albumNamesToAlbumViews);
+		XmlStorageWrapper.storeViews(albumNamesToAlbumViews);
 	}
 	
 	private static void loadViews() {
-		albumNamesToAlbumViews = XMLStorageWrapper.retrieveViews();
+		albumNamesToAlbumViews = XmlStorageWrapper.retrieveViews();
 		
 		for (String albumName : albumNamesToAlbumViews.keySet()) {
 			try {

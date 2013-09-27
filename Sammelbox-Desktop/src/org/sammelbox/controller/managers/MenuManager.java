@@ -275,9 +275,9 @@ public class MenuManager {
 		Menu synchronizeMenu = new Menu(menu);
 		synchronizeItem.setMenu(synchronizeMenu);
 
-		MenuItem Synchronize = new MenuItem(synchronizeMenu, SWT.NONE);
-		Synchronize.setText(Translator.get(DictKeys.MENU_SYNCHRONIZE));
-		Synchronize.addSelectionListener(new SelectionAdapter() {
+		MenuItem synchronize = new MenuItem(synchronizeMenu, SWT.NONE);
+		synchronize.setText(Translator.get(DictKeys.MENU_SYNCHRONIZE));
+		synchronize.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				ApplicationUI.changeRightCompositeTo(

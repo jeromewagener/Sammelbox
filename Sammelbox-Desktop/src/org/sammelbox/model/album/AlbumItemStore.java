@@ -21,6 +21,7 @@ package org.sammelbox.model.album;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import org.sammelbox.controller.filesystem.FileSystemLocations;
 import org.sammelbox.controller.i18n.DictKeys;
@@ -160,7 +161,7 @@ public final class AlbumItemStore {
 				} else if (metaItemField.getType().equals(FieldType.DATE)) {
 					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), new java.sql.Date(System.currentTimeMillis()), false));
 				} else if (metaItemField.getType().equals(FieldType.INTEGER)) {
-					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), 10 + (int)(Math.random() * ((90) + 1)), false));
+					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), new Random().nextInt(100), false));
 				} else if (metaItemField.getType().equals(FieldType.DECIMAL)) {
 					BigDecimal randomDecimal = new BigDecimal(Math.random() * 100);
 				    randomDecimal = randomDecimal.setScale(2, BigDecimal.ROUND_HALF_UP);
@@ -177,7 +178,7 @@ public final class AlbumItemStore {
 					}
 					
 				} else if (metaItemField.getType().equals(FieldType.STAR_RATING)) {
-					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), StarRating.values()[(int)(Math.random() * ((5) + 1))], false));
+					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), StarRating.values()[new Random().nextInt(6)], false));
 				} else if (metaItemField.getType().equals(FieldType.TIME)) {
 					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), System.currentTimeMillis(), false));
 				} else if (metaItemField.getType().equals(FieldType.URL)) {

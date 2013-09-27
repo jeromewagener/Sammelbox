@@ -62,7 +62,7 @@ public final class CSVImporter {
 			pictureColumnIndex = handleFirstLine(line, albumName, separationCharacter, metaItemFields, pictureColumnName, pictureSeparationCharacter, isSimulation);
 			
 			while ((line = br.readLine()) != null) {
-				handleData(line, albumName, separationCharacter, metaItemFields, pictureColumnName, pictureSeparationCharacter, pictureColumnIndex, isSimulation);
+				handleData(line, albumName, separationCharacter, metaItemFields, pictureSeparationCharacter, pictureColumnIndex, isSimulation);
 			}
 						
 		} catch (FileNotFoundException fnfe) {
@@ -116,7 +116,7 @@ public final class CSVImporter {
 		return pictureColumnIndex;
 	}
 	
-	private static void handleData(String line, String albumName, String separationCharacter, List<MetaItemField> metaItemFields, String pictureColumnName, 
+	private static void handleData(String line, String albumName, String separationCharacter, List<MetaItemField> metaItemFields, 
 			String pictureSeperationCharacter, int pictureColumnIndex, boolean isSimulation) throws DatabaseWrapperOperationException, ImportException {
 		
 		String[] fieldValues = line.split(separationCharacter, NO_PICTURE_INDEX);

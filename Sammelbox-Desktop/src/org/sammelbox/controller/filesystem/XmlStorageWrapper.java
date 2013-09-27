@@ -1,3 +1,21 @@
+/** -----------------------------------------------------------------
+ *    Sammelbox: Collection Manager - A free and open-source collection manager for Windows & Linux
+ *    Copyright (C) 2011 Jerome Wagener & Paul Bicheler
+ *
+ *    This program is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation, either version 3 of the License, or
+ *    (at your option) any later version.
+ *
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
+ *
+ *    You should have received a copy of the GNU General Public License
+ *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ ** ----------------------------------------------------------------- */
+
 package org.sammelbox.controller.filesystem;
 
 import java.io.StringReader;
@@ -21,8 +39,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
-public class XMLStorageWrapper {
-	private static final Logger LOGGER = LoggerFactory.getLogger(XMLStorageWrapper.class);
+public class XmlStorageWrapper {
+	private static final Logger LOGGER = LoggerFactory.getLogger(XmlStorageWrapper.class);
 	
 	private static String getValue(String tag, Element element) {
 		NodeList nodes = element.getElementsByTagName(tag).item(0).getChildNodes();
@@ -125,7 +143,7 @@ public class XMLStorageWrapper {
 			Node root = document.getFirstChild();
 
 			if (!root.getNodeName().equals("settings")) {
-				throw new Exception("Invalid Settings File");
+				throw new XmlParsingException("Invalid Settings File");
 			} else {
 				Element element = (Element) root;
 				
@@ -159,7 +177,7 @@ public class XMLStorageWrapper {
 			Node root = document.getFirstChild();
 
 			if (!root.getNodeName().equals("albums")) {
-				throw new Exception("Invalid Album File");
+				throw new XmlParsingException("Invalid Album File");
 			} else {
 				NodeList viewNodes = document.getElementsByTagName("album");
 				
@@ -203,7 +221,7 @@ public class XMLStorageWrapper {
 			Node root = document.getFirstChild();
 
 			if (!root.getNodeName().equals("views")) {
-				throw new Exception("Invalid Album View File");
+				throw new XmlParsingException("Invalid Album View File");
 			} else {
 				NodeList viewNodes = document.getElementsByTagName("view");
 				
@@ -259,7 +277,7 @@ public class XMLStorageWrapper {
 			Node root = document.getFirstChild();
 
 			if (!root.getNodeName().equals("welcomePageInformation")) {
-				throw new Exception("Invalid Welcome Page File");
+				throw new XmlParsingException("Invalid Welcome Page File");
 			} else {
 				NodeList viewNodes = document.getElementsByTagName("albumToLastModified");
 				
@@ -305,7 +323,7 @@ public class XMLStorageWrapper {
 			Node root = document.getFirstChild();
 
 			if (!root.getNodeName().equals("welcomePageInformation")) {
-				throw new Exception("Invalid Welcome Page File");
+				throw new XmlParsingException("Invalid Welcome Page File");
 			} else {
 				NodeList viewNodes = document.getElementsByTagName("albumAndViewsToClicks");
 				

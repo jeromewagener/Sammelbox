@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 
 public final class Utilities {
 	public static final String NO_ANCHOR = "";
-	private static final Logger logger = LoggerFactory.getLogger(Utilities.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(Utilities.class);
 		
 	/** The anchor to which a jump is performed as soon as the page is fully loaded. 
 	 * This field is used via the set and get methods by the browser progress listener */
@@ -61,7 +61,7 @@ public final class Utilities {
 		try {
 			AlbumItemStore.reinitializeStore(DatabaseOperations.executeSQLQuery(sqlQuery));
 		} catch (DatabaseWrapperOperationException ex) {
-			logger.error("An error occured while reinitializing the album item store using the following SQL query (" + sqlQuery + ")", ex);
+			LOGGER.error("An error occured while reinitializing the album item store using the following SQL query (" + sqlQuery + ")", ex);
 		}
 		showAlbum(browser);
 	}
@@ -70,7 +70,7 @@ public final class Utilities {
 		try {
 			AlbumItemStore.reinitializeStore(albumItemResultSet);
 		} catch (DatabaseWrapperOperationException ex) {
-			logger.error("Could not reinitialize album item store", ex);
+			LOGGER.error("Could not reinitialize album item store", ex);
 		}
 		showAlbum(browser);
 	}

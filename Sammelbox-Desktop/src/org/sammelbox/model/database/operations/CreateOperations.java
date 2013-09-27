@@ -1,6 +1,6 @@
 /** -----------------------------------------------------------------
  *    Sammelbox: Collection Manager - A free and open-source collection manager for Windows & Linux
- *    Copyright (C) 2011 Jérôme Wagener & Paul Bicheler
+ *    Copyright (C) 2011 Jerome Wagener & Paul Bicheler
  *
  *    This program is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -96,6 +96,7 @@ public final class CreateOperations {
 			// Remove the type info  field from the old table
 			columns.remove(new MetaItemField(DatabaseConstants.TYPE_INFO_COLUMN_NAME, FieldType.ID));
 			tableName = DatabaseStringUtilities.encloseNameWithQuotes(DatabaseStringUtilities.generateTempTableName(albumName));
+			
 			typeInfoTableName = DatabaseStringUtilities.encloseNameWithQuotes(
 					DatabaseStringUtilities.generateTypeInfoTableName(albumName));
 			createTempTableSQL = "TEMPORARY";

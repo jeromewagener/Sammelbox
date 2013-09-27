@@ -89,8 +89,9 @@ public class TextInputDialog extends Dialog {
 
 		shell.addListener(SWT.Traverse, new Listener() {
 			public void handleEvent(Event event) {
-				if(event.detail == SWT.TRAVERSE_ESCAPE)
+				if (event.detail == SWT.TRAVERSE_ESCAPE) {
 					event.doit = false;
+				}
 			}
 		});
 
@@ -106,8 +107,9 @@ public class TextInputDialog extends Dialog {
 		shell.setLocation(xCoordinateForShell, yCoordinateForShell);
 		
 		while (!shell.isDisposed()) {
-			if (!shell.getDisplay().readAndDispatch())
+			if (!shell.getDisplay().readAndDispatch()) {
 				shell.getDisplay().sleep();
+			}
 		}
 
 		return value;

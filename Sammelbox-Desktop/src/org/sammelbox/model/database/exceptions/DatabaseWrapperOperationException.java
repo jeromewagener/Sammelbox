@@ -1,6 +1,6 @@
 /** -----------------------------------------------------------------
  *    Sammelbox: Collection Manager - A free and open-source collection manager for Windows & Linux
- *    Copyright (C) 2011 Jérôme Wagener & Paul Bicheler
+ *    Copyright (C) 2011 Jerome Wagener & Paul Bicheler
  *
  *    This program is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -30,20 +30,28 @@ public class DatabaseWrapperOperationException extends Exception {
 	
 	private static final long serialVersionUID = 1L;	
 	/** When this exception is caught this state can be used to determine which type of error the database has encountered.*/
-	public DBErrorState errorState;
+	private DBErrorState errorState;
 	
 	public DatabaseWrapperOperationException(DBErrorState errorState, String message) {
 		super(message);
-		this.errorState = errorState;
+		this.setErrorState(errorState);
 	}
 	
 	public DatabaseWrapperOperationException(DBErrorState errorState) {
 		super();
-		this.errorState = errorState;
+		this.setErrorState(errorState);
 	}
 	
 	public DatabaseWrapperOperationException(DBErrorState errorState, Throwable cause) {
 		super(cause);
+		this.setErrorState(errorState);
+	}
+
+	public DBErrorState getErrorState() {
+		return errorState;
+	}
+
+	public void setErrorState(DBErrorState errorState) {
 		this.errorState = errorState;
 	}
 }

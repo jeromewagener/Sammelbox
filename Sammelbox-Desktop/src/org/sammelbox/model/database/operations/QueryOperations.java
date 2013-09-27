@@ -1,6 +1,6 @@
 /** -----------------------------------------------------------------
  *    Sammelbox: Collection Manager - A free and open-source collection manager for Windows & Linux
- *    Copyright (C) 2011 Jérôme Wagener & Paul Bicheler
+ *    Copyright (C) 2011 Jerome Wagener & Paul Bicheler
  *
  *    This program is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -449,25 +449,19 @@ public final class QueryOperations {
 	
 	static boolean isAlbumFieldQuicksearchable(String albumName, String fieldName) throws DatabaseWrapperOperationException {
 		List<String> quicksearchableFieldNames = getIndexedColumnNames(DatabaseStringUtilities.generateTableName(albumName));
-
-		if (quicksearchableFieldNames != null) {
-			return quicksearchableFieldNames.contains(fieldName);
-		}
-		return false;
+		return quicksearchableFieldNames.contains(fieldName);
 	}
 
 	static boolean isAlbumQuicksearchable(String albumName) throws DatabaseWrapperOperationException {
 		List<String> quicksearchableFieldNames = getIndexedColumnNames(DatabaseStringUtilities.generateTableName(albumName));
 
-		if (quicksearchableFieldNames.size() >= 1) {
-			return true;
-		} else {
-			return false;
-		}	
+		return quicksearchableFieldNames.size() >= 1;
 	}
 	
 	static boolean isPictureAlbum(String albumName) throws DatabaseWrapperOperationException {
-		if (DatabaseStringUtilities.isStringNullOrEmpty(albumName)) {return false;}
+		if (DatabaseStringUtilities.isStringNullOrEmpty(albumName)) {
+			return false;
+		}
 		
 		String query = " SELECT " + DatabaseStringUtilities.transformColumnNameToSelectQueryName(DatabaseConstants.HAS_PICTURES_COLUMN_IN_ALBUM_MASTER_TABLE) +
  					   "   FROM " + DatabaseStringUtilities.encloseNameWithQuotes(DatabaseConstants.ALBUM_MASTER_TABLE_NAME) +

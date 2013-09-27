@@ -65,11 +65,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class ApplicationUI implements Observer {	
-	private static final Logger logger = LoggerFactory.getLogger(ApplicationUI.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationUI.class);
 	/** A reference to the main display */
-	private static final Display display = new Display();
+	private static final Display DISPLAY = new Display();
 	/** A reference to the main shell */
-	private static final Shell shell = new Shell(display);
+	private static final Shell SHELL = new Shell(DISPLAY);
 	
 	/** A reference to the SWT list containing all available albums */
 	private static List albumList;
@@ -225,7 +225,7 @@ public final class ApplicationUI implements Observer {
 		// SWT display management
 		shell.pack();
 
-		Rectangle displayClientArea = display.getPrimaryMonitor().getClientArea();
+		Rectangle displayClientArea = DISPLAY.getPrimaryMonitor().getClientArea();
 		if (maximizeShellOnStartUp(displayClientArea.width, displayClientArea.height)){
 			shell.setMaximized(true);
 		}
@@ -236,18 +236,18 @@ public final class ApplicationUI implements Observer {
 			selectDefaultAndShowWelcomePage();		
 	
 			while (!shell.isDisposed()) {
-				if (!display.readAndDispatch()) {
-					display.sleep();
+				if (!DISPLAY.readAndDispatch()) {
+					DISPLAY.sleep();
 				}
 			}
 	
-			display.dispose();
+			DISPLAY.dispose();
 		}
 		
 		try {
 			DatabaseIntegrityManager.backupAutoSave();
-		} catch (DatabaseWrapperOperationException e) {
-			logger.error("Couldn't create an auto save of the database file", e);
+		} catch (DatabaseWrapperOperationException ex) {
+			LOGGER.error("Couldn't create an auto save of the database file", ex);
 		}
 	}
 
@@ -380,7 +380,7 @@ public final class ApplicationUI implements Observer {
 		}
 		
 		if (!albumSelectionIsInSync) {
-			logger.error("The album list does not contain the album that is supposed to be selected");
+			LOGGER.error("The album list does not contain the album that is supposed to be selected");
 			return false;
 		}
 	
@@ -391,7 +391,7 @@ public final class ApplicationUI implements Observer {
 		try {
 			ApplicationUI.getQuickSearchTextField().setEnabled(DatabaseOperations.isAlbumQuicksearchable(albumName));
 		} catch (DatabaseWrapperOperationException ex) {
-			logger.error("An error occured while enabling the quick search field", ex);
+			LOGGER.error("An error occured while enabling the quick search field", ex);
 		}
 		
 		BrowserFacade.performBrowserQueryAndShow(QueryBuilder.createSelectStarQuery(albumName));
@@ -449,7 +449,7 @@ public final class ApplicationUI implements Observer {
 	}
 
 	public static Shell getShell() {
-		return shell;
+		return SHELL;
 	}
 	
 	/**
@@ -504,7 +504,7 @@ public final class ApplicationUI implements Observer {
 	}
 	
 	private static Rectangle getPrimaryScreenClientArea() {
-		Monitor primaryMonitorBySwt = display.getPrimaryMonitor();
+		Monitor primaryMonitorBySwt = DISPLAY.getPrimaryMonitor();
 		Rectangle primaryMonitorClientAreaBySwt = primaryMonitorBySwt.getClientArea();
 		GraphicsDevice[]screens =  GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
 		  for (GraphicsDevice screen : screens) {

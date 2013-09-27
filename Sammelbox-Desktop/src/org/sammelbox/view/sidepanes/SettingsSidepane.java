@@ -1,6 +1,6 @@
 /** -----------------------------------------------------------------
  *    Sammelbox: Collection Manager - A free and open-source collection manager for Windows & Linux
- *    Copyright (C) 2011 Jérôme Wagener & Paul Bicheler
+ *    Copyright (C) 2011 Jerome Wagener & Paul Bicheler
  *
  *    This program is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -44,14 +44,14 @@ public final class SettingsSidepane {
 	private static final String AMERICAN_DOT = "01.16.1988";
 	private static final String AMERICAN_SLASH = "01/16/1988";
 	
-	private static final Map<String, String> dateExamplesToFormats;
+	private static final Map<String, String> DATE_EXAMPLES_TO_FORMATS;
     static {
         Map<String, String> myDateExamplesToFormats = new HashMap<String, String>();
         myDateExamplesToFormats.put(EUROPEAN_DOT, "dd.MM.yyyy");
         myDateExamplesToFormats.put(EUROPEAN_SLASH, "dd/MM/yyyy");
         myDateExamplesToFormats.put(AMERICAN_DOT, "MM.dd.yyyy");
         myDateExamplesToFormats.put(AMERICAN_SLASH, "MM/dd/yyyy");
-        dateExamplesToFormats = Collections.unmodifiableMap(myDateExamplesToFormats);
+        DATE_EXAMPLES_TO_FORMATS = Collections.unmodifiableMap(myDateExamplesToFormats);
     }
 	
     private SettingsSidepane() {
@@ -95,8 +95,8 @@ public final class SettingsSidepane {
 		dateFormatSelectionCombo.setItems(new String[] { EUROPEAN_DOT, EUROPEAN_SLASH, AMERICAN_DOT, AMERICAN_SLASH});
 		
 		String definedDateFormat = SettingsManager.getSettings().getDateFormat();
-		for (String key : dateExamplesToFormats.keySet()) {
-			if (dateExamplesToFormats.get(key).equals(definedDateFormat)) {
+		for (String key : DATE_EXAMPLES_TO_FORMATS.keySet()) {
+			if (DATE_EXAMPLES_TO_FORMATS.get(key).equals(definedDateFormat)) {
 				dateFormatSelectionCombo.setText(key);
 				break;
 			}
@@ -121,7 +121,7 @@ public final class SettingsSidepane {
 				
 				appSettings.setUserDefinedLanguage(Language.valueOf(languageCombo.getItem(languageCombo.getSelectionIndex())));
 				appSettings.setDetailedViewIsDefault(viewSelectionCombo.getSelectionIndex() == 0);
-				appSettings.setDateFormat(dateExamplesToFormats.get(dateFormatSelectionCombo.getItem(dateFormatSelectionCombo.getSelectionIndex())));
+				appSettings.setDateFormat(DATE_EXAMPLES_TO_FORMATS.get(dateFormatSelectionCombo.getItem(dateFormatSelectionCombo.getSelectionIndex())));
 				SettingsManager.setApplicationSettings(appSettings);
 				
 				Translator.setLanguageManually(Language.valueOf(languageCombo.getItem(languageCombo.getSelectionIndex())));

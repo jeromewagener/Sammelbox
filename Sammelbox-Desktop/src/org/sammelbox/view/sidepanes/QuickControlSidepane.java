@@ -54,7 +54,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class QuickControlSidepane {
-	private static final Logger logger = LoggerFactory.getLogger(QuickControlSidepane.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(QuickControlSidepane.class);
 	
 	private QuickControlSidepane() {
 		// use build method instead
@@ -219,7 +219,7 @@ public final class QuickControlSidepane {
 							GuiController.getGuiState().setSelectedAlbum(GuiState.NO_ALBUM_SELECTED);
 							ApplicationUI.refreshAlbumList();
 						} catch (DatabaseWrapperOperationException ex) {
-							logger.error("A database error occured while removing the following album: '" + ApplicationUI.getSelectedAlbum() + "'", ex);
+							LOGGER.error("A database error occured while removing the following album: '" + ApplicationUI.getSelectedAlbum() + "'", ex);
 						}
 					}
 				}

@@ -1,6 +1,6 @@
 /** -----------------------------------------------------------------
  *    Sammelbox: Collection Manager - A free and open-source collection manager for Windows & Linux
- *    Copyright (C) 2011 Jérôme Wagener & Paul Bicheler
+ *    Copyright (C) 2011 Jerome Wagener & Paul Bicheler
  *
  *    This program is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -74,7 +74,7 @@ public final class UpdateOperations {
 	
 			DatabaseIntegrityManager.updateLastDatabaseChangeTimeStamp();
 		} catch (DatabaseWrapperOperationException e) {
-			if (e.errorState.equals(DBErrorState.ERROR_DIRTY_STATE)) {
+			if (e.getErrorState().equals(DBErrorState.ERROR_DIRTY_STATE)) {
 				DatabaseIntegrityManager.rollbackToSavepoint(savepointName);
 			}
 		} finally {
@@ -152,7 +152,7 @@ public final class UpdateOperations {
 			rebuildIndexForTable(albumName, newFields);
 			DatabaseIntegrityManager.updateLastDatabaseChangeTimeStamp();
 		} catch (DatabaseWrapperOperationException e) {
-			if (e.errorState.equals(DBErrorState.ERROR_DIRTY_STATE)) {
+			if (e.getErrorState().equals(DBErrorState.ERROR_DIRTY_STATE)) {
 				DatabaseIntegrityManager.rollbackToSavepoint(savepointName);
 				throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE, e);
 			}
@@ -196,7 +196,7 @@ public final class UpdateOperations {
 			rebuildIndexForTable(albumName, newFields);
 			DatabaseIntegrityManager.updateLastDatabaseChangeTimeStamp();
 		} catch (DatabaseWrapperOperationException e) {
-			if (e.errorState.equals(DBErrorState.ERROR_DIRTY_STATE)) {
+			if (e.getErrorState().equals(DBErrorState.ERROR_DIRTY_STATE)) {
 				DatabaseIntegrityManager.rollbackToSavepoint(savepointName);
 				throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE, e);
 			}
@@ -225,7 +225,7 @@ public final class UpdateOperations {
 			updateSchemaVersion(albumName);
 			DatabaseIntegrityManager.updateLastDatabaseChangeTimeStamp();
 		} catch (DatabaseWrapperOperationException e) {
-			if (e.errorState.equals(DBErrorState.ERROR_DIRTY_STATE)) {
+			if (e.getErrorState().equals(DBErrorState.ERROR_DIRTY_STATE)) {
 				DatabaseIntegrityManager.rollbackToSavepoint(savepointName);
 				throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE);
 			}
@@ -329,7 +329,7 @@ public final class UpdateOperations {
 			appendNewTableColumn(albumName, metaItemField);
 			DatabaseIntegrityManager.updateLastDatabaseChangeTimeStamp();
 		} catch (DatabaseWrapperOperationException e) {
-			if (e.errorState.equals(DBErrorState.ERROR_DIRTY_STATE)) {
+			if (e.getErrorState().equals(DBErrorState.ERROR_DIRTY_STATE)) {
 				DatabaseIntegrityManager.rollbackToSavepoint(savepointName);
 				throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE);
 			}
@@ -385,7 +385,7 @@ public final class UpdateOperations {
 				DeleteOperations.clearPictureTable(albumName);
 			}
 		} catch ( DatabaseWrapperOperationException e) {
-			if (e.errorState.equals(DBErrorState.ERROR_DIRTY_STATE)) {
+			if (e.getErrorState().equals(DBErrorState.ERROR_DIRTY_STATE)) {
 				DatabaseIntegrityManager.rollbackToSavepoint(savepointName);
 			}
 		} finally {
@@ -509,7 +509,7 @@ public final class UpdateOperations {
 			try {
 				CreateOperations.createIndex(albumName, quicksearchColumnNames);
 			} catch (DatabaseWrapperOperationException e) {
-				if (e.errorState.equals(DBErrorState.ERROR_DIRTY_STATE)) {
+				if (e.getErrorState().equals(DBErrorState.ERROR_DIRTY_STATE)) {
 					DatabaseIntegrityManager.rollbackToSavepoint(savepointName);
 				}
 			}finally {
@@ -525,7 +525,7 @@ public final class UpdateOperations {
 			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE);
 		}
 
-		// Get the id and make sure the field exist;
+		// Get the id and make sure the field exists
 		ItemField idField = albumItem.getField("id");
 
 		if (idField == null) {
@@ -605,7 +605,7 @@ public final class UpdateOperations {
 			updateContentVersion(albumItem.getAlbumName(), id, UUID.randomUUID());
 			DatabaseIntegrityManager.updateLastDatabaseChangeTimeStamp();
 		} catch (DatabaseWrapperOperationException e) {
-			if (e.errorState.equals(DBErrorState.ERROR_DIRTY_STATE)) {
+			if (e.getErrorState().equals(DBErrorState.ERROR_DIRTY_STATE)) {
 				DatabaseIntegrityManager.rollbackToSavepoint(savepointName);
 			}
 		} catch (SQLException e) {

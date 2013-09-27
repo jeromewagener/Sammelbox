@@ -39,7 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class DetailedItemCreator {
-	private static final Logger logger = LoggerFactory.getLogger(DetailedItemCreator.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(DetailedItemCreator.class);
 	
 	private DetailedItemCreator() {
 	}
@@ -115,7 +115,7 @@ public final class DetailedItemCreator {
 		               "<div>" + getAlternativePicturesHtml(id, pictures) + "</div>");
 			}
 		} catch (DatabaseWrapperOperationException ex) {
-			logger.error("An issue regarding the album item picture occured", ex);
+			LOGGER.error("An issue regarding the album item picture occured", ex);
 		}
 
 		if (showUpdateAndRemoveButtons) {

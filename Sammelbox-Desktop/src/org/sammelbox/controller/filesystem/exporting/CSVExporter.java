@@ -33,7 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class CSVExporter {
-	private static final Logger logger = LoggerFactory.getLogger(CSVExporter.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(CSVExporter.class);
 	
 	private CSVExporter() {
 	}
@@ -106,7 +106,7 @@ public final class CSVExporter {
 			bufferedWriter.write(headerBuilder.toString() + dataBuilder.toString());
 			bufferedWriter.close();
 		} catch (IOException e) {
-			logger.error("An error occured while writing the export data to its destinatation (" + filepath + ")", e);
+			LOGGER.error("An error occured while writing the export data to its destinatation (" + filepath + ")", e);
 		}
 	}
 }

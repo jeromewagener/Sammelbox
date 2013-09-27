@@ -1,6 +1,6 @@
 /** -----------------------------------------------------------------
  *    Sammelbox: Collection Manager - A free and open-source collection manager for Windows & Linux
- *    Copyright (C) 2011 Jérôme Wagener & Paul Bicheler
+ *    Copyright (C) 2011 Jerome Wagener & Paul Bicheler
  *
  *    This program is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -269,11 +269,8 @@ public class AlbumItem {
 			}
 		}
 		
-		if (moveAfterField == null){
-			moveAfterField = itemFields.get(0);
-		}
+		int moveAfterIndex = itemFields.indexOf(moveAfterField != null ? moveAfterField : itemFields.get(0));
 		
-		int moveAfterIndex = itemFields.indexOf(moveAfterField);
 		if (toMove != null && moveAfterIndex != -1) {
 			itemFields.remove(toMove);
 			itemFields.add(moveAfterIndex<=itemFields.size() ? moveAfterIndex : itemFields.size()-1, toMove);
@@ -312,11 +309,11 @@ public class AlbumItem {
 	
 	/**
 	 * Getter for the album name formatted for low level database interaction.
-	 * @param FieldName The field name.
+	 * @param fieldName The field name.
 	 * @return The string representing the properly formatted field name.
 	 */
-	public static String getDatabaseFieldName(String FieldName) {
-		return DatabaseStringUtilities.encloseNameWithQuotes(FieldName);
+	public static String getDatabaseFieldName(String fieldName) {
+		return DatabaseStringUtilities.encloseNameWithQuotes(fieldName);
 	}
 
 	public UUID getContentVersion() {

@@ -32,11 +32,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class QueryBuilder {
-	private static final Logger logger = LoggerFactory.getLogger(QueryBuilder.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(QueryBuilder.class);
 	
 	/** A private default constructor to forbid the creation of multiple instances */
 	private QueryBuilder() {}
-	private static final QueryBuilder instance = new QueryBuilder();
 	
 	private static final Map<String, String> searchToSQLOperators;
     static {
@@ -111,7 +110,7 @@ public final class QueryBuilder {
 	}
 
 	/** A helper (data) class for building queries. A query component is the combination of a field name, an operator and a value */
-	public class QueryComponent {
+	public static class QueryComponent {
 		public String fieldName;
 		public QueryOperator operator;
 		public String value;
@@ -129,7 +128,7 @@ public final class QueryBuilder {
 	 * @param value the value which should be used for querying
 	 * @return a query component based on the provided parameters */
 	public static QueryComponent getQueryComponent(String fieldName, QueryOperator operator, String value) {
-		return instance.new QueryComponent(fieldName, operator, value);
+		return new QueryComponent(fieldName, operator, value);
 	}
 	
 	/** This method builds a SQL query string out of multiple query components 
@@ -162,7 +161,7 @@ public final class QueryBuilder {
 		try {
 			fieldNameToFieldTypeMap = DatabaseOperations.getAlbumItemFieldNameToTypeMap(albumName);
 		} catch (DatabaseWrapperOperationException ex) {
-			logger.error("Couldn't determine field types for album " + albumName, ex);
+			LOGGER.error("Couldn't determine field types for album " + albumName, ex);
 		}
 			
 		for (int i=0; i<queryComponents.size(); i++) {	

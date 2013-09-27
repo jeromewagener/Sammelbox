@@ -51,7 +51,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ToolbarComposite extends Composite implements Observer {
-	private static final Logger logger = LoggerFactory.getLogger(ToolbarComposite.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ToolbarComposite.class);
 	
 	private Composite toolbarComposite = null;
 	private Image home = null, addAlbum = null, addEntry = null,
@@ -473,7 +473,7 @@ public class ToolbarComposite extends Composite implements Observer {
 				toggleViewBtn.setEnabled(false);
 			}
 		} catch (DatabaseWrapperOperationException ex) {
-			logger.error("An error occured while checking whether the following album contains pictures: '" + albumName + "'", ex);
+			LOGGER.error("An error occured while checking whether the following album contains pictures: '" + albumName + "'", ex);
 		}
 
 		GuiController.getGuiState().setViewDetailed(

@@ -1,6 +1,6 @@
 /** -----------------------------------------------------------------
  *    Sammelbox: Collection Manager - A free and open-source collection manager for Windows & Linux
- *    Copyright (C) 2011 Jérôme Wagener & Paul Bicheler
+ *    Copyright (C) 2011 Jerome Wagener & Paul Bicheler
  *
  *    This program is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -453,13 +453,14 @@ public final class BasicAlbumItemSidepane {
 				
 				AlbumItem albumItem = new AlbumItem(ApplicationUI.getSelectedAlbum());
 				
-				for (Control control : composite.getChildren()) {					
-					FieldType fieldType = null;
+				for (Control control : composite.getChildren()) {
 					if (control.getData(AlbumItemPicture.ALBUM_ITEM_PICTURE) != null) {
 						ImageDropAndManagementComposite imageDropAndManagementComposite = (ImageDropAndManagementComposite) control;
 
 						albumItem.setPictures(imageDropAndManagementComposite.getAllPictures());
-					} else if ((fieldType = (FieldType) control.getData("FieldType")) != null) {
+					} else if (control.getData("FieldType") != null) {
+						FieldType fieldType = (FieldType) control.getData("FieldType");
+						
 						if (fieldType.equals(FieldType.TEXT)) {
 							Text text = (Text) control;
 

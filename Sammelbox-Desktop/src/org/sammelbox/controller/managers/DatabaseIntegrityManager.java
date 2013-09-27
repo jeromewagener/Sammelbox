@@ -1,6 +1,6 @@
 /** -----------------------------------------------------------------
  *    Sammelbox: Collection Manager - A free and open-source collection manager for Windows & Linux
- *    Copyright (C) 2011 Jérôme Wagener & Paul Bicheler
+ *    Copyright (C) 2011 Jerome Wagener & Paul Bicheler
  *
  *    This program is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -238,8 +238,7 @@ public class DatabaseIntegrityManager {
 		}
 		
 		try {
-			long databaseChangeTimeStamp = Long.parseLong(fileName.substring(fileName.indexOf("_") + 1, fileName.indexOf(".")));
-			return databaseChangeTimeStamp;
+			return Long.parseLong(fileName.substring(fileName.indexOf('_') + 1, fileName.indexOf('.')));
 		} catch (NumberFormatException e) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE, e);
 		}

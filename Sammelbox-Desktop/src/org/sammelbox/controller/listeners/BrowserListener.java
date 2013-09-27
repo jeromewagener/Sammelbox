@@ -53,7 +53,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class BrowserListener implements LocationListener, ProgressListener, MenuDetectListener {
-	private static final Logger logger = LoggerFactory.getLogger(BrowserListener.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(BrowserListener.class);
 	
 	/** The parent composite to which this listener belongs to */
 	private Composite parentComposite;
@@ -63,13 +63,15 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 		this.parentComposite = parentComposite;
 	}
 
-	/** This method is required since under some circumstances, an question-mark is added to the end of the URL (event.location). If
-	 * a question mark is present at the end, it will be deleted. Otherwise, the unmodified string is returned 
-	 * @return a string without a question mark at the end*/
-	private void removeQuestionMarkAtTheEndIfPresent(String string) {
+	/** This method is required since under some circumstances, a question-mark is added to the end of the URL (event.location). 
+	 * If a question mark is present at the end, it will be deleted. Otherwise, the unmodified string is returned 
+	 * @return a string without a question mark at the end */
+	private String retrieveStringWithoutQuestionMarkAtEnd(String string) {
 		if (string.charAt(string.length() - 1) == '?') {
-			string = string.substring(0, string.length() - 1);
+			return string.substring(0, string.length() - 1);
 		}
+		
+		return string;
 	}
 
 	@Override
@@ -83,7 +85,7 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 	public void changing(LocationEvent event) {		
 		if (event.location.startsWith(UIConstants.SHOW_UPDATE_ENTRY_COMPOSITE)) {
 			String id = event.location.substring(UIConstants.SHOW_UPDATE_ENTRY_COMPOSITE.length());
-			removeQuestionMarkAtTheEndIfPresent(id);
+			id = retrieveStringWithoutQuestionMarkAtEnd(id);
 
 			ApplicationUI.changeRightCompositeTo(PanelType.UPDATE_ENTRY,
 					UpdateAlbumItemSidepane.build(parentComposite, ApplicationUI.getSelectedAlbum(), Long.parseLong(id)));
@@ -94,7 +96,7 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 
 		} else if (event.location.startsWith(UIConstants.DELETE_ENTRY)) {
 			String id = event.location.substring(UIConstants.DELETE_ENTRY.length());
-			removeQuestionMarkAtTheEndIfPresent(id);
+			id = retrieveStringWithoutQuestionMarkAtEnd(id);
 		
 			MessageBox messageBox = ComponentFactory.getMessageBox(Translator.get(DictKeys.DIALOG_TITLE_DELETE_ALBUM_ITEM),
 					Translator.get(DictKeys.DIALOG_CONTENT_DELETE_ALBUM_ITEM), 
@@ -105,9 +107,9 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 					AlbumItem albumItemToBeDeleted = DatabaseOperations.getAlbumItem(ApplicationUI.getSelectedAlbum(), Long.parseLong(id));
 					DatabaseOperations.deleteAlbumItem(albumItemToBeDeleted);
 				} catch (NumberFormatException nfe) {
-					logger.error("Couldn't parse the following id: '" + id + "'", nfe);
+					LOGGER.error("Couldn't parse the following id: '" + id + "'", nfe);
 				} catch (DatabaseWrapperOperationException ex) {
-					logger.error("A database error occured while deleting the album item #" + id + " from the album '" + 
+					LOGGER.error("A database error occured while deleting the album item #" + id + " from the album '" + 
 										ApplicationUI.getSelectedAlbum() + "'", ex);
 				}
 				BrowserFacade.performBrowserQueryAndShow(QueryBuilder.createSelectStarQuery(ApplicationUI.getSelectedAlbum()));
@@ -117,8 +119,7 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 			event.doit = false;
 		} else if (event.location.startsWith(UIConstants.SHOW_BIG_PICTURE)) {
 			String pathAndIdString = event.location.substring(UIConstants.SHOW_BIG_PICTURE.length());
-
-			removeQuestionMarkAtTheEndIfPresent(pathAndIdString);
+			pathAndIdString = retrieveStringWithoutQuestionMarkAtEnd(pathAndIdString);
 
 			String[] pathAndIdArray = pathAndIdString.split("\\?");
 
@@ -134,7 +135,7 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 			event.doit = false;
 		} else if (event.location.startsWith(UIConstants.SHOW_DETAILS)) {
 			String id = event.location.substring(UIConstants.SHOW_DETAILS.length());
-			removeQuestionMarkAtTheEndIfPresent(id);
+			id = retrieveStringWithoutQuestionMarkAtEnd(id);
 
 			AlbumItem albumItem;
 			try {
@@ -152,9 +153,9 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 				
 				StatusBarComposite.getInstance(ApplicationUI.getShell()).writeStatus(sb.toString());
 			} catch (NumberFormatException nfe) {
-				logger.error("Couldn't parse the following id: '" + id + "'", nfe);
+				LOGGER.error("Couldn't parse the following id: '" + id + "'", nfe);
 			} catch (DatabaseWrapperOperationException ex) {
-				logger.error("A database related error occured: \n Stacktrace: ", ex);
+				LOGGER.error("A database related error occured: \n Stacktrace: ", ex);
 			}
 
 			// Do not change the page
@@ -202,7 +203,7 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 		            runtime.exec("xdg-open " + url);
 		        }
 			} catch (IOException | URISyntaxException ex) {
-				logger.error("An error occured while opening the following URL: " + url, ex);
+				LOGGER.error("An error occured while opening the following URL: " + url, ex);
 			}
 			
 			// Do not change the page
@@ -211,22 +212,15 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 	}
 
 	@Override
-	public void changed(ProgressEvent event) {
-//		if (event.current == event.total) {
-//			String anchor = BrowserFacade.getFutureJumpAnchor();
-//			
-//			if (anchor != null) { //TODO this should never be null, use a defined value instead
-//				BrowserFacade.jumpToAnchor(BrowserFacade.getFutureJumpAnchor());
-//			}
-//		}
-	}
+	public void changed(ProgressEvent event) {}
 
 	@Override
 	/** As soon as a page is completely loaded, it is possible to jump to a previously defined anchor */
 	public void completed(ProgressEvent event) {
 		String anchor = BrowserFacade.getFutureJumpAnchor();
 
-		if (anchor != null) { //TODO this should never be null, use a defined value instead
+		if (anchor != null) {
+			//TODO this should never be null, use a defined value instead
 			BrowserFacade.jumpToAnchor(BrowserFacade.getFutureJumpAnchor());
 		}
 	}

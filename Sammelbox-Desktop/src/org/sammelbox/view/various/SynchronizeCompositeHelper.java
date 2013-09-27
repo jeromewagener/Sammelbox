@@ -1,6 +1,6 @@
 /** -----------------------------------------------------------------
  *    Sammelbox: Collection Manager - A free and open-source collection manager for Windows & Linux
- *    Copyright (C) 2011 Jérôme Wagener & Paul Bicheler
+ *    Copyright (C) 2011 Jerome Wagener & Paul Bicheler
  *
  *    This program is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -33,12 +33,10 @@ public class SynchronizeCompositeHelper implements Observer {
 	
 	private void enabledSynchronizeStep(SynchronizeStep synchronizeStep) {
 		((Label) synchronizeStepsToLabelsMap.get(synchronizeStep).getAccessible().getControl()).setEnabled(true);
-		//syncronizeStepsToLabelsMap.get(synchronizeStep).setEnabled(true);
 	}
 	
 	private void disableSynchronizeStep(SynchronizeStep synchronizeStep) {
 		((Label) synchronizeStepsToLabelsMap.get(synchronizeStep).getAccessible().getControl()).setEnabled(false);
-		//.setEnabled(false);
 	}
 
 	@Override

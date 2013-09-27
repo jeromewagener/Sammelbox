@@ -27,7 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class Translator {
-	private static final Logger logger = LoggerFactory.getLogger(Translator.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(Translator.class);
 	
 	private static Language language = null;
 	private static ResourceBundle languageBundle = null;
@@ -62,7 +62,7 @@ public final class Translator {
 			Translator.language = language;
 			languageBundle = ResourceBundle.getBundle(Language.getDictionaryBundle(language));
 		} catch (MissingResourceException mre) {
-			logger.error("The properties file for the selected language (" + language + ") could not be found", mre);
+			LOGGER.error("The properties file for the selected language (" + language + ") could not be found", mre);
 		}
 	}
 	
@@ -86,7 +86,7 @@ public final class Translator {
 	 * @return the string entered as parameter, with a warning prefix
 	 * */
 	public static String toBeTranslated(String stringToBeTranslated) {
-		logger.warn("The following string needs to be translated: " + stringToBeTranslated);
+		LOGGER.warn("The following string needs to be translated: " + stringToBeTranslated);
 		return get(DictKeys.TO_BE_TRANSLATED, stringToBeTranslated);
 	}
 	
@@ -107,7 +107,7 @@ public final class Translator {
 				return MessageFormat.format(languageBundle.getString(key), parameters);
 			}
 		} catch (MissingResourceException mre) {
-			logger.error("It seems that the following key (" + key + ") is not yet translated for the chosen language (" + language + ")", mre);
+			LOGGER.error("It seems that the following key (" + key + ") is not yet translated for the chosen language (" + language + ")", mre);
 			
 			return "";			
 		}

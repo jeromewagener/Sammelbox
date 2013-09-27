@@ -25,7 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class BuildInformationManager {
-	private static final Logger logger = LoggerFactory.getLogger(BuildInformationManager.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(BuildInformationManager.class);
 		
 	private static ResourceBundle buildInfoBundle = null;
 	private static BuildInformationManager instance;
@@ -34,7 +34,7 @@ public final class BuildInformationManager {
 		try {
 			buildInfoBundle = ResourceBundle.getBundle("dynamic/build");
 		} catch (MissingResourceException mre) {
-			logger.error("The properties file with the build information could not be found");
+			LOGGER.error("The properties file with the build information could not be found");
 		}
 	}
 	

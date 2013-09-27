@@ -59,7 +59,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class AdvancedSearchSidepane {
-	private static final Logger logger = LoggerFactory.getLogger(AdvancedSearchSidepane.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(AdvancedSearchSidepane.class);
 	
 	private AdvancedSearchSidepane() {
 		// use build method instead
@@ -92,7 +92,7 @@ public final class AdvancedSearchSidepane {
 			fieldToSearchCombo.setData("validMetaItemFields", MetaItemFieldFilter.getValidMetaItemFields(DatabaseOperations.getAlbumItemFieldNamesAndTypes(album)));
 			fieldToSearchCombo.setItems(MetaItemFieldFilter.getValidFieldNamesAsStringArray(DatabaseOperations.getAlbumItemFieldNamesAndTypes(album)));	
 		} catch (DatabaseWrapperOperationException ex) {
-			logger.error("A database related error occured", ex);
+			LOGGER.error("A database related error occured", ex);
 		}
 		Label searchOperatorLabel = new Label(innerComposite, SWT.NONE);
 		searchOperatorLabel.setText(Translator.get(DictKeys.LABEL_SEARCH_OPERATOR));
@@ -250,7 +250,7 @@ public final class AdvancedSearchSidepane {
 			fieldToSortCombo.setData("validMetaItemFields", MetaItemFieldFilter.getValidMetaItemFields(DatabaseOperations.getAlbumItemFieldNamesAndTypes(album)));
 			fieldToSortCombo.setItems(MetaItemFieldFilter.getValidFieldNamesAsStringArray(DatabaseOperations.getAlbumItemFieldNamesAndTypes(album)));
 		} catch (DatabaseWrapperOperationException ex) {
-			logger.error("A database related error occured", ex);
+			LOGGER.error("A database related error occured", ex);
 		}
 		
 		final Button sortAscendingButton = new Button(composite, SWT.RADIO);
@@ -265,7 +265,7 @@ public final class AdvancedSearchSidepane {
 		searchButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				ArrayList<QueryComponent> queryComponents = getQueryComponentsForAdvancedSearch(parentComposite, searchQueryTable);
+				ArrayList<QueryComponent> queryComponents = getQueryComponentsForAdvancedSearch(searchQueryTable);
 
 				boolean connectByAnd = false;
 				if (andButton.getSelection() == true) {
@@ -290,7 +290,7 @@ public final class AdvancedSearchSidepane {
 					return;
 				}
 
-				ArrayList<QueryComponent> queryComponents = getQueryComponentsForAdvancedSearch(parentComposite, searchQueryTable);
+				ArrayList<QueryComponent> queryComponents = getQueryComponentsForAdvancedSearch(searchQueryTable);
 
 				boolean connectByAnd = false;
 				if (andButton.getSelection() == true) {
@@ -327,7 +327,7 @@ public final class AdvancedSearchSidepane {
 		return advancedSearchComposite;
 	}
 	
-	private static ArrayList<QueryComponent> getQueryComponentsForAdvancedSearch(Composite parentComposite, Table searchQueryTable) {
+	private static ArrayList<QueryComponent> getQueryComponentsForAdvancedSearch(Table searchQueryTable) {
 		ArrayList<QueryComponent> queryComponents = new ArrayList<QueryComponent>();
 		try {
 			for (int i=0; i < searchQueryTable.getItemCount(); i++) {					
@@ -384,8 +384,8 @@ public final class AdvancedSearchSidepane {
 							searchQueryTable.getItem(i).getText(2)));
 				}
 			}			
-		} catch (Exception ex) {
-			logger.error("A database related error occured", ex);
+		} catch (DatabaseWrapperOperationException dwoe) {
+			LOGGER.error("A database related error occured", dwoe);
 		}
 		
 		return queryComponents;	

@@ -1,6 +1,6 @@
 /** -----------------------------------------------------------------
  *    Sammelbox: Collection Manager - A free and open-source collection manager for Windows & Linux
- *    Copyright (C) 2011 Jérôme Wagener & Paul Bicheler
+ *    Copyright (C) 2011 Jerome Wagener & Paul Bicheler
  *
  *    This program is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -173,11 +173,8 @@ public class ComponentFactory {
 		int questionMessageBoxStyle = SWT.ICON_QUESTION |SWT.YES | SWT.NO;
 		MessageBox questionMessageBox= getMessageBox(titleText, messageText, questionMessageBoxStyle);
 		int messageBoxResultFlag = questionMessageBox.open();
-		if ( messageBoxResultFlag  == SWT.YES) {
-			return true;
-		}else {
-			return false;
-		}
+		
+		return messageBoxResultFlag == SWT.YES;
 	}
 	
 	/**

@@ -1,6 +1,6 @@
 /** -----------------------------------------------------------------
  *    Sammelbox: Collection Manager - A free and open-source collection manager for Windows & Linux
- *    Copyright (C) 2011 Jérôme Wagener & Paul Bicheler
+ *    Copyright (C) 2011 Jerome Wagener & Paul Bicheler
  *
  *    This program is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -88,7 +88,7 @@ public final class DeleteOperations {
 			UpdateOperations.rebuildIndexForTable(albumName, newFields);
 			DatabaseIntegrityManager.updateLastDatabaseChangeTimeStamp();
 		} catch (DatabaseWrapperOperationException e) {
-			if (e.errorState.equals(DBErrorState.ERROR_CLEAN_STATE)) {
+			if (e.getErrorState().equals(DBErrorState.ERROR_CLEAN_STATE)) {
 				DatabaseIntegrityManager.rollbackToSavepoint(savepointName);					
 				LOGGER.error("Unable to roll back before to state before the removal of the album item field");
 				throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE, e);
@@ -134,7 +134,7 @@ public final class DeleteOperations {
 			
 			DatabaseIntegrityManager.updateLastDatabaseChangeTimeStamp();
 		} catch (DatabaseWrapperOperationException e) {
-			if (e.errorState.equals(DBErrorState.ERROR_DIRTY_STATE)) {
+			if (e.getErrorState().equals(DBErrorState.ERROR_DIRTY_STATE)) {
 				DatabaseIntegrityManager.rollbackToSavepoint(savepointName);
 				throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE, e);
 			}
@@ -156,7 +156,7 @@ public final class DeleteOperations {
 			FileSystemAccessWrapper.deleteDirectoryRecursively(
 					new File(FileSystemAccessWrapper.getFilePathForAlbum(albumName)));
 		} catch (DatabaseWrapperOperationException e) {
-			if (e.errorState.equals(DBErrorState.ERROR_DIRTY_STATE)) {
+			if (e.getErrorState().equals(DBErrorState.ERROR_DIRTY_STATE)) {
 				DatabaseIntegrityManager.rollbackToSavepoint(savepointName);
 				throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE, e);
 			}
