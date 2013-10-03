@@ -21,6 +21,10 @@ package org.sammelbox.model.album;
 import java.sql.Date;
 import java.sql.Time;
 
+import org.sammelbox.controller.i18n.Translator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public enum FieldType {
 	ID,
 	TEXT,
@@ -33,22 +37,65 @@ public enum FieldType {
 	INTEGER,
 	OPTION; 
 
-	/** 
-	 * The Picture type and ID are not included since they should not be directly be edited by the user. 
-	 * Picture is also not included in the returned string since this method is only used to fill ComboBoxes 
-	 * listing possible FieldTypes for the create new Album dialog. GUI specific method.
-	 */
-	public static String[] toUserTypeStringArray() {
-		return new String[] { 	
-				FieldType.TEXT.toString(), 
-				FieldType.INTEGER.toString(),
-				FieldType.DECIMAL.toString(),
-				FieldType.STAR_RATING.toString(),
-				FieldType.OPTION.toString(),
-				FieldType.DATE.toString(),
-				FieldType.URL.toString()
-				//FieldType.Time.toString(),//TODO In the current iteration the time is not needed as explicit field type. 
+	private static final Logger LOGGER = LoggerFactory.getLogger(FieldType.class);
+	
+	/** Returns a collection of translated field types. Special FieldTypes such as ID and UUID won't be included */
+	public static String[] getTranslatedFieldTypes() {
+		return new String[] {
+				Translator.toBeTranslated("Text"),
+				Translator.toBeTranslated("Decimal"),
+				Translator.toBeTranslated("Date"),
+				Translator.toBeTranslated("Star Rating"),
+				Translator.toBeTranslated("URL"),
+				Translator.toBeTranslated("Integer"),
+				Translator.toBeTranslated("Option")
 		};
+	}
+	
+	public static FieldType valueOfTranslatedFieldType(String translatedFieldType) {
+		if (translatedFieldType.equals(Translator.toBeTranslated("Text"))) {
+			return FieldType.TEXT;
+		} else if (translatedFieldType.equals(Translator.toBeTranslated("Decimal"))) {
+			return FieldType.DECIMAL;
+		} else if (translatedFieldType.equals(Translator.toBeTranslated("Date"))) {
+			return FieldType.DATE;
+		} else if (translatedFieldType.equals(Translator.toBeTranslated("Star Rating"))) {
+			return FieldType.STAR_RATING;
+		} else if (translatedFieldType.equals(Translator.toBeTranslated("URL"))) {
+			return FieldType.URL;
+		} else if (translatedFieldType.equals(Translator.toBeTranslated("Integer"))) {
+			return FieldType.INTEGER;
+		} else if (translatedFieldType.equals(Translator.toBeTranslated("Option"))) {
+			return FieldType.OPTION;
+		}
+		
+		LOGGER.error("We should never return null at this point. "
+				+ "However, if null is returned, this means that a new fieldtype has not been translated");
+		
+		return null;
+	}
+	
+	public static String translateFieldType(FieldType fieldType) {
+		if (fieldType.equals(FieldType.TEXT)) {
+			return Translator.toBeTranslated("Text");
+		} else if (fieldType.equals(FieldType.DECIMAL)) {
+			return Translator.toBeTranslated("Decimal");
+		} else if (fieldType.equals(FieldType.DATE)) {
+			return Translator.toBeTranslated("Date");
+		} else if (fieldType.equals(FieldType.STAR_RATING)) {
+			return Translator.toBeTranslated("Star Rating");
+		} else if (fieldType.equals(FieldType.URL)) {
+			return Translator.toBeTranslated("URL");
+		} else if (fieldType.equals(FieldType.INTEGER)) {
+			return Translator.toBeTranslated("Integer");
+		} else if (fieldType.equals(FieldType.OPTION)) {
+			return Translator.toBeTranslated("Option");
+		}
+		
+		LOGGER.error("We should never return null at this point. "
+				+ "However, if null is returned, this means that a new fieldtype has not been translated");
+		
+		return null;
 	}
 
 	/**

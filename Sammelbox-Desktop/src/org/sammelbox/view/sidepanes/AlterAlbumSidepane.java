@@ -128,7 +128,7 @@ public final class AlterAlbumSidepane {
 		Label fieldTypeLabel = new Label(innerComposite, SWT.NONE);
 		fieldTypeLabel.setText(Translator.get(DictKeys.LABEL_FIELD_TYPE));
 		final Combo fieldTypeCombo = new Combo(innerComposite, SWT.DROP_DOWN);
-		fieldTypeCombo.setItems(FieldType.toUserTypeStringArray());	    
+		fieldTypeCombo.setItems(FieldType.getTranslatedFieldTypes());	    
 		fieldTypeCombo.setLayoutData(new GridData(GridData.FILL_BOTH));
 		fieldTypeCombo.setText(fieldTypeCombo.getItem(0).toString());
 
@@ -150,7 +150,7 @@ public final class AlterAlbumSidepane {
 				if (albumFieldNamesAndTypesTable.getSelectionIndex() > 0) {
 					int newPosition = albumFieldNamesAndTypesTable.getSelectionIndex() - 1; // move one up
 					TableItem originalItem = albumFieldNamesAndTypesTable.getItem(albumFieldNamesAndTypesTable.getSelectionIndex());
-					MetaItemField metaItemField = new MetaItemField(originalItem.getText(1), FieldType.valueOf(originalItem.getText(2)), originalItem.getChecked());
+					MetaItemField metaItemField = new MetaItemField(originalItem.getText(1), FieldType.valueOfTranslatedFieldType(originalItem.getText(2)), originalItem.getChecked());
 					originalItem.dispose();
 
 					TableItem itemAtNewPosition = new TableItem(albumFieldNamesAndTypesTable, SWT.NONE, newPosition);
@@ -166,7 +166,7 @@ public final class AlterAlbumSidepane {
 							AlterAlbumSidepane.updateAlterAlbumPage(yesButtonForIncludingImages, albumFieldNamesAndTypesTable);
 						} else {
 							TableItem moveAfterTableItem = albumFieldNamesAndTypesTable.getItem(newPosition-1);
-							MetaItemField moveAfterField = new MetaItemField(moveAfterTableItem.getText(1), FieldType.valueOf(moveAfterTableItem.getText(2)), moveAfterTableItem.getChecked());
+							MetaItemField moveAfterField = new MetaItemField(moveAfterTableItem.getText(1), FieldType.valueOfTranslatedFieldType(moveAfterTableItem.getText(2)), moveAfterTableItem.getChecked());
 							DatabaseOperations.reorderAlbumItemField(albumName, metaItemField, moveAfterField);
 							BrowserFacade.addModificationToAlterationList(Translator.get(DictKeys.BROWSER_ALBUMFIELD_MOVED_UP, metaItemField.getName()));
 							AlterAlbumSidepane.updateAlterAlbumPage(yesButtonForIncludingImages, albumFieldNamesAndTypesTable);
@@ -272,7 +272,7 @@ public final class AlterAlbumSidepane {
 				if (albumFieldNamesAndTypesTable.getSelectionIndex() < (albumFieldNamesAndTypesTable.getItemCount() - 1)) {
 					int newPosition = albumFieldNamesAndTypesTable.getSelectionIndex() + 1; // move one down
 					TableItem originalItem = albumFieldNamesAndTypesTable.getItem(albumFieldNamesAndTypesTable.getSelectionIndex());
-					MetaItemField metaItemField = new MetaItemField(originalItem.getText(1), FieldType.valueOf(originalItem.getText(2)), originalItem.getChecked());
+					MetaItemField metaItemField = new MetaItemField(originalItem.getText(1), FieldType.valueOfTranslatedFieldType(originalItem.getText(2)), originalItem.getChecked());
 					originalItem.dispose();
 
 					TableItem itemAtNewPosition = new TableItem(albumFieldNamesAndTypesTable, SWT.NONE, newPosition);
@@ -288,7 +288,7 @@ public final class AlterAlbumSidepane {
 							AlterAlbumSidepane.updateAlterAlbumPage(yesButtonForIncludingImages, albumFieldNamesAndTypesTable);
 						} else {
 							TableItem moveAfterTableItem = albumFieldNamesAndTypesTable.getItem(newPosition - 1);
-							MetaItemField moveAfterField = new MetaItemField(moveAfterTableItem.getText(1), FieldType.valueOf(moveAfterTableItem.getText(2)), moveAfterTableItem.getChecked());
+							MetaItemField moveAfterField = new MetaItemField(moveAfterTableItem.getText(1), FieldType.valueOfTranslatedFieldType(moveAfterTableItem.getText(2)), moveAfterTableItem.getChecked());
 							DatabaseOperations.reorderAlbumItemField(albumName, metaItemField, moveAfterField);
 							BrowserFacade.addModificationToAlterationList(Translator.get(DictKeys.BROWSER_ALBUMFIELD_MOVED_DOWN, metaItemField.getName()));
 							AlterAlbumSidepane.updateAlterAlbumPage(yesButtonForIncludingImages, albumFieldNamesAndTypesTable);
@@ -314,8 +314,8 @@ public final class AlterAlbumSidepane {
 						Translator.get(DictKeys.DIALOG_BUTTON_RENAME_FIELD));
 
 				if (newFieldName != null) {	    			
-					MetaItemField oldMetaItemField = new MetaItemField(item.getText(1),  FieldType.valueOf(item.getText(2)), item.getChecked());
-					MetaItemField newMetaItemField = new MetaItemField(newFieldName,  FieldType.valueOf(item.getText(2)), item.getChecked());
+					MetaItemField oldMetaItemField = new MetaItemField(item.getText(1), FieldType.valueOfTranslatedFieldType(item.getText(2)), item.getChecked());
+					MetaItemField newMetaItemField = new MetaItemField(newFieldName, FieldType.valueOfTranslatedFieldType(item.getText(2)), item.getChecked());
 
 					String albumName = albumNameText.getData().toString();
 					try {
@@ -345,7 +345,7 @@ public final class AlterAlbumSidepane {
 
 						String albumName = albumNameText.getData().toString();
 						try {
-							DatabaseOperations.removeAlbumItemField(albumName, new MetaItemField(item.getText(1), FieldType.valueOf(item.getText(2)), item.getChecked()));
+							DatabaseOperations.removeAlbumItemField(albumName, new MetaItemField(item.getText(1), FieldType.valueOfTranslatedFieldType(item.getText(2)), item.getChecked()));
 							BrowserFacade.addModificationToAlterationList(Translator.get(DictKeys.BROWSER_ALBUMFIELD_REMOVED, item.getText(1)));
 							AlterAlbumSidepane.updateAlterAlbumPage(yesButtonForIncludingImages, albumFieldNamesAndTypesTable);
 						} catch (DatabaseWrapperOperationException ex) {
@@ -382,7 +382,7 @@ public final class AlterAlbumSidepane {
 			TableItem item = new TableItem(albumFieldNamesAndTypesTable, SWT.NONE);
 			item.setChecked(metaItemField.isQuickSearchable());
 			item.setText(1, metaItemField.getName());
-			item.setText(2, metaItemField.getType().toString());			
+			item.setText(2, FieldType.translateFieldType(metaItemField.getType()));			
 		}
 
 		// Set table layout data
@@ -404,7 +404,7 @@ public final class AlterAlbumSidepane {
 				if (event.detail == SWT.CHECK) {
 					MetaItemField metaItemField = new MetaItemField(
 							albumFieldNamesAndTypesTable.getItem(index).getText(1),
-							FieldType.valueOf(albumFieldNamesAndTypesTable.getItem(index).getText(2)),
+							FieldType.valueOfTranslatedFieldType(albumFieldNamesAndTypesTable.getItem(index).getText(2)),
 							albumFieldNamesAndTypesTable.getItem(index).getChecked());
 
 					String albumName = albumNameText.getData().toString();
@@ -435,7 +435,7 @@ public final class AlterAlbumSidepane {
 				}
 
 
-				MetaItemField metaItemField = new MetaItemField(fieldNameText.getText(), FieldType.valueOf(fieldTypeCombo.getText()), false);
+				MetaItemField metaItemField = new MetaItemField(fieldNameText.getText(), FieldType.valueOfTranslatedFieldType(fieldTypeCombo.getText()), false);
 				String albumName = albumNameText.getData().toString();
 
 				try {
@@ -481,7 +481,7 @@ public final class AlterAlbumSidepane {
 			metaItemFields.add(
 					new MetaItemField(
 							albumFieldNamesAndTypesTable.getItem(i).getText(1),
-							FieldType.valueOf(albumFieldNamesAndTypesTable.getItem(i).getText(2)),
+							FieldType.valueOfTranslatedFieldType(albumFieldNamesAndTypesTable.getItem(i).getText(2)),
 							albumFieldNamesAndTypesTable.getItem(i).getChecked()));
 		}
 		

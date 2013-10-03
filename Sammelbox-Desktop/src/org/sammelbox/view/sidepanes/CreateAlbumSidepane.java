@@ -116,7 +116,7 @@ public final class CreateAlbumSidepane {
 		Label fieldTypeLabel = new Label(innerCompositeForFieldname, SWT.NONE);
 		fieldTypeLabel.setText(Translator.get(DictKeys.LABEL_FIELD_TYPE));
 		final Combo fieldTypeCombo = new Combo(innerCompositeForFieldname, SWT.DROP_DOWN);
-		fieldTypeCombo.setItems(FieldType.toUserTypeStringArray());	    
+		fieldTypeCombo.setItems(FieldType.getTranslatedFieldTypes());	    
 		fieldTypeCombo.setLayoutData(new GridData(GridData.FILL_BOTH));
 		fieldTypeCombo.setText(fieldTypeCombo.getItem(0).toString());
 
@@ -321,7 +321,7 @@ public final class CreateAlbumSidepane {
 					metaItemFields.add(
 							new MetaItemField(
 									albumFieldNamesAndTypesTable.getItem(i).getText(1),
-									FieldType.valueOf(albumFieldNamesAndTypesTable.getItem(i).getText(2)),
+									FieldType.valueOfTranslatedFieldType(albumFieldNamesAndTypesTable.getItem(i).getText(2)),
 									albumFieldNamesAndTypesTable.getItem(i).getChecked()));
 				}
 
@@ -373,7 +373,7 @@ public final class CreateAlbumSidepane {
 			metaItemFields.add(
 					new MetaItemField(
 							albumFieldNamesAndTypesTable.getItem(i).getText(1),
-							FieldType.valueOf(albumFieldNamesAndTypesTable.getItem(i).getText(2)),
+							FieldType.valueOfTranslatedFieldType(albumFieldNamesAndTypesTable.getItem(i).getText(2)),
 							albumFieldNamesAndTypesTable.getItem(i).getChecked()));
 		}
 		

@@ -20,6 +20,7 @@ package org.sammelbox.controller;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.sammelbox.model.album.FieldType;
@@ -34,10 +35,14 @@ public final class MetaItemFieldFilter {
 	 * @return a list containing only valid meta item fields */
 	public static List<MetaItemField> getValidMetaItemFields(List<MetaItemField> metaItemFields) {
 		List<MetaItemField> validMetaItemFields = new ArrayList<MetaItemField>();
-		List<String> validFieldTypes = Arrays.asList(FieldType.toUserTypeStringArray());
+		List<FieldType> validFieldTypes = new LinkedList<FieldType>(Arrays.asList(FieldType.values()));
 
+		validFieldTypes.remove(FieldType.TIME); // TODO implement or delete for future releases
+		validFieldTypes.remove(FieldType.ID);
+		validFieldTypes.remove(FieldType.UUID);
+		
 		for (MetaItemField metaItemField : metaItemFields) {
-			if (validFieldTypes.contains(metaItemField.getType().toString())) {
+			if (validFieldTypes.contains(metaItemField.getType())) {
 				validMetaItemFields.add(metaItemField);
 			}
 		}
@@ -51,10 +56,14 @@ public final class MetaItemFieldFilter {
 	 * @return a string array containing only valid field names */
 	public static String[] getValidFieldNamesAsStringArray(List<MetaItemField> metaItemFields) {
 		List<MetaItemField> validMetaItemFields = new ArrayList<MetaItemField>();
-		List<String> validFieldTypes = Arrays.asList(FieldType.toUserTypeStringArray());
-
+		List<FieldType> validFieldTypes = new LinkedList<FieldType>(Arrays.asList(FieldType.values()));	
+		
+		validFieldTypes.remove(FieldType.TIME); // TODO implement or delete for future releases
+		validFieldTypes.remove(FieldType.ID);
+		validFieldTypes.remove(FieldType.UUID);
+		
 		for (MetaItemField metaItemField : metaItemFields) {
-			if (validFieldTypes.contains(metaItemField.getType().toString())) {
+			if (validFieldTypes.contains(metaItemField.getType())) {
 				validMetaItemFields.add(metaItemField);
 			}
 		}
