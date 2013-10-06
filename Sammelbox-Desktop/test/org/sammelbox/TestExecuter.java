@@ -94,7 +94,7 @@ public class TestExecuter {
 			FileSystemLocations.setActiveHomeDir(FileSystemLocations.DEFAULT_SAMMELBOX_TEST_HOME);
 			ConnectionManager.closeConnection();
 			FileSystemAccessWrapper.removeHomeDirectory();
-			Class.forName("org.sqlite.JDBC");
+			Class.forName(Sammelbox.ORG_SQLITE_JDBC);
 			FileSystemAccessWrapper.updateSammelboxFileStructure();			
 			ConnectionManager.openConnection();
 			FileSystemAccessWrapper.updateAlbumFileStructure(ConnectionManager.getConnection());

@@ -131,6 +131,7 @@ public final class BasicAlbumItemSidepane {
 			String fieldName = metaItem.getName();
 			FieldType fieldType = metaItem.getType();
 
+			// TODO is this check still necessary? see the switch below
 			// Do not show the id field!
 			if (fieldName.equals("id") || fieldName.equals("typeinfo")) {
 				continue;
@@ -138,279 +139,34 @@ public final class BasicAlbumItemSidepane {
 
 			switch (fieldType) {
 			case ID:
-				// not shown
+				// not shown in sidepane
 				break;
 			case UUID:
-				// not shown
+				// not shown in sidepane
 				break;
 			case TEXT: 
-				ComponentFactory.getSmallBoldItalicLabel(basicAlbumItemComposite, fieldName + ":");
-
-				Text textText = new Text(
-						basicAlbumItemComposite,
-						SWT.WRAP
-						| SWT.MULTI
-						| SWT.BORDER
-						| SWT.V_SCROLL
-						);
-
-				GridData gridData = new GridData(SWT.FILL, SWT.FILL, false, false);
-				gridData.widthHint = BASIC_ALBUM_SIDEPANE_WIDTH_IN_PIXELS;
-				textText.setLayoutData(gridData);
-				// Override the normal tab behavior of a multiline text widget.
-				// Instead of ctrl+tab a simple text changes focus.
-				textText.addTraverseListener(new TraverseListener() {
-					public void keyTraversed(TraverseEvent e) {
-						if (e.detail == SWT.TRAVERSE_TAB_NEXT || e.detail == SWT.TRAVERSE_TAB_PREVIOUS) {
-							e.doit = true;
-						}
-					}
-				});
-
-				if (loadDataIntoFields) {
-					String text = albumItem.getField(fieldName).getValue();
-					if (text != null) {
-						textText.setText(text);
-					}
-				}
-
-				textText.setData("FieldType", FieldType.TEXT);
-				textText.setData("FieldName", fieldName);
-
+				addTextComponent(basicAlbumItemComposite, albumItem, fieldName, loadDataIntoFields);
 				break;
-
 			case URL: 
-				ComponentFactory.getSmallBoldItalicLabel(basicAlbumItemComposite, fieldName + ":");
-
-				Text url = new Text(
-						basicAlbumItemComposite,
-						SWT.WRAP
-						| SWT.MULTI
-						| SWT.BORDER
-						| SWT.V_SCROLL);
-
-				url.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
-
-				if (loadDataIntoFields) {
-					url.setText((String) albumItem.getField(fieldName).getValue());
-				}
-
-				url.setData("FieldType", FieldType.URL);
-				url.setData("FieldName", fieldName);
-
-				break;	
-
+				addURLComponent(basicAlbumItemComposite, albumItem, fieldName, loadDataIntoFields);
+				break;
 			case DECIMAL:
-				ComponentFactory.getSmallBoldItalicLabel(basicAlbumItemComposite, fieldName + ":");
-
-				final Text numberText = new Text(basicAlbumItemComposite, SWT.BORDER);
-				numberText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
-
-				if (loadDataIntoFields) {
-					numberText.setText(((Double) albumItem.getField(fieldName).getValue()).toString());
-				} 
-				numberText.addListener(SWT.Verify, new Listener() {
-					public void handleEvent(Event e) {
-						boolean hasPoint = false;
-						String newString = e.text;
-						hasPoint = numberText.getText().contains(".");
-
-						char[] chars = new char[newString.length()];
-						newString.getChars(0, chars.length, chars, 0);
-
-						for (int i = 0; i < chars.length; i++) {
-							if (!hasPoint) {
-								if (!('0' <= chars[i] && chars[i] <= '9'|| chars[i] == '.')) {
-									e.doit = false;
-									return;
-								}
-							} else {
-								if (!('0' <= chars[i] && chars[i] <= '9')) {
-									e.doit = false;
-									return;
-								}
-							}
-						}
-					}
-				});
-
-				numberText.setData("FieldType", FieldType.DECIMAL);
-				numberText.setData("FieldName", fieldName);
-
+				addDecimalNumberComponent(basicAlbumItemComposite, albumItem, fieldName, loadDataIntoFields);
 				break;
-
 			case INTEGER:
-				ComponentFactory.getSmallBoldItalicLabel(basicAlbumItemComposite, fieldName + ":");
-
-				final Text integerText = new Text(basicAlbumItemComposite, SWT.BORDER);
-				integerText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
-
-				if (loadDataIntoFields) {
-					integerText.setText(((Integer) albumItem.getField(fieldName).getValue()).toString());
-				} 
-				integerText.addListener(SWT.Verify, new Listener() {
-					public void handleEvent(Event e) {
-						String newString = e.text;
-						
-						char[] chars = new char[newString.length()];
-						newString.getChars(0, chars.length, chars, 0);
-
-						for (int i = 0; i < chars.length; i++) {
-							if (!('0' <= chars[i] && chars[i] <= '9')) {
-								e.doit = false;
-								return;
-							}
-						}
-						
-						try {
-							if (!integerText.getText().isEmpty()) {
-								Integer.parseInt(integerText.getText() + e.text);
-							}
-						} catch (NumberFormatException nfe) {
-							e.doit = false;
-							return;
-						}
-					}
-				});
-
-				integerText.setData("FieldType", FieldType.INTEGER);
-				integerText.setData("FieldName", fieldName);
-
-				break;	
-
+				addIntegerNumberComponent(basicAlbumItemComposite, albumItem, fieldName, loadDataIntoFields);
+				break;
 			case DATE:
-				ComponentFactory.getSmallBoldItalicLabel(basicAlbumItemComposite, fieldName + ":");
-
-				Composite dateComposite = new Composite(basicAlbumItemComposite, SWT.NULL);
-				dateComposite.setLayout(new RowLayout(SWT.HORIZONTAL));
-				dateComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
-				dateComposite.setData("FieldType", FieldType.DATE);
-				dateComposite.setData("FieldName", fieldName);
-				
-				final Button enableDateButton = new Button(dateComposite, SWT.CHECK);
-				enableDateButton.setSelection(true);
-				enableDateButton.setText("");
-								
-				final DateTime datePicker = new DateTime(dateComposite, SWT.BORDER | SWT.DATE | SWT.DROP_DOWN);
-				
-				enableDateButton.addMouseListener(new MouseListener() {
-					@Override
-					public void mouseUp(MouseEvent arg0) {
-						datePicker.setEnabled(enableDateButton.getSelection());
-					}
-					
-					@Override
-					public void mouseDown(MouseEvent arg0) {}
-					
-					@Override
-					public void mouseDoubleClick(MouseEvent arg0) {}
-				});
-				
-				if (loadDataIntoFields) {
-					Date date = albumItem.getField(fieldName).getValue();
-					if (date != null) {
-						Calendar calendarForDate = Calendar.getInstance();
-						calendarForDate.setTimeInMillis(date.getTime());
-						datePicker.setDate(calendarForDate.get(Calendar.YEAR), calendarForDate.get(Calendar.MONTH), calendarForDate.get(Calendar.DAY_OF_MONTH));
-					} else {
-						enableDateButton.setSelection(false);
-						datePicker.setEnabled(false);
-					}
-				}
-
-				datePicker.setData("FieldType", FieldType.DATE);
-				datePicker.setData("FieldName", fieldName);
-
+				addDateComponent(basicAlbumItemComposite, albumItem, fieldName, loadDataIntoFields);
 				break;
-
 			case TIME:
-				ComponentFactory.getSmallBoldItalicLabel(basicAlbumItemComposite, fieldName + ":");
-
-				DateTime timePicker = new DateTime(basicAlbumItemComposite, SWT.BORDER | SWT.TIME | SWT.DROP_DOWN);
-				timePicker.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
-
-				if (loadDataIntoFields) {
-					Time time = albumItem.getField(fieldName).getValue();
-					Calendar calendarForTime = Calendar.getInstance();
-					calendarForTime.setTimeInMillis(time.getTime());
-
-					timePicker.setTime(calendarForTime.get(Calendar.HOUR), calendarForTime.get(Calendar.MINUTE), calendarForTime.get(Calendar.SECOND));
-				}
-
-				timePicker.setData("FieldType", FieldType.TIME);
-				timePicker.setData("FieldName", fieldName);
-
+				addTimeComponent(basicAlbumItemComposite, albumItem, fieldName, loadDataIntoFields);
 				break;
-
 			case STAR_RATING:
-				ComponentFactory.getSmallBoldItalicLabel(basicAlbumItemComposite, fieldName + ":");
-
-				final Combo ratingCombo = new Combo(basicAlbumItemComposite, SWT.DROP_DOWN | SWT.READ_ONLY);
-				ratingCombo.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
-
-				// Fill the comboBox
-				ratingCombo.setData("FieldType", FieldType.STAR_RATING);
-				ratingCombo.setData("FieldName", fieldName);
-				ratingCombo.setItems(StarRating.toComboBoxArray());
-				
-				if (loadDataIntoFields) {
-					ratingCombo.select(((StarRating) albumItem.getField(fieldName).getValue()).getIntegerValue());
-				} else {
-					ratingCombo.select(0);
-				}
-				
+				addStarRatingComponent(basicAlbumItemComposite, albumItem, fieldName, loadDataIntoFields);
 				break;
-
 			case OPTION:
-				ComponentFactory.getSmallBoldItalicLabel(basicAlbumItemComposite, fieldName + ":");
-
-				Composite yesNoComposite = new Composite(basicAlbumItemComposite, SWT.NULL);
-				yesNoComposite.setLayout(new RowLayout());
-				yesNoComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
-				yesNoComposite.setData("FieldType", FieldType.OPTION);
-				yesNoComposite.setData("FieldName", fieldName);
-
-				Button yesButton = new Button(yesNoComposite, SWT.RADIO);
-				yesButton.setText(Translator.get(DictKeys.BUTTON_YES));
-				yesButton.setData("yesButton", true);
-				yesButton.setData("noButton", false);
-				yesButton.setData("unknownButton", false);
-				if (loadDataIntoFields) {
-					if (albumItem.getField(fieldName).getValue() == OptionType.YES) {
-						yesButton.setSelection(true);
-					} else {
-						yesButton.setSelection(false);
-					}
-				}
-
-				Button noButton = new Button(yesNoComposite, SWT.RADIO);
-				noButton.setText(Translator.get(DictKeys.BUTTON_NO));
-				noButton.setData("yesButton", false);
-				noButton.setData("noButton", true);
-				noButton.setData("unknownButton", false);
-				if (loadDataIntoFields) {
-					if (albumItem.getField(fieldName).getValue() == OptionType.NO) {
-						noButton.setSelection(true);
-					} else {
-						noButton.setSelection(false);
-					}
-				}
-
-				Button unknownButton = new Button(yesNoComposite, SWT.RADIO);
-				unknownButton.setText(Translator.get(DictKeys.BUTTON_UNKNOWN));
-				unknownButton.setData("yesButton", false);
-				unknownButton.setData("noButton", false);
-				unknownButton.setData("unknownButton", true);
-				if (loadDataIntoFields) {
-					if (albumItem.getField(fieldName).getValue() == OptionType.UNKNOWN) {
-						unknownButton.setSelection(true);
-					} else {
-						unknownButton.setSelection(false);
-					}
-				} else {
-					unknownButton.setSelection(true);
-				}
-
+				addOptionComponent(basicAlbumItemComposite, albumItem, fieldName, loadDataIntoFields);
 				break;
 			}
 		}
@@ -456,25 +212,19 @@ public final class BasicAlbumItemSidepane {
 				for (Control control : composite.getChildren()) {
 					if (control.getData(AlbumItemPicture.ALBUM_ITEM_PICTURE) != null) {
 						ImageDropAndManagementComposite imageDropAndManagementComposite = (ImageDropAndManagementComposite) control;
-
 						albumItem.setPictures(imageDropAndManagementComposite.getAllPictures());
+					
 					} else if (control.getData("FieldType") != null) {
 						FieldType fieldType = (FieldType) control.getData("FieldType");
 						
-						if (fieldType.equals(FieldType.TEXT)) {
+						if(fieldType.equals(FieldType.TEXT)) {
 							Text text = (Text) control;
-
-							albumItem.addField(
-									(String) text.getData("FieldName"),
-									(FieldType) text.getData("FieldType"),
-									text.getText());
+							albumItem.addField((String) text.getData("FieldName"), (FieldType) text.getData("FieldType"), text.getText());
+						
 						} else if (fieldType.equals(FieldType.URL)) {
 							Text url = (Text) control;
-
-							albumItem.addField(
-									(String) url.getData("FieldName"),
-									(FieldType) url.getData("FieldType"),
-									url.getText());
+							albumItem.addField((String) url.getData("FieldName"), (FieldType) url.getData("FieldType"), url.getText());
+						
 						} else if (fieldType.equals(FieldType.DECIMAL)) {
 							Text text = (Text) control;
 							double number = 0.0;
@@ -483,10 +233,8 @@ public final class BasicAlbumItemSidepane {
 								number = Double.parseDouble(text.getText());
 							}
 
-							albumItem.addField(
-									(String) text.getData("FieldName"),
-									(FieldType) text.getData("FieldType"),
-									number);
+							albumItem.addField((String) text.getData("FieldName"), (FieldType) text.getData("FieldType"), number);
+						
 						} else if (fieldType.equals(FieldType.INTEGER)) {
 							Text text = (Text) control;
 							int integer = 0;
@@ -495,79 +243,42 @@ public final class BasicAlbumItemSidepane {
 								integer = Integer.parseInt(text.getText());
 							}
 
-							albumItem.addField(
-									(String) text.getData("FieldName"),
-									(FieldType) text.getData("FieldType"),
-									integer);
+							albumItem.addField((String) text.getData("FieldName"), (FieldType) text.getData("FieldType"), integer);
+						
 						} else if (fieldType.equals(FieldType.DATE)) {
 							Composite dateComposite = (Composite) control;
 							
 							for (Control dateControl : dateComposite.getChildren()) {
-								if (dateControl.getData("FieldType") != null && 
-										((FieldType) dateControl.getData("FieldType")).equals(FieldType.DATE)) {								
-									
+								if (dateControl.getData("FieldType") != null && ((FieldType) dateControl.getData("FieldType")).equals(FieldType.DATE)) {
 									DateTime dateTime = (DateTime) dateControl;
 									
 									if (!dateTime.getEnabled()) {
-										albumItem.addField(
-												(String) dateTime.getData("FieldName"),
-												(FieldType) dateTime.getData("FieldType"),
-												null);
+										albumItem.addField((String) dateTime.getData("FieldName"), (FieldType) dateTime.getData("FieldType"), null);
 									} else {
 										Calendar calendar = Calendar.getInstance();
 										calendar.set(dateTime.getYear(), dateTime.getMonth(), dateTime.getDay());
-			
-										albumItem.addField(
-												(String) dateTime.getData("FieldName"),
-												(FieldType) dateTime.getData("FieldType"),
-												new Date(calendar.getTimeInMillis()));
+										albumItem.addField((String) dateTime.getData("FieldName"), (FieldType) dateTime.getData("FieldType"), new Date(calendar.getTimeInMillis()));
 									}
 								}
 							}
+						
 						} else if (fieldType.equals(FieldType.STAR_RATING)) {							
 							Combo combo = (Combo) control;
-							
-							albumItem.addField(
-									(String) combo.getData("FieldName"),
-									(FieldType) combo.getData("FieldType"),
-									StarRating.values()[combo.getSelectionIndex()]);
+							albumItem.addField((String) combo.getData("FieldName"), (FieldType) combo.getData("FieldType"), StarRating.values()[combo.getSelectionIndex()]);
+						
 						} else if (fieldType.equals(FieldType.OPTION)) {
 							Composite yesNoComposite = (Composite) control;
-
 							for (Control yesNoControl : yesNoComposite.getChildren()) {
 								Button radioButton = (Button) yesNoControl;
 
-								if (((Boolean) radioButton.getData("yesButton")) == true) {
-									if (radioButton.getSelection() == true) {
-										albumItem.addField(
-												(String) control.getData("FieldName"),
-												(FieldType) fieldType,
-												OptionType.YES);
-									}
-								}
-
-								if (((Boolean) radioButton.getData("noButton")) == true) {
-									if (radioButton.getSelection() == true) {
-										albumItem.addField(
-												(String) control.getData("FieldName"),
-												(FieldType) fieldType,
-												OptionType.NO);
-									}
-								}
-
-								if (((Boolean) radioButton.getData("unknownButton")) == true) {
-									if (radioButton.getSelection() == true) {
-										albumItem.addField(
-												(String) control.getData("FieldName"),
-												(FieldType) fieldType,
-												OptionType.UNKNOWN);
-									}
+								if (((Boolean) radioButton.getData("yesButton")) && radioButton.getSelection()) {
+									albumItem.addField((String) control.getData("FieldName"), (FieldType) fieldType, OptionType.YES);
+								} else if (((Boolean) radioButton.getData("noButton")) && radioButton.getSelection()) {
+									albumItem.addField((String) control.getData("FieldName"), (FieldType) fieldType, OptionType.NO);
+								} else if (((Boolean) radioButton.getData("unknownButton")) && radioButton.getSelection()) {
+									albumItem.addField((String) control.getData("FieldName"), (FieldType) fieldType, OptionType.UNKNOWN);
 								}
 							}
-						} else if (control instanceof ImageDropAndManagementComposite) {
- 							ImageDropAndManagementComposite imageDropAndManagementComposite = (ImageDropAndManagementComposite) control;
- 
- 							albumItem.setPictures(imageDropAndManagementComposite.getAllPictures());
 						}
 					}
 				}
@@ -580,8 +291,7 @@ public final class BasicAlbumItemSidepane {
 						BrowserFacade.generateAlbumItemUpdatedPage(albumItemId);
 					} else {						
 						// Create album item
-						BrowserFacade.generateAlbumItemAddedPage(
-								DatabaseOperations.addAlbumItem(albumItem, true));
+						BrowserFacade.generateAlbumItemAddedPage(DatabaseOperations.addAlbumItem(albumItem, true));
 					}
 					
 					// Update GUI
@@ -592,5 +302,267 @@ public final class BasicAlbumItemSidepane {
 				}
 			}
 		};
+	}
+	
+	private static void addTextComponent(Composite basicAlbumItemComposite, AlbumItem albumItem, String fieldName, boolean loadDataIntoFields) {
+		ComponentFactory.getSmallBoldItalicLabel(basicAlbumItemComposite, fieldName + ":");
+
+		Text textText = new Text(
+				basicAlbumItemComposite,
+				SWT.WRAP
+				| SWT.MULTI
+				| SWT.BORDER
+				| SWT.V_SCROLL
+				);
+
+		GridData gridData = new GridData(SWT.FILL, SWT.FILL, false, false);
+		gridData.widthHint = BASIC_ALBUM_SIDEPANE_WIDTH_IN_PIXELS;
+		textText.setLayoutData(gridData);
+		// Override the normal tab behavior of a multiline text widget.
+		// Instead of ctrl+tab a simple text changes focus.
+		textText.addTraverseListener(new TraverseListener() {
+			public void keyTraversed(TraverseEvent e) {
+				if (e.detail == SWT.TRAVERSE_TAB_NEXT || e.detail == SWT.TRAVERSE_TAB_PREVIOUS) {
+					e.doit = true;
+				}
+			}
+		});
+
+		if (loadDataIntoFields) {
+			String text = albumItem.getField(fieldName).getValue();
+			if (text != null) {
+				textText.setText(text);
+			}
+		}
+
+		textText.setData("FieldType", FieldType.TEXT);
+		textText.setData("FieldName", fieldName);
+	}
+	
+	private static void addURLComponent(Composite basicAlbumItemComposite, AlbumItem albumItem, String fieldName, boolean loadDataIntoFields) {
+		ComponentFactory.getSmallBoldItalicLabel(basicAlbumItemComposite, fieldName + ":");
+
+		Text url = new Text(
+				basicAlbumItemComposite,
+				SWT.WRAP
+				| SWT.MULTI
+				| SWT.BORDER
+				| SWT.V_SCROLL);
+
+		url.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+
+		if (loadDataIntoFields) {
+			url.setText((String) albumItem.getField(fieldName).getValue());
+		}
+
+		url.setData("FieldType", FieldType.URL);
+		url.setData("FieldName", fieldName);
+	}
+	
+	private static void addDecimalNumberComponent(Composite basicAlbumItemComposite, AlbumItem albumItem, String fieldName, boolean loadDataIntoFields) {
+		ComponentFactory.getSmallBoldItalicLabel(basicAlbumItemComposite, fieldName + ":");
+
+		final Text numberText = new Text(basicAlbumItemComposite, SWT.BORDER);
+		numberText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+
+		if (loadDataIntoFields) {
+			numberText.setText(((Double) albumItem.getField(fieldName).getValue()).toString());
+		} 
+		numberText.addListener(SWT.Verify, new Listener() {
+			public void handleEvent(Event e) {
+				boolean hasPoint = false;
+				String newString = e.text;
+				hasPoint = numberText.getText().contains(".");
+
+				char[] chars = new char[newString.length()];
+				newString.getChars(0, chars.length, chars, 0);
+
+				for (int i = 0; i < chars.length; i++) {
+					if (!hasPoint) {
+						if (!('0' <= chars[i] && chars[i] <= '9'|| chars[i] == '.')) {
+							e.doit = false;
+							return;
+						}
+					} else {
+						if (!('0' <= chars[i] && chars[i] <= '9')) {
+							e.doit = false;
+							return;
+						}
+					}
+				}
+			}
+		});
+
+		numberText.setData("FieldType", FieldType.DECIMAL);
+		numberText.setData("FieldName", fieldName);
+	}
+	
+	private static void addIntegerNumberComponent(Composite basicAlbumItemComposite, AlbumItem albumItem, String fieldName, boolean loadDataIntoFields) {
+		ComponentFactory.getSmallBoldItalicLabel(basicAlbumItemComposite, fieldName + ":");
+
+		final Text integerText = new Text(basicAlbumItemComposite, SWT.BORDER);
+		integerText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+
+		if (loadDataIntoFields) {
+			integerText.setText(((Integer) albumItem.getField(fieldName).getValue()).toString());
+		} 
+		integerText.addListener(SWT.Verify, new Listener() {
+			public void handleEvent(Event e) {
+				String newString = e.text;
+				
+				char[] chars = new char[newString.length()];
+				newString.getChars(0, chars.length, chars, 0);
+
+				for (int i = 0; i < chars.length; i++) {
+					if (!('0' <= chars[i] && chars[i] <= '9')) {
+						e.doit = false;
+						return;
+					}
+				}
+				
+				try {
+					if (!integerText.getText().isEmpty()) {
+						Integer.parseInt(integerText.getText() + e.text);
+					}
+				} catch (NumberFormatException nfe) {
+					e.doit = false;
+					return;
+				}
+			}
+		});
+
+		integerText.setData("FieldType", FieldType.INTEGER);
+		integerText.setData("FieldName", fieldName);
+	}
+	
+	private static void addDateComponent(Composite basicAlbumItemComposite, AlbumItem albumItem, String fieldName, boolean loadDataIntoFields) {
+		ComponentFactory.getSmallBoldItalicLabel(basicAlbumItemComposite, fieldName + ":");
+
+		Composite dateComposite = new Composite(basicAlbumItemComposite, SWT.NULL);
+		dateComposite.setLayout(new RowLayout(SWT.HORIZONTAL));
+		dateComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+		dateComposite.setData("FieldType", FieldType.DATE);
+		dateComposite.setData("FieldName", fieldName);
+		
+		final Button enableDateButton = new Button(dateComposite, SWT.CHECK);
+		enableDateButton.setSelection(true);
+		enableDateButton.setText("");
+						
+		final DateTime datePicker = new DateTime(dateComposite, SWT.BORDER | SWT.DATE | SWT.DROP_DOWN);
+		
+		enableDateButton.addMouseListener(new MouseListener() {
+			@Override
+			public void mouseUp(MouseEvent arg0) {
+				datePicker.setEnabled(enableDateButton.getSelection());
+			}
+			
+			@Override
+			public void mouseDown(MouseEvent arg0) {}
+			
+			@Override
+			public void mouseDoubleClick(MouseEvent arg0) {}
+		});
+		
+		if (loadDataIntoFields) {
+			Date date = albumItem.getField(fieldName).getValue();
+			if (date != null) {
+				Calendar calendarForDate = Calendar.getInstance();
+				calendarForDate.setTimeInMillis(date.getTime());
+				datePicker.setDate(calendarForDate.get(Calendar.YEAR), calendarForDate.get(Calendar.MONTH), calendarForDate.get(Calendar.DAY_OF_MONTH));
+			} else {
+				enableDateButton.setSelection(false);
+				datePicker.setEnabled(false);
+			}
+		}
+
+		datePicker.setData("FieldType", FieldType.DATE);
+		datePicker.setData("FieldName", fieldName);
+	}
+	
+	private static void addTimeComponent(Composite basicAlbumItemComposite, AlbumItem albumItem, String fieldName, boolean loadDataIntoFields) {
+		ComponentFactory.getSmallBoldItalicLabel(basicAlbumItemComposite, fieldName + ":");
+
+		DateTime timePicker = new DateTime(basicAlbumItemComposite, SWT.BORDER | SWT.TIME | SWT.DROP_DOWN);
+		timePicker.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+
+		if (loadDataIntoFields) {
+			Time time = albumItem.getField(fieldName).getValue();
+			Calendar calendarForTime = Calendar.getInstance();
+			calendarForTime.setTimeInMillis(time.getTime());
+
+			timePicker.setTime(calendarForTime.get(Calendar.HOUR), calendarForTime.get(Calendar.MINUTE), calendarForTime.get(Calendar.SECOND));
+		}
+
+		timePicker.setData("FieldType", FieldType.TIME);
+		timePicker.setData("FieldName", fieldName);
+	}
+	
+	private static void addStarRatingComponent(Composite basicAlbumItemComposite, AlbumItem albumItem, String fieldName, boolean loadDataIntoFields) {
+		ComponentFactory.getSmallBoldItalicLabel(basicAlbumItemComposite, fieldName + ":");
+
+		final Combo ratingCombo = new Combo(basicAlbumItemComposite, SWT.DROP_DOWN | SWT.READ_ONLY);
+		ratingCombo.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+
+		// Fill the comboBox
+		ratingCombo.setData("FieldType", FieldType.STAR_RATING);
+		ratingCombo.setData("FieldName", fieldName);
+		ratingCombo.setItems(StarRating.toComboBoxArray());
+		
+		if (loadDataIntoFields) {
+			ratingCombo.select(((StarRating) albumItem.getField(fieldName).getValue()).getIntegerValue());
+		} else {
+			ratingCombo.select(0);
+		}
+	}
+	
+	private static void addOptionComponent(Composite basicAlbumItemComposite, AlbumItem albumItem, String fieldName, boolean loadDataIntoFields) {
+		ComponentFactory.getSmallBoldItalicLabel(basicAlbumItemComposite, fieldName + ":");
+
+		Composite yesNoComposite = new Composite(basicAlbumItemComposite, SWT.NULL);
+		yesNoComposite.setLayout(new RowLayout());
+		yesNoComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+		yesNoComposite.setData("FieldType", FieldType.OPTION);
+		yesNoComposite.setData("FieldName", fieldName);
+
+		Button yesButton = new Button(yesNoComposite, SWT.RADIO);
+		yesButton.setText(Translator.get(DictKeys.BUTTON_YES));
+		yesButton.setData("yesButton", true);
+		yesButton.setData("noButton", false);
+		yesButton.setData("unknownButton", false);
+		if (loadDataIntoFields) {
+			if (albumItem.getField(fieldName).getValue() == OptionType.YES) {
+				yesButton.setSelection(true);
+			} else {
+				yesButton.setSelection(false);
+			}
+		}
+
+		Button noButton = new Button(yesNoComposite, SWT.RADIO);
+		noButton.setText(Translator.get(DictKeys.BUTTON_NO));
+		noButton.setData("yesButton", false);
+		noButton.setData("noButton", true);
+		noButton.setData("unknownButton", false);
+		if (loadDataIntoFields) {
+			if (albumItem.getField(fieldName).getValue() == OptionType.NO) {
+				noButton.setSelection(true);
+			} else {
+				noButton.setSelection(false);
+			}
+		}
+
+		Button unknownButton = new Button(yesNoComposite, SWT.RADIO);
+		unknownButton.setText(Translator.get(DictKeys.BUTTON_UNKNOWN));
+		unknownButton.setData("yesButton", false);
+		unknownButton.setData("noButton", false);
+		unknownButton.setData("unknownButton", true);
+		if (loadDataIntoFields) {
+			if (albumItem.getField(fieldName).getValue() == OptionType.UNKNOWN) {
+				unknownButton.setSelection(true);
+			} else {
+				unknownButton.setSelection(false);
+			}
+		} else {
+			unknownButton.setSelection(true);
+		}
 	}
 }

@@ -37,6 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class Sammelbox {
+	public static final String ORG_SQLITE_JDBC = "org.sqlite.JDBC";
 	private static final Logger LOGGER = LoggerFactory.getLogger(Sammelbox.class);
 	
 	private Sammelbox() {
@@ -46,10 +47,10 @@ public final class Sammelbox {
 	/** This method initializes the file structure and opens the database connections. */
 	private static void setupConnectionAndFilesystem() {
 		try {
-			Class.forName("org.sqlite.JDBC");
+			Class.forName(ORG_SQLITE_JDBC);
 			ConnectionManager.openConnection();
 		} catch (ClassNotFoundException cnfe) {
-			LOGGER.warn("org.sqlite.JDBC couldn't be found on the classpath", cnfe);
+			LOGGER.warn(ORG_SQLITE_JDBC + " couldn't be found on the classpath", cnfe);
 		} catch (DatabaseWrapperOperationException dwoe) {
 			try {
 				LOGGER.warn("Couldn't open a database connection. Will try to open a clean connection instead.", dwoe);
