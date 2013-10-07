@@ -49,7 +49,7 @@ import org.sammelbox.model.album.FieldType;
 import org.sammelbox.model.album.MetaItemField;
 import org.sammelbox.model.album.OptionType;
 import org.sammelbox.model.database.QueryBuilder;
-import org.sammelbox.model.database.QueryBuilder.QueryComponent;
+import org.sammelbox.model.database.QueryComponent;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 import org.sammelbox.model.database.operations.DatabaseOperations;
 import org.sammelbox.view.ApplicationUI;
@@ -265,10 +265,10 @@ public final class AdvancedSearchSidepane {
 		searchButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				ArrayList<QueryComponent> queryComponents = getQueryComponentsForAdvancedSearch(searchQueryTable);
+				ArrayList<org.sammelbox.model.database.QueryComponent> queryComponents = getQueryComponentsForAdvancedSearch(searchQueryTable);
 
 				boolean connectByAnd = false;
-				if (andButton.getSelection() == true) {
+				if (andButton.getSelection()) {
 					connectByAnd = true;
 				}
 
@@ -293,7 +293,7 @@ public final class AdvancedSearchSidepane {
 				ArrayList<QueryComponent> queryComponents = getQueryComponentsForAdvancedSearch(searchQueryTable);
 
 				boolean connectByAnd = false;
-				if (andButton.getSelection() == true) {
+				if (andButton.getSelection()) {
 					connectByAnd = true;
 				}
 

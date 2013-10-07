@@ -32,7 +32,7 @@ import org.sammelbox.TestExecuter;
 import org.sammelbox.controller.managers.DatabaseIntegrityManager;
 import org.sammelbox.model.album.AlbumItemResultSet;
 import org.sammelbox.model.database.QueryBuilder;
-import org.sammelbox.model.database.QueryBuilder.QueryComponent;
+import org.sammelbox.model.database.QueryComponent;
 import org.sammelbox.model.database.QueryOperator;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 import org.sammelbox.model.database.operations.DatabaseOperations;

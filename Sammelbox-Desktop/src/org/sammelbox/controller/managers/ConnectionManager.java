@@ -34,11 +34,15 @@ import org.sammelbox.model.database.operations.DatabaseOperations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ConnectionManager {
+public final class ConnectionManager {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ConnectionManager.class);
 	private static final String SQLITE_CONNECTION_STRING = "jdbc:sqlite:";
 	private static Connection connection = null;
 
+	private ConnectionManager() {
+		// not needed
+	}
+	
 	/**
 	 * Opens the default connection for the FileSystemAccessWrapper.DATABASE database. Only opens a new connection if none is currently open.
 	 * @throws DatabaseWrapperOperationException 
@@ -48,9 +52,9 @@ public class ConnectionManager {
 		// This hides all internal SQL exceptions
 		try {
 			if (ConnectionManager.connection == null || connection.isClosed()) {
-				ConnectionManager.connection = DriverManager.getConnection(ConnectionManager.SQLITE_CONNECTION_STRING + FileSystemLocations.getDatabaseFile());
+				ConnectionManager.connection = DriverManager.getConnection(ConnectionManager.SQLITE_CONNECTION_STRING + 
+						FileSystemLocations.getDatabaseFile());
 				ConnectionManager.connection = ConnectionLoggingProxy.wrap(connection);
-
 				ConnectionManager.enableForeignKeySupportForCurrentSession();
 				
 				// The AutoCommit state makes little difference here since all relevant public methods roll back on
@@ -64,11 +68,11 @@ public class ConnectionManager {
 			DatabaseOperations.createAlbumMasterTableIfItDoesNotExist();
 
 			// Run a fetch  to check if the database connection is up and running
-			if (ConnectionManager.isConnectionReady() == false) {
+			if (!ConnectionManager.isConnectionReady()) {
 				throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE);
 			}
-		} catch (SQLException e) {			
-			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE);
+		} catch (SQLException sqlEx) {			
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE, sqlEx);
 		}
 	}
 
@@ -81,9 +85,9 @@ public class ConnectionManager {
 			if (ConnectionManager.connection != null && !ConnectionManager.connection.isClosed()) {
 				ConnectionManager.connection.close();
 			}
-		} catch (SQLException e) {
+		} catch (SQLException sqlEx) {
 			LOGGER.error("Unable to close the database connection");
-			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE, e);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE, sqlEx);
 		}
 	}
 
@@ -97,7 +101,7 @@ public class ConnectionManager {
 			if (ConnectionManager.connection == null || ConnectionManager.connection.isClosed() || DatabaseOperations.getListOfAllAlbums() == null) {			
 				return false;
 			}
-		} catch (Exception ex) {
+		} catch (SQLException | DatabaseWrapperOperationException ex) {
 			LOGGER.error("Unable to test the database connection", ex);
 			return false;			
 		}
@@ -113,7 +117,7 @@ public class ConnectionManager {
 	 * @throws DatabaseWrapperOperationException 
 	 */
 	public static synchronized void openCleanConnection() throws DatabaseWrapperOperationException {
-		if (isConnectionReady() == true) {
+		if (isConnectionReady()) {
 			return;
 		}
 
@@ -125,9 +129,9 @@ public class ConnectionManager {
 		// Copy file to temporary location
 		try {
 			FileSystemAccessWrapper.copyFile(new File(FileSystemLocations.getDatabaseFile()), corruptTemporarySnapshotFile);
-		} catch (IOException e1) {
-			LOGGER.error("Copying the corrupt database file to a temporary location failed" , e1);
-			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE);
+		} catch (IOException ioe) {
+			LOGGER.error("Copying the corrupt database file to a temporary location failed" , ioe);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE, ioe);
 		}
 
 		// Clean home directory
@@ -138,15 +142,15 @@ public class ConnectionManager {
 		File corruptSnapshotFile = new File(corruptSnapshotFilePath);			
 		try {
 			FileSystemAccessWrapper.copyFile(corruptTemporarySnapshotFile, corruptSnapshotFile);
-		} catch (IOException e) {
-			LOGGER.error("Copying the corrupt database file from the temporary location back to the clean home directory failed. Manual cleanup may be required", e);
-			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE);
+		} catch (IOException ioe) {
+			LOGGER.error("Copying the corrupt database file from the temporary location back to the clean home directory failed. Manual cleanup may be required", ioe);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE, ioe);
 		}
 
 		// Try to open a regular connection to the newly setup home directory
 		openConnection();
 
-		if (FileSystemAccessWrapper.updateSammelboxFileStructure() == false) {
+		if (!FileSystemAccessWrapper.updateSammelboxFileStructure()) {
 			LOGGER.error("Updating the structure of the home directory failed. Manual cleanup may be required");
 			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE);
 		}
@@ -164,8 +168,8 @@ public class ConnectionManager {
 
 		try (PreparedStatement preparedStatement = connection.prepareStatement("PRAGMA foreign_keys = ON");) {			
 			preparedStatement.executeUpdate();
-		} catch (SQLException e) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE);
+		} catch (SQLException sqlEx) {
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE, sqlEx);
 		} 
 	}
 }

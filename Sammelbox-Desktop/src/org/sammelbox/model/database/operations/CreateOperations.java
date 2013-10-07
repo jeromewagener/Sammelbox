@@ -124,9 +124,9 @@ public final class CreateOperations {
 
 		for (MetaItemField item : columns) {
 			sb.append(" , ");
-			sb.append(DatabaseStringUtilities.encloseNameWithQuotes(item.getName()));	// " , 'fieldName'"  
-			sb.append(" ");										// " , 'fieldName' " 
-			sb.append(item.getType().toDatabaseTypeString());	// " , 'fieldName' TYPE"
+			sb.append(DatabaseStringUtilities.encloseNameWithQuotes(item.getName()));
+			sb.append(" ");
+			sb.append(item.getType().toDatabaseTypeString());
 		}
 
 		sb.append(" ,  ");
@@ -176,9 +176,9 @@ public final class CreateOperations {
 				
 		// Add the main table columns sans id field or typeInfo column
 		for (MetaItemField metaItemField : metafields) {
-			sb.append(" , ");// " , "
-			sb.append(DatabaseStringUtilities.encloseNameWithQuotes(metaItemField.getName()));// " , 'fieldName'"
-			sb.append(" TEXT");// " , 'fieldName' TEXT" //stored as text to ease transformation back to java enum.
+			sb.append(" , ");
+			sb.append(DatabaseStringUtilities.encloseNameWithQuotes(metaItemField.getName()));
+			sb.append(" TEXT");
 		}
 		
 		// Add the schema version uuid column
@@ -279,9 +279,9 @@ public final class CreateOperations {
 		
 		for (MetaItemField item : columns) {
 			sb.append(" , ");
-			sb.append(DatabaseStringUtilities.encloseNameWithQuotes(item.getName()));	// " , 'fieldName'"  
-			sb.append(" ");																// " , 'fieldName' " 
-			sb.append(item.getType().toDatabaseTypeString());							// " , 'fieldName' TYPE"
+			sb.append(DatabaseStringUtilities.encloseNameWithQuotes(item.getName()));
+			sb.append(" ");
+			sb.append(item.getType().toDatabaseTypeString());
 		}
 		
 		sb.append(")");
@@ -331,7 +331,7 @@ public final class CreateOperations {
 		}
 
 		// Check if content version should be carried over if yes ensure a content version is present
-		if (updateContentVersion == false && albumItem.getContentVersion() == null) {
+		if (!updateContentVersion && albumItem.getContentVersion() == null) {
 			LOGGER.error("The option for carrying over the old content version " +
 					"is checked but no content version is found in the item!");
 			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE);
@@ -440,17 +440,14 @@ public final class CreateOperations {
 		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(
 				DatabaseStringUtilities.generatePictureTableName(albumItemPicture.getAlbumName())));
 		sb.append(" ( ");
-
 		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(DatabaseConstants.ORIGINAL_PICTURE_FILE_NAME_IN_PICTURE_TABLE) + ", ");
 		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(DatabaseConstants.THUMBNAIL_PICTURE_FILE_NAME_IN_PICTURE_TABLE) + ", ");
 		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(DatabaseConstants.ALBUM_ITEM_ID_REFERENCE_IN_PICTURE_TABLE));
 		
 		sb.append(") VALUES( ");
-
 		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(albumItemPicture.getOriginalPictureName()) + ", ");
 		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(albumItemPicture.getThumbnailPictureName()) + ", ");
 		sb.append(albumItemPicture.getAlbumItemID());
-
 		sb.append(" ) ");
 		
 		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(sb.toString())){			

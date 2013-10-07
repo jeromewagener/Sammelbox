@@ -38,22 +38,21 @@ public final class CSVExporter {
 	private CSVExporter() {
 	}
 	
-	public static void exportVisibleItems(String filepath) {
-		List<AlbumItem> visibleAlbumItems = AlbumItemStore.getAllAlbumItems();
+	public static void exportAlbum(String filepath) {
+		List<AlbumItem> albumItems = AlbumItemStore.getAllAlbumItems();
 		
 		StringBuilder headerBuilder = new StringBuilder();
 		StringBuilder dataBuilder = new StringBuilder();
 		boolean firstLine = true;
 
-		for (AlbumItem albumItem : visibleAlbumItems) {			
+		for (AlbumItem albumItem : albumItems) {			
 			for (int i=0; i<albumItem.getFields().size(); i++) {				
 				if (albumItem.getField(i).getType().equals(FieldType.UUID)) {
 					// schema or content version UUID --> ignore 
 				}
 				else if (albumItem.getField(i).getType().equals(FieldType.ID)) {
 					// do not show ID either
-				}
-				else {
+				} else {
 					if (albumItem.getField(i).getType().equals(FieldType.OPTION)) {
 						if (firstLine) {
 							headerBuilder.append(albumItem.getField(i).getName());

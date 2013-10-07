@@ -36,7 +36,7 @@ import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DatabaseIntegrityManager {
+public final class DatabaseIntegrityManager {
 	private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseIntegrityManager.class);
 	/** The extension used on file names for autosaves */
 	private static final String AUTO_SAVE_EXTENSION = "autosave";
@@ -49,10 +49,14 @@ public class DatabaseIntegrityManager {
 	/** The last change time in milliseconds */
 	private static long lastChangeTimeStampInMS = -1;
 	
+	private DatabaseIntegrityManager() {
+		// not needed
+	}
+	
 	/**
 	 * Creates a savepoint to which the database state can be rolled back to. A new transaction is started.
-	 * @return The name of the created savepoint or null in case of failure. The create savepoint should only be used in public methods to avoid ovehead
-	 * with nested savepoints. 
+	 * @return The name of the created savepoint or null in case of failure. The create savepoint should only be 
+	 * used in public methods to avoid overhead with nested savepoints. 
 	 * @throws DatabaseWrapperOperationException 
 	 */
 	public static String createSavepoint() throws DatabaseWrapperOperationException {
@@ -79,16 +83,17 @@ public class DatabaseIntegrityManager {
 	 */
 	public static void releaseSavepoint(String savepointName) throws DatabaseWrapperOperationException {
 	
-		if (savepointName == null || savepointName.isEmpty()){
+		if (savepointName == null || savepointName.isEmpty()) {
 			LOGGER.error("The savepoint could not be released since the name string is null or empty");
 			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE);
 		}
 		
-		try (PreparedStatement releaseSavepointStatement = ConnectionManager.getConnection().prepareStatement("RELEASE SAVEPOINT " + DatabaseStringUtilities.encloseNameWithQuotes(savepointName));){			
+		try (PreparedStatement releaseSavepointStatement = ConnectionManager.getConnection().prepareStatement("RELEASE SAVEPOINT " + 
+				DatabaseStringUtilities.encloseNameWithQuotes(savepointName));) {			
 			releaseSavepointStatement.execute();
-		} catch (SQLException e) {
+		} catch (SQLException sqlEx) {
 			LOGGER.error("Releasing the savepoint {} failed", savepointName);
-			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE, e);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE, sqlEx);
 		}
 	}
 	
@@ -107,9 +112,9 @@ public class DatabaseIntegrityManager {
 		try (PreparedStatement rollbackToSavepointStatement = ConnectionManager.getConnection().prepareStatement(
 				"ROLLBACK TO SAVEPOINT " + DatabaseStringUtilities.encloseNameWithQuotes(savepointName))){
 			rollbackToSavepointStatement.execute();
-		} catch (SQLException e) {
+		} catch (SQLException sqlEx) {
 			LOGGER.error("Rolling back the savepoint {} failed", savepointName);
-			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE,e);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE, sqlEx);
 		}
 	}
 	
@@ -170,15 +175,15 @@ public class DatabaseIntegrityManager {
 			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE,e);
 		}
 	
-		if ( !FileSystemAccessWrapper.deleteDatabaseRestoreFile() ) {
+		if (!FileSystemAccessWrapper.deleteDatabaseRestoreFile()) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE);
 		}
 	
-		if ( !FileSystemAccessWrapper.updateSammelboxFileStructure() ) {
+		if (!FileSystemAccessWrapper.updateSammelboxFileStructure()) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE);
 		}
 	
-		if ( !FileSystemAccessWrapper.updateAlbumFileStructure(ConnectionManager.getConnection()) ) {
+		if (!FileSystemAccessWrapper.updateAlbumFileStructure(ConnectionManager.getConnection())) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE);
 		}
 		
@@ -224,8 +229,7 @@ public class DatabaseIntegrityManager {
 	 * @return A long integer representing the last change of the database.
 	 * @throws DatabaseWrapperOperationException 
 	 */
-	 static long extractTimeStamp(File autoSaveFile) throws DatabaseWrapperOperationException {
-	
+	 static long extractTimeStamp(File autoSaveFile) throws DatabaseWrapperOperationException {	
 		String fileName;
 		try {
 			fileName = autoSaveFile.getCanonicalFile().getName();
@@ -233,7 +237,7 @@ public class DatabaseIntegrityManager {
 			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE, e);
 		}
 		
-		if ( !fileName.matches(DatabaseIntegrityManager.AUTO_SAVE_FILE_REGEX) ) {
+		if (!fileName.matches(DatabaseIntegrityManager.AUTO_SAVE_FILE_REGEX)) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE);
 		}
 		
@@ -257,7 +261,7 @@ public class DatabaseIntegrityManager {
 		String timeStamp = Long.toString(getLastDatabaseChangeTimeStamp());		
 	
 		String autoSaveFilePath = FileSystemLocations.getBackupDir() + 
-				File.separator + "PERIODICAL_BACKUP_" + programVersion + "_"; // separator for the timestamp	
+				File.separator + "PERIODICAL_BACKUP_" + programVersion + "_";
 	
 		List<File> previousAutoSaveList = getAllAutoSaves();
 		if (DatabaseIntegrityManager.autoSaveLimit < 1) {			
@@ -276,21 +280,19 @@ public class DatabaseIntegrityManager {
 				LOGGER.error("Autosave - backup failed");
 				throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE, e);
 			}
-		} else {// Autosaves detected
-	
-			// No need to overwrite the last autosave when no changes were made.
+		// Auto-saves detected
+		} else {
+			// No need to overwrite the last auto-save when no changes were made.
 			if (getLastDatabaseChangeTimeStamp() == -1) {
 				return;
 			}
 	
 			// Auto save limit reached, delete the oldest
-			if (previousAutoSaveList.size()>=DatabaseIntegrityManager.autoSaveLimit) {
+			if (previousAutoSaveList.size() >= DatabaseIntegrityManager.autoSaveLimit) {
 				File oldestAutoSave = previousAutoSaveList.get(previousAutoSaveList.size()-1);
-				if (oldestAutoSave.exists()) {
-					if (!oldestAutoSave.delete()){
-						LOGGER.error("Autosave - cannot delete old autosave");
-						throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE);
-					}
+				if (oldestAutoSave.exists() && !oldestAutoSave.delete()) {
+					LOGGER.error("Autosave - cannot delete old autosave");
+					throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE);
 				}
 			}
 			autoSaveFilePath = autoSaveFilePath + timeStamp + "." + DatabaseIntegrityManager.AUTO_SAVE_EXTENSION;

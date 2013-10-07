@@ -30,14 +30,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class AlbumItem {
-	private static final Logger LOGGER = LoggerFactory.getLogger(AlbumItem.class);
 	public static final Long ITEM_ID_UNDEFINED = Long.MIN_VALUE;
+	private static final Logger LOGGER = LoggerFactory.getLogger(AlbumItem.class);
 	
-	protected long itemId = ITEM_ID_UNDEFINED;
-	protected String albumName = "";
-	protected List<ItemField> itemFields;
-	protected List<AlbumItemPicture> albumItemPictures;
-	protected UUID contentVersion;
+	private long itemId = ITEM_ID_UNDEFINED;
+	private String albumName = "";
+	private List<ItemField> itemFields;
+	private List<AlbumItemPicture> albumItemPictures;
+	private UUID contentVersion;
 	
 	/**
 	 * Constructor

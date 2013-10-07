@@ -1,6 +1,6 @@
 /** -----------------------------------------------------------------
  *    Sammelbox: Collection Manager - A free and open-source collection manager for Windows & Linux
- *    Copyright (C) 2011 Jérôme Wagener & Paul Bicheler
+ *    Copyright (C) 2011 Jerome Wagener & Paul Bicheler
  *
  *    This program is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -19,9 +19,9 @@
 package org.sammelbox.model.album;
 
 public class MetaItemField {
-	protected String name;
-	protected FieldType type;
-	protected boolean quickSearchable;
+	private String name;
+	private FieldType type;
+	private boolean quickSearchable;
 	
 	/**
 	 * Standard constructor. For internal use by inheriting classes only. 

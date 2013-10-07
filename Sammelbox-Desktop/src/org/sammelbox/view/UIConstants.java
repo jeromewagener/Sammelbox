@@ -22,7 +22,12 @@ import java.io.File;
 
 import org.sammelbox.controller.filesystem.FileSystemLocations;
 
-public class UIConstants {
+public final class UIConstants {
+	
+	private UIConstants() {
+		// not needed
+	}
+	
 	// ------------------ GUI Constants ------------------
 	public static final int SCROLL_SPEED_MULTIPLICATOR = 3;
 	

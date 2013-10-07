@@ -18,6 +18,7 @@
 
 package org.sammelbox.controller.filesystem;
 
+import java.io.IOException;
 import java.io.StringReader;
 import java.util.Collection;
 import java.util.HashMap;
@@ -27,6 +28,7 @@ import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.sammelbox.controller.i18n.Language;
 import org.sammelbox.controller.managers.AlbumViewManager.AlbumView;
@@ -38,9 +40,14 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
-public class XmlStorageWrapper {
+public final class XmlStorageWrapper {
 	private static final Logger LOGGER = LoggerFactory.getLogger(XmlStorageWrapper.class);
+	
+	private XmlStorageWrapper() {
+		// not needed
+	}
 	
 	private static String getValue(String tag, Element element) {
 		NodeList nodes = element.getElementsByTagName(tag).item(0).getChildNodes();
@@ -151,7 +158,7 @@ public class XmlStorageWrapper {
 				applicationSettings.setDateFormat(getValue("dateFormat", element));
 				applicationSettings.setDetailedViewIsDefault(Boolean.valueOf(getValue("detailedViewIsDefault", element)));
 			}
-		} catch (Exception ex) {
+		} catch (ParserConfigurationException | IOException | SAXException | XmlParsingException ex) {
 			LOGGER.error("An error occured while parsing the settings XML file", ex);
 		}
 		
@@ -195,7 +202,7 @@ public class XmlStorageWrapper {
 					}
 				}
 			}
-		} catch (Exception ex) {
+		} catch (ParserConfigurationException | IOException | SAXException | XmlParsingException ex) {
 			LOGGER.error("An error occured while parsing the albums XML file");
 		}
 		
@@ -251,7 +258,7 @@ public class XmlStorageWrapper {
 					}
 				}
 			}
-		} catch (Exception ex) {
+		} catch (ParserConfigurationException | IOException | SAXException | XmlParsingException ex) {
 			LOGGER.error("An error occured while parsing the album views XML file");
 		}
 		
@@ -297,7 +304,7 @@ public class XmlStorageWrapper {
 					}
 				}
 			}
-		} catch (Exception ex) {
+		} catch (ParserConfigurationException | IOException | SAXException | XmlParsingException ex) {
 			LOGGER.error("An error occured while parsing the welcome page XML file");
 		}
 		
@@ -343,7 +350,7 @@ public class XmlStorageWrapper {
 					}
 				}
 			}
-		} catch (Exception ex) {
+		} catch (ParserConfigurationException | IOException | SAXException | XmlParsingException ex) {
 			LOGGER.error("An error occured while parsing the welcome page XML file");
 		}
 		

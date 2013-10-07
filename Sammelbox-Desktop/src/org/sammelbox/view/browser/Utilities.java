@@ -55,7 +55,7 @@ public final class Utilities {
 
 	/** To avoid rebuilding the exact same HTML output when returning from the picture viewer 
 	 * to the album view, the last generated HTML output is saved  */
-	static String lastPageAsHtml;
+	private static String lastPageAsHtml;
 
 	static void performBrowserQueryAndShow(Browser browser, String sqlQuery) {				
 		try {

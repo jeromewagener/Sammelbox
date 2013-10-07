@@ -37,7 +37,7 @@ public final class QueryBuilder {
 	/** A private default constructor to forbid the creation of multiple instances */
 	private QueryBuilder() {}
 	
-	private static final Map<String, String> searchToSQLOperators;
+	private static final Map<String, String> SEARCH_TO_SQL_OPERATORS;
     static {
         Map<String, String> mySearchToSQLOperators = new HashMap<String, String>();
 
@@ -53,11 +53,11 @@ public final class QueryBuilder {
         mySearchToSQLOperators.put(Translator.toBeTranslated("after or equal"), QueryOperator.DATE_AFTER_OR_EQUAL.toSqlOperator());
         mySearchToSQLOperators.put(Translator.toBeTranslated("after"), QueryOperator.DATE_AFTER.toSqlOperator());
         
-        searchToSQLOperators = Collections.unmodifiableMap(mySearchToSQLOperators);
+        SEARCH_TO_SQL_OPERATORS = Collections.unmodifiableMap(mySearchToSQLOperators);
     }
 	
     public static QueryOperator getQueryOperator(String searchOperator) {
-    	return QueryOperator.valueOfSQL(searchToSQLOperators.get(searchOperator));
+    	return QueryOperator.valueOfSQL(SEARCH_TO_SQL_OPERATORS.get(searchOperator));
     }
     
 	/** Returns all natural language operators suited for text queries 
@@ -108,19 +108,6 @@ public final class QueryBuilder {
 	public static String toSQLOperator(QueryOperator searchOperator) {
 		return searchOperator.toSqlOperator();
 	}
-
-	/** A helper (data) class for building queries. A query component is the combination of a field name, an operator and a value */
-	public static class QueryComponent {
-		public String fieldName;
-		public QueryOperator operator;
-		public String value;
-
-		public QueryComponent(String fieldName, QueryOperator operator, String value) {
-			this.fieldName = fieldName;
-			this.operator = operator;
-			this.value = value;
-		}
-	}
 	
 	/** This factory method returns a query component based on the provided parameters
 	 * @param fieldName the name of the field respectively column 
@@ -166,25 +153,25 @@ public final class QueryBuilder {
 			
 		for (int i=0; i<queryComponents.size(); i++) {	
 			
-			if (fieldNameToFieldTypeMap.get(queryComponents.get(i).fieldName).equals(FieldType.OPTION) ||
-					fieldNameToFieldTypeMap.get(queryComponents.get(i).fieldName).equals(FieldType.URL) ||
-					fieldNameToFieldTypeMap.get(queryComponents.get(i).fieldName).equals(FieldType.TEXT)) {
-				if (queryComponents.get(i).operator == QueryOperator.LIKE) {
+			if (fieldNameToFieldTypeMap.get(queryComponents.get(i).getFieldName()).equals(FieldType.OPTION) ||
+					fieldNameToFieldTypeMap.get(queryComponents.get(i).getFieldName()).equals(FieldType.URL) ||
+					fieldNameToFieldTypeMap.get(queryComponents.get(i).getFieldName()).equals(FieldType.TEXT)) {
+				if (queryComponents.get(i).getOperator() == QueryOperator.LIKE) {
 					query.append( "(" +
-							"[" + queryComponents.get(i).fieldName + "] " + 
-							toSQLOperator(queryComponents.get(i).operator) + " " + 
-							"'%" + DatabaseStringUtilities.sanitizeSingleQuotesInAlbumItemValues(queryComponents.get(i).value) + "%')");
+							"[" + queryComponents.get(i).getFieldName() + "] " + 
+							toSQLOperator(queryComponents.get(i).getOperator()) + " " + 
+							"'%" + DatabaseStringUtilities.sanitizeSingleQuotesInAlbumItemValues(queryComponents.get(i).getValue()) + "%')");
 				} else {
 					query.append( "(" +
-							"[" + queryComponents.get(i).fieldName + "] " + 
-							toSQLOperator(queryComponents.get(i).operator) + " " + 
-							"'" + DatabaseStringUtilities.sanitizeSingleQuotesInAlbumItemValues(queryComponents.get(i).value) + "')");
+							"[" + queryComponents.get(i).getFieldName() + "] " + 
+							toSQLOperator(queryComponents.get(i).getOperator()) + " " + 
+							"'" + DatabaseStringUtilities.sanitizeSingleQuotesInAlbumItemValues(queryComponents.get(i).getValue()) + "')");
 				}
 			} else {
 				query.append( "(" +
-						"[" + queryComponents.get(i).fieldName + "] " + 
-						toSQLOperator(queryComponents.get(i).operator) + " " + 
-						queryComponents.get(i).value + ")");
+						"[" + queryComponents.get(i).getFieldName() + "] " + 
+						toSQLOperator(queryComponents.get(i).getOperator()) + " " + 
+						queryComponents.get(i).getValue() + ")");
 			}
 
 			if (i+1 != queryComponents.size()) {

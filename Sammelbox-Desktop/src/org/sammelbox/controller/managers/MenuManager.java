@@ -1,6 +1,6 @@
 /** -----------------------------------------------------------------
  *    Sammelbox: Collection Manager - A free and open-source collection manager for Windows & Linux
- *    Copyright (C) 2011 Jérôme Wagener & Paul Bicheler
+ *    Copyright (C) 2011 Jerome Wagener & Paul Bicheler
  *
  *    This program is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -50,9 +50,13 @@ import org.sammelbox.view.various.PanelType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MenuManager {
+public final class MenuManager {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationUI.class);
 
+	private MenuManager() {
+		// not needed
+	}
+	
 	/** This method creates and initializes the menu for the main user interface
 	 * @param shell the shell used to create the user interface */
 	public static void createAndInitializeMenuBar(Shell parentShell) {
@@ -117,9 +121,9 @@ public class MenuManager {
 					String filepath = saveFileDialog.open();
 					if (filepath != null) {
 						if (filepath.endsWith(".csv")) {
-							CSVExporter.exportVisibleItems(filepath);
+							CSVExporter.exportAlbum(filepath);
 						} else if (filepath.endsWith(".html")) {
-							HTMLExporter.exportVisibleItems(filepath);
+							HTMLExporter.exportAlbum(filepath);
 						}
 					}
 				}

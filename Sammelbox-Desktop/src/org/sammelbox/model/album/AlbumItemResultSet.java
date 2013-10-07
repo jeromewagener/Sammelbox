@@ -1,6 +1,6 @@
 /** -----------------------------------------------------------------
  *    Sammelbox: Collection Manager - A free and open-source collection manager for Windows & Linux
- *    Copyright (C) 2011 Jérôme Wagener & Paul Bicheler
+ *    Copyright (C) 2011 Jerome Wagener & Paul Bicheler
  *
  *    This program is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -56,7 +56,7 @@ public class AlbumItemResultSet {
 			this.albumName = DatabaseOperations.getAlbumName(metaData.getTableName(1));			
 			this.metaInfoMap = DatabaseOperations.getAlbumItemMetaMap(albumName);
 		} catch (SQLException sqlException) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE);
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE, sqlException);
 		}		
 	}	
 	
@@ -69,8 +69,9 @@ public class AlbumItemResultSet {
 	 */
 	public AlbumItemResultSet(Connection connection, String sqlStatement, Map<Integer, MetaItemField> metaInfoMap) throws DatabaseWrapperOperationException {
 		this.metaInfoMap = metaInfoMap;
+		Statement statement = null;
 		try {
-			Statement statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			this.items = statement.executeQuery(sqlStatement);
 			this.metaData = items.getMetaData();
 			this.albumName = DatabaseOperations.getAlbumName(metaData.getTableName(1));	

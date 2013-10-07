@@ -45,7 +45,8 @@ public final class ImageManipulator {
 	/** The maximum width of a thumb nail in pixels. Only originals with a higher resolution will be resized */
 	private static final int MAX_WIDTH_IN_PIXELS = 200;
 	
-	public ImageManipulator() {
+	private ImageManipulator() {
+		// not needed
 	}
 
 	

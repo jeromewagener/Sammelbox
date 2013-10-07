@@ -1,6 +1,6 @@
 /** -----------------------------------------------------------------
  *    Sammelbox: Collection Manager - A free and open-source collection manager for Windows & Linux
- *    Copyright (C) 2011 Jérôme Wagener & Paul Bicheler
+ *    Copyright (C) 2011 Jerome Wagener & Paul Bicheler
  *
  *    This program is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -167,7 +167,7 @@ public final class AlbumItemStore {
 				    randomDecimal = randomDecimal.setScale(2, BigDecimal.ROUND_HALF_UP);
 					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), randomDecimal.doubleValue()));
 				} else if (metaItemField.getType().equals(FieldType.OPTION)) {
-					int option = (int)(Math.random() * ((2) + 1));
+					int option = new Random().nextInt(3);
 					
 					if (option == 0) {
 						itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), OptionType.NO, false));

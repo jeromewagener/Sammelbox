@@ -40,7 +40,12 @@ import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.view.ApplicationUI;
 import org.sammelbox.view.sidepanes.EmptySidepane;
 
-public class ComponentFactory {
+public final class ComponentFactory {
+	
+	private ComponentFactory() {
+		// not needed
+	}
+	
 	/** Returns a styled label which is small bold and italic 
 	 * @param parentComposite the parent of the label 
 	 * @param textForLabel the text for the label 

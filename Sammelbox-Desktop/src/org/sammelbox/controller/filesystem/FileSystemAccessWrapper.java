@@ -41,12 +41,17 @@ import org.sammelbox.model.database.operations.DatabaseOperations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class FileSystemAccessWrapper {
+public final class FileSystemAccessWrapper {
+	private static final int ONE_KB_BUFFER_SIZE = 1024;
 	private static final Logger LOGGER = LoggerFactory.getLogger(FileSystemAccessWrapper.class);
 	private static final boolean OVERWRITE_EXISITING_FILES = true;	
 	/** A simple regular expression.. to prevent album names whose folders of the same name cause problems on the filesystem
 	 * Minimum length is 3 alphanumeric characters possibly white spaces, underscores (u005F) hyphen_minuses (u002D). */
 	private static final String ALBUM_NAME_REGEX = "^(\\w|\\u005F|\\s|\\u002D){3,}$";
+	
+	private FileSystemAccessWrapper() {
+		// not needed
+	}
 	
 	/** Creates the directory using the specified path. All errors that might occur will be logged 
 	 * @param directoryPath the complete (absolute) directory path. E.g. /home/user/folder1
@@ -54,12 +59,9 @@ public class FileSystemAccessWrapper {
 	private static boolean createDirectoryAndLogError(String directoryPath) {
 		File directory = new File(directoryPath);
 		
-		if (!directory.exists()) {
-			if (!directory.mkdir()) {
-				LOGGER.error("Cannot create '" + directoryPath + "' "
-						+ "although it seems that the directory does not yet exist");
-				return true;
-			}
+		if (!directory.exists() && !directory.mkdir()) {
+			LOGGER.error("Cannot create '" + directoryPath + "' although it seems that the directory does not yet exist");
+			return true;
 		}
 		
 		return false;
@@ -80,19 +82,7 @@ public class FileSystemAccessWrapper {
 			return false;
 		}
 			
-		extractResourceToFile("graphics/placeholder.png", FileSystemLocations.getPlaceholderPNG());
-		extractResourceToFile("graphics/placeholder2.png", FileSystemLocations.getPlaceholder2PNG());
-		extractResourceToFile("graphics/placeholder3.png", FileSystemLocations.getPlaceholder3PNG());
-		extractResourceToFile("graphics/zerostars.png", FileSystemLocations.getZeroStarsPNG());
-		extractResourceToFile("graphics/onestar.png", FileSystemLocations.getOneStarPNG());
-		extractResourceToFile("graphics/twostars.png", FileSystemLocations.getTwoStarsPNG());
-		extractResourceToFile("graphics/threestars.png", FileSystemLocations.getThreeStarsPNG());
-		extractResourceToFile("graphics/fourstars.png", FileSystemLocations.getFourStarsPNG());
-		extractResourceToFile("graphics/fivestars.png", FileSystemLocations.getFiveStarsPNG());
-		extractResourceToFile("graphics/logo.png", FileSystemLocations.getLogoPNG());
-		extractResourceToFile("graphics/logo-small.png", FileSystemLocations.getLogoSmallPNG());
-		extractResourceToFile("javascript/effects.js", FileSystemLocations.getEffectsJS());
-		extractResourceToFile("stylesheets/style.css", FileSystemLocations.getStyleCSS());
+		extractAllResources();
 
 		// Add the lock file
 		try {
@@ -109,6 +99,23 @@ public class FileSystemAccessWrapper {
 		return true;
 	}
 
+	/** Extracts all resources from the jar to the file system */
+	private static void extractAllResources() {
+		extractResourceToFile("graphics/placeholder.png", FileSystemLocations.getPlaceholderPNG());
+		extractResourceToFile("graphics/placeholder2.png", FileSystemLocations.getPlaceholder2PNG());
+		extractResourceToFile("graphics/placeholder3.png", FileSystemLocations.getPlaceholder3PNG());
+		extractResourceToFile("graphics/zerostars.png", FileSystemLocations.getZeroStarsPNG());
+		extractResourceToFile("graphics/onestar.png", FileSystemLocations.getOneStarPNG());
+		extractResourceToFile("graphics/twostars.png", FileSystemLocations.getTwoStarsPNG());
+		extractResourceToFile("graphics/threestars.png", FileSystemLocations.getThreeStarsPNG());
+		extractResourceToFile("graphics/fourstars.png", FileSystemLocations.getFourStarsPNG());
+		extractResourceToFile("graphics/fivestars.png", FileSystemLocations.getFiveStarsPNG());
+		extractResourceToFile("graphics/logo.png", FileSystemLocations.getLogoPNG());
+		extractResourceToFile("graphics/logo-small.png", FileSystemLocations.getLogoSmallPNG());
+		extractResourceToFile("javascript/effects.js", FileSystemLocations.getEffectsJS());
+		extractResourceToFile("stylesheets/style.css", FileSystemLocations.getStyleCSS());
+	}
+	
 	/** Extracts the specified resource to the specified output location
 	 * @param resourceName the name of the resource to be extracted 
 	 * @param outputResourcePath the absolute location to which the resource should be extracted */
@@ -119,7 +126,7 @@ public class FileSystemAccessWrapper {
 			try (InputStream istream = FileSystemAccessWrapper.class.getClassLoader().getResourceAsStream(resourceName);
 				 OutputStream ostream = new FileOutputStream(outputResourcePath);)
 			{
-				byte buffer[] = new byte[1024];
+				byte buffer[] = new byte[ONE_KB_BUFFER_SIZE];
 				int length;
 
 				while ((length=istream.read(buffer)) > 0) {
@@ -206,7 +213,7 @@ public class FileSystemAccessWrapper {
 		try (InputStream in = new FileInputStream(sourceLocation);
 			 OutputStream out = new FileOutputStream(targetLocation);)
 		{
-			byte[] buf = new byte[1024];
+			byte[] buf = new byte[ONE_KB_BUFFER_SIZE];
 			int len;
 			while ((len = in.read(buf)) > 0) {
 				out.write(buf, 0, len);
@@ -270,7 +277,7 @@ public class FileSystemAccessWrapper {
 
 			// being here means that we have a file and not a directory
 			try {
-				byte[] buffer = new byte[1024];
+				byte[] buffer = new byte[ONE_KB_BUFFER_SIZE];
 				FileInputStream fileInputStream = new FileInputStream(files[i]);
 				zipOutputStream.putNextEntry(new ZipEntry(parentName + files[i].getName()));
 
@@ -334,7 +341,7 @@ public class FileSystemAccessWrapper {
 						 InputStream inputStream = zipFile.getInputStream(entry);) {
 	
 						// Copy the bits from inputStream to fileOutputStream
-						byte[] buf = new byte[1024];
+						byte[] buf = new byte[ONE_KB_BUFFER_SIZE];
 						int len;
 	
 						while ((len = inputStream.read(buf)) > 0) {

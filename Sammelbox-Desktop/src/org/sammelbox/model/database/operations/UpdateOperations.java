@@ -224,10 +224,10 @@ public final class UpdateOperations {
 			}				
 			updateSchemaVersion(albumName);
 			DatabaseIntegrityManager.updateLastDatabaseChangeTimeStamp();
-		} catch (DatabaseWrapperOperationException e) {
-			if (e.getErrorState().equals(DBErrorState.ERROR_DIRTY_STATE)) {
+		} catch (DatabaseWrapperOperationException dwoe) {
+			if (dwoe.getErrorState().equals(DBErrorState.ERROR_DIRTY_STATE)) {
 				DatabaseIntegrityManager.rollbackToSavepoint(savepointName);
-				throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE);
+				throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE, dwoe);
 			}
 		} finally {
 			DatabaseIntegrityManager.releaseSavepoint(savepointName);
@@ -328,10 +328,10 @@ public final class UpdateOperations {
 		try {
 			appendNewTableColumn(albumName, metaItemField);
 			DatabaseIntegrityManager.updateLastDatabaseChangeTimeStamp();
-		} catch (DatabaseWrapperOperationException e) {
-			if (e.getErrorState().equals(DBErrorState.ERROR_DIRTY_STATE)) {
+		} catch (DatabaseWrapperOperationException dwoe) {
+			if (dwoe.getErrorState().equals(DBErrorState.ERROR_DIRTY_STATE)) {
 				DatabaseIntegrityManager.rollbackToSavepoint(savepointName);
-				throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE);
+				throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE, dwoe);
 			}
 		} finally {
 			DatabaseIntegrityManager.releaseSavepoint(savepointName);			
@@ -412,8 +412,8 @@ public final class UpdateOperations {
 
 		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(sb.toString())) {
 			preparedStatement.executeUpdate();					
-		}catch (SQLException e) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE);
+		} catch (SQLException sqlEx) {
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE, sqlEx);
 		}
 		
 		sb.delete(0,sb.length());
@@ -426,8 +426,8 @@ public final class UpdateOperations {
 		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(sb.toString())){
 			preparedStatement.setString(1, metaItemField.getType().toString());
 			preparedStatement.executeUpdate();
-		}catch (SQLException e) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE);
+		}catch (SQLException sqlEx) {
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE, sqlEx);
 		}		
 
 		updateSchemaVersion(albumName);
@@ -629,10 +629,10 @@ public final class UpdateOperations {
 			preparedStatement.setString(1, newUuid.toString());
 			preparedStatement.setLong(2, itemID);
 			preparedStatement.executeUpdate();
-		}catch (SQLException e) {
+		} catch (SQLException sqlEx) {
 			DatabaseIntegrityManager.rollbackToSavepoint(savepointName);
-			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE);
-		}finally {
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE, sqlEx);
+		} finally {
 			DatabaseIntegrityManager.releaseSavepoint(savepointName);
 		}
 	}
@@ -650,10 +650,10 @@ public final class UpdateOperations {
 		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(sb.toString())) {		
 			preparedStatement.setString(1, UUID.randomUUID().toString());
 			preparedStatement.executeUpdate();
-		} catch (SQLException e) {
+		} catch (SQLException sqlEx) {
 			DatabaseIntegrityManager.rollbackToSavepoint(savepointName);
-			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE);
-		}finally {
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE, sqlEx);
+		} finally {
 			DatabaseIntegrityManager.releaseSavepoint(savepointName);
 		}
 	}

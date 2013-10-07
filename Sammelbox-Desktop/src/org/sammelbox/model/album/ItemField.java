@@ -23,7 +23,7 @@ import java.sql.Time;
 import java.util.UUID;
 
 public class ItemField extends MetaItemField {
-	protected Object value; 
+	private Object value; 
 	
 	/**
 	 * Constructor.
@@ -86,9 +86,9 @@ public class ItemField extends MetaItemField {
 	 * Standard constructor.
 	 */
 	public ItemField() {
-		this.name = "";
-		this.type = FieldType.TEXT;
-		this.value = null;
+		this.setName("");
+		this.setType(FieldType.TEXT);
+		this.setValue(null);
 	}
 
 	/**
@@ -118,7 +118,7 @@ public class ItemField extends MetaItemField {
 	 * @return True if item field is valid. False otherwise.
 	 */
 	public boolean isValid() {
-		switch (type) {
+		switch (this.getType()) {
 		case ID:
 			return (value instanceof Long);
 			

@@ -38,14 +38,14 @@ public final class HTMLExporter {
 	private HTMLExporter() {
 	}
 	
-	public static void exportVisibleItems(String filepath) {
-		List<AlbumItem> visibleAlbumItems = AlbumItemStore.getAllAlbumItems();
+	public static void exportAlbum(String filepath) {
+		List<AlbumItem> albumItems = AlbumItemStore.getAllAlbumItems();
 
 		StringBuilder headerBuilder = new StringBuilder();
 		StringBuilder dataBuilder = new StringBuilder();
 		boolean firstLine = true;
 
-		for (AlbumItem albumItem : visibleAlbumItems) {	
+		for (AlbumItem albumItem : albumItems) {	
 			if (firstLine) {
 				headerBuilder.append("<tr>");
 			}

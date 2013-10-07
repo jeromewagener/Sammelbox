@@ -1,6 +1,6 @@
 /** -----------------------------------------------------------------
  *    Sammelbox: Collection Manager - A free and open-source collection manager for Windows & Linux
- *    Copyright (C) 2011 Jérôme Wagener & Paul Bicheler
+ *    Copyright (C) 2011 Jerome Wagener & Paul Bicheler
  *
  *    This program is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -37,10 +37,14 @@ import org.sammelbox.model.database.operations.DatabaseOperations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class WelcomePageManager {
+public final class WelcomePageManager {
 	private static final Logger LOGGER = LoggerFactory.getLogger(WelcomePageManager.class);
 	private static Map<String, Integer> albumAndViewsToClicks;
 	private static Map<String, Long> albumToLastModified;
+	
+	private WelcomePageManager() {
+		// not needed
+	}
 	
 	public static void initializeFromWelcomeFile() {
 		albumAndViewsToClicks = XmlStorageWrapper.retrieveAlbumAndViewsToClicks();

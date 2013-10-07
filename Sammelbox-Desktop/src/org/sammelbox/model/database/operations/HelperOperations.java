@@ -1,6 +1,6 @@
 /** -----------------------------------------------------------------
  *    Sammelbox: Collection Manager - A free and open-source collection manager for Windows & Linux
- *    Copyright (C) 2011 Jérôme Wagener & Paul Bicheler
+ *    Copyright (C) 2011 Jerome Wagener & Paul Bicheler
  *
  *    This program is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -115,8 +115,8 @@ public final class HelperOperations {
 		
 		try {
 			dbmetadata = ConnectionManager.getConnection().getMetaData();
-		} catch (SQLException e1) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE);
+		} catch (SQLException sqlEx) {
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE, sqlEx);
 		}
 		
 		try (ResultSet dbmetars = dbmetadata.getImportedKeys(null, null, tableName)) {

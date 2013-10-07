@@ -483,7 +483,7 @@ public final class ApplicationUI implements Observer {
 				viewList.add(albumView.getName());				
 			}
 			
-			if (viewList.isEnabled() == false && viewList.getItemCount() != 0) {
+			if (!viewList.isEnabled() && viewList.getItemCount() != 0) {
 				viewList.setEnabled(true);
 			}
 		} else if (event.equals(SammelboxEvent.NO_ALBUM_SELECTED)) {
