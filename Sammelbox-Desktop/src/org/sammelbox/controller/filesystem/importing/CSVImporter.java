@@ -129,21 +129,23 @@ public final class CSVImporter {
 		List<ItemField> itemFields = new ArrayList<>();
 		List<AlbumItemPicture> pictures = new ArrayList<>();
 		
+		// parse item fields
 		for (int index=0; index<metaItemFields.size(); index++) {
 			if (index != pictureColumnIndex) {
 				convertIntoDatabaseValueAndAddToItemFields(metaItemFields, fieldValues, index, itemFields);
-			} else {
-				for (String filePath : fieldValues[pictureColumnIndex].split(pictureSeperationCharacter)) {
-					if (!filePath.isEmpty()) {
-						if (isSimulation) {
-							// if it is a simulation, just check if the specified files exist!
-							new File(filePath).exists();
-						} else {
-							pictures.add(ImageManipulator.adaptAndStoreImageForCollectorUsingApacheImaging(new File(filePath), albumName));
-						}
-					}
-				}
 			}	
+		}
+		
+		// parse picture field
+		for (String filePath : fieldValues[pictureColumnIndex].split(pictureSeperationCharacter)) {
+			if (!filePath.isEmpty()) {
+				if (isSimulation) {
+					// if it is a simulation, just check if the specified files exist!
+					new File(filePath).exists();
+				} else {
+					pictures.add(ImageManipulator.adaptAndStoreImageForCollectorUsingApacheImaging(new File(filePath), albumName));
+				}
+			}
 		}
 		
 		AlbumItem albumItem = new AlbumItem(albumName, itemFields);
