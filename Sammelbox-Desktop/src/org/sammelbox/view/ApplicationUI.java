@@ -493,8 +493,7 @@ public final class ApplicationUI implements Observer {
 					Translator.get(DictKeys.DIALOG_CONTENT_NO_ALBUM_SELECTED));
 		}
 	}
-	
-	// TODO: ugly hack for alpha.
+
 	public static boolean isAlbumSelectedAndShowMessageIfNot() {
 		if (!GuiController.getGuiState().isAlbumSelected()) {
 			EventObservable.addEventToQueue(SammelboxEvent.NO_ALBUM_SELECTED);
@@ -533,5 +532,9 @@ public final class ApplicationUI implements Observer {
 			return true;
 		}
 		return false;
+	}
+	
+	public static ToolbarComposite getToolbarComposite() {
+		return toolbarComposite;
 	}
 }

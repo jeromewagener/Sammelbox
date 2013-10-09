@@ -31,16 +31,16 @@ import org.sammelbox.model.album.AlbumItemStore;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 import org.sammelbox.model.database.operations.DatabaseOperations;
 import org.sammelbox.view.ApplicationUI;
+import org.sammelbox.view.UIConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class Utilities {
-	public static final String NO_ANCHOR = "";
 	private static final Logger LOGGER = LoggerFactory.getLogger(Utilities.class);
 		
 	/** The anchor to which a jump is performed as soon as the page is fully loaded. 
 	 * This field is used via the set and get methods by the browser progress listener */
-	private static String futureJumpAnchor = NO_ANCHOR;
+	private static String futureJumpAnchor = UIConstants.NO_ANCHOR_DEFINED;
 	/** The background color of the application widgets in html hex */
 	private static String backgroundColorOfWidgetInHex = null;
 	/** The default system font */
@@ -94,7 +94,7 @@ public final class Utilities {
 	 * must be used. By using this method the browser progress listener will execute the
 	 * jump as soon as the document is completely loaded */
 	static void jumpToAnchor(String anchor) {
-		if (!anchor.equals(NO_ANCHOR)) {
+		if (!anchor.equals(UIConstants.NO_ANCHOR_DEFINED)) {
 			String javaScriptScrollToSnippet = "document.getElementById(\"" + anchor + "\").scrollIntoView(true)";
 			ApplicationUI.getAlbumItemBrowser().execute(javaScriptScrollToSnippet);
 		}

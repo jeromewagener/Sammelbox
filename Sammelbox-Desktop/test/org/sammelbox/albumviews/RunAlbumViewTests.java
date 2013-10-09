@@ -66,7 +66,6 @@ public class RunAlbumViewTests {
 			AlbumViewManager.initialize();
 			
 			List<AlbumView> albumViews = AlbumViewManager.getAlbumViews("Books");
-			
 			assertTrue("There should be one album view for the book album", albumViews.size() == 1);
 			
 			if (albumViews.get(0).getName().equals("Programming Languages")) {
@@ -75,7 +74,7 @@ public class RunAlbumViewTests {
 				
 				assertTrue("There should be two books about programming languages", AlbumItemStore.getAllAlbumItems().size() == 2);
 			} else {
-				// FIXME why is this else empty??!
+				fail("The first view should be Programming Languages");
 			}
 			
 		} catch (DatabaseWrapperOperationException e) {

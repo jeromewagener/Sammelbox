@@ -23,6 +23,7 @@ import java.io.InputStream;
 import org.sammelbox.model.album.AlbumItem;
 import org.sammelbox.model.album.AlbumItemResultSet;
 import org.sammelbox.view.ApplicationUI;
+import org.sammelbox.view.UIConstants;
 
 public final class BrowserFacade {
 	private BrowserFacade() {
@@ -35,7 +36,7 @@ public final class BrowserFacade {
 	public static void jumpToAnchor(String anchor) { Utilities.jumpToAnchor(anchor); }
 	public static void performBrowserQueryAndShow(String sqlQuery) { Utilities.performBrowserQueryAndShow(ApplicationUI.getAlbumItemBrowser(), sqlQuery); }
 	public static void showImageViewer(String pathToPicture, long albumItemId) { PictureViewCreator.showPicture(albumItemId); }
-	public static void resetFutureJumpAnchor() {Utilities.setFutureJumpAnchor(Utilities.NO_ANCHOR);}
+	public static void resetFutureJumpAnchor() {Utilities.setFutureJumpAnchor(UIConstants.NO_ANCHOR_DEFINED);}
 	public static void setFutureJumpAnchor(String futureJumpAnchor) { Utilities.setFutureJumpAnchor(futureJumpAnchor); }
 	public static String getFutureJumpAnchor() { return Utilities.getFutureJumpAnchor(); }
 	public static void returnFromImageViewer() { Utilities.returnFromImageViewer(); }

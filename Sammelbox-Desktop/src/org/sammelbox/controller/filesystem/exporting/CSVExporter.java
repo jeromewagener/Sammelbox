@@ -32,6 +32,7 @@ import org.sammelbox.model.album.OptionType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+// TODO the separation character shouldn't be hard coded
 public final class CSVExporter {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CSVExporter.class);
 	

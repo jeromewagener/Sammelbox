@@ -219,8 +219,7 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 	public void completed(ProgressEvent event) {
 		String anchor = BrowserFacade.getFutureJumpAnchor();
 
-		if (anchor != null) {
-			//TODO this should never be null, use a defined value instead
+		if (anchor.equals(UIConstants.NO_ANCHOR_DEFINED)) {
 			BrowserFacade.jumpToAnchor(BrowserFacade.getFutureJumpAnchor());
 		}
 	}

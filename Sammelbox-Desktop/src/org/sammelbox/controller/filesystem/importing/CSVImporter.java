@@ -137,13 +137,15 @@ public final class CSVImporter {
 		}
 		
 		// parse picture field
-		for (String filePath : fieldValues[pictureColumnIndex].split(pictureSeperationCharacter)) {
-			if (!filePath.isEmpty()) {
-				if (isSimulation) {
-					// if it is a simulation, just check if the specified files exist!
-					new File(filePath).exists();
-				} else {
-					pictures.add(ImageManipulator.adaptAndStoreImageForCollectorUsingApacheImaging(new File(filePath), albumName));
+		if (pictureColumnIndex != NO_PICTURE_INDEX) {
+			for (String filePath : fieldValues[pictureColumnIndex].split(pictureSeperationCharacter)) {
+				if (!filePath.isEmpty()) {
+					if (isSimulation) {
+						// if it is a simulation, just check if the specified files exist!
+						new File(filePath).exists();
+					} else {
+						pictures.add(ImageManipulator.adaptAndStoreImageForCollectorUsingApacheImaging(new File(filePath), albumName));
+					}
 				}
 			}
 		}

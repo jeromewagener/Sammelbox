@@ -41,6 +41,9 @@ public final class UIConstants {
 	/** The minimum height of the shell in pixels. The shell can never have a smaller height than this. */
 	public static final int MIN_SHELL_HEIGHT = 700;
 	
+	// ------------------ Browser Anchors ------------------
+	public static final String NO_ANCHOR_DEFINED = "";
+	
 	// ------------------ Browser Constants ------------------
 	public static final String STYLE_CSS = "file://" + FileSystemLocations.getStyleCSS();
 	public static final String EFFECTS_JS = "file://" + FileSystemLocations.getAppDataDir() + File.separatorChar + "effects.js";

@@ -21,8 +21,6 @@ package org.sammelbox.view.composites;
 import java.io.InputStream;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -40,12 +38,6 @@ import org.sammelbox.controller.settings.SettingsManager;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 import org.sammelbox.model.database.operations.DatabaseOperations;
 import org.sammelbox.view.ApplicationUI;
-import org.sammelbox.view.browser.BrowserFacade;
-import org.sammelbox.view.sidepanes.AddAlbumItemSidepane;
-import org.sammelbox.view.sidepanes.AdvancedSearchSidepane;
-import org.sammelbox.view.sidepanes.CreateAlbumSidepane;
-import org.sammelbox.view.sidepanes.EmptySidepane;
-import org.sammelbox.view.sidepanes.SynchronizeSidepane;
 import org.sammelbox.view.various.PanelType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,34 +46,32 @@ public class ToolbarComposite extends Composite implements Observer {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ToolbarComposite.class);
 	
 	private Composite toolbarComposite = null;
-	private Image home = null, addAlbum = null, addEntry = null,
-			detailedView = null, pictureView = null, search = null,
-			sync = null, help = null;
-	private Image homeActive = null, addAlbumActive = null,
-			addEntryActive = null, searchActive = null, syncActive = null,
-			helpActive = null;
-	private Button homeBtn = null, addAlbumBtn = null, addEntryBtn = null,
-			toggleViewBtn = null, searchBtn = null, syncBtn = null, helpBtn = null;
+	private Image homeIcon = null, addNewAlbumIcon = null, addAlbumItemIcon = null, detailedViewIcon = null, 
+			pictureViewIcon = null, advancedSearchIcon = null, synchronizeIcon = null, helpIcon = null;
+	private Image homeActiveIcon = null, addNewAlbumActiveIcon = null, addAlbumItemActiveIcon = null, 
+			advancedSearchActiveIcon = null, synchronizeActiveIcon = null, helpActiveIcon = null;
+	private Button homeButton = null, addNewAlbumButton = null, addAlbumItemButton = null,
+			toggleViewButton = null, advancedSearchButton = null, synchronizeButton = null, helpButton = null;
 	private PanelType lastSelectedPanelType = PanelType.EMPTY;
 
-	private void disableActiveButtons() {
-		homeBtn.setImage(home);
-		addAlbumBtn.setImage(addAlbum);
-		addEntryBtn.setImage(addEntry);
-		toggleViewBtn.setImage(detailedView);
-		searchBtn.setImage(search);
-		syncBtn.setImage(sync);
-		helpBtn.setImage(help);
+	void disableActiveButtons() {
+		homeButton.setImage(homeIcon);
+		addNewAlbumButton.setImage(addNewAlbumIcon);
+		addAlbumItemButton.setImage(addAlbumItemIcon);
+		toggleViewButton.setImage(detailedViewIcon);
+		advancedSearchButton.setImage(advancedSearchIcon);
+		synchronizeButton.setImage(synchronizeIcon);
+		helpButton.setImage(helpIcon);
 	}
 	
 	private void setButtonsWhenNoAlbumIsSelected() {
-		homeBtn.setEnabled(true);
-		addAlbumBtn.setEnabled(true);
-		addEntryBtn.setEnabled(false);
-		toggleViewBtn.setEnabled(false);
-		searchBtn.setEnabled(false);
-		syncBtn.setEnabled(true);
-		helpBtn.setEnabled(true);
+		homeButton.setEnabled(true);
+		addNewAlbumButton.setEnabled(true);
+		addAlbumItemButton.setEnabled(false);
+		toggleViewButton.setEnabled(false);
+		advancedSearchButton.setEnabled(false);
+		synchronizeButton.setEnabled(true);
+		helpButton.setEnabled(true);
 	}
 
 	public ToolbarComposite(final Composite parentComposite) {
@@ -105,348 +95,104 @@ public class ToolbarComposite extends Composite implements Observer {
 
 		innerComposite.setLayout(gridLayout);
 
-		InputStream istream = this.getClass().getClassLoader().getResourceAsStream("graphics/home.png");
-		home = new Image(Display.getCurrent(), istream);
-		istream = this.getClass().getClassLoader().getResourceAsStream("graphics/home-active.png");
-		homeActive = new Image(Display.getCurrent(), istream);
+		// retrieve button image
+		homeIcon = getImageFromResource("graphics/home.png");
+		homeActiveIcon = getImageFromResource("graphics/home-active.png");
+		addNewAlbumIcon = getImageFromResource("graphics/add.png");
+		addNewAlbumActiveIcon = getImageFromResource("graphics/add-active.png");
+		addAlbumItemIcon = getImageFromResource("graphics/additem.png");
+		addAlbumItemActiveIcon = getImageFromResource("graphics/additem-active.png");
+		detailedViewIcon = getImageFromResource("graphics/detailedview.png");
+		pictureViewIcon = getImageFromResource("graphics/pictureview.png");
+		advancedSearchIcon = getImageFromResource("graphics/search.png");
+		advancedSearchActiveIcon = getImageFromResource("graphics/search-active.png");
+		synchronizeIcon = getImageFromResource("graphics/sync.png");
+		synchronizeActiveIcon = getImageFromResource("graphics/sync-active.png");
+		helpIcon = getImageFromResource("graphics/help.png");
+		helpActiveIcon = getImageFromResource("graphics/help-active.png");
 
-		istream = this.getClass().getClassLoader().getResourceAsStream("graphics/add.png");
-		addAlbum = new Image(Display.getCurrent(), istream);
-		istream = this.getClass().getClassLoader().getResourceAsStream("graphics/add-active.png");
-		addAlbumActive = new Image(Display.getCurrent(), istream);
+		// configure buttons
+		homeButton = new Button(innerComposite, SWT.PUSH);
+		homeButton.setImage(homeActiveIcon);
+		homeButton.setText(Translator.get(DictKeys.BUTTON_HOME));
+		homeButton.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_HOME));
 
-		istream = this.getClass().getClassLoader().getResourceAsStream("graphics/additem.png");
-		addEntry = new Image(Display.getCurrent(), istream);
-		istream = this.getClass().getClassLoader().getResourceAsStream("graphics/additem-active.png");
-		addEntryActive = new Image(Display.getCurrent(), istream);
+		addNewAlbumButton = new Button(innerComposite, SWT.PUSH);
+		addNewAlbumButton.setImage(addNewAlbumIcon);
+		addNewAlbumButton.setText(Translator.get(DictKeys.BUTTON_ADD_ALBUM));
+		addNewAlbumButton.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_ADD_ALBUM));
 
-		istream = this.getClass().getClassLoader().getResourceAsStream("graphics/detailedview.png");
-		detailedView = new Image(Display.getCurrent(), istream);
-		istream = this.getClass().getClassLoader().getResourceAsStream("graphics/pictureview.png");
-		pictureView = new Image(Display.getCurrent(), istream);
+		addAlbumItemButton = new Button(innerComposite, SWT.PUSH);
+		addAlbumItemButton.setImage(addAlbumItemIcon);
+		addAlbumItemButton.setText(Translator.get(DictKeys.BUTTON_ADD_ENTRY));
+		addAlbumItemButton.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_ADD_ENTRY));
+		addAlbumItemButton.setEnabled(false);
 
-		istream = this.getClass().getClassLoader().getResourceAsStream("graphics/search.png");
-		search = new Image(Display.getCurrent(), istream);
-		istream = this.getClass().getClassLoader().getResourceAsStream("graphics/search-active.png");
-		searchActive = new Image(Display.getCurrent(), istream);
+		toggleViewButton = new Button(innerComposite, SWT.PUSH);
+		toggleViewButton.setImage(detailedViewIcon);
+		toggleViewButton.setText(Translator.get(DictKeys.BUTTON_TOGGLE));
+		toggleViewButton.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_TOGGLE_TO_GALLERY));
+		toggleViewButton.setEnabled(false);
 
-		istream = this.getClass().getClassLoader().getResourceAsStream("graphics/sync.png");
-		sync = new Image(Display.getCurrent(), istream);
-		istream = this.getClass().getClassLoader().getResourceAsStream("graphics/sync-active.png");
-		syncActive = new Image(Display.getCurrent(), istream);
+		advancedSearchButton = new Button(innerComposite, SWT.PUSH);
+		advancedSearchButton.setImage(advancedSearchIcon);
+		advancedSearchButton.setText(Translator.get(DictKeys.BUTTON_SEARCH));
+		advancedSearchButton.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_SEARCH));
+		advancedSearchButton.setEnabled(false);
 
-		istream = this.getClass().getClassLoader().getResourceAsStream("graphics/help.png");
-		help = new Image(Display.getCurrent(), istream);
-		istream = this.getClass().getClassLoader().getResourceAsStream("graphics/help-active.png");
-		helpActive = new Image(Display.getCurrent(), istream);
+		synchronizeButton = new Button(innerComposite, SWT.PUSH);
+		synchronizeButton.setImage(synchronizeIcon);
+		synchronizeButton.setText(Translator.get(DictKeys.BUTTON_SYNCHRONIZE));
+		synchronizeButton.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_SYNCHRONIZE));
 
-		homeBtn = new Button(innerComposite, SWT.PUSH);
-		homeBtn.setImage(homeActive);
-		homeBtn.setText(Translator.get(DictKeys.BUTTON_HOME));
-		homeBtn.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_HOME));
+		helpButton = new Button(innerComposite, SWT.PUSH);
+		helpButton.setImage(helpIcon);
+		helpButton.setText(Translator.get(DictKeys.BUTTON_HELP));
+		helpButton.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_HELP));
 
-		addAlbumBtn = new Button(innerComposite, SWT.PUSH);
-		addAlbumBtn.setImage(addAlbum);
-		addAlbumBtn.setText(Translator.get(DictKeys.BUTTON_ADD_ALBUM));
-		addAlbumBtn.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_ADD_ALBUM));
+		// add button listeners
+		homeButton.addMouseListener(ToolbarCompositeListener.getHomeButtonListener(
+				homeButton, addAlbumItemButton, toggleViewButton, advancedSearchButton, detailedViewIcon, homeActiveIcon));
 
-		addEntryBtn = new Button(innerComposite, SWT.PUSH);
-		addEntryBtn.setImage(addEntry);
-		addEntryBtn.setText(Translator.get(DictKeys.BUTTON_ADD_ENTRY));
-		addEntryBtn.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_ADD_ENTRY));
-		addEntryBtn.setEnabled(false);
+		addNewAlbumButton.addMouseListener(ToolbarCompositeListener.getAddNewAlbumButtonListener(
+				addNewAlbumButton, addNewAlbumActiveIcon));
 
-		toggleViewBtn = new Button(innerComposite, SWT.PUSH);
-		toggleViewBtn.setImage(detailedView);
-		toggleViewBtn.setText(Translator.get(DictKeys.BUTTON_TOGGLE));
-		toggleViewBtn.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_TOGGLE_TO_GALLERY));
-		toggleViewBtn.setEnabled(false);
+		addAlbumItemButton.addMouseListener(ToolbarCompositeListener.getAddAlbumItemButtonListener(
+				addAlbumItemButton, addAlbumItemActiveIcon));
 
-		searchBtn = new Button(innerComposite, SWT.PUSH);
-		searchBtn.setImage(search);
-		searchBtn.setText(Translator.get(DictKeys.BUTTON_SEARCH));
-		searchBtn.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_SEARCH));
-		searchBtn.setEnabled(false);
+		toggleViewButton.addMouseListener(ToolbarCompositeListener.getToggleButtonListener(
+				toggleViewButton, detailedViewIcon, pictureViewIcon));
 
-		syncBtn = new Button(innerComposite, SWT.PUSH);
-		syncBtn.setImage(sync);
-		syncBtn.setText(Translator.get(DictKeys.BUTTON_SYNCHRONIZE));
-		syncBtn.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_SYNCHRONIZE));
+		advancedSearchButton.addMouseListener(ToolbarCompositeListener.getAdvancedSearchButtonListener(
+				advancedSearchButton, advancedSearchActiveIcon));
 
-		helpBtn = new Button(innerComposite, SWT.PUSH);
-		helpBtn.setImage(help);
-		helpBtn.setText(Translator.get(DictKeys.BUTTON_HELP));
-		helpBtn.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_HELP));
+		synchronizeButton.addMouseListener(ToolbarCompositeListener.getSynchronizeButtonListener(
+				synchronizeButton, synchronizeActiveIcon));
 
-		// ---------- Add Mouse Listeners ----------
-
-		homeBtn.addMouseListener(new MouseListener() {
-			@Override
-			public void mouseUp(MouseEvent arg0) {
-				disableActiveButtons();
-
-				ApplicationUI.changeRightCompositeTo(PanelType.EMPTY, EmptySidepane.build(ApplicationUI.getThreePanelComposite()));
-				
-				lastSelectedPanelType = PanelType.EMPTY;
-				
-				homeBtn.setImage(homeActive);
-
-				BrowserFacade.loadWelcomePage();
-
-				addEntryBtn.setEnabled(false);
-
-				toggleViewBtn.setEnabled(false);
-				toggleViewBtn.setImage(detailedView);
-				toggleViewBtn.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_TOGGLE_TO_GALLERY));
-
-				searchBtn.setEnabled(false);
-				
-				ApplicationUI.setSelectedAlbum("");
-			}
-
-			@Override
-			public void mouseDown(MouseEvent arg0) {
-			}
-
-			@Override
-			public void mouseDoubleClick(MouseEvent arg0) {
-			}
-		});
-
-		addAlbumBtn.addMouseListener(new MouseListener() {
-			@Override
-			public void mouseUp(MouseEvent arg0) {
-				if (ApplicationUI.getCurrentRightPanelType() != PanelType.ADD_ALBUM) {
-					ApplicationUI.changeRightCompositeTo(PanelType.ADD_ALBUM,
-							CreateAlbumSidepane
-									.build(ApplicationUI
-											.getThreePanelComposite()));
-					StatusBarComposite.getInstance(parentComposite.getShell())
-							.writeStatus(Translator.get(DictKeys.STATUSBAR_ADD_ALBUM_OPENED));
-
-					disableActiveButtons();
-					addAlbumBtn.setImage(addAlbumActive);
-					ApplicationUI.setCurrentRightPanelType(PanelType.ADD_ALBUM);
-					lastSelectedPanelType = PanelType.ADD_ALBUM;
-				} else {
-					ApplicationUI.changeRightCompositeTo(PanelType.EMPTY,
-							EmptySidepane.build(ApplicationUI
-									.getThreePanelComposite()));
-					StatusBarComposite.getInstance(parentComposite.getShell())
-							.writeStatus(Translator.get(DictKeys.STATUSBAR_PROGRAM_STARTED));
-
-					disableActiveButtons();
-					ApplicationUI.setCurrentRightPanelType(PanelType.EMPTY);
-				}
-			}
-
-			@Override
-			public void mouseDown(MouseEvent arg0) {
-			}
-
-			@Override
-			public void mouseDoubleClick(MouseEvent arg0) {
-			}
-		});
-
-		addEntryBtn.addMouseListener(new MouseListener() {
-			@Override
-			public void mouseUp(MouseEvent arg0) {				
-				if (!ApplicationUI.isAlbumSelectedAndShowMessageIfNot()) {
-					return;
-				}
-				
-				if (ApplicationUI.getCurrentRightPanelType() != PanelType.ADD_ENTRY) {					
-					ApplicationUI.changeRightCompositeTo(PanelType.ADD_ENTRY,
-							AddAlbumItemSidepane.build(
-									ApplicationUI.getThreePanelComposite(),
-									ApplicationUI.getSelectedAlbum()));
-					StatusBarComposite
-							.getInstance(parentComposite.getShell())
-							.writeStatus(Translator.get(DictKeys.STATUSBAR_ADD_ITEM_OPENED));
-
-					disableActiveButtons();
-					addEntryBtn.setImage(addEntryActive);
-					ApplicationUI.setCurrentRightPanelType(PanelType.ADD_ENTRY);
-					lastSelectedPanelType = PanelType.ADD_ENTRY;
-				} else {					
-					ApplicationUI.changeRightCompositeTo(PanelType.EMPTY,
-							EmptySidepane.build(ApplicationUI
-									.getThreePanelComposite()));
-					StatusBarComposite.getInstance(parentComposite.getShell())
-							.writeStatus(Translator.get(DictKeys.STATUSBAR_PROGRAM_STARTED));
-
-					disableActiveButtons();
-					ApplicationUI.setCurrentRightPanelType(PanelType.EMPTY);
-				}
-			}
-
-			@Override
-			public void mouseDown(MouseEvent arg0) {
-			}
-
-			@Override
-			public void mouseDoubleClick(MouseEvent arg0) {
-			}
-		});
-
-		toggleViewBtn.addMouseListener(new MouseListener() {
-			@Override
-			public void mouseUp(MouseEvent arg0) {
-				if (GuiController.getGuiState().isViewDetailed()) {
-					toggleViewBtn.setImage(detailedView);
-					toggleViewBtn.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_TOGGLE_TO_DETAILS));
-					GuiController.getGuiState().setViewDetailed(false);
-				} else {
-					toggleViewBtn.setImage(pictureView);
-					toggleViewBtn.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_TOGGLE_TO_GALLERY));
-					GuiController.getGuiState().setViewDetailed(true);
-				}
-				
-				BrowserFacade.showAlbum();
-			}
-
-			@Override
-			public void mouseDown(MouseEvent arg0) {
-			}
-
-			@Override
-			public void mouseDoubleClick(MouseEvent arg0) {
-			}
-		});
-
-		searchBtn.addMouseListener(new MouseListener() {
-			@Override
-			public void mouseUp(MouseEvent arg0) {
-				if (!ApplicationUI.isAlbumSelectedAndShowMessageIfNot()) {
-					return;
-				}
-				
-				if (ApplicationUI.getCurrentRightPanelType() != PanelType.ADVANCED_SEARCH) {
-					ApplicationUI.changeRightCompositeTo(PanelType.ADVANCED_SEARCH,
-							AdvancedSearchSidepane.build(
-									ApplicationUI.getThreePanelComposite(),
-									ApplicationUI.getSelectedAlbum()));
-					StatusBarComposite
-							.getInstance(parentComposite.getShell())
-							.writeStatus(Translator.get(DictKeys.STATUSBAR_SEARCH_OPENED));
-
-					disableActiveButtons();
-					searchBtn.setImage(searchActive);
-					ApplicationUI
-							.setCurrentRightPanelType(PanelType.ADVANCED_SEARCH);
-					lastSelectedPanelType = PanelType.ADVANCED_SEARCH;
-				} else {
-					ApplicationUI.changeRightCompositeTo(PanelType.EMPTY,
-							EmptySidepane.build(ApplicationUI
-									.getThreePanelComposite()));
-					StatusBarComposite.getInstance(parentComposite.getShell())
-							.writeStatus(Translator.get(DictKeys.STATUSBAR_PROGRAM_STARTED));
-
-					disableActiveButtons();
-					ApplicationUI.setCurrentRightPanelType(PanelType.EMPTY);
-				}
-			}
-
-			@Override
-			public void mouseDown(MouseEvent arg0) {
-			}
-
-			@Override
-			public void mouseDoubleClick(MouseEvent arg0) {
-			}
-		});
-
-		syncBtn.addMouseListener(new MouseListener() {
-			@Override
-			public void mouseUp(MouseEvent arg0) {
-				BrowserFacade.showSynchronizePage();
-				
-				if (ApplicationUI.getCurrentRightPanelType() != PanelType.SYNCHRONIZATION) {
-					ApplicationUI.changeRightCompositeTo(PanelType.SYNCHRONIZATION,
-							SynchronizeSidepane.build(ApplicationUI.getThreePanelComposite()));
-					StatusBarComposite
-							.getInstance(parentComposite.getShell())
-							.writeStatus(Translator.get(DictKeys.STATUSBAR_SYNCHRONIZE_OPENED));
-
-					disableActiveButtons();
-					syncBtn.setImage(syncActive);
-					ApplicationUI.setCurrentRightPanelType(PanelType.SYNCHRONIZATION);
-					lastSelectedPanelType = PanelType.SYNCHRONIZATION;
-				} else {
-					ApplicationUI.changeRightCompositeTo(PanelType.EMPTY,
-							EmptySidepane.build(ApplicationUI.getThreePanelComposite()));
-					StatusBarComposite.getInstance(parentComposite.getShell())
-							.writeStatus(Translator.get(DictKeys.STATUSBAR_PROGRAM_STARTED));
-
-					disableActiveButtons();
-					ApplicationUI.setCurrentRightPanelType(PanelType.EMPTY);
-				}
-			}
-
-			@Override
-			public void mouseDown(MouseEvent arg0) {
-			}
-
-			@Override
-			public void mouseDoubleClick(MouseEvent arg0) {
-			}
-		});
-
-		helpBtn.addMouseListener(new MouseListener() {
-			@Override
-			public void mouseUp(MouseEvent arg0) {
-				if (ApplicationUI.getCurrentRightPanelType() != PanelType.HELP) {
-					BrowserFacade.loadHelpPage();
-					ApplicationUI.changeRightCompositeTo(PanelType.HELP,
-							EmptySidepane.build(ApplicationUI
-									.getThreePanelComposite()));
-					StatusBarComposite.getInstance(parentComposite.getShell())
-							.writeStatus(Translator.get(DictKeys.STATUSBAR_HELP_OPENED));
-
-					disableActiveButtons();
-					helpBtn.setImage(helpActive);
-					ApplicationUI.setCurrentRightPanelType(PanelType.EMPTY);
-					lastSelectedPanelType = PanelType.EMPTY;
-				} else {
-					ApplicationUI.changeRightCompositeTo(PanelType.EMPTY,
-							EmptySidepane.build(ApplicationUI
-									.getThreePanelComposite()));
-					StatusBarComposite.getInstance(parentComposite.getShell())
-							.writeStatus(Translator.get(DictKeys.STATUSBAR_PROGRAM_STARTED));
-
-					disableActiveButtons();
-					ApplicationUI.setCurrentRightPanelType(PanelType.EMPTY);
-				}
-			}
-
-			@Override
-			public void mouseDown(MouseEvent arg0) {
-			}
-
-			@Override
-			public void mouseDoubleClick(MouseEvent arg0) {
-			}
-		});
-
-		GridData seperatorGridData = new GridData(GridData.FILL_BOTH);
-		seperatorGridData.minimumHeight = 0;
+		helpButton.addMouseListener(ToolbarCompositeListener.getHelpButtonListener(
+				helpButton, helpActiveIcon));
 
 		// separator
-		new Label(toolbarComposite, SWT.SEPARATOR | SWT.HORIZONTAL)
-				.setLayoutData(seperatorGridData);
+		GridData seperatorGridData = new GridData(GridData.FILL_BOTH);
+		seperatorGridData.minimumHeight = 0;
+		new Label(toolbarComposite, SWT.SEPARATOR | SWT.HORIZONTAL).setLayoutData(seperatorGridData);
+	}
+	
+	private Image getImageFromResource(String resourcePath) {
+		InputStream istream = this.getClass().getClassLoader().getResourceAsStream(resourcePath);
+		return new Image(Display.getCurrent(), istream);
 	}
 	
 	@Override
 	public void update(SammelboxEvent event) {
 		if (event.equals(SammelboxEvent.RIGHT_SIDEPANE_CHANGED)) {
-			if (lastSelectedPanelType != ApplicationUI.getCurrentRightPanelType()) {
+			if (getLastSelectedPanelType() != ApplicationUI.getCurrentRightPanelType()) {
 				disableActiveButtons();
 			}
-		}else if (event.equals(SammelboxEvent.ALBUM_SELECTED)) {
+		} else if (event.equals(SammelboxEvent.ALBUM_SELECTED)) {
 			String currentlySelectedAlbum = ApplicationUI.getSelectedAlbum();
 			enableAlbumButtons(currentlySelectedAlbum);
-		}else if (event.equals(SammelboxEvent.ALBUM_LIST_UPDATED)) {				
+		} else if (event.equals(SammelboxEvent.ALBUM_LIST_UPDATED)) {				
 			if (!GuiController.getGuiState().isAlbumSelected()) {
 				setButtonsWhenNoAlbumIsSelected();
 			}
@@ -454,31 +200,37 @@ public class ToolbarComposite extends Composite implements Observer {
 	}
 
 	public void enableAlbumButtons(String albumName) {
-		homeBtn.setImage(home);
-		addEntryBtn.setEnabled(true);
+		homeButton.setImage(homeIcon);
+		addAlbumItemButton.setEnabled(true);
 
 		try {
 			if (DatabaseOperations.isPictureAlbum(albumName)) {
 				if (SettingsManager.getSettings().isDetailedViewDefault()) {
-					toggleViewBtn.setImage(pictureView);
-					toggleViewBtn.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_TOGGLE_TO_GALLERY));
+					toggleViewButton.setImage(pictureViewIcon);
+					toggleViewButton.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_TOGGLE_TO_GALLERY));
 				} else {
-					toggleViewBtn.setImage(detailedView);
-					toggleViewBtn.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_TOGGLE_TO_DETAILS));
+					toggleViewButton.setImage(detailedViewIcon);
+					toggleViewButton.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_TOGGLE_TO_DETAILS));
 				}
 				
-				toggleViewBtn.setEnabled(true);
+				toggleViewButton.setEnabled(true);
 			} else {
-				toggleViewBtn.setImage(detailedView);
-				toggleViewBtn.setEnabled(false);
+				toggleViewButton.setImage(detailedViewIcon);
+				toggleViewButton.setEnabled(false);
 			}
 		} catch (DatabaseWrapperOperationException ex) {
 			LOGGER.error("An error occured while checking whether the following album contains pictures: '" + albumName + "'", ex);
 		}
 
-		GuiController.getGuiState().setViewDetailed(
-				SettingsManager.getSettings().isDetailedViewDefault());
-		//BrowserFacade.rerunLastQuery(); FIXME ???
-		searchBtn.setEnabled(true);
+		GuiController.getGuiState().setViewDetailed(SettingsManager.getSettings().isDetailedViewDefault());
+		advancedSearchButton.setEnabled(true);
+	}
+
+	public PanelType getLastSelectedPanelType() {
+		return lastSelectedPanelType;
+	}
+
+	public void setLastSelectedPanelType(PanelType lastSelectedPanelType) {
+		this.lastSelectedPanelType = lastSelectedPanelType;
 	}
 }
