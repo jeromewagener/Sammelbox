@@ -128,7 +128,7 @@ public final class UpdateOperations {
 			// Create the new table pointing to new typeinfo
 			boolean hasPictureField = QueryOperations.isPictureAlbum(albumName);
 			List<MetaItemField> newFields = QueryOperations.getAlbumItemFieldNamesAndTypes(albumName);
-			newFields = renameFieldInMetaItemList(oldMetaItemField, newMetaItemField, newFields);// [rename column]
+			newFields = renameFieldInMetaItemList(oldMetaItemField, newMetaItemField, newFields);
 		
 			// Drop the old table + typeTable
 			DeleteOperations.dropTable(albumName);

@@ -148,7 +148,7 @@ public final class AlterAlbumSidepane {
 		moveUp.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (albumFieldNamesAndTypesTable.getSelectionIndex() > 0) {
-					int newPosition = albumFieldNamesAndTypesTable.getSelectionIndex() - 1; // move one up
+					int newPosition = albumFieldNamesAndTypesTable.getSelectionIndex() - 1;
 					TableItem originalItem = albumFieldNamesAndTypesTable.getItem(albumFieldNamesAndTypesTable.getSelectionIndex());
 					MetaItemField metaItemField = new MetaItemField(originalItem.getText(1), FieldType.valueOfTranslatedFieldType(originalItem.getText(2)), originalItem.getChecked());
 					originalItem.dispose();
@@ -270,7 +270,7 @@ public final class AlterAlbumSidepane {
 		moveDown.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (albumFieldNamesAndTypesTable.getSelectionIndex() < (albumFieldNamesAndTypesTable.getItemCount() - 1)) {
-					int newPosition = albumFieldNamesAndTypesTable.getSelectionIndex() + 1; // move one down
+					int newPosition = albumFieldNamesAndTypesTable.getSelectionIndex() + 1;
 					TableItem originalItem = albumFieldNamesAndTypesTable.getItem(albumFieldNamesAndTypesTable.getSelectionIndex());
 					MetaItemField metaItemField = new MetaItemField(originalItem.getText(1), FieldType.valueOfTranslatedFieldType(originalItem.getText(2)), originalItem.getChecked());
 					originalItem.dispose();

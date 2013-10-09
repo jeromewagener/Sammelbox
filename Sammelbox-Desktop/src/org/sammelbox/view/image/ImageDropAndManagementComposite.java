@@ -60,8 +60,6 @@ public class ImageDropAndManagementComposite extends Composite implements DropTa
 	private LinkedList<AlbumItemPicture> pictures = new LinkedList<AlbumItemPicture>();
 	/** An inner composite presenting the pictures */
 	private Composite imageComposite;
-	/** An inner scrollable composite wrapping the imageComposite */ 
-	private ScrolledComposite imageScrolledComposite;
 
 	/** Creates a new ImageDropAndManagementComposite as a child of the provided parent composite 
 	 * @param parentComposite the parent composite of the ImageDropAndManagementComposite */
@@ -130,7 +128,7 @@ public class ImageDropAndManagementComposite extends Composite implements DropTa
 		});
 		addDropSupport(dropTextLabel);
 
-		imageScrolledComposite = new ScrolledComposite(this, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL );
+		ScrolledComposite imageScrolledComposite = new ScrolledComposite(this, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL );
 		imageScrolledComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		imageComposite = new Composite(imageScrolledComposite, SWT.NONE);

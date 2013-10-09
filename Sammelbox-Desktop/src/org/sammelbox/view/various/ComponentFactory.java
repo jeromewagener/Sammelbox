@@ -103,7 +103,7 @@ public final class ComponentFactory {
 	 * @param textForLabel the text for the label 
 	 * @return a new label */
 	public static Label getH1Label(Composite parentComposite, String textForLabel) {
-		return getLabel(parentComposite, textForLabel, 16); // big
+		return getLabel(parentComposite, textForLabel, 16);
 	}
 
 	/** Returns a H2 label similar to the HTML H2 tag 
@@ -111,7 +111,7 @@ public final class ComponentFactory {
 	 * @param textForLabel the text for the label 
 	 * @return a new label */
 	public static Label getH2Label(Composite parentComposite, String textForLabel) {
-		return getLabel(parentComposite, textForLabel, 14); // medium
+		return getLabel(parentComposite, textForLabel, 14);
 	}
 
 	/** Returns a H3 label similar to the HTML H3 tag 
@@ -119,7 +119,7 @@ public final class ComponentFactory {
 	 * @param textForLabel the text for the label 
 	 * @return a new label */
 	public static Label getH3Label(Composite parentComposite, String textForLabel) {
-		return getLabel(parentComposite, textForLabel, 12); // small
+		return getLabel(parentComposite, textForLabel, 12);
 	}
 
 	/** Returns a H4 label similar to the HTML H3 tag 
@@ -127,7 +127,7 @@ public final class ComponentFactory {
 	 * @param textForLabel the text for the label 
 	 * @return a new label */
 	public static Label getH4Label(Composite parentComposite, String textForLabel) {
-		return getLabel(parentComposite, textForLabel, 10); // smaller
+		return getLabel(parentComposite, textForLabel, 10);
 	}
 
 	/** Returns a standard SWT label

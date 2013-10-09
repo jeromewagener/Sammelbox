@@ -78,7 +78,7 @@ public final class DetailedViewCreator {
 				    "<link rel=stylesheet href=\"" + UIConstants.STYLE_CSS + "\" />" +
 				    "<script src=\"" + UIConstants.EFFECTS_JS + "\"></script>" +
 				  "</head>" +
-				  "<body>" + // TODO extract to dynamic CSS  style=\"font-family:" +  Utilities.getDefaultSystemFont() + "\">
+				  "<body>" +
 				    "<h2>" + collectionHeader + "</h2>" +
 				  	"<div id=\"albumItems\">" + albumItemDetailDivContainers + "</div>" +
 				  "</body>" +

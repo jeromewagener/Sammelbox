@@ -45,7 +45,6 @@ import org.slf4j.LoggerFactory;
 public class ToolbarComposite extends Composite implements Observer {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ToolbarComposite.class);
 	
-	private Composite toolbarComposite = null;
 	private Image homeIcon = null, addNewAlbumIcon = null, addAlbumItemIcon = null, detailedViewIcon = null, 
 			pictureViewIcon = null, advancedSearchIcon = null, synchronizeIcon = null, helpIcon = null;
 	private Image homeActiveIcon = null, addNewAlbumActiveIcon = null, addAlbumItemActiveIcon = null, 
@@ -76,7 +75,7 @@ public class ToolbarComposite extends Composite implements Observer {
 
 	public ToolbarComposite(final Composite parentComposite) {
 		super(parentComposite, SWT.NONE);
-		toolbarComposite = new Composite(parentComposite, SWT.NONE);
+		Composite toolbarComposite = new Composite(parentComposite, SWT.NONE);
 
 		EventObservable.registerObserver(this);
 		

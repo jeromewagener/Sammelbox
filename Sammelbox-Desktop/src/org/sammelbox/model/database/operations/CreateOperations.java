@@ -86,7 +86,8 @@ public final class CreateOperations {
 		String typeInfoTableName = "";
 		String createTempTableSQL = "";
 		List<MetaItemField> columns =  new ArrayList<MetaItemField>(fields);
-		boolean temporary = (columns == null); // TODO comment. Whats up with this temporary table?
+		// TODO comment. Whats up with this temporary table?
+		boolean temporary = (columns == null);
 
 		if (temporary) {
 			// Retrieve the typeInfo of the old Album before creating a new temp table
