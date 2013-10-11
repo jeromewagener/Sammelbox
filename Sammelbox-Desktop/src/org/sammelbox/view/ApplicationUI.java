@@ -48,7 +48,7 @@ import org.sammelbox.controller.managers.AlbumManager;
 import org.sammelbox.controller.managers.AlbumViewManager;
 import org.sammelbox.controller.managers.AlbumViewManager.AlbumView;
 import org.sammelbox.controller.managers.DatabaseIntegrityManager;
-import org.sammelbox.controller.managers.MenuManager;
+import org.sammelbox.controller.menu.MenuManager;
 import org.sammelbox.model.GuiState;
 import org.sammelbox.model.database.QueryBuilder;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;

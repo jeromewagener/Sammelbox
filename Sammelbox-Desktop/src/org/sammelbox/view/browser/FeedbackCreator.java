@@ -188,7 +188,7 @@ public final class FeedbackCreator {
 			   "      <link rel=stylesheet href=\"" + UIConstants.STYLE_CSS + "\" />" +
 			   "      <script src=\"" + UIConstants.EFFECTS_JS + "\"></script>" +
 			   "    </head>" +
-			   "    <body bgcolor=\"#FFCC99\">" +
+			   "    <body>" +
 		       "      <h3>" + Translator.toBeTranslated("Backup in Progress") + "</h3>" +
 		       "      <div>" + Translator.toBeTranslated("This might take a moment. During this time, " + 
 		       "				Sammelbox disables itself, but will notify you as soon as the backup is finished") + 
@@ -205,7 +205,7 @@ public final class FeedbackCreator {
 			   "      <link rel=stylesheet href=\"" + UIConstants.STYLE_CSS + "\" />" +
 			   "      <script src=\"" + UIConstants.EFFECTS_JS + "\"></script>" +
 			   "    </head>" +
-			   "    <body bgcolor=\"#99FFCC\">" +
+			   "    <body>" +
 		       "      <h3>" + Translator.toBeTranslated("Backup Finished") + "</h3>" +
 		       "      <div>" + Translator.toBeTranslated("The backup has been created. " + 
 		       "				You can now continue to use Sammelbox") + 
