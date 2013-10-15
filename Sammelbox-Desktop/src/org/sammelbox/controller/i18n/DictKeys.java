@@ -23,6 +23,20 @@ public final class DictKeys {
 		// not needed
 	}
 	
+	/*  Enumeration Translations  */
+	public static final String QUERY_OPERATOR_EQUAL = "org.sammelbox.enum.QUERY_OPERATOR_EQUAL";
+	public static final String QUERY_OPERATOR_NOT_EQUAL = "org.sammelbox.enum.QUERY_OPERATOR_NOT_EQUAL";
+	public static final String QUERY_OPERATOR_LIKE = "org.sammelbox.enum.QUERY_OPERATOR_LIKE";
+	public static final String QUERY_OPERATOR_CONTAINS = "org.sammelbox.enum.QUERY_OPERATOR_CONTAINS";
+	public static final String QUERY_OPERATOR_SMALLER_OR_EQUAL = "org.sammelbox.enum.QUERY_OPERATOR_SMALLER_OR_EQUAL";
+	public static final String QUERY_OPERATOR_SMALLER_THAN = "org.sammelbox.enum.QUERY_OPERATOR_SMALLER_THAN";
+	public static final String QUERY_OPERATOR_BIGGER_THAN = "org.sammelbox.enum.QUERY_OPERATOR_BIGGER_THAN";
+	public static final String QUERY_OPERATOR_BIGGER_OR_EQUAL = "org.sammelbox.enum.QUERY_OPERATOR_BIGGER_OR_EQUAL";
+	public static final String QUERY_OPERATOR_BEFORE = "org.sammelbox.enum.QUERY_OPERATOR_BEFORE";
+	public static final String QUERY_OPERATOR_BEFORE_OR_EQUAL = "org.sammelbox.enum.QUERY_OPERATOR_BEFORE_OR_EQUAL";
+	public static final String QUERY_OPERATOR_AFTER_OR_EQUAL = "org.sammelbox.enum.QUERY_OPERATOR_AFTER_OR_EQUAL";
+	public static final String QUERY_OPERATOR_AFTER = "org.sammelbox.enum.QUERY_OPERATOR_AFTER";
+	
 	/* Special Translation Keys */
 	public static final String TO_BE_TRANSLATED = "collector.special.TO_BE_TRANSLATED";
 	

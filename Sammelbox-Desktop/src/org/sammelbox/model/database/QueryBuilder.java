@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.model.album.FieldType;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
@@ -41,17 +42,17 @@ public final class QueryBuilder {
     static {
         Map<String, String> mySearchToSQLOperators = new HashMap<String, String>();
 
-        mySearchToSQLOperators.put(Translator.toBeTranslated("equals"), QueryOperator.EQUALS.toSqlOperator());
-        mySearchToSQLOperators.put(Translator.toBeTranslated("not equals"), QueryOperator.NOT_EQUALS.toSqlOperator());
-        mySearchToSQLOperators.put(Translator.toBeTranslated("contains"), QueryOperator.LIKE.toSqlOperator());
-        mySearchToSQLOperators.put(Translator.toBeTranslated("smaller or equal"), QueryOperator.SMALLER_OR_EQUAL.toSqlOperator());
-        mySearchToSQLOperators.put(Translator.toBeTranslated("smaller"), QueryOperator.SMALLER.toSqlOperator());
-        mySearchToSQLOperators.put(Translator.toBeTranslated("bigger than"), QueryOperator.BIGGER.toSqlOperator());
-        mySearchToSQLOperators.put(Translator.toBeTranslated("bigger or equal"), QueryOperator.BIGGER_OR_EQUAL.toSqlOperator());
-        mySearchToSQLOperators.put(Translator.toBeTranslated("before"), QueryOperator.DATE_BEFORE.toSqlOperator());
-        mySearchToSQLOperators.put(Translator.toBeTranslated("before or equal"), QueryOperator.DATE_BEFORE_OR_EQUAL.toSqlOperator());
-        mySearchToSQLOperators.put(Translator.toBeTranslated("after or equal"), QueryOperator.DATE_AFTER_OR_EQUAL.toSqlOperator());
-        mySearchToSQLOperators.put(Translator.toBeTranslated("after"), QueryOperator.DATE_AFTER.toSqlOperator());
+        mySearchToSQLOperators.put(Translator.get(DictKeys.QUERY_OPERATOR_EQUAL), QueryOperator.EQUALS.toSqlOperator());
+        mySearchToSQLOperators.put(Translator.get(DictKeys.QUERY_OPERATOR_NOT_EQUAL), QueryOperator.NOT_EQUALS.toSqlOperator());
+        mySearchToSQLOperators.put(Translator.get(DictKeys.QUERY_OPERATOR_LIKE), QueryOperator.LIKE.toSqlOperator());
+        mySearchToSQLOperators.put(Translator.get(DictKeys.QUERY_OPERATOR_SMALLER_OR_EQUAL), QueryOperator.SMALLER_OR_EQUAL.toSqlOperator());
+        mySearchToSQLOperators.put(Translator.get(DictKeys.QUERY_OPERATOR_SMALLER_THAN), QueryOperator.SMALLER.toSqlOperator());
+        mySearchToSQLOperators.put(Translator.get(DictKeys.QUERY_OPERATOR_BIGGER_THAN), QueryOperator.BIGGER.toSqlOperator());
+        mySearchToSQLOperators.put(Translator.get(DictKeys.QUERY_OPERATOR_BIGGER_OR_EQUAL), QueryOperator.BIGGER_OR_EQUAL.toSqlOperator());
+        mySearchToSQLOperators.put(Translator.get(DictKeys.QUERY_OPERATOR_BEFORE), QueryOperator.DATE_BEFORE.toSqlOperator());
+        mySearchToSQLOperators.put(Translator.get(DictKeys.QUERY_OPERATOR_BEFORE_OR_EQUAL), QueryOperator.DATE_BEFORE_OR_EQUAL.toSqlOperator());
+        mySearchToSQLOperators.put(Translator.get(DictKeys.QUERY_OPERATOR_AFTER_OR_EQUAL), QueryOperator.DATE_AFTER_OR_EQUAL.toSqlOperator());
+        mySearchToSQLOperators.put(Translator.get(DictKeys.QUERY_OPERATOR_AFTER), QueryOperator.DATE_AFTER.toSqlOperator());
         
         SEARCH_TO_SQL_OPERATORS = Collections.unmodifiableMap(mySearchToSQLOperators);
     }
@@ -64,9 +65,9 @@ public final class QueryBuilder {
 	 * @return a string array containing all natural language operators suited for text queries */
 	public static String[] toTextOperatorStringArray() {
 		return new String[] { 	
-			Translator.toBeTranslated("equals"),
-			Translator.toBeTranslated("not equals"),
-			Translator.toBeTranslated("contains")
+			Translator.get(DictKeys.QUERY_OPERATOR_EQUAL),
+			Translator.get(DictKeys.QUERY_OPERATOR_NOT_EQUAL),
+			Translator.get(DictKeys.QUERY_OPERATOR_CONTAINS)
 		};
 	}
 		
@@ -74,11 +75,11 @@ public final class QueryBuilder {
 	 * @return a string array containing all natural language operators suited for number queries */
 	public static String[] toNumberOperatorStringArray() {
 		return new String[] { 	
-			Translator.toBeTranslated("equals"),
-			Translator.toBeTranslated("smaller"),
-			Translator.toBeTranslated("smaller or equal"),
-			Translator.toBeTranslated("bigger"),
-			Translator.toBeTranslated("bigger or equal")
+			Translator.get(DictKeys.QUERY_OPERATOR_EQUAL),
+			Translator.get(DictKeys.QUERY_OPERATOR_SMALLER_THAN),
+			Translator.get(DictKeys.QUERY_OPERATOR_SMALLER_OR_EQUAL),
+			Translator.get(DictKeys.QUERY_OPERATOR_BIGGER_OR_EQUAL),
+			Translator.get(DictKeys.QUERY_OPERATOR_BIGGER_THAN)
 		};
 	}
 		
@@ -86,11 +87,11 @@ public final class QueryBuilder {
 	 * @return an string array containing all operators suited for date queries */
 	public static String[] toDateOperatorStringArray() {			
 		return new String[] { 	
-			Translator.toBeTranslated("equals"),
-			Translator.toBeTranslated("before"),
-			Translator.toBeTranslated("before or equals"),
-			Translator.toBeTranslated("after or equals"),
-			Translator.toBeTranslated("after")
+			Translator.get(DictKeys.QUERY_OPERATOR_EQUAL),
+			Translator.get(DictKeys.QUERY_OPERATOR_BEFORE),
+			Translator.get(DictKeys.QUERY_OPERATOR_BEFORE_OR_EQUAL),
+			Translator.get(DictKeys.QUERY_OPERATOR_AFTER_OR_EQUAL),
+			Translator.get(DictKeys.QUERY_OPERATOR_AFTER)
 		};
 	}
 		
@@ -98,7 +99,7 @@ public final class QueryBuilder {
 	 * @return an string array containing all operators suited for yes/no queries */
 	public static String[] toYesNoOperatorStringArray() {
 		return new String[] { 	
-			Translator.toBeTranslated("equals")
+				Translator.get(DictKeys.QUERY_OPERATOR_EQUAL)
 		};
 	}
 		
