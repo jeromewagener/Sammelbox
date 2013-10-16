@@ -32,14 +32,13 @@ import org.sammelbox.model.album.OptionType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-// TODO the separation character shouldn't be hard coded
 public final class CSVExporter {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CSVExporter.class);
 	
 	private CSVExporter() {
 	}
 	
-	public static void exportAlbum(String filepath) {
+	public static void exportAlbum(String filepath, String separationCharacter) {
 		List<AlbumItem> albumItems = AlbumItemStore.getAllAlbumItems();
 		
 		StringBuilder headerBuilder = new StringBuilder();
@@ -59,7 +58,7 @@ public final class CSVExporter {
 							headerBuilder.append(albumItem.getField(i).getName());
 							
 							if (i < albumItem.getFields().size()) {
-								headerBuilder.append("$");
+								headerBuilder.append(separationCharacter);
 							}
 						}
 
@@ -72,21 +71,21 @@ public final class CSVExporter {
 						}
 						
 						if (i < albumItem.getFields().size()) {
-							dataBuilder.append("$");
+							dataBuilder.append(separationCharacter);
 						}
 					} else {
 						if (firstLine) {
 							headerBuilder.append(albumItem.getField(i).getName());
 							
 							if (i < albumItem.getFields().size()) {
-								headerBuilder.append("$");
+								headerBuilder.append(separationCharacter);
 							}
 						}
 
 						dataBuilder.append(albumItem.getField(i).getValue());
 						
 						if (i < albumItem.getFields().size()) {
-							dataBuilder.append("$");
+							dataBuilder.append(separationCharacter);
 						}
 					}
 				}

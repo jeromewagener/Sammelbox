@@ -17,6 +17,7 @@ import org.sammelbox.view.browser.BrowserFacade;
 import org.sammelbox.view.sidepanes.EmptySidepane;
 import org.sammelbox.view.sidepanes.ImportSidepane;
 import org.sammelbox.view.various.PanelType;
+import org.sammelbox.view.various.TextInputDialog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,7 +55,14 @@ public final class SammelboxMenuItemListener {
 					String filepath = saveFileDialog.open();
 					if (filepath != null) {
 						if (filepath.endsWith(".csv")) {
-							CSVExporter.exportAlbum(filepath);
+							// ask for separation character
+							TextInputDialog separationCharacterInput = new TextInputDialog(ApplicationUI.getShell());
+							String separationCharacter = separationCharacterInput.open(
+									Translator.toBeTranslated("Choose a separation character"),
+									Translator.toBeTranslated("Please choose a separation character"), "$", 
+									Translator.toBeTranslated("Export"));
+							
+							CSVExporter.exportAlbum(filepath, separationCharacter);
 						} else if (filepath.endsWith(".html")) {
 							HTMLExporter.exportAlbum(filepath);
 						}
