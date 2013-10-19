@@ -11,6 +11,7 @@ import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.controller.managers.AlbumViewManager;
 import org.sammelbox.controller.managers.DatabaseIntegrityManager;
+import org.sammelbox.model.album.AlbumItemStore;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 import org.sammelbox.view.ApplicationUI;
 import org.sammelbox.view.browser.BrowserFacade;
@@ -62,9 +63,9 @@ public final class SammelboxMenuItemListener {
 									Translator.toBeTranslated("Please choose a separation character"), "$", 
 									Translator.toBeTranslated("Export"));
 							
-							CSVExporter.exportAlbum(filepath, separationCharacter);
+							CSVExporter.exportAlbum(AlbumItemStore.getAllAlbumItems(), filepath, separationCharacter);
 						} else if (filepath.endsWith(".html")) {
-							HTMLExporter.exportAlbum(filepath);
+							HTMLExporter.exportAlbum(AlbumItemStore.getAllAlbumItems(), filepath);
 						}
 					}
 				}

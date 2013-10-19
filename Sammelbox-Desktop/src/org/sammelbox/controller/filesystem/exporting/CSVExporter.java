@@ -26,9 +26,9 @@ import java.util.List;
 import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.model.album.AlbumItem;
-import org.sammelbox.model.album.AlbumItemStore;
 import org.sammelbox.model.album.FieldType;
 import org.sammelbox.model.album.OptionType;
+import org.sammelbox.model.album.StarRating;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,9 +38,7 @@ public final class CSVExporter {
 	private CSVExporter() {
 	}
 	
-	public static void exportAlbum(String filepath, String separationCharacter) {
-		List<AlbumItem> albumItems = AlbumItemStore.getAllAlbumItems();
-		
+	public static void exportAlbum(List<AlbumItem> albumItems, String filepath, String separationCharacter) {
 		StringBuilder headerBuilder = new StringBuilder();
 		StringBuilder dataBuilder = new StringBuilder();
 		boolean firstLine = true;
@@ -56,12 +54,10 @@ public final class CSVExporter {
 					if (albumItem.getField(i).getType().equals(FieldType.OPTION)) {
 						if (firstLine) {
 							headerBuilder.append(albumItem.getField(i).getName());
-							
-							if (i < albumItem.getFields().size()) {
-								headerBuilder.append(separationCharacter);
-							}
+							addSeparationCharacterIfRequired(albumItem, headerBuilder, separationCharacter, i);
 						}
 
+						// TODO this should be in the OptionType
 						if (albumItem.getField(i).getValue() == OptionType.YES) {
 							dataBuilder.append(Translator.get(DictKeys.BROWSER_YES));
 						} else if (albumItem.getField(i).getValue() == OptionType.NO) {
@@ -70,23 +66,25 @@ public final class CSVExporter {
 							dataBuilder.append(Translator.get(DictKeys.BROWSER_UNKNOWN));
 						}
 						
-						if (i < albumItem.getFields().size()) {
-							dataBuilder.append(separationCharacter);
+						addSeparationCharacterIfRequired(albumItem, dataBuilder, separationCharacter, i);
+					} else if (albumItem.getField(i).getType().equals(FieldType.STAR_RATING)) {
+						if (firstLine) {
+							headerBuilder.append(albumItem.getField(i).getName());
+							addSeparationCharacterIfRequired(albumItem, headerBuilder, separationCharacter, i);
 						}
+						
+						dataBuilder.append(StarRating.toComboBoxArray()[
+						         ((StarRating) albumItem.getField(i).getValue()).getIntegerValue()]);
+						
+						addSeparationCharacterIfRequired(albumItem, dataBuilder, separationCharacter, i);
 					} else {
 						if (firstLine) {
 							headerBuilder.append(albumItem.getField(i).getName());
-							
-							if (i < albumItem.getFields().size()) {
-								headerBuilder.append(separationCharacter);
-							}
+							addSeparationCharacterIfRequired(albumItem, headerBuilder, separationCharacter, i);
 						}
 
 						dataBuilder.append(albumItem.getField(i).getValue());
-						
-						if (i < albumItem.getFields().size()) {
-							dataBuilder.append(separationCharacter);
-						}
+						addSeparationCharacterIfRequired(albumItem, dataBuilder, separationCharacter, i);
 					}
 				}
 			}
@@ -96,7 +94,6 @@ public final class CSVExporter {
 			}
 			
 			dataBuilder.append(System.lineSeparator());
-			
 			firstLine = false;
 		}
 
@@ -106,6 +103,12 @@ public final class CSVExporter {
 			bufferedWriter.close();
 		} catch (IOException e) {
 			LOGGER.error("An error occured while writing the export data to its destinatation (" + filepath + ")", e);
+		}
+	}
+	
+	private static void addSeparationCharacterIfRequired(AlbumItem albumItem, StringBuilder builder, String separationCharacter, int fieldPosition) {
+		if (fieldPosition < albumItem.getFields().size() - 1) {
+			builder.append(separationCharacter);
 		}
 	}
 }

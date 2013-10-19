@@ -26,7 +26,6 @@ import java.util.List;
 import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.model.album.AlbumItem;
-import org.sammelbox.model.album.AlbumItemStore;
 import org.sammelbox.model.album.FieldType;
 import org.sammelbox.model.album.OptionType;
 import org.slf4j.Logger;
@@ -38,9 +37,7 @@ public final class HTMLExporter {
 	private HTMLExporter() {
 	}
 	
-	public static void exportAlbum(String filepath) {
-		List<AlbumItem> albumItems = AlbumItemStore.getAllAlbumItems();
-
+	public static void exportAlbum(List<AlbumItem> albumItems, String filepath) {
 		StringBuilder headerBuilder = new StringBuilder();
 		StringBuilder dataBuilder = new StringBuilder();
 		boolean firstLine = true;
