@@ -28,11 +28,13 @@ import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.model.album.AlbumItem;
 import org.sammelbox.model.album.FieldType;
 import org.sammelbox.model.album.OptionType;
+import org.sammelbox.model.album.StarRating;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class HTMLExporter {
 	private static final Logger LOGGER = LoggerFactory.getLogger(HTMLExporter.class);
+	private static final String TABLE_STYLE = " style=\"border:1px solid black;\" ";
 	
 	private HTMLExporter() {
 	}
@@ -57,26 +59,30 @@ public final class HTMLExporter {
 				}
 				else {
 					if (albumItem.getField(i).getType().equals(FieldType.OPTION)) {
-						if (firstLine) {
-							headerBuilder.append("<th style=\"border:1px solid black;\">" + albumItem.getField(i).getName() + "</th>");
-						}
+						addHeaderIfFirstLine(firstLine, albumItem, headerBuilder, i);
 
 						if (albumItem.getField(i).getValue() == OptionType.YES) {
-							dataBuilder.append("<td style=\"border:1px solid black;\">" + Translator.get(DictKeys.BROWSER_YES) + "</td>");
+							dataBuilder.append("<td" + TABLE_STYLE + ">" + Translator.get(DictKeys.BROWSER_YES) + "</td>");
 						} else if (albumItem.getField(i).getValue() == OptionType.NO) {
-							dataBuilder.append("<td style=\"border:1px solid black;\">" + Translator.get(DictKeys.BROWSER_NO) + "</td>");
+							dataBuilder.append("<td" + TABLE_STYLE + ">" + Translator.get(DictKeys.BROWSER_NO) + "</td>");
 						} else {
-							dataBuilder.append("<td style=\"border:1px solid black;\">" + Translator.get(DictKeys.BROWSER_UNKNOWN) + "</td>");
+							dataBuilder.append("<td" + TABLE_STYLE + ">" + Translator.get(DictKeys.BROWSER_UNKNOWN) + "</td>");
 						}
-					} else {
-						if (firstLine) {
-							headerBuilder.append("<th style=\"border:1px solid black;\">" + albumItem.getField(i).getName() + "</th>");
-						}
+					} else if (albumItem.getField(i).getType().equals(FieldType.STAR_RATING)) {
+						addHeaderIfFirstLine(firstLine, albumItem, headerBuilder, i);
 
 						if (albumItem.getField(i).getValue() == null || albumItem.getField(i).getValue().equals("")) {
-							dataBuilder.append("<td style=\"border:1px solid black;\">" + "-" + "</td>");
+							dataBuilder.append("<td" + TABLE_STYLE + ">" + "-" + "</td>");
 						} else {
-							dataBuilder.append("<td style=\"border:1px solid black;\">" + albumItem.getField(i).getValue() + "</td>");
+							dataBuilder.append("<td " + TABLE_STYLE + ">" + StarRating.toComboBoxArray()[((StarRating) albumItem.getField(i).getValue()).getIntegerValue()] + "</td>");
+						}
+					} else {
+						addHeaderIfFirstLine(firstLine, albumItem, headerBuilder, i);
+						
+						if (albumItem.getField(i).getValue() == null || albumItem.getField(i).getValue().equals("")) {
+							dataBuilder.append("<td" + TABLE_STYLE + ">" + "-" + "</td>");
+						} else {
+							dataBuilder.append("<td" + TABLE_STYLE + ">" + albumItem.getField(i).getValue() + "</td>");
 						}
 					}
 				}
@@ -107,6 +113,12 @@ public final class HTMLExporter {
 			bufferedWriter.close();
 		} catch (IOException e) {
 			LOGGER.error("An error occured while writing the HTML to its destination", e);
+		}
+	}
+	
+	private static void addHeaderIfFirstLine(boolean firstLine, AlbumItem albumItem, StringBuilder builder, int fieldPosition) {
+		if (firstLine) {
+			builder.append("<th" + TABLE_STYLE + "\">" + albumItem.getField(fieldPosition).getName() + "</th>");
 		}
 	}
 }

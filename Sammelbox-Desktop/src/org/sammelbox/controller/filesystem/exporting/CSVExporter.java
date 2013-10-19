@@ -52,10 +52,7 @@ public final class CSVExporter {
 					// do not show ID either
 				} else {
 					if (albumItem.getField(i).getType().equals(FieldType.OPTION)) {
-						if (firstLine) {
-							headerBuilder.append(albumItem.getField(i).getName());
-							addSeparationCharacterIfRequired(albumItem, headerBuilder, separationCharacter, i);
-						}
+						addHeaderIfFirstLine(firstLine, albumItem, headerBuilder, separationCharacter, i);
 
 						// TODO this should be in the OptionType
 						if (albumItem.getField(i).getValue() == OptionType.YES) {
@@ -68,21 +65,11 @@ public final class CSVExporter {
 						
 						addSeparationCharacterIfRequired(albumItem, dataBuilder, separationCharacter, i);
 					} else if (albumItem.getField(i).getType().equals(FieldType.STAR_RATING)) {
-						if (firstLine) {
-							headerBuilder.append(albumItem.getField(i).getName());
-							addSeparationCharacterIfRequired(albumItem, headerBuilder, separationCharacter, i);
-						}
-						
-						dataBuilder.append(StarRating.toComboBoxArray()[
-						         ((StarRating) albumItem.getField(i).getValue()).getIntegerValue()]);
-						
+						addHeaderIfFirstLine(firstLine, albumItem, headerBuilder, separationCharacter, i);
+						dataBuilder.append(StarRating.toComboBoxArray()[((StarRating) albumItem.getField(i).getValue()).getIntegerValue()]);
 						addSeparationCharacterIfRequired(albumItem, dataBuilder, separationCharacter, i);
 					} else {
-						if (firstLine) {
-							headerBuilder.append(albumItem.getField(i).getName());
-							addSeparationCharacterIfRequired(albumItem, headerBuilder, separationCharacter, i);
-						}
-
+						addHeaderIfFirstLine(firstLine, albumItem, headerBuilder, separationCharacter, i);
 						dataBuilder.append(albumItem.getField(i).getValue());
 						addSeparationCharacterIfRequired(albumItem, dataBuilder, separationCharacter, i);
 					}
@@ -103,6 +90,13 @@ public final class CSVExporter {
 			bufferedWriter.close();
 		} catch (IOException e) {
 			LOGGER.error("An error occured while writing the export data to its destinatation (" + filepath + ")", e);
+		}
+	}
+	
+	private static void addHeaderIfFirstLine(boolean firstLine, AlbumItem albumItem, StringBuilder headerBuilder, String separationCharacter, int fieldPosition) {
+		if (firstLine) {
+			headerBuilder.append(albumItem.getField(fieldPosition).getName());
+			addSeparationCharacterIfRequired(albumItem, headerBuilder, separationCharacter, fieldPosition);
 		}
 	}
 	
