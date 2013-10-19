@@ -38,6 +38,7 @@ import org.sammelbox.albumviews.RunAlbumViewTests;
 import org.sammelbox.controller.filesystem.FileSystemAccessWrapper;
 import org.sammelbox.controller.filesystem.FileSystemLocations;
 import org.sammelbox.controller.managers.ConnectionManager;
+import org.sammelbox.exporting.ExportTests;
 import org.sammelbox.importing.CSVImportTests;
 import org.sammelbox.searching.AdvancedSearchTests;
 import org.sammelbox.searching.QuickSearchTests;
@@ -64,7 +65,9 @@ import org.sammelbox.sidepanes.SidepaneCreationTests;
 	AdvancedSearchTests.class,
 	QuickSearchTests.class,
 	
+	ExportTests.class,
 	CSVImportTests.class,
+	
 	SidepaneCreationTests.class
 })
 
@@ -72,7 +75,7 @@ public class TestExecuter {
 	public static final String PATH_TO_TEST_CBK = 
 			System.getProperty("user.dir") + File.separatorChar + "test" +
 					File.separatorChar + "testdata" + 
-					File.separatorChar + "test-albums-version-3.0.cbk";
+					File.separatorChar + "test-albums-version-3.1.cbk";
 	
 	public static final String PATH_TO_TEST_PICTURE_1 = 
 			System.getProperty("user.dir") + File.separatorChar + "res" + 
