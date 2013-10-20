@@ -21,7 +21,7 @@ package org.sammelbox.model.database;
 public enum QueryOperator {
 		EQUALS 					("="),
 		NOT_EQUALS 				("!="),
-		LIKE 					("like"),
+		CONTAINS     			("like"),
 		SMALLER 				("<"), 
 		SMALLER_OR_EQUAL 		("<="), 
 		BIGGER 					(">"),

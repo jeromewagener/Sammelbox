@@ -108,7 +108,7 @@ public final class QueryOperations {
 				if (field.isQuickSearchable()) {
 					if (field.getType().equals(FieldType.TEXT) || field.getType().equals(FieldType.OPTION) || 
 							field.getType().equals(FieldType.URL)) {
-						queryFields.add(QueryBuilder.getQueryComponent(field.getName(), QueryOperator.LIKE, term));
+						queryFields.add(QueryBuilder.getQueryComponent(field.getName(), QueryOperator.CONTAINS, term));
 					}
 					else if ((field.getType().equals(FieldType.INTEGER) || field.getType().equals(FieldType.STAR_RATING))
 							&& (Pattern.compile("-?[0-9]+").matcher(term).matches())) {

@@ -44,7 +44,7 @@ public final class QueryBuilder {
 
         mySearchToSQLOperators.put(Translator.get(DictKeys.QUERY_OPERATOR_EQUAL), QueryOperator.EQUALS.toSqlOperator());
         mySearchToSQLOperators.put(Translator.get(DictKeys.QUERY_OPERATOR_NOT_EQUAL), QueryOperator.NOT_EQUALS.toSqlOperator());
-        mySearchToSQLOperators.put(Translator.get(DictKeys.QUERY_OPERATOR_LIKE), QueryOperator.LIKE.toSqlOperator());
+        mySearchToSQLOperators.put(Translator.get(DictKeys.QUERY_OPERATOR_CONTAINS), QueryOperator.CONTAINS.toSqlOperator());
         mySearchToSQLOperators.put(Translator.get(DictKeys.QUERY_OPERATOR_SMALLER_OR_EQUAL), QueryOperator.SMALLER_OR_EQUAL.toSqlOperator());
         mySearchToSQLOperators.put(Translator.get(DictKeys.QUERY_OPERATOR_SMALLER_THAN), QueryOperator.SMALLER.toSqlOperator());
         mySearchToSQLOperators.put(Translator.get(DictKeys.QUERY_OPERATOR_BIGGER_THAN), QueryOperator.BIGGER.toSqlOperator());
@@ -157,7 +157,7 @@ public final class QueryBuilder {
 			if (fieldNameToFieldTypeMap.get(queryComponents.get(i).getFieldName()).equals(FieldType.OPTION) ||
 					fieldNameToFieldTypeMap.get(queryComponents.get(i).getFieldName()).equals(FieldType.URL) ||
 					fieldNameToFieldTypeMap.get(queryComponents.get(i).getFieldName()).equals(FieldType.TEXT)) {
-				if (queryComponents.get(i).getOperator() == QueryOperator.LIKE) {
+				if (queryComponents.get(i).getOperator() == QueryOperator.CONTAINS) {
 					query.append( "(" +
 							"[" + queryComponents.get(i).getFieldName() + "] " + 
 							toSQLOperator(queryComponents.get(i).getOperator()) + " " + 

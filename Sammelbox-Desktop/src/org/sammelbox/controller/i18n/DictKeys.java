@@ -26,7 +26,6 @@ public final class DictKeys {
 	/*  Enumeration Translations  */
 	public static final String QUERY_OPERATOR_EQUAL = "org.sammelbox.enum.QUERY_OPERATOR_EQUAL";
 	public static final String QUERY_OPERATOR_NOT_EQUAL = "org.sammelbox.enum.QUERY_OPERATOR_NOT_EQUAL";
-	public static final String QUERY_OPERATOR_LIKE = "org.sammelbox.enum.QUERY_OPERATOR_LIKE";
 	public static final String QUERY_OPERATOR_CONTAINS = "org.sammelbox.enum.QUERY_OPERATOR_CONTAINS";
 	public static final String QUERY_OPERATOR_SMALLER_OR_EQUAL = "org.sammelbox.enum.QUERY_OPERATOR_SMALLER_OR_EQUAL";
 	public static final String QUERY_OPERATOR_SMALLER_THAN = "org.sammelbox.enum.QUERY_OPERATOR_SMALLER_THAN";
