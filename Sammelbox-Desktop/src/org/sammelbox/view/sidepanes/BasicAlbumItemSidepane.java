@@ -25,6 +25,8 @@ import java.util.Calendar;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -43,6 +45,7 @@ import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
+import org.sammelbox.controller.GuiController;
 import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.controller.managers.WelcomePageManager;
@@ -194,6 +197,7 @@ public final class BasicAlbumItemSidepane {
 		return basicAlbumItemComposite;
 	}
 
+	// TODO extract to own class
 	/** Returns a selection listener suitable for the add and update composite.
 	 * @param composite the composite to which the listener should be attached
 	 * @param isUpdateAlbumItemComposite if true, the listener is used for the update composite, otherwise for the add composite
@@ -294,6 +298,8 @@ public final class BasicAlbumItemSidepane {
 						BrowserFacade.generateAlbumItemAddedPage(DatabaseOperations.addAlbumItem(albumItem, true));
 					}
 					
+					GuiController.getGuiState().setUnsavedAlbumItem(false);
+					
 					// Update GUI
 					ApplicationUI.changeRightCompositeTo(PanelType.EMPTY, EmptySidepane.build(ApplicationUI.getThreePanelComposite()));
 					WelcomePageManager.updateLastModifiedWithCurrentDate(ApplicationUI.getSelectedAlbum());
@@ -304,6 +310,16 @@ public final class BasicAlbumItemSidepane {
 		};
 	}
 	
+	private static ModifyListener getModifyListener() {
+		return new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent arg0) {
+				GuiController.getGuiState().setUnsavedAlbumItem(true);
+			}
+		};
+	}
+	
+	// TODO extract all these into own builders
 	private static void addTextComponent(Composite basicAlbumItemComposite, AlbumItem albumItem, String fieldName, boolean loadDataIntoFields) {
 		ComponentFactory.getSmallBoldItalicLabel(basicAlbumItemComposite, fieldName + ":");
 
@@ -327,7 +343,7 @@ public final class BasicAlbumItemSidepane {
 				}
 			}
 		});
-
+		
 		if (loadDataIntoFields) {
 			String text = albumItem.getField(fieldName).getValue();
 			if (text != null) {
@@ -337,6 +353,8 @@ public final class BasicAlbumItemSidepane {
 
 		textText.setData("FieldType", FieldType.TEXT);
 		textText.setData("FieldName", fieldName);
+		
+		textText.addModifyListener(getModifyListener());
 	}
 	
 	private static void addURLComponent(Composite basicAlbumItemComposite, AlbumItem albumItem, String fieldName, boolean loadDataIntoFields) {
@@ -357,6 +375,8 @@ public final class BasicAlbumItemSidepane {
 
 		url.setData("FieldType", FieldType.URL);
 		url.setData("FieldName", fieldName);
+		
+		url.addModifyListener(getModifyListener());
 	}
 	
 	private static void addDecimalNumberComponent(Composite basicAlbumItemComposite, AlbumItem albumItem, String fieldName, boolean loadDataIntoFields) {
@@ -395,6 +415,8 @@ public final class BasicAlbumItemSidepane {
 
 		numberText.setData("FieldType", FieldType.DECIMAL);
 		numberText.setData("FieldName", fieldName);
+		
+		numberText.addModifyListener(getModifyListener());
 	}
 	
 	private static void addIntegerNumberComponent(Composite basicAlbumItemComposite, AlbumItem albumItem, String fieldName, boolean loadDataIntoFields) {
@@ -433,6 +455,8 @@ public final class BasicAlbumItemSidepane {
 
 		integerText.setData("FieldType", FieldType.INTEGER);
 		integerText.setData("FieldName", fieldName);
+		
+		integerText.addModifyListener(getModifyListener());
 	}
 	
 	private static void addDateComponent(Composite basicAlbumItemComposite, AlbumItem albumItem, String fieldName, boolean loadDataIntoFields) {

@@ -125,12 +125,14 @@ public final class QuickControlSidepane {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (albumList.getSelectionIndex() != -1)	{			
+				if (albumList.getSelectionIndex() != -1 && GuiController.continueWithUnsavedModifications()) {
+					GuiController.getGuiState().setUnsavedAlbumItem(false);
+					
 					ApplicationUI.setSelectedAlbum(albumList.getItem(albumList.getSelectionIndex()));
-
 					ApplicationUI.changeRightCompositeTo(PanelType.EMPTY, EmptySidepane.build(ApplicationUI.getThreePanelComposite()));
-
 					WelcomePageManager.increaseClickCountForAlbumOrView(albumList.getItem(albumList.getSelectionIndex()));
+				} else {
+					// TODO (re)select original album
 				}
 			}
 		});

@@ -18,7 +18,11 @@
 
 package org.sammelbox.controller;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.MessageBox;
+import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.model.GuiState;
+import org.sammelbox.view.ApplicationUI;
 
 public final class GuiController {
 	private static GuiState guiState = new GuiState();
@@ -32,5 +36,19 @@ public final class GuiController {
 	
 	public static void setGuiState(GuiState guiState) {
 		GuiController.guiState = guiState;
+	}
+	
+	public static boolean continueWithUnsavedModifications() {
+		if (GuiController.getGuiState().hasUnsavedAlbumItem()) {
+			MessageBox dialog = new MessageBox(ApplicationUI.getShell(), SWT.ICON_QUESTION | SWT.YES| SWT.NO);
+			dialog.setText(Translator.toBeTranslated("Unsaved changes"));
+			dialog.setMessage(Translator.toBeTranslated("There are unsaved changes. Do you want to continue?"));
+
+			if (dialog.open() == SWT.NO) {
+				return false;
+			}
+		}
+		
+		return true;
 	}
 }

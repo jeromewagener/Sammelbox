@@ -1,6 +1,6 @@
 /** -----------------------------------------------------------------
  *    Sammelbox: Collection Manager - A free and open-source collection manager for Windows & Linux
- *    Copyright (C) 2011 Jérôme Wagener & Paul Bicheler
+ *    Copyright (C) 2011 Jerome Wagener & Paul Bicheler
  *
  *    This program is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ public final class EmptySidepane {
 	public static Composite build(Composite parentComposite) {
 		// Setup empty composite
 		Composite emptyComposite = new Composite(parentComposite, SWT.NONE);
-
+		
 		return emptyComposite;
 	}
 }

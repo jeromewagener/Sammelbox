@@ -304,9 +304,22 @@ public final class ApplicationUI implements Observer {
 		rightComposite.getParent().layout();
 	}
 
-	/** This method exchanges the right composite with a composite provided as parameter. Hereby, the previous composite is disposed. 
-	 * @param newRightComposite the new composite for the right element of the user interface */
 	public static void changeRightCompositeTo(PanelType panelType, Composite newRightComposite) {
+		changeRightCompositeTo(panelType, newRightComposite, -1);
+	}
+	
+	/** This method exchanges the right composite with a composite provided as parameter. Hereby, the previous composite is disposed. 
+	 * @param newRightComposite the new composite for the right element of the user interface
+	 * @param albumItemId to be used in case the right composite is used to show an album item */
+	public static void changeRightCompositeTo(PanelType panelType, Composite newRightComposite, long albumItemId) {
+		// handle the case of unsaved changes
+		if (GuiController.continueWithUnsavedModifications()) {
+			GuiController.getGuiState().setUnsavedAlbumItem(false);
+		} else {
+			newRightComposite.dispose();
+			return;
+		}
+		
 		currentRightPanelType = panelType;
 
 		GridData layoutData = new GridData(GridData.FILL_BOTH);
@@ -337,6 +350,10 @@ public final class ApplicationUI implements Observer {
 		rightComposite.moveBelow(centerComposite);
 		rightComposite.getParent().layout();
 
+		GuiController.getGuiState().setCurrentSidepaneType(panelType);
+		GuiController.getGuiState().setCurrentSidepaneComposite(newRightComposite);
+		GuiController.getGuiState().setIdOfAlbumItemInSidepane(albumItemId);
+		
 		EventObservable.addEventToQueue(SammelboxEvent.RIGHT_SIDEPANE_CHANGED);
 	}
 

@@ -35,9 +35,12 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Tracker;
+import org.sammelbox.controller.GuiController;
 import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
+import org.sammelbox.model.GuiState;
 import org.sammelbox.view.ApplicationUI;
+import org.sammelbox.view.sidepanes.BasicAlbumItemSidepane;
 import org.sammelbox.view.sidepanes.EmptySidepane;
 
 public final class ComponentFactory {
@@ -189,8 +192,22 @@ public final class ComponentFactory {
 	 * @return a composite containing the panel header
 	 */
 	public static Composite getPanelHeaderComposite(final Composite panelComposite, String headerLabelString) {
+		return getPanelHeaderComposite(panelComposite, headerLabelString, null);
+	}
+	
+	/** TODO fully comment
+	 * @param composite the composite to which the listener should be attached
+	 * @param isUpdateAlbumItemComposite if true, the listener is used for the update composite, otherwise for the add composite
+	 * @param albumItemId the albumItemId is only used in case isUpdateAlbumItemComposite is set to true */
+	public static Composite getPanelHeaderComposite(final Composite panelComposite, String headerLabelString, String saveButtonTooltip) {
 		Composite headerComposite = new Composite(panelComposite, SWT.NONE);
-		headerComposite.setLayout(new GridLayout(4, false));
+		
+		int numberOfCellsNeeded = 4;
+		if (saveButtonTooltip != null) {
+			numberOfCellsNeeded += 1;
+		}
+		headerComposite.setLayout(new GridLayout(numberOfCellsNeeded, false));
+		
 		GridData headerGridData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		
 		headerGridData.minimumHeight = 35;
@@ -227,18 +244,44 @@ public final class ComponentFactory {
 		resizeLabel.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 
 		Label headerLabel = ComponentFactory.getH2Label(headerComposite, headerLabelString);
-		headerLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true));
 		headerLabel.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 		
 		Label fillerLabel = ComponentFactory.getH1Label(headerComposite, "");
 		fillerLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
+		if (saveButtonTooltip != null) {
+			istream = cf.getClass().getClassLoader().getResourceAsStream("graphics/save.png");
+			Image saveImage = new Image(Display.getCurrent(), istream);
+			final Button saveButton = new Button(headerComposite, SWT.PUSH);
+			saveButton.setImage(saveImage);
+			saveButton.setToolTipText(Translator.toBeTranslated(saveButtonTooltip));
+			saveButton.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
+			saveButton.addMouseListener(new MouseListener() {
+				@Override
+				public void mouseUp(MouseEvent arg0) {
+					GuiState guiState = GuiController.getGuiState();
+					if (guiState.getCurrentSidepaneType().equals(PanelType.ADD_ENTRY)) {				
+						saveButton.addSelectionListener(BasicAlbumItemSidepane.getSelectionListenerForAddAndUpdateAlbumItemComposite(
+							GuiController.getGuiState().getCurrentAlbumItemSubComposite(), false, -1));
+					} else if (guiState.getCurrentSidepaneType().equals(PanelType.UPDATE_ENTRY)) {
+						saveButton.addSelectionListener(BasicAlbumItemSidepane.getSelectionListenerForAddAndUpdateAlbumItemComposite(
+								GuiController.getGuiState().getCurrentAlbumItemSubComposite(), true, guiState.getIdOfAlbumItemInSidepane()));
+					}
+				}
+				
+				@Override
+				public void mouseDown(MouseEvent arg0) {}
+				
+				@Override
+				public void mouseDoubleClick(MouseEvent arg0) {}
+			});
+		}
+		
 		istream = cf.getClass().getClassLoader().getResourceAsStream("graphics/close.png");
 		Image closeImage = new Image(Display.getCurrent(), istream);
 		Button closeButton = new Button(headerComposite, SWT.PUSH);  
 		closeButton.setImage(closeImage);
 		closeButton.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_CLOSE));
-		closeButton.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true));
 		closeButton.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 		closeButton.addMouseListener(new MouseListener() {
 			@Override

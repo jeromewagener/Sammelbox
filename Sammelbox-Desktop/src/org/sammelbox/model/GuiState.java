@@ -18,7 +18,9 @@
 
 package org.sammelbox.model;
 
+import org.eclipse.swt.widgets.Composite;
 import org.sammelbox.controller.settings.SettingsManager;
+import org.sammelbox.view.various.PanelType;
 
 public class GuiState {
 	public static final String NO_ALBUM_SELECTED = "NO_ALBUM_SELECTED"; 
@@ -28,6 +30,15 @@ public class GuiState {
 	private String selectedView = null;
 	private String quickSearchTerms = null;
 	private boolean isViewDetailed = SettingsManager.getSettings().isDetailedViewDefault();
+	
+	// TODO comment these four
+	private PanelType currentSidepaneType = PanelType.EMPTY;
+	private Composite currentSidepaneComposite = null;
+	private Composite currentAlbumItemSubComposite = null;
+	private long idOfAlbumItemInSidepane = -1;
+	
+	// TODO comment
+	private boolean unsavedAlbumItem = false;
 	
 	public GuiState() {
 	}
@@ -84,5 +95,45 @@ public class GuiState {
 
 	public void setViewDetailed(boolean isViewDetailed) {
 		this.isViewDetailed = isViewDetailed;
+	}
+
+	public PanelType getCurrentSidepaneType() {
+		return currentSidepaneType;
+	}
+
+	public void setCurrentSidepaneType(PanelType currentSidepaneType) {
+		this.currentSidepaneType = currentSidepaneType;
+	}
+
+	public Composite getCurrentSidepaneComposite() {
+		return currentSidepaneComposite;
+	}
+
+	public void setCurrentSidepaneComposite(Composite currentSidepaneComposite) {
+		this.currentSidepaneComposite = currentSidepaneComposite;
+	}
+
+	public long getIdOfAlbumItemInSidepane() {
+		return idOfAlbumItemInSidepane;
+	}
+
+	public void setIdOfAlbumItemInSidepane(long idOfAlbumItemInSidepane) {
+		this.idOfAlbumItemInSidepane = idOfAlbumItemInSidepane;
+	}
+
+	public Composite getCurrentAlbumItemSubComposite() {
+		return currentAlbumItemSubComposite;
+	}
+
+	public void setCurrentAlbumItemSubComposite(Composite currentAlbumItemSubComposite) {
+		this.currentAlbumItemSubComposite = currentAlbumItemSubComposite;
+	}
+
+	public boolean hasUnsavedAlbumItem() {
+		return unsavedAlbumItem;
+	}
+
+	public void setUnsavedAlbumItem(boolean unsavedAlbumItem) {
+		this.unsavedAlbumItem = unsavedAlbumItem;
 	}
 }

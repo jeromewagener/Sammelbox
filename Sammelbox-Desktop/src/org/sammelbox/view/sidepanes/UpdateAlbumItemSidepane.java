@@ -1,6 +1,6 @@
 /** -----------------------------------------------------------------
  *    Sammelbox: Collection Manager - A free and open-source collection manager for Windows & Linux
- *    Copyright (C) 2011 Jérôme Wagener & Paul Bicheler
+ *    Copyright (C) 2011 Jerome Wagener & Paul Bicheler
  *
  *    This program is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.sammelbox.controller.GuiController;
 import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.view.UIConstants;
@@ -40,13 +41,13 @@ public final class UpdateAlbumItemSidepane {
 	 * @param album the name of the album to which an item should be added
 	 * @param albumItemId the id of the album item whose content is loaded into the fields
 	 * @return a new "update album item" composite */
-	public static Composite build(Composite parentComposite, final String album, final long albumItemId) {
+	public static Composite build(Composite parentComposite, final String album, final long albumItemId) {		
 		Composite resizeComposite = new Composite(parentComposite, SWT.NONE);
 		resizeComposite.setLayout(new GridLayout(1, false));
 		resizeComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
 		// description (header) label
-		ComponentFactory.getPanelHeaderComposite(resizeComposite, Translator.get(DictKeys.LABEL_UPDATE_ENTRY));
+		ComponentFactory.getPanelHeaderComposite(resizeComposite, Translator.get(DictKeys.LABEL_UPDATE_ENTRY), Translator.toBeTranslated("Update current item"));
 
 		// Setup ScrolledComposite containing an normal (basic) Composite
 		ScrolledComposite scrolledComposite = new ScrolledComposite(resizeComposite,  SWT.NONE | SWT.H_SCROLL | SWT.V_SCROLL );
@@ -69,6 +70,9 @@ public final class UpdateAlbumItemSidepane {
 		// avoids having crushed buttons and text-fields..
 		scrolledComposite.setMinSize(updateAlbumItemComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 
+		GuiController.getGuiState().setCurrentAlbumItemSubComposite(updateAlbumItemComposite);
+		GuiController.getGuiState().setIdOfAlbumItemInSidepane(albumItemId);
+		
 		return resizeComposite;
 	}
 }

@@ -88,7 +88,7 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 			id = retrieveStringWithoutQuestionMarkAtEnd(id);
 
 			ApplicationUI.changeRightCompositeTo(PanelType.UPDATE_ENTRY,
-					UpdateAlbumItemSidepane.build(parentComposite, ApplicationUI.getSelectedAlbum(), Long.parseLong(id)));
+					UpdateAlbumItemSidepane.build(parentComposite, ApplicationUI.getSelectedAlbum(), Long.parseLong(id)), Long.parseLong(id));
 			BrowserFacade.setFutureJumpAnchor(BrowserFacade.getAnchorForAlbumItemId(Long.parseLong(id)));
 			
 			// Do not change the page
