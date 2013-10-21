@@ -155,7 +155,7 @@ public final class AlterAlbumSidepane {
 
 					TableItem itemAtNewPosition = new TableItem(albumFieldNamesAndTypesTable, SWT.NONE, newPosition);
 					itemAtNewPosition.setText(1, metaItemField.getName());
-					itemAtNewPosition.setText(2, metaItemField.getType().toString());
+					itemAtNewPosition.setText(2, FieldType.translateFieldType((FieldType) metaItemField.getType()));
 					itemAtNewPosition.setChecked(metaItemField.isQuickSearchable());					
 
 					try {
@@ -277,7 +277,7 @@ public final class AlterAlbumSidepane {
 
 					TableItem itemAtNewPosition = new TableItem(albumFieldNamesAndTypesTable, SWT.NONE, newPosition);
 					itemAtNewPosition.setText(1, metaItemField.getName());
-					itemAtNewPosition.setText(2, metaItemField.getType().toString());
+					itemAtNewPosition.setText(2, FieldType.translateFieldType((FieldType) metaItemField.getType()));
 					itemAtNewPosition.setChecked(metaItemField.isQuickSearchable());
 
 					try {
