@@ -48,11 +48,11 @@ public final class DetailedItemCreator {
 		return getImageAndDetailContainer(albumItem, true);
 	}
 	
-	static String getImageAndDetailContainer(AlbumItem albumItem, boolean showUpdateAndRemoveButtons) {
+	static String getImageAndDetailContainer(AlbumItem albumItem, boolean hasButtonsAndLinks) {
 		StringBuilder htmlDataColumnContent = new StringBuilder();
 		StringBuilder htmlPictureColumnContent = new StringBuilder();
 		StringBuilder albumItemTableRowHtml = new StringBuilder();
-		addImageAndDetailContainer(albumItem, htmlDataColumnContent, htmlPictureColumnContent, albumItemTableRowHtml, showUpdateAndRemoveButtons);
+		addImageAndDetailContainer(albumItem, htmlDataColumnContent, htmlPictureColumnContent, albumItemTableRowHtml, hasButtonsAndLinks);
 
 		return albumItemTableRowHtml.toString();
 	}
@@ -62,7 +62,7 @@ public final class DetailedItemCreator {
 	}
 	
 	static void addImageAndDetailContainer(AlbumItem albumItem, StringBuilder htmlDataColumnContent, StringBuilder htmlPictureColumnContent, 
-			StringBuilder albumItems, boolean showUpdateAndRemoveButtons) {
+			StringBuilder albumItems, boolean hasButtonsAndLinks) {
 		
 		// the id of the current album item
 		long id = -1;	
@@ -111,14 +111,14 @@ public final class DetailedItemCreator {
 			if (DatabaseOperations.isPictureAlbum(ApplicationUI.getSelectedAlbum()) || !pictures.isEmpty()) {
 				
 				htmlPictureColumnContent.append(			
-		               "<div class=\"mainPictureWrapper\">" + getMainPictureHtml(id, pictures) + "</div>" +
-		               "<div>" + getAlternativePicturesHtml(id, pictures) + "</div>");
+					"<div class=\"mainPictureWrapper\">" + getMainPictureHtml(id, pictures, hasButtonsAndLinks) + "</div>" +
+		            "<div>" + getAlternativePicturesHtml(id, pictures, hasButtonsAndLinks) + "</div>");
 			}
 		} catch (DatabaseWrapperOperationException ex) {
 			LOGGER.error("An issue regarding the album item picture occured", ex);
 		}
 
-		if (showUpdateAndRemoveButtons) {
+		if (hasButtonsAndLinks) {
 			htmlDataColumnContent.append(getUpdateRemoveButtonsForm(id));
 		}
 		
@@ -168,26 +168,35 @@ public final class DetailedItemCreator {
 		return "<span class=\"field\"> " + Utilities.escapeHtmlString(fieldName) + "</span><img alt=\"\" height=\"20\" src=\"" + FileSystemLocations.getZeroStarsPNG() + "\"><br>";
 	}
 	
-	private static String getAlternativePicturesHtml(long id, List<AlbumItemPicture> pictures) {
+	private static String getAlternativePicturesHtml(long id, List<AlbumItemPicture> pictures, boolean hasButtonsAndLinks) {
 		StringBuilder htmlBuilder = new StringBuilder();
 		
 		if (pictures.size() > 1) {
 			for(AlbumItemPicture picture : pictures) {
 				String escapedJavascriptFilePath = Utilities.escapeBackslashesInFilePath(picture.getThumbnailPicturePath());
-				htmlBuilder.append(
-					"<div class=\"thumbnailWrapper\">" +
-					  "<a onClick=\"showBigPicture(&quot;imageId" + id + "&quot;)\" " +
-					     "onMouseOver=\"change(&quot;imageId" + id + "&quot;, &quot;" + escapedJavascriptFilePath + "&quot;)\">" +
-				        "<img alt=\"\" onMouseOver=\"this.style.cursor=&quot;pointer&quot;\" class=\"thumbnailPicture\" src=\"" + escapedJavascriptFilePath + "\">" +
-				      "</a>" +
-				    "</div>");
+				htmlBuilder.append("<div class=\"thumbnailWrapper\">");
+				
+				htmlBuilder.append("<a ");
+				if (hasButtonsAndLinks) {
+					htmlBuilder.append(" onClick=\"showBigPicture(&quot;imageId" + id + "&quot;)\" ");
+				}
+				htmlBuilder.append(" onMouseOver=\"change(&quot;imageId" + id + "&quot;, &quot;" + escapedJavascriptFilePath + "&quot;)\">");
+								
+				htmlBuilder.append("<img alt=\"\" onMouseOver=\"this.style.cursor=&quot;pointer&quot;\" "
+				        + "class=\"thumbnailPicture\" src=\"" + escapedJavascriptFilePath + "\">");
+				      
+				if (hasButtonsAndLinks) {
+					htmlBuilder.append("</a>");
+				}
+						
+				htmlBuilder.append("</div>");
 			}
 		}
 		
 		return htmlBuilder.toString();
 	}
 
-	private static String getMainPictureHtml(long id, List<AlbumItemPicture> albumItemPictures) {
+	private static String getMainPictureHtml(long id, List<AlbumItemPicture> albumItemPictures, boolean hasButtonsAndLinks) {
 		// Initialize with placeholder
 		String mainPictureHtml = "<img id=\"imageId" + id + "\" " +
 								 " alt=\"\"" +
@@ -199,9 +208,14 @@ public final class DetailedItemCreator {
 			mainPictureHtml = "<img id=\"imageId" + id + "\" " +
 					          " alt=\"\"" +
 							  " class=\"mainPicture\"" +
-							  " src=\"" + albumItemPictures.get(0).getThumbnailPicturePath() + "\"" +
-							  " onMouseOver=\"changeCursorToHand(&quot;imageId" + id + "&quot;)\"" +
-							  " onClick=\"showBigPicture(&quot;imageId" + id + "&quot;)\">";
+							  " src=\"" + albumItemPictures.get(0).getThumbnailPicturePath() + "\"";
+			
+			if (hasButtonsAndLinks) {
+				mainPictureHtml += " onMouseOver=\"changeCursorToHand(&quot;imageId" + id + "&quot;)\""
+						         + " onClick=\"showBigPicture(&quot;imageId" + id + "&quot;)\">";
+			} else {
+				mainPictureHtml += ">";
+			}
 		}
 		
 		return mainPictureHtml;
