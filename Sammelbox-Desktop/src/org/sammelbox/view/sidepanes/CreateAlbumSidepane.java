@@ -139,7 +139,7 @@ public final class CreateAlbumSidepane {
 		// Add menu to table
 		Menu popupMenu = new Menu(albumFieldNamesAndTypesTable);
 		MenuItem moveUp = new MenuItem(popupMenu, SWT.NONE);
-		moveUp.setText(Translator.get(DictKeys.DROPDOWN_MOVE_ONE_DOWN));
+		moveUp.setText(Translator.get(DictKeys.DROPDOWN_MOVE_ONE_UP));
 		moveUp.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (albumFieldNamesAndTypesTable.getSelectionIndex() > 0) {
