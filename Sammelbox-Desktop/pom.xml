@@ -167,8 +167,8 @@
          </build>
          <activation>
             <os>
-               <family>macos</family>
-               <arch>amd64</arch>
+               <family>mac</family>
+               <arch>x86_64</arch>
             </os>
          </activation>
          <dependencies>
@@ -186,7 +186,7 @@
          </build>
          <activation>
             <os>
-               <family>macos</family>
+               <family>mac</family>
                <arch>x86</arch>
             </os>
          </activation>
