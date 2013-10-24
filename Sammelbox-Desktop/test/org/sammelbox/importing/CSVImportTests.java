@@ -29,6 +29,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.sammelbox.TestExecuter;
+import org.sammelbox.controller.filesystem.FileSystemAccessWrapper;
+import org.sammelbox.controller.filesystem.FileSystemLocations;
 import org.sammelbox.controller.filesystem.importing.CSVImporter;
 import org.sammelbox.controller.filesystem.importing.ImportException;
 import org.sammelbox.controller.managers.ConnectionManager;
@@ -46,6 +48,12 @@ public class CSVImportTests {
 	public static final String TEST_CSV_2 =	CSV_TEST_FOLDER + File.separatorChar + "myCollection2.csv";
 	public static final String TEST_CSV_3 =	CSV_TEST_FOLDER + File.separatorChar + "myCollection3.csv";
 	public static final String TEST_CSV_4_FAULTY = CSV_TEST_FOLDER + File.separatorChar + "myCollection4Faulty.csv";
+	
+	public static final String PICTURE_A = CSV_TEST_FOLDER + File.separatorChar + "pictureA.png";
+	public static final String PICTURE_B = CSV_TEST_FOLDER + File.separatorChar + "pictureB.png";
+	public static final String PICTURE_C = CSV_TEST_FOLDER + File.separatorChar + "pictureC.png";
+	public static final String PICTURE_D = CSV_TEST_FOLDER + File.separatorChar + "pictureD.png";
+	public static final String PICTURE_E = CSV_TEST_FOLDER + File.separatorChar + "pictureE.png";
 	
 	private static final String IMPORT_ALBUM_NAME = "Imported Albums";
 	
@@ -69,15 +77,35 @@ public class CSVImportTests {
 		ConnectionManager.closeConnection();
 	}
 
+	private void replaceImagePlaceholdersAndWriteToOutputFilePath(String originalCsvWithPlacholdersPath, String outputFilePath) {
+		File csvFileWithAbsolutImagePathPlaceholders = new File(outputFilePath);
+		if (csvFileWithAbsolutImagePathPlaceholders.exists()) {
+			csvFileWithAbsolutImagePathPlaceholders.delete();
+		}
+		
+		String csvWithPicturePlaceholders = FileSystemAccessWrapper.readFileAsString(originalCsvWithPlacholdersPath);
+		String csvWithoutPicturePlaceholders = csvWithPicturePlaceholders
+				                                      .replace("$PICTURE_A", PICTURE_A)
+														.replace("$PICTURE_B", PICTURE_B)
+														 .replace("$PICTURE_C", PICTURE_C)
+														  .replace("$PICTURE_D", PICTURE_D)
+														   .replace("$PICTURE_E", PICTURE_E);
+		
+		FileSystemAccessWrapper.writeToFile(csvWithoutPicturePlaceholders, outputFilePath);
+	}
+	
 	@Test
 	public void testCSVImport() {		
 		try {
-			CSVImporter.importCSV(IMPORT_ALBUM_NAME, TEST_CSV_1, ";", "IMG", "!", true);
+			String tmpCSVFilePath = FileSystemLocations.TEMP_DIR + File.separatorChar + "csvFileWithAbsolutImagePathPlaceholders.csv";
+			replaceImagePlaceholdersAndWriteToOutputFilePath(TEST_CSV_1, tmpCSVFilePath);
+			
+			CSVImporter.importCSV(IMPORT_ALBUM_NAME, tmpCSVFilePath, ";", "IMG", "!", true);
 			
 			assertTrue("After the simulation, the album table should not have been created", 
 					!TestQueries.isDatabaseTablePresent(DatabaseStringUtilities.generateTableName(IMPORT_ALBUM_NAME)));
 			
-			CSVImporter.importCSV(IMPORT_ALBUM_NAME, TEST_CSV_1, ";", "IMG", "!", false);
+			CSVImporter.importCSV(IMPORT_ALBUM_NAME, tmpCSVFilePath, ";", "IMG", "!", false);
 			
 			assertTrue("The table should now be present", 
 					TestQueries.isDatabaseTablePresent(DatabaseStringUtilities.generateTableName(IMPORT_ALBUM_NAME)));
@@ -94,8 +122,11 @@ public class CSVImportTests {
 	@Test
 	public void testCSVImport2() {		
 		try {
-			CSVImporter.importCSV(IMPORT_ALBUM_NAME, TEST_CSV_2, ":", "pics", "#", true);
-			CSVImporter.importCSV(IMPORT_ALBUM_NAME, TEST_CSV_2, ":", "pics", "#", false);
+			String tmpCSVFilePath = FileSystemLocations.TEMP_DIR + File.separatorChar + "csvFileWithAbsolutImagePathPlaceholders.csv";
+			replaceImagePlaceholdersAndWriteToOutputFilePath(TEST_CSV_2, tmpCSVFilePath);
+			
+			CSVImporter.importCSV(IMPORT_ALBUM_NAME, tmpCSVFilePath, ":", "pics", "#", true);
+			CSVImporter.importCSV(IMPORT_ALBUM_NAME, tmpCSVFilePath, ":", "pics", "#", false);
 			
 			assertTrue("There should be four items after the import", 
 					TestQueries.getNumberOfRecordsInTable(DatabaseStringUtilities.generateTableName(IMPORT_ALBUM_NAME)) == 4);

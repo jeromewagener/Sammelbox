@@ -1,5 +1,5 @@
 Title~TEXT;Author~TEXT;Price in €~DECIMAL;Year~INTEGER;Second Hand~OPTION;Purchase Date~DATE;Rating~STAR_RATING;Website~URL;IMG
-Design Patterns;;15.85;1994;NO;16.05.2008;FIVE_STARS;http://en.wikipedia.org/wiki/Design_Patterns;/home/luxem/Sammelbox/Sammelbox-Desktop/test/testdata/import-test-data/pictureA.png
+Design Patterns;;15.85;1994;NO;16.05.2008;FIVE_STARS;http://en.wikipedia.org/wiki/Design_Patterns;$PICTURE_A
 Artificial Intelligence;Russel & Norvig;;2009;YES;08.05.2011;THREE_STARS;http://en.wikipedia.org/wiki/Artificial_Intelligence:_A_Modern_Approach;
-Clean Code;Robert C. Martin;;;NO;;FOUR_STARS;;/home/luxem/Sammelbox/Sammelbox-Desktop/test/testdata/import-test-data/pictureC.png!/home/luxem/Sammelbox/Sammelbox-Desktop/test/testdata/import-test-data/pictureB.png
-Ruby Cookbook;Carlson & Richardson;55;2009;NO; 30.12.2010;THREE_STARS;;/home/luxem/Sammelbox/Sammelbox-Desktop/test/testdata/import-test-data/pictureD.png
+Clean Code;Robert C. Martin;;;NO;;FOUR_STARS;;$PICTURE_C!$PICTURE_B
+Ruby Cookbook;Carlson & Richardson;55;2009;NO; 30.12.2010;THREE_STARS;;$PICTURE_D
