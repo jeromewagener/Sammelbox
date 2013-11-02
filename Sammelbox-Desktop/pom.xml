@@ -101,6 +101,9 @@
                <version>4.3</version>
             </dependency>
          </dependencies>
+         <properties>
+            <sqliteLibName>libsqlitejdbc.so</sqliteLibName>
+         </properties>
       </profile>
       <profile>
          <id>linux32</id> <!-- SWT Linux 32 -->
@@ -121,6 +124,9 @@
                <version>4.3</version>
             </dependency>
          </dependencies>
+         <properties>
+            <sqliteLibName>libsqlitejdbc.so</sqliteLibName>
+         </properties>
       </profile>
       <profile>
          <id>win64</id> <!-- SWT Windows 64 -->
@@ -140,6 +146,9 @@
                <version>4.3</version>
             </dependency>
          </dependencies>
+         <properties>
+            <sqliteLibName>sqlitejdbc.dll</sqliteLibName>
+         </properties>
       </profile>
       <profile>
          <id>win32</id> <!-- SWT Windows 32 -->
@@ -159,6 +168,9 @@
                <version>4.3</version>
             </dependency>
          </dependencies>
+         <properties>
+            <sqliteLibName>sqlitejdbc.dll</sqliteLibName>
+         </properties>
       </profile>
       <profile>
          <id>macos64</id> <!-- SWT MacOS 64 -->
@@ -178,6 +190,10 @@
                <version>4.3</version>
             </dependency>
          </dependencies>
+         <properties>
+            <jvmOpts>-XstartOnFirstThread</jvmOpts>
+            <sqliteLibName>libsqlitejdbc.jnilib</sqliteLibName>
+         </properties>
       </profile>
       <profile>
          <id>macos32</id> <!-- SWT MacOS 32 -->
@@ -197,6 +213,10 @@
                <version>4.3</version>
             </dependency>
          </dependencies>
+         <properties>
+            <jvmOpts>-XstartOnFirstThread</jvmOpts>
+            <sqliteLibName>libsqlitejdbc.jnilib</sqliteLibName>
+         </properties>
       </profile>
    </profiles>
 
@@ -253,7 +273,9 @@
             <configuration>
                <systemPropertyVariables>
                   <log4j.configuration>log4j2.xml</log4j.configuration>
+                  <org.sqlite.lib.name>${sqliteLibName}</org.sqlite.lib.name>
                </systemPropertyVariables>
+               <argLine>${jvmOpts}</argLine>
             </configuration>
          </plugin>
       </plugins>
