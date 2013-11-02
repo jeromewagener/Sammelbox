@@ -195,10 +195,14 @@ public final class ComponentFactory {
 		return getPanelHeaderComposite(panelComposite, headerLabelString, null);
 	}
 	
-	/** TODO fully comment
-	 * @param composite the composite to which the listener should be attached
-	 * @param isUpdateAlbumItemComposite if true, the listener is used for the update composite, otherwise for the add composite
-	 * @param albumItemId the albumItemId is only used in case isUpdateAlbumItemComposite is set to true */
+	/**
+	 * Returns a panel header which is normally used for the right panel of the three-panel-solution 
+	 * which also provides a save button in the upper right corner
+	 * @param panelComposite the panel (right panel) to which the header should be added
+	 * @param headerLabelString the string to be shown within the header
+	 * @param saveButtonTooltip the tool-tip shown when hovering over the save button
+	 * @return a composite containing the panel header
+	 */
 	public static Composite getPanelHeaderComposite(final Composite panelComposite, String headerLabelString, String saveButtonTooltip) {
 		Composite headerComposite = new Composite(panelComposite, SWT.NONE);
 		

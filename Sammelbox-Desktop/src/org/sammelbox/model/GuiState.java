@@ -23,21 +23,29 @@ import org.sammelbox.controller.settings.SettingsManager;
 import org.sammelbox.view.various.PanelType;
 
 public class GuiState {
+	/** Default value if no album is selected */
 	public static final String NO_ALBUM_SELECTED = "NO_ALBUM_SELECTED"; 
+	/** Default value if no saved search is selected */
 	public static final String NO_VIEW_SELECTED = "NO_VIEW_SELECTED"; 
 	
+	/** The currently selected album */
 	private String selectedAlbum = null;
+	/** The currently selected saved search */
 	private String selectedView = null;
+	/** The quick search terms string that is currently displayed */
 	private String quickSearchTerms = null;
+	/** True if detailed view is selected, false if gallery view is selected */
 	private boolean isViewDetailed = SettingsManager.getSettings().isDetailedViewDefault();
 	
-	// TODO comment these four
-	private PanelType currentSidepaneType = PanelType.EMPTY;
-	private Composite currentSidepaneComposite = null;
-	private Composite currentAlbumItemSubComposite = null;
+	/** The panel type of the right sidepane */
+	private PanelType currentRightSidepaneType = PanelType.EMPTY;
+	/** A reference to the composite of the current right sidepane */	
+	private Composite currentRightSidepaneComposite = null;
+	/** A reference to the sub-composite (BasicAlbumItemSidePane) of the current right sidepane */
+	private Composite currentRightAlbumItemSubComposite = null;
+	/** The id of the album item currently displayed via the right sidepane */
 	private long idOfAlbumItemInSidepane = -1;
-	
-	// TODO comment
+	/** True if the sidepane contains unsaved modifications, false otherwise */
 	private boolean unsavedAlbumItem = false;
 	
 	public GuiState() {
@@ -98,19 +106,19 @@ public class GuiState {
 	}
 
 	public PanelType getCurrentSidepaneType() {
-		return currentSidepaneType;
+		return currentRightSidepaneType;
 	}
 
 	public void setCurrentSidepaneType(PanelType currentSidepaneType) {
-		this.currentSidepaneType = currentSidepaneType;
+		this.currentRightSidepaneType = currentSidepaneType;
 	}
 
 	public Composite getCurrentSidepaneComposite() {
-		return currentSidepaneComposite;
+		return currentRightSidepaneComposite;
 	}
 
 	public void setCurrentSidepaneComposite(Composite currentSidepaneComposite) {
-		this.currentSidepaneComposite = currentSidepaneComposite;
+		this.currentRightSidepaneComposite = currentSidepaneComposite;
 	}
 
 	public long getIdOfAlbumItemInSidepane() {
@@ -122,11 +130,11 @@ public class GuiState {
 	}
 
 	public Composite getCurrentAlbumItemSubComposite() {
-		return currentAlbumItemSubComposite;
+		return currentRightAlbumItemSubComposite;
 	}
 
 	public void setCurrentAlbumItemSubComposite(Composite currentAlbumItemSubComposite) {
-		this.currentAlbumItemSubComposite = currentAlbumItemSubComposite;
+		this.currentRightAlbumItemSubComposite = currentAlbumItemSubComposite;
 	}
 
 	public boolean hasUnsavedAlbumItem() {
