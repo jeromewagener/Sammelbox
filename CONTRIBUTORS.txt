@@ -1,2 +1,8 @@
+// ---------------------------------------------------------
 // Originally developed by Jérôme Wagener & Paul Bicheler
-// No one has contributed so far
+// The following people have made major contributions in the past. The list is in chronological order:
+// ---------------------------------------------------------
+
+>> Robert & Gerard Wagener (Testing)
+>> Mike de Dood (Testing)
+>> Patrick Gomez (Bugfix)
