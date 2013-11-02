@@ -47,7 +47,8 @@ public final class UpdateAlbumItemSidepane {
 		resizeComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
 		// description (header) label
-		ComponentFactory.getPanelHeaderComposite(resizeComposite, Translator.get(DictKeys.LABEL_UPDATE_ENTRY), Translator.toBeTranslated("Update current item"));
+		ComponentFactory.getPanelHeaderComposite(
+				resizeComposite, Translator.get(DictKeys.LABEL_UPDATE_ENTRY), Translator.get(DictKeys.BUTTON_TOOLTIP_UPDATE_ITEM));
 
 		// Setup ScrolledComposite containing an normal (basic) Composite
 		ScrolledComposite scrolledComposite = new ScrolledComposite(resizeComposite,  SWT.NONE | SWT.H_SCROLL | SWT.V_SCROLL );

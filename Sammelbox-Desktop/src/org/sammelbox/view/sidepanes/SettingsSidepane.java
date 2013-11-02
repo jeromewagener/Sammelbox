@@ -78,18 +78,18 @@ public final class SettingsSidepane {
 		languageCombo.setText(Translator.getUsedLanguage().toString());
 		
 		Label defaultViewSelection = new Label(innerComposite, SWT.NONE);
-		defaultViewSelection.setText(Translator.toBeTranslated("Default View"));
+		defaultViewSelection.setText(Translator.get(DictKeys.LABEL_DEFAULT_VIEW));
 		
 		final Combo viewSelectionCombo = new Combo(innerComposite, SWT.READ_ONLY);
-		viewSelectionCombo.setItems(new String[] { Translator.toBeTranslated("Detailed View"), Translator.toBeTranslated("Gallery View")});
+		viewSelectionCombo.setItems(new String[] { Translator.get(DictKeys.LABEL_DETAILS_VIEW), Translator.get(DictKeys.LABEL_GALLERY_VIEW)});
 		if (SettingsManager.getSettings().isDetailedViewDefault()) {
-			viewSelectionCombo.setText(Translator.toBeTranslated("Detailed View"));
+			viewSelectionCombo.setText(Translator.get(DictKeys.LABEL_DETAILS_VIEW));
 		} else {
-			viewSelectionCombo.setText(Translator.toBeTranslated("Gallery View"));
+			viewSelectionCombo.setText(Translator.get(DictKeys.LABEL_GALLERY_VIEW));
 		}
 		
 		Label dateFormatSelection = new Label(innerComposite, SWT.NONE);
-		dateFormatSelection.setText(Translator.toBeTranslated("Date Format"));
+		dateFormatSelection.setText(Translator.get(DictKeys.LABEL_DATE_FORMAT));
 		
 		final Combo dateFormatSelectionCombo = new Combo(innerComposite, SWT.READ_ONLY);
 		dateFormatSelectionCombo.setItems(new String[] { EUROPEAN_DOT, EUROPEAN_SLASH, AMERICAN_DOT, AMERICAN_SLASH});

@@ -43,7 +43,7 @@ public final class ImportSidepane {
 	    spanGridData.horizontalAlignment = GridData.FILL;
 		
 		// label header
-		ComponentFactory.getPanelHeaderComposite(importComposite, Translator.toBeTranslated("CSV Import"));
+		ComponentFactory.getPanelHeaderComposite(importComposite, Translator.get(DictKeys.LABEL_CSV_IMPORT));
 		
 		// setup two column inner composite
 		Composite innerComposite = new Composite(importComposite, SWT.NONE);
@@ -52,18 +52,18 @@ public final class ImportSidepane {
 		
 		// album name 
 		final Button selectCSVButton = new Button(innerComposite, SWT.NONE);
-		selectCSVButton.setText(Translator.toBeTranslated("Select CSV File"));
+		selectCSVButton.setText(Translator.get(DictKeys.BUTTON_SELECT_CSV_FILE));
 		
 		// album name label
 		final Label csvFileNameLabel = new Label(innerComposite, SWT.NONE);
-		csvFileNameLabel.setText(Translator.toBeTranslated("..."));
+		csvFileNameLabel.setText("...");
 		csvFileNameLabel.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		selectCSVButton.addSelectionListener(new SelectionAdapter() {
 			@Override()
 			public void widgetSelected(SelectionEvent event) {
 				FileDialog openFileDialog = new FileDialog(ApplicationUI.getShell(), SWT.OPEN);
-				openFileDialog.setText(Translator.toBeTranslated("Select Import CSV File"));
+				openFileDialog.setText(Translator.get(DictKeys.DIALOG_TITLE_SELECT_CSV_FILE));
 				openFileDialog.setFilterPath(System.getProperty("user.home"));
 				String[] filterExt = { "*.csv" };
 				openFileDialog.setFilterExtensions(filterExt);
@@ -81,7 +81,7 @@ public final class ImportSidepane {
 		// album name text-box 
 		final Text albumNameText = new Text(innerComposite, SWT.BORDER);
 		albumNameText.setLayoutData(new GridData(GridData.FILL_BOTH));
-		albumNameText.setText("Imported Album");
+		albumNameText.setText(Translator.toBeTranslated("Imported Album"));
 		
 		// separator char label
 		Label separatorCharLabel = new Label(innerComposite, SWT.NONE);

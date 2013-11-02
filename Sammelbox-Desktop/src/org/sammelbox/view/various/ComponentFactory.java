@@ -258,7 +258,7 @@ public final class ComponentFactory {
 			Image saveImage = new Image(Display.getCurrent(), istream);
 			final Button saveButton = new Button(headerComposite, SWT.PUSH);
 			saveButton.setImage(saveImage);
-			saveButton.setToolTipText(Translator.toBeTranslated(saveButtonTooltip));
+			saveButton.setToolTipText(saveButtonTooltip);
 			saveButton.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 			saveButton.addMouseListener(new MouseListener() {
 				@Override

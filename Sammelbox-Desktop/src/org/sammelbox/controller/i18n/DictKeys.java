@@ -115,6 +115,7 @@ public final class DictKeys {
 	public static final String DIALOG_CONTENT_RESTART_NEEDED_FOR_SETTINGS = "collector.dialog.content.DIALOG_TITLE_RESTART_NEEDED_FOR_SETTINGS";
 	public static final String DIALOG_TITLE_SAMMELBOX_CANT_BE_LAUNCHED = "collector.dialog.title.SAMMELBOX_CANT_BE_LAUNCHED";
 	public static final String DIALOG_CONTENT_SAMMELBOX_CANT_BE_LAUNCHED = "collector.dialog.content.SAMMELBOX_CANT_BE_LAUNCHED";
+	public static final String DIALOG_TITLE_SELECT_CSV_FILE = "org.sammelbox.dialog.title.SELECT_CSV_FILE";
 	
 	/*   Open & Save Dialogs   */
 	public static final String DIALOG_BACKUP_TO_FILE = "collector.savedialog.title.BACKUP_TO_FILE";
@@ -158,6 +159,9 @@ public final class DictKeys {
 	public static final String BUTTON_SORT_DESCENDING = "collector.button.caption.BUTTON_SORT_DESCENDING";
 	public static final String BUTTON_SAVE_SETTINGS = "collector.button.caption.BUTTON_SAVE_SETTINGS";
 	public static final String BUTTON_TOOLTIP_CLOSE = "collector.button.tooltip.CLOSE";
+	public static final String BUTTON_TOOLTIP_UPDATE_ITEM = "org.sammelbox.button.tooltip.UPDATE_ITEM";
+	public static final String BUTTON_TOOLTIP_ADD_ITEM = "org.sammelbox.button.tooltip.ADD_ITEM";
+	public static final String BUTTON_SELECT_CSV_FILE = "org.sammelbox.button.SELECT_CSV_FILE";
 	
 	/*   Labels   */
 	public static final String LABEL_ADD_ENTRY = "collector.label.caption.ADD_ENTRY";
@@ -189,6 +193,11 @@ public final class DictKeys {
 	public static final String LABEL_NEW_ALBUM_NAME = "collector.label.caption.NEW_ALBUM_NAME";
 	public static final String LABEL_AUTOSAVE_DATABASE = "collector.label.caption.AUTOSAVE_DATABASE";
 	public static final String LABEL_LOADING = "collector.label.caption.LOADING";
+	public static final String LABEL_CSV_IMPORT = "org.sammelbox.label.caption.CSV_IMPORT";
+	public static final String LABEL_DEFAULT_VIEW = "org.sammelbox.label.caption.DEFAULT_VIEW";
+	public static final String LABEL_DETAILS_VIEW = "org.sammelbox.label.caption.DETAILS_VIEW";
+	public static final String LABEL_GALLERY_VIEW = "org.sammelbox.label.caption.GALLERY_VIEW";
+	public static final String LABEL_DATE_FORMAT = "org.sammelbox.label.caption.DATE_FORMAT";
 	
 	/*   Textbox   */
 	public static final String TEXTBOX_MY_NEW_ALBUM = "collector.textbox.content.MY_NEW_ALBUM";
