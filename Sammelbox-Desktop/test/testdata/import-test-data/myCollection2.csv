@@ -1,5 +1,5 @@
-pics:Title~TEXT
-$PICTURE_A:Design Patterns
-:Artificial Intelligence
-$PICTURE_C#$PICTURE_B:Clean Code
-$PICTURE_D:Ruby Cookbook
+pics#Title~TEXT
+$PICTURE_A#Design Patterns
+#Artificial Intelligence
+$PICTURE_C%$PICTURE_B#Clean Code
+$PICTURE_D#Ruby Cookbook

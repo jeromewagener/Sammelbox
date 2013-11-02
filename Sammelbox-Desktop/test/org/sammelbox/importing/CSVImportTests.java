@@ -125,8 +125,8 @@ public class CSVImportTests {
 			String tmpCSVFilePath = FileSystemLocations.TEMP_DIR + File.separatorChar + "csvFileWithAbsolutImagePathPlaceholders.csv";
 			replaceImagePlaceholdersAndWriteToOutputFilePath(TEST_CSV_2, tmpCSVFilePath);
 			
-			CSVImporter.importCSV(IMPORT_ALBUM_NAME, tmpCSVFilePath, ":", "pics", "#", true);
-			CSVImporter.importCSV(IMPORT_ALBUM_NAME, tmpCSVFilePath, ":", "pics", "#", false);
+			CSVImporter.importCSV(IMPORT_ALBUM_NAME, tmpCSVFilePath, "#", "pics", "%", true);
+			CSVImporter.importCSV(IMPORT_ALBUM_NAME, tmpCSVFilePath, "#", "pics", "%", false);
 			
 			assertTrue("There should be four items after the import", 
 					TestQueries.getNumberOfRecordsInTable(DatabaseStringUtilities.generateTableName(IMPORT_ALBUM_NAME)) == 4);
