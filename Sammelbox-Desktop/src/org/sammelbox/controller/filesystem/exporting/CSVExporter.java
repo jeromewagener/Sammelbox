@@ -33,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class CSVExporter {
+	public static final String DEFAULT_SEPARATION_CHARACTER = ";";
 	private static final Logger LOGGER = LoggerFactory.getLogger(CSVExporter.class);
 	
 	private CSVExporter() {

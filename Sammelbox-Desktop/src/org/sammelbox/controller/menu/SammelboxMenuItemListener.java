@@ -60,8 +60,13 @@ public final class SammelboxMenuItemListener {
 							TextInputDialog separationCharacterInput = new TextInputDialog(ApplicationUI.getShell());
 							String separationCharacter = separationCharacterInput.open(
 									Translator.toBeTranslated("Choose a separation character"),
-									Translator.toBeTranslated("Please choose a separation character"), "$", 
+									Translator.toBeTranslated("Please choose a separation character"), 
+									CSVExporter.DEFAULT_SEPARATION_CHARACTER, 
 									Translator.toBeTranslated("Export"));
+							
+							if (separationCharacter == null) {
+								separationCharacter = CSVExporter.DEFAULT_SEPARATION_CHARACTER;
+							}
 							
 							CSVExporter.exportAlbum(AlbumItemStore.getAllAlbumItems(), filepath, separationCharacter);
 						} else if (filepath.endsWith(".html")) {
