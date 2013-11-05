@@ -148,6 +148,9 @@ public final class MenuManager {
 		dumpHTML.setText(Translator.toBeTranslated("Dump HTML"));
 		dumpHTML.addSelectionListener(HelpMenuItemListener.getDumpHTMLListener());
 
+		MenuItem showBrowserInfo = new MenuItem(debugSubMenu, SWT.NONE);
+		showBrowserInfo.setText(Translator.toBeTranslated("Show Browser Info"));
+		showBrowserInfo.addSelectionListener(HelpMenuItemListener.getShowBrowserInfoListener());
 		
 		new MenuItem(helpMenu, SWT.SEPARATOR);
 		

@@ -3,6 +3,7 @@ package org.sammelbox.controller.menu;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.FileDialog;
 import org.sammelbox.controller.filesystem.FileSystemAccessWrapper;
 import org.sammelbox.controller.i18n.Translator;
@@ -56,6 +57,18 @@ public final class HelpMenuItemListener {
 				ApplicationUI.refreshAlbumList();
 				BrowserFacade.loadHtmlFromInputStream(
 						ApplicationUI.getShell().getClass().getClassLoader().getResourceAsStream("htmlfiles/about.html"));
+				ApplicationUI.changeRightCompositeTo(PanelType.HELP, EmptySidepane.build(ApplicationUI.getThreePanelComposite()));
+			}
+		};
+	}
+
+	public static SelectionListener getShowBrowserInfoListener() {
+		return new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				ApplicationUI.refreshAlbumList();
+				BrowserFacade.loadHtmlFromInputStream(
+						ApplicationUI.getShell().getClass().getClassLoader().getResourceAsStream("htmlfiles/browserinfo.html"));
 				ApplicationUI.changeRightCompositeTo(PanelType.HELP, EmptySidepane.build(ApplicationUI.getThreePanelComposite()));
 			}
 		};
