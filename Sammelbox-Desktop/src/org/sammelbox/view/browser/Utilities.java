@@ -212,6 +212,10 @@ public final class Utilities {
 		Utilities.lastPageAsHtml = lastShownContentAsHtml;
 	}
 	
+	public static String getLastPageAsHtml() {
+		return lastPageAsHtml;
+	}
+	
 	/**
 	 * Escapes backslashes in a file path to make it ready to use as a string parameter for a javascript method.
 	 * @param filePath A file path that contains backslashes as separators which is an escape sequence in javascript and

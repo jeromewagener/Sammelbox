@@ -8,6 +8,7 @@ import org.sammelbox.controller.filesystem.FileSystemAccessWrapper;
 import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.view.ApplicationUI;
 import org.sammelbox.view.browser.BrowserFacade;
+import org.sammelbox.view.browser.Utilities;
 import org.sammelbox.view.sidepanes.EmptySidepane;
 import org.sammelbox.view.various.PanelType;
 
@@ -28,7 +29,7 @@ public final class HelpMenuItemListener {
 				
 				String filepath = saveFileDialog.open();
 				if (filepath != null) {
-					FileSystemAccessWrapper.writeToFile(ApplicationUI.getAlbumItemBrowser().getText(), filepath);
+					FileSystemAccessWrapper.writeToFile(Utilities.getLastPageAsHtml(), filepath);
 				}
 			}
 		};
