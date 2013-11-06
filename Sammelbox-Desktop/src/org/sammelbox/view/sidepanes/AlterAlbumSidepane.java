@@ -402,15 +402,23 @@ public final class AlterAlbumSidepane {
 				} 
 
 				if (event.detail == SWT.CHECK) {
+					boolean isQuickSearchable = albumFieldNamesAndTypesTable.getItem(index).getChecked();
+					
 					MetaItemField metaItemField = new MetaItemField(
 							albumFieldNamesAndTypesTable.getItem(index).getText(1),
 							FieldType.valueOfTranslatedFieldType(albumFieldNamesAndTypesTable.getItem(index).getText(2)),
-							albumFieldNamesAndTypesTable.getItem(index).getChecked());
+							isQuickSearchable);
 
 					String albumName = albumNameText.getData().toString();
 					try {
 						DatabaseOperations.updateQuickSearchable(albumName, metaItemField);
-						BrowserFacade.addModificationToAlterationList(Translator.get(DictKeys.BROWSER_ALBUMFIELD_NOW_QUICKSEARCHABLE, metaItemField.getName()));
+						if (isQuickSearchable) {
+							BrowserFacade.addModificationToAlterationList(Translator.get(
+									DictKeys.BROWSER_ALBUMFIELD_NOW_QUICKSEARCHABLE, metaItemField.getName()));
+						} else {
+							BrowserFacade.addModificationToAlterationList(Translator.get(
+									DictKeys.BROWSER_ALBUMFIELD_NO_LONGER_QUICKSEARCHABLE, metaItemField.getName()));
+						}
 						AlterAlbumSidepane.updateAlterAlbumPage(yesButtonForIncludingImages, albumFieldNamesAndTypesTable);
 					} catch (DatabaseWrapperOperationException ex) {
 						LOGGER.error("A database error occured while trying to make the '" + metaItemField + "' " +

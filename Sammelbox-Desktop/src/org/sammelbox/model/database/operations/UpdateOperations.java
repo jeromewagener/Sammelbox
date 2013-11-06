@@ -213,15 +213,16 @@ public final class UpdateOperations {
 			
 			if (metaItemField.isQuickSearchable() && !quickSearchableColumnNames.contains(metaItemField.getName())) {
 				// Enable for quicksearch feature
-				quickSearchableColumnNames.add(metaItemField.getName());
-	
-				DeleteOperations.dropIndex(albumName);
- 				CreateOperations.createIndex(albumName, quickSearchableColumnNames);			
+				quickSearchableColumnNames.add(metaItemField.getName());			
 			} else if (!metaItemField.isQuickSearchable()){	
 				// Disable for quicksearch feature
 				quickSearchableColumnNames.remove(metaItemField.getName());
-				CreateOperations.createIndex(albumName, quickSearchableColumnNames);
-			}				
+			}
+			
+			// update index for album
+			DeleteOperations.dropIndex(albumName);
+			CreateOperations.createIndex(albumName, quickSearchableColumnNames);
+			
 			updateSchemaVersion(albumName);
 			DatabaseIntegrityManager.updateLastDatabaseChangeTimeStamp();
 		} catch (DatabaseWrapperOperationException dwoe) {

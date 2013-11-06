@@ -31,6 +31,8 @@ import org.junit.Test;
 import org.sammelbox.TestExecuter;
 import org.sammelbox.controller.managers.DatabaseIntegrityManager;
 import org.sammelbox.model.album.AlbumItemResultSet;
+import org.sammelbox.model.album.MetaItemField;
+import org.sammelbox.model.database.DatabaseStringUtilities;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 import org.sammelbox.model.database.operations.DatabaseOperations;
 
@@ -133,6 +135,33 @@ public class QuickSearchTests {
 			}
 
 			assertTrue("Resultset should contain 1 items", counter == 1);
+		} catch (DatabaseWrapperOperationException e) {
+			fail("Failed due to internal database error");
+		}
+	}
+	
+	@Test
+	public void testRemoveQuickSearchFlag() {
+		try {
+			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
+		
+			MetaItemField dvdTitleMetaItemField = null;
+			for (MetaItemField metaItemField : DatabaseOperations.getAlbumItemMetaMap("DVDs").values()) {
+				if (metaItemField.getName().equals("Title")) {
+					dvdTitleMetaItemField = metaItemField;
+					break;
+				}
+			}
+			
+			if (dvdTitleMetaItemField != null && dvdTitleMetaItemField.isQuickSearchable()) {
+				// disable quick searchability
+				dvdTitleMetaItemField.setQuickSearchable(false);
+				DatabaseOperations.updateQuickSearchable(
+						DatabaseStringUtilities.generateTableName("DVDs"), dvdTitleMetaItemField);
+			} else {
+				fail("There should be a dvd title field that is quick searchable");
+			}
+			
 		} catch (DatabaseWrapperOperationException e) {
 			fail("Failed due to internal database error");
 		}

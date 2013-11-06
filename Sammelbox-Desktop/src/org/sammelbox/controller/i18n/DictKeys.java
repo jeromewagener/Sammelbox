@@ -235,6 +235,7 @@ public final class DictKeys {
 	public static final String BROWSER_ALBUM_RENAMED = "collector.browser.text.ALBUM_RENAMED";
 	public static final String BROWSER_ALBUMFIELD_ADDED = "collector.browser.text.ALBUMFIELD_ADDED";
 	public static final String BROWSER_ALBUMFIELD_NOW_QUICKSEARCHABLE = "collector.browser.text.ALBUMFIELD_NOW_QUICKSEARCHABLE";
+	public static final String BROWSER_ALBUMFIELD_NO_LONGER_QUICKSEARCHABLE = "org.sammelbox.browser.text.ALBUMFIELD_NO_LONGER_QUICKSEARCHABLE";
 	public static final String BROWSER_ALBUMFIELD_REMOVED = "collector.browser.text.ALBUMFIELD_REMOVED";
 	public static final String BROWSER_ALBUMFIELD_RENAMED = "collector.browser.text.ALBUMFIELD_RENAMED";
 	public static final String BROWSER_ALBUMFIELD_MOVED_DOWN = "collector.browser.text.ALBUMFIELD_MOVED_DOWN";
