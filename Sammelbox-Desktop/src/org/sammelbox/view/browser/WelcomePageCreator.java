@@ -43,22 +43,15 @@ public final class WelcomePageCreator {
 				"    <script src=\"" + UIConstants.EFFECTS_JS + "\"></script>" +
 				"  </head>" +
 				"  <body>" +
-				"    <font face=\"" + Utilities.getDefaultSystemFont() + "\">" +
-				"	 <br>" +
-				"	 <table>" +
-				"      <tr>" +
-				"	     <td align=\"center\">" +
-				"          <img width=\"450\" src=\" " + FileSystemLocations.getLogoPNG() + " \">" +
-				"        </td>" +
-				"        <td width=\"430px\">" +
-		        "          <div style=\"margin-left:30px; padding:10px; background-color:#" + Utilities.getBackgroundColorOfWidgetInHex() + "\">" +
-						     generateAlbumInformation() +
-						     generateFavorites() +
-			    "          </div>" +
-				"        </td>" +
-				"      </tr>" +
-				"	 </table>" +
-				"    </font>" +
+				"    <div style=\"width:100%;\">" +
+				"      <div style=\"float:left; margin:25px;\">" +
+				"        <img width=\"450px\" src=\" " + FileSystemLocations.getLogoPNG() + " \">" +
+				"      </div>" +
+		        "      <div style=\"float:left; margin:25px; padding:10px; background-color:#" + Utilities.getBackgroundColorOfWidgetInHex() + "\">" +
+					     generateAlbumInformation() +
+					     generateFavorites() +
+			    "      </div>" +
+			    "    </div>" +
 				"  </body>" +
 				"</html>");
 	}
