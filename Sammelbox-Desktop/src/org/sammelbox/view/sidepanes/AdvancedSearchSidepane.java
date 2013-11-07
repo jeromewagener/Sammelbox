@@ -19,7 +19,6 @@
 package org.sammelbox.view.sidepanes;
 
 import java.sql.Date;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -44,7 +43,6 @@ import org.sammelbox.controller.MetaItemFieldFilter;
 import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.controller.managers.AlbumViewManager;
-import org.sammelbox.controller.settings.SettingsManager;
 import org.sammelbox.model.album.FieldType;
 import org.sammelbox.model.album.MetaItemField;
 import org.sammelbox.model.album.OptionType;
@@ -52,6 +50,7 @@ import org.sammelbox.model.database.QueryBuilder;
 import org.sammelbox.model.database.QueryComponent;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 import org.sammelbox.model.database.operations.DatabaseOperations;
+import org.sammelbox.model.database.operations.QueryOperations;
 import org.sammelbox.view.ApplicationUI;
 import org.sammelbox.view.various.ComponentFactory;
 import org.sammelbox.view.various.TextInputDialog;
@@ -333,12 +332,11 @@ public final class AdvancedSearchSidepane {
 			for (int i=0; i < searchQueryTable.getItemCount(); i++) {					
 				// In case of a date
 				if (DatabaseOperations.isDateField(ApplicationUI.getSelectedAlbum(), searchQueryTable.getItem(i).getText(0))) {
-					// Convert string to milliseconds
-					DateFormat df = new SimpleDateFormat(SettingsManager.getSettings().getDateFormat());
-					java.util.Date result = null;
+									
 					try {
-						result = df.parse(searchQueryTable.getItem(i).getText(2));
-						long dateInMilliseconds = result.getTime();
+						// Convert string to milliseconds
+						String dateString = searchQueryTable.getItem(i).getText(2);
+						long dateInMilliseconds = QueryOperations.transformDateStringToUTCUnixTime(dateString);
 
 						queryComponents.add(QueryBuilder.getQueryComponent(
 								searchQueryTable.getItem(i).getText(0),

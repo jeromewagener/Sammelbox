@@ -25,6 +25,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Time;
+import java.util.Calendar;
+import java.util.TimeZone;
 import java.util.UUID;
 
 import org.sammelbox.controller.managers.ConnectionManager;
@@ -68,7 +70,9 @@ public final class HelperOperations {
 				break;
 			case DATE: 
 				Date date = field.getValue();
-				preparedStatement.setDate(parameterIndex, date);		
+				// Date needs to be truncated to be properly searchable 
+				Date truncatedDate = truncateTimePartOfDate(date);
+				preparedStatement.setDate(parameterIndex, truncatedDate, Calendar.getInstance(TimeZone.getTimeZone("UTC")));		
 				break;
 			case TIME: 
 				Time time = field.getValue();
@@ -103,6 +107,22 @@ public final class HelperOperations {
 		}
 	}
 	
+	/** Treats the input date as a date with UTC time and truncates the time part. Truncating means the time part is set to all zeroes.
+	 *  If treated of a timezone time may differ from expected result!*/
+	private static Date truncateTimePartOfDate(Date date) {
+		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC")); 
+		cal.setTime(date);
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+		long timeAsMillis = cal.getTimeInMillis();
+		Date truncatedDate = new Date(timeAsMillis);
+		
+		return truncatedDate;
+		
+	}
+
 	/**
 	 * A helper method to detect the collector FieldType using the type information in the separate typeInfo table.
 	 * @param tableName The name of the table to which the column belongs to. Do NOT escape!

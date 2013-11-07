@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -121,12 +122,11 @@ public final class QueryOperations {
 					}
 					else if (field.getType().equals(FieldType.DATE)) {
 						try {
-							// FIXME this doesn't work and there is always exactly one day missing?!?
-							SimpleDateFormat sdf = new SimpleDateFormat(SettingsManager.getSettings().getDateFormat());
-							Date parsedDate = sdf.parse(term);
+							
+							long utcTimeForDateTerm = transformDateStringToUTCUnixTime(term);
 							
 							queryFields.add(QueryBuilder.getQueryComponent(
-									field.getName(), QueryOperator.EQUALS, String.valueOf(parsedDate.getTime())));
+									field.getName(), QueryOperator.EQUALS, String.valueOf(utcTimeForDateTerm)));
 						} catch (ParseException e) {
 							continue;
 						}
@@ -140,6 +140,14 @@ public final class QueryOperations {
 		}// end of for - terms
 
 		return executeQuickSearchQuery(query, albumName);
+	}
+	
+	// TODO: Find a better spot for this method.
+	public static long transformDateStringToUTCUnixTime(String dateString) throws ParseException {
+		SimpleDateFormat sdf = new SimpleDateFormat(SettingsManager.getSettings().getDateFormat());
+		sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+		Date parsedDate = sdf.parse(dateString);
+		return parsedDate.getTime();
 	}
 
 	static long getNumberOfItemsInAlbum(String albumName) throws DatabaseWrapperOperationException {

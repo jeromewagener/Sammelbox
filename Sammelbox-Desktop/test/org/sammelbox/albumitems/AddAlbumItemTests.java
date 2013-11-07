@@ -23,7 +23,9 @@ import static org.junit.Assert.fail;
 import java.sql.Date;
 import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.UUID;
 
 import junit.framework.Assert;
@@ -72,7 +74,8 @@ public class AddAlbumItemTests {
 		List<ItemField> fields = new ArrayList<ItemField>();
 		fields.add( new ItemField("Book Title", FieldType.TEXT, "book title"));
 		fields.add( new ItemField("Author", FieldType.TEXT, "the author"));
-		fields.add( new ItemField("Purchased", FieldType.DATE, new Date(System.currentTimeMillis())));
+		Date currentDate = new Date(System.currentTimeMillis());
+		fields.add( new ItemField("Purchased", FieldType.DATE, currentDate));
 		fields.add( new ItemField("Price", FieldType.DECIMAL, 4.2d));
 		fields.add( new ItemField("Lent to", FieldType.TEXT, "some random name"));
 		fields.add( new ItemField("In Stock", FieldType.OPTION, OptionType.NO));
@@ -105,7 +108,18 @@ public class AddAlbumItemTests {
 				}
 			}
 
-			Assert.assertTrue("Some of the fields of the inserted item don't have the expected values.",actualAlbumItem.getFields().containsAll(fields));
+			// Truncate date to account for the database truncating the 
+			Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC")); 
+			cal.setTime(currentDate);
+			cal.set(Calendar.HOUR_OF_DAY, 0);
+			cal.set(Calendar.MINUTE, 0);
+			cal.set(Calendar.SECOND, 0);
+			cal.set(Calendar.MILLISECOND, 0);
+			long timeAsMillis = cal.getTimeInMillis();
+			Date truncatedDate = new Date(timeAsMillis);
+			item.getField("Purchased").setValue(truncatedDate);	
+
+			Assert.assertTrue("Some of the fields of the inserted item don't have the expected values.",actualAlbumItem.getFields().containsAll(item.getFields()));
 			Assert.assertEquals("The carried over content version is not matching.", actualAlbumItem.getContentVersion(), item.getContentVersion());
 		} catch( DatabaseWrapperOperationException e) {
 			fail("Album Item could not be inserted into album");
@@ -120,7 +134,8 @@ public class AddAlbumItemTests {
 		List<ItemField> fields = new ArrayList<ItemField>();
 		fields.add( new ItemField("Book Title", FieldType.TEXT, "book title"));
 		fields.add( new ItemField("Author", FieldType.TEXT, "the author"));
-		fields.add( new ItemField("Purchased", FieldType.DATE, new Date(System.currentTimeMillis())));
+		Date currentDate = new Date(System.currentTimeMillis());
+		fields.add( new ItemField("Purchased", FieldType.DATE, currentDate));
 		fields.add( new ItemField("Price", FieldType.DECIMAL, 4.2d));
 		fields.add( new ItemField("Lent to", FieldType.TEXT, "some random name"));
 		fields.add( new ItemField("In Stock", FieldType.OPTION, OptionType.NO));
@@ -150,8 +165,19 @@ public class AddAlbumItemTests {
 					}
 				}
 			}
+			
+			// Truncate date to account for the database truncating the 
+			Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC")); 
+			cal.setTime(currentDate);
+			cal.set(Calendar.HOUR_OF_DAY, 0);
+			cal.set(Calendar.MINUTE, 0);
+			cal.set(Calendar.SECOND, 0);
+			cal.set(Calendar.MILLISECOND, 0);
+			long timeAsMillis = cal.getTimeInMillis();
+			Date truncatedDate = new Date(timeAsMillis);
+			item.getField("Purchased").setValue(truncatedDate);	
 
-			Assert.assertTrue(actualAlbumItem.getFields().containsAll(fields));
+			Assert.assertTrue(actualAlbumItem.getFields().containsAll(item.getFields()));
 			List<AlbumItemPicture> pictures = actualAlbumItem.getPictures();
 			Assert.assertTrue("The picture field contains values which have not been inserted.", pictures==null || pictures.isEmpty());
 			Assert.assertNotNull(actualAlbumItem.getContentVersion());
@@ -168,7 +194,8 @@ public class AddAlbumItemTests {
 		List<ItemField> fields = new ArrayList<ItemField>();
 		fields.add( new ItemField("Book Title", FieldType.TEXT, "book's title"));
 		fields.add( new ItemField("Author", FieldType.TEXT, "the author"));
-		fields.add( new ItemField("Purchased", FieldType.DATE, new Date(System.currentTimeMillis())));
+		Date currentDate = new Date(System.currentTimeMillis());
+		fields.add( new ItemField("Purchased", FieldType.DATE, currentDate));
 		fields.add( new ItemField("Price", FieldType.DECIMAL, 4.2d));
 		fields.add( new ItemField("Lent to", FieldType.TEXT, "some random name"));
 		fields.add( new ItemField("In Stock", FieldType.OPTION, OptionType.NO));
@@ -197,8 +224,19 @@ public class AddAlbumItemTests {
 					}
 				}
 			}
-
-			Assert.assertTrue(actualAlbumItem.getFields().containsAll(fields));
+			
+			// Truncate date to account for the database truncating the 
+			Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC")); 
+			cal.setTime(currentDate);
+			cal.set(Calendar.HOUR_OF_DAY, 0);
+			cal.set(Calendar.MINUTE, 0);
+			cal.set(Calendar.SECOND, 0);
+			cal.set(Calendar.MILLISECOND, 0);
+			long timeAsMillis = cal.getTimeInMillis();
+			Date truncatedDate = new Date(timeAsMillis);
+			item.getField("Purchased").setValue(truncatedDate);				
+			
+			Assert.assertTrue(actualAlbumItem.getFields().containsAll(item.getFields()));		
 			List<AlbumItemPicture> pictures = actualAlbumItem.getPictures();
 			Assert.assertTrue("The picture field contains values which have not been inserted.", pictures==null || pictures.isEmpty());
 			Assert.assertNotNull(actualAlbumItem.getContentVersion());

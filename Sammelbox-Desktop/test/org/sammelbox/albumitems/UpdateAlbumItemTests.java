@@ -22,7 +22,9 @@ import static org.junit.Assert.fail;
 
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.UUID;
 
 import junit.framework.Assert;
@@ -107,13 +109,24 @@ public class UpdateAlbumItemTests {
 	public void updateDatefieldOfAlbumItem() {
 		try {
 			AlbumItem originalAlbumItem = DatabaseOperations.getAlbumItem("Books", 1);
-			originalAlbumItem.getField("Purchased").setValue(new Date(System.currentTimeMillis()));
+			Date currentDate = new Date(System.currentTimeMillis());
+			originalAlbumItem.getField("Purchased").setValue(currentDate);
 			DatabaseOperations.updateAlbumItem(originalAlbumItem);
 			AlbumItem updatedAlbumItem = DatabaseOperations.getAlbumItem("Books", 1);
 			
 			if (updatedAlbumItem == null) {
 				fail("The updatedAlbumItem is unexpectatly null");
 			}
+			
+			Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC")); 
+			cal.setTime(currentDate);
+			cal.set(Calendar.HOUR_OF_DAY, 0);
+			cal.set(Calendar.MINUTE, 0);
+			cal.set(Calendar.SECOND, 0);
+			cal.set(Calendar.MILLISECOND, 0);
+			long timeAsMillis = cal.getTimeInMillis();
+			Date truncatedDate = new Date(timeAsMillis);
+			originalAlbumItem.getField("Purchased").setValue(truncatedDate);
 	
 			Assert.assertTrue(originalAlbumItem.getAlbumName().equals(updatedAlbumItem.getAlbumName()));
 			Assert.assertTrue(originalAlbumItem.getFields().containsAll(updatedAlbumItem.getFields()));	
