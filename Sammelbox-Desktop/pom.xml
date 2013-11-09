@@ -24,10 +24,6 @@
          <id>swtrepo</id>
          <url>file://${basedir}/swtrepo</url>
       </repository>
-      <repository>
-         <id>apache.snapshots</id>
-         <url>http://repository.apache.org/snapshots/</url>
-      </repository>      
    </repositories>
 
 
@@ -73,10 +69,12 @@
          <scope>runtime</scope>
       </dependency>
       <dependency>
-         <groupId>org.apache.commons</groupId>
-         <artifactId>commons-imaging</artifactId>
-         <version>1.0-SNAPSHOT</version>
-      </dependency>
+         <groupId>org.imgscalr</groupId>
+         <artifactId>imgscalr-lib</artifactId>
+         <version>4.2</version>
+         <type>jar</type>
+         <scope>compile</scope>
+     </dependency>
    </dependencies>
 
 

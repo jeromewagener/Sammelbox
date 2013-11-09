@@ -38,6 +38,7 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -74,7 +75,7 @@ public class ImageDropAndManagementComposite extends Composite implements DropTa
 	 * @param pictures a list of pictures pointing to images that should be included within the imageComposite */
 	public ImageDropAndManagementComposite(Composite parentComposite, List<AlbumItemPicture> pictures) {	
 		super(parentComposite, SWT.NONE);
-		this.initialize();
+		this.initialize();		
 
 		for (AlbumItemPicture picture : pictures) {
 			this.pictures.addLast(picture);
@@ -111,7 +112,7 @@ public class ImageDropAndManagementComposite extends Composite implements DropTa
 					String selectionFolder = new File(firstFile).getParent();
 					String[] filenames = openFileDialog.getFileNames();
 					for (String filename : filenames) {
-						AlbumItemPicture picture = ImageManipulator.adaptAndStoreImageForCollectorUsingApacheImaging(
+						AlbumItemPicture picture = ImageManipulator.adaptAndStoreImageForCollector(
 								new File(selectionFolder + File.separatorChar + filename), GuiController.getGuiState().getSelectedAlbum());
 						if (picture == null) {
 							showDroppedUnsupportedFileMessageBox(filename);
@@ -173,20 +174,22 @@ public class ImageDropAndManagementComposite extends Composite implements DropTa
 		disposeAllChildren();
 
 		for (final AlbumItemPicture picture : pictures) {			
-			Image originalImage = new Image(Display.getCurrent(), picture.getOriginalPicturePath());
+			final Image originalImage = new Image(Display.getCurrent(), picture.getOriginalPicturePath());
 			final Image scaledImage;
 			
-			int originalWidth = originalImage.getImageData().width;
-			int originalHeight = originalImage.getImageData().height;
+//			int originalWidth = originalImage.getImageData().width;
+//			int originalHeight = originalImage.getImageData().height;
 			
-			if (originalWidth < originalHeight) {
-				scaledImage = new Image(Display.getCurrent(), originalImage.getImageData().scaledTo(
-					(int) Math.round(originalImage.getImageData().width / ((double)(originalImage.getImageData().height / 100.0))), 100));
-			} else {
-				scaledImage = new Image(Display.getCurrent(), originalImage.getImageData().scaledTo(
-					100, (int) Math.round(originalImage.getImageData().height / ((double)(originalImage.getImageData().width / 100.0)))));
-			}
-			
+//			if (originalWidth < originalHeight) {
+//				scaledImage = ImageDropAndManagementComposite.resize(originalImage,
+//						(int) Math.round(originalImage.getImageData().width / ((double)(originalImage.getImageData().height / 100.0))), 100);
+//			} else {
+//				scaledImage = ImageDropAndManagementComposite.resize(originalImage,
+//					100, (int) Math.round(originalImage.getImageData().height / ((double)(originalImage.getImageData().width / 100.0))));
+//			}
+			scaledImage = ImageDropAndManagementComposite.resize(originalImage,
+					100, 100);
+			originalImage.dispose();
 			Label pictureLabel = new Label(imageComposite, SWT.NONE);
 			pictureLabel.setImage(scaledImage);
 			pictureLabel.addDisposeListener(new DisposeListener() {				
@@ -195,7 +198,7 @@ public class ImageDropAndManagementComposite extends Composite implements DropTa
 					scaledImage.dispose();	
 				}
 			});
-			originalImage.dispose();
+			
 
 			Button deleteButton = new Button(imageComposite, SWT.NONE);
 			deleteButton.setText(Translator.get(DictKeys.BUTTON_REMOVE));
@@ -286,7 +289,7 @@ public class ImageDropAndManagementComposite extends Composite implements DropTa
 			String[] filenames = (String[]) event.data;
 			if (filenames.length > 0){
 				for (String filename : filenames) {
-					AlbumItemPicture picture = ImageManipulator.adaptAndStoreImageForCollectorUsingApacheImaging(
+					AlbumItemPicture picture = ImageManipulator.adaptAndStoreImageForCollector(
 							new File(filename), GuiController.getGuiState().getSelectedAlbum());
 					if (picture == null) {
 						showDroppedUnsupportedFileMessageBox(filename);
@@ -314,5 +317,17 @@ public class ImageDropAndManagementComposite extends Composite implements DropTa
 		for (Control control : imageComposite.getChildren()) {
 			control.dispose();			
 		}
+	}
+	
+	private static Image resize(Image image, int width, int height) {
+		Image scaled = new Image(Display.getDefault(), width, height);
+		GC gc = new GC(scaled);
+		gc.setAntialias(SWT.ON);
+		gc.setInterpolation(SWT.HIGH);
+		gc.drawImage(image, 0, 0,
+						image.getBounds().width, image.getBounds().height, 0, 0, width, height);
+		gc.dispose();
+//		image.dispose(); // don't forget about me!
+		return scaled;
 	}
 }

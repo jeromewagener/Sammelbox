@@ -18,18 +18,14 @@
 
 package org.sammelbox.view.image;
 
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
-import org.apache.commons.imaging.ImageFormat;
-import org.apache.commons.imaging.ImageReadException;
-import org.apache.commons.imaging.ImageWriteException;
-import org.apache.commons.imaging.Imaging;
+import javax.imageio.ImageIO;
+
+import org.imgscalr.Scalr;
 import org.sammelbox.controller.filesystem.FileSystemAccessWrapper;
 import org.sammelbox.controller.filesystem.FileSystemLocations;
 import org.sammelbox.model.album.AlbumItemPicture;
@@ -48,19 +44,18 @@ public final class ImageManipulator {
 	private ImageManipulator() {
 		// not needed
 	}
-
 	
-	/**This method is used to copy originals, and create thumb nails, within the picture folder. 
-	 * It uses Apache imaging instead of SWT which seems to leak memory.
+	/**This method is used to copy originals, and create thumbnails, within the picture folder. 
+	 * It uses imageScalr instead of SWT which seems to leak memory.
 	 * @param pictureFile the original image
 	 * @param album the album to which the image should be assigned 
 	 * @return a picture pointing to the location of the original file and thumb nail within the album */	
-	public static AlbumItemPicture adaptAndStoreImageForCollectorUsingApacheImaging(File pictureFile, String album) {
+	public static AlbumItemPicture adaptAndStoreImageForCollector(File pictureFile, String album) {
 		try {
-			BufferedImage thumbnailImage = Imaging.getBufferedImage(pictureFile);
+			BufferedImage sourceImage = ImageIO.read(pictureFile);
 			
-			int imageWidth = thumbnailImage.getWidth();
-			int imageHeight	= thumbnailImage.getHeight();
+			int imageWidth = sourceImage.getWidth();
+			int imageHeight	= sourceImage.getHeight();
 			
 			String identifierForOriginal = UUID.randomUUID().toString();
 			String identifierForThumbnail = UUID.randomUUID().toString();
@@ -70,7 +65,7 @@ public final class ImageManipulator {
 			
 			String newFileLocationForOriginal = FileSystemAccessWrapper.getFilePathForAlbum(album) + File.separatorChar + newFileNameForOriginal;
 			String newFileLocationForThumbnail = FileSystemLocations.getThumbnailsDir() + File.separatorChar + newFileNameForThumbnail;
-			
+			BufferedImage thumbnailImage = null;
 			
 			if (imageWidth > MAX_WIDTH_IN_PIXELS || imageHeight > MAX_HEIGHT_IN_PIXELS) {
 				int newWidth = 0, newHeight = 0;
@@ -85,22 +80,20 @@ public final class ImageManipulator {
 					newHeight = MAX_HEIGHT_IN_PIXELS;
 					newWidth = (int) (MAX_HEIGHT_IN_PIXELS / imageRatio);
 				}
-				Image resizedImage = thumbnailImage.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
-				thumbnailImage = new BufferedImage(newWidth, newHeight, thumbnailImage.getType());
-				thumbnailImage.getGraphics().drawImage(resizedImage, 0, 0 , null);
+				
+				thumbnailImage = Scalr.resize(sourceImage, Scalr.Method.SPEED, Scalr.Mode.FIT_TO_WIDTH, newWidth, newHeight, Scalr.OP_ANTIALIAS);			   
+				sourceImage.flush();
 			}
-
-			final ImageFormat format = ImageFormat.IMAGE_FORMAT_PNG;
-            final Map<String,Object> optionalParams = new HashMap<String,Object>();
-            File thumbnailDestination = new File(newFileLocationForThumbnail); 
-            Imaging.writeImage(thumbnailImage, thumbnailDestination, format, optionalParams);
 			
-			FileSystemAccessWrapper.copyFile(new File(pictureFile.getPath()), new File(newFileLocationForOriginal));
-						
+            File thumbnailDestination = new File(newFileLocationForThumbnail); 
+			ImageIO.write(thumbnailImage, "png", thumbnailDestination);
+			thumbnailImage.flush();
+			
+			FileSystemAccessWrapper.copyFile(new File(pictureFile.getPath()), new File(newFileLocationForOriginal));		
 			return new AlbumItemPicture(newFileNameForThumbnail, newFileNameForOriginal, album, AlbumItemPicture.PICTURE_ID_UNDEFINED);
 			
-		} catch (IOException | ImageReadException | ImageWriteException ex) {
-			LOGGER.error("An error occured while manipulating an image", ex);
+		} catch (IOException ex) {
+			LOGGER.error("An file handling error occured while manipulating an image", ex);
 		}
 		
 		return null;

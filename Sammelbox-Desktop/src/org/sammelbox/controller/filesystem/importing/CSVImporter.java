@@ -144,7 +144,7 @@ public final class CSVImporter {
 						// if it is a simulation, just check if the specified files exist!
 						new File(filePath).exists();
 					} else {
-						pictures.add(ImageManipulator.adaptAndStoreImageForCollectorUsingApacheImaging(new File(filePath), albumName));
+						pictures.add(ImageManipulator.adaptAndStoreImageForCollector(new File(filePath), albumName));
 					}
 				}
 			}
