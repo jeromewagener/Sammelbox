@@ -89,21 +89,20 @@ public final class GalleryViewCreator {
 			collectionHeader += " - " + GuiController.getGuiState().getSelectedView();
 		}
 		
-		String finalPageAsHtml = 
-		   "<!DOCTYPE HTML>" +
+		String finalPageAsHtml = "<!DOCTYPE html>\n" +
 		   "<html>" +
 		     "<head>" +
-		       "<title>sammelbox.org</title>" +
-		       "<meta " + UIConstants.META_PARAMS + ">" + 
+		       "<meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge,chrome=1\">" +
 		       "<link rel=stylesheet href=\"" + UIConstants.STYLE_CSS + "\" />" +
 		       "<script src=\"" + UIConstants.EFFECTS_JS + "\"></script>" +
+		       "<title>sammelbox.org</title>" +
 		     "</head>" +
 		     "<body style=\"background-color:#ffffff;font-family:" +  Utilities.getDefaultSystemFont() + "\">" +
 		       "<h2>" + collectionHeader + "</h2>" +
 		       "<div id=\"albumItems\">" + galleryItemHtmlBuilder.toString() + "</div>" +
 		     "</body>" +
 		   "</html>";
-				
+		
 		browser.setText(finalPageAsHtml);
 		Utilities.setLastPageAsHtml(finalPageAsHtml);
 	}

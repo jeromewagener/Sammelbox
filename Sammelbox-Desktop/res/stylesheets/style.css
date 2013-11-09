@@ -29,10 +29,10 @@ p {
 .pictureContainer {
 	text-align:center; 
 	float:left; 
-	width:200px; 
-	height:200px; 
+	width:210px; 
+	height:210px; 
 
-	padding: 10px;
+	padding: 5px;
 
 	border: 3px solid white;
 
@@ -41,8 +41,8 @@ p {
 }
 
 .innerPictureContainer {
-	width:195px; 
-	height:195px;
+	width:200px; 
+	height:200px;
 	display: table-cell; 
 	vertical-align: middle;
 }

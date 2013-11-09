@@ -21,7 +21,7 @@ public final class HelpMenuItemListener {
 	static SelectionAdapter getDumpHTMLListener() {
 		return new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent arg0) {
+			public void widgetSelected(SelectionEvent arg0) {				
 				FileDialog saveFileDialog = new FileDialog(ApplicationUI.getShell(), SWT.SAVE);
 				saveFileDialog.setText(Translator.toBeTranslated("Dump HTML"));
 				saveFileDialog.setFilterPath(System.getProperty("user.home"));
