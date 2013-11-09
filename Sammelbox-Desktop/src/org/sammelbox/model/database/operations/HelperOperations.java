@@ -110,6 +110,12 @@ public final class HelperOperations {
 	/** Treats the input date as a date with UTC time and truncates the time part. Truncating means the time part is set to all zeroes.
 	 *  If treated of a timezone time may differ from expected result!*/
 	private static Date truncateTimePartOfDate(Date date) {
+		if (date == null) {
+			// A null date is possible in the case where the user hasn't selected a date yet.
+			// Thus, we need to abort in this scenario.
+			return null;
+		}
+		
 		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC")); 
 		cal.setTime(date);
 		cal.set(Calendar.HOUR_OF_DAY, 0);
