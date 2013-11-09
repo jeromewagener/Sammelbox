@@ -107,7 +107,7 @@ public final class Utilities {
 	}
 
 	static void showAlbum(Browser browser) {
-		if (GuiController.getGuiState().isViewDetailed()) {
+		if (GuiController.getGuiState().isDetailsView()) {
 			DetailedViewCreator.showDetailedAlbum(browser);
 		} else {
 			GalleryViewCreator.showOverviewAlbum(browser);
@@ -162,7 +162,7 @@ public final class Utilities {
 	}
 	
 	static void addAdditionalAlbumItems() {
-		if (GuiController.getGuiState().isViewDetailed()) {
+		if (GuiController.getGuiState().isDetailsView()) {
 			if (!AlbumItemStore.isStopIndexAtEnd()) {
 				StringBuilder rows = new StringBuilder();
 

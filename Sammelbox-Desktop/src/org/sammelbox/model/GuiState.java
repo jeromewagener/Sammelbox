@@ -97,7 +97,7 @@ public class GuiState {
 		this.quickSearchTerms = quickSearchTerms;
 	}
 
-	public boolean isViewDetailed() {
+	public boolean isDetailsView() {
 		return isViewDetailed;
 	}
 

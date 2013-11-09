@@ -92,7 +92,7 @@ public final class FeedbackCreator {
 				"      <br>" +
 				"      <form>" +
 				"        <input type=\"button\"" +
-				"               onclick=parent.location.href=\"" + UIConstants.SHOW_DETAILS_VIEW_OF_ALBUM + albumItemId + "\"" +
+				"               onclick=parent.location.href=\"" + UIConstants.RELOAD_AND_SHOW_ALBUM_VIEW + albumItemId + "\"" +
 				"               value=\"" + Translator.get(DictKeys.BROWSER_BACK_TO_ALBUM) + "\">" +
 				"      </form>" +
 				"    </body>" +

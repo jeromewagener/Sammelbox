@@ -33,8 +33,10 @@ import org.eclipse.swt.events.MenuDetectEvent;
 import org.eclipse.swt.events.MenuDetectListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.MessageBox;
+import org.sammelbox.controller.GuiController;
 import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
+import org.sammelbox.controller.managers.AlbumViewManager;
 import org.sammelbox.model.album.AlbumItem;
 import org.sammelbox.model.album.FieldType;
 import org.sammelbox.model.album.ItemField;
@@ -171,12 +173,17 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 
 			// Do not change the page
 			event.doit = false;
-		} else if (event.location.startsWith(UIConstants.SHOW_DETAILS_VIEW_OF_ALBUM)) {
-			String albumItemId = event.location.substring(UIConstants.SHOW_DETAILS_VIEW_OF_ALBUM.length());
+		} else if (event.location.startsWith(UIConstants.RELOAD_AND_SHOW_ALBUM_VIEW)) {
+			String albumItemId = event.location.substring(UIConstants.RELOAD_AND_SHOW_ALBUM_VIEW.length());
 			
-			BrowserFacade.performBrowserQueryAndShow(QueryBuilder.createSelectStarQuery(ApplicationUI.getSelectedAlbum()));
+			if (!GuiController.getGuiState().isViewSelected()) {
+				BrowserFacade.performBrowserQueryAndShow(QueryBuilder.createSelectStarQuery(GuiController.getGuiState().getSelectedAlbum()));
+			} else {
+				BrowserFacade.performBrowserQueryAndShow(AlbumViewManager.getSqlQueryByViewName(
+						GuiController.getGuiState().getSelectedAlbum(), GuiController.getGuiState().getSelectedView()));
+			}
+			
 			BrowserFacade.setFutureJumpAnchor(BrowserFacade.getAnchorForAlbumItemId(Long.parseLong(albumItemId)));
-			
 			ApplicationUI.changeRightCompositeTo(PanelType.EMPTY, EmptySidepane.build(ApplicationUI.getThreePanelComposite()));	
 			
 			// Do not change the page

@@ -118,7 +118,7 @@ public final class ToolbarCompositeListener {
 		return new MouseListener() {
 			@Override
 			public void mouseUp(MouseEvent mouseEvent) {
-				if (GuiController.getGuiState().isViewDetailed()) {
+				if (GuiController.getGuiState().isDetailsView()) {
 					toggleViewButton.setImage(detailedViewIcon);
 					toggleViewButton.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_TOGGLE_TO_DETAILS));
 					GuiController.getGuiState().setViewDetailed(false);

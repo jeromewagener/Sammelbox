@@ -37,7 +37,7 @@ public final class UIConstants {
 	public static final int RIGHT_PANEL_NO_WIDTH = 0;
 
 	/** The minimum width of the shell in pixels. The shell can never have a smaller width than this. */
-	public static final int MIN_SHELL_WIDTH = 1110;
+	public static final int MIN_SHELL_WIDTH = 1125;
 	/** The minimum height of the shell in pixels. The shell can never have a smaller height than this. */
 	public static final int MIN_SHELL_HEIGHT = 700;
 	
@@ -56,7 +56,7 @@ public final class UIConstants {
 	public static final String SHOW_LAST_PAGE = "show:///lastPage";
 	public static final String SHOW_DETAILS = "show:///details=";
 	public static final String ADD_ADDITIONAL_ALBUM_ITEMS = "show:///addAdditionalAlbumItems";
-	public static final String SHOW_DETAILS_VIEW_OF_ALBUM = "show:///showDetails=";
+	public static final String RELOAD_AND_SHOW_ALBUM_VIEW = "show:///reloadAndShowAlbumView=";
 	public static final String BROWSER_RESIZED = "show:///browserResized";
 	public static final String SHOW_URL = "show:///url=";
 }
