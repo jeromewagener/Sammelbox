@@ -6,6 +6,7 @@ public class ApplicationSettings {
 	private Language userDefinedLanguage = Language.UNKNOWN;
 	private String dateFormat = "dd/MM/yyyy";
 	private boolean detailedViewIsDefault = true;
+	private boolean showDebugMenu = false;
 	
 	public ApplicationSettings() {}
 	
@@ -31,5 +32,13 @@ public class ApplicationSettings {
 
 	public void setDetailedViewIsDefault(boolean detailedViewIsDefault) {
 		this.detailedViewIsDefault = detailedViewIsDefault;
+	}
+
+	public boolean showDebugMenu() {
+		return showDebugMenu;
+	}
+
+	public void setShowDebugMenu(boolean showDebugMenu) {
+		this.showDebugMenu = showDebugMenu;
 	}
 }

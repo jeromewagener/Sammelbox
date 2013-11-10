@@ -79,7 +79,7 @@ public final class CreateAlbumSidepane {
 		albumNameLabel.setText(Translator.get(DictKeys.LABEL_NAME_OF_NEW_ALBUM));
 		final Text albumNameText = new Text(createNewAlbumComposite, SWT.BORDER);
 		albumNameText.setLayoutData(new GridData(GridData.FILL_BOTH));
-		albumNameText.setText(Translator.get(DictKeys.TEXTBOX_MY_NEW_ALBUM));
+		albumNameText.setText(Translator.get(DictKeys.TEXT_MY_NEW_ALBUM));
 
 		Label seperator = new Label(createNewAlbumComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
 		GridData gridDataForSeperator = new GridData(GridData.FILL_BOTH);

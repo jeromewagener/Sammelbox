@@ -60,4 +60,8 @@ public final class SettingsManager {
 	public static ApplicationSettings getSettings() {
 		return applicationSettings;
 	}
+
+	public static boolean showDebugMenu() {
+		return applicationSettings.showDebugMenu();
+	}
 }

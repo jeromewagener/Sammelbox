@@ -59,10 +59,10 @@ public final class SammelboxMenuItemListener {
 							// ask for separation character
 							TextInputDialog separationCharacterInput = new TextInputDialog(ApplicationUI.getShell());
 							String separationCharacter = separationCharacterInput.open(
-									Translator.toBeTranslated("Choose a separation character"),
-									Translator.toBeTranslated("Please choose a separation character"), 
+									Translator.get(DictKeys.DIALOG_TITLE_SELECT_SEPARATION_CHAR),
+									Translator.get(DictKeys.DIALOG_CONTENT_SELECT_SEPARATION_CHAR), 
 									CSVExporter.DEFAULT_SEPARATION_CHARACTER, 
-									Translator.toBeTranslated("Export"));
+									Translator.get(DictKeys.DIALOG_BUTTON_SELECT_SEPARATION_CHAR));
 							
 							if (separationCharacter == null) {
 								separationCharacter = CSVExporter.DEFAULT_SEPARATION_CHARACTER;

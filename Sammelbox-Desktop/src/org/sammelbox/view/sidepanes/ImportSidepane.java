@@ -76,16 +76,16 @@ public final class ImportSidepane {
 				
 		// album name 
 		Label albumNameLabel = new Label(innerComposite, SWT.NONE);
-		albumNameLabel.setText(Translator.toBeTranslated("Album Name: "));
+		albumNameLabel.setText(Translator.get(DictKeys.LABEL_ALBUM_NAME));
 		
 		// album name text-box 
 		final Text albumNameText = new Text(innerComposite, SWT.BORDER);
 		albumNameText.setLayoutData(new GridData(GridData.FILL_BOTH));
-		albumNameText.setText(Translator.toBeTranslated("Imported Album"));
+		albumNameText.setText(Translator.get(DictKeys.TEXT_SAMPLE_IMPORT_NAME));
 		
 		// separator char label
 		Label separatorCharLabel = new Label(innerComposite, SWT.NONE);
-		separatorCharLabel.setText(Translator.toBeTranslated("Separator: "));
+		separatorCharLabel.setText(Translator.get(DictKeys.LABEL_SEPARATOR));
 		
 		// separator char text-box
 		final Text separatorCharText = new Text(innerComposite, SWT.BORDER);
@@ -102,7 +102,7 @@ public final class ImportSidepane {
 		compositeGridData.heightHint = 25;
 		
 		Label lastColumnPictureLabel = new Label(innerComposite, SWT.HORIZONTAL);
-		lastColumnPictureLabel.setText(Translator.toBeTranslated("Import pictures from last column?"));		
+		lastColumnPictureLabel.setText(Translator.get(DictKeys.LABEL_IMPORT_IMG_FROM_COLUMN));		
 	    lastColumnPictureLabel.setLayoutData(compositeGridData);
 		
 		Composite lastColumnPictureLinksComposite = new Composite(innerComposite, SWT.FILL);
@@ -121,7 +121,7 @@ public final class ImportSidepane {
 		
 		// image column name
 		Label imageColumnLabel = new Label(innerComposite, SWT.NONE);
-		imageColumnLabel.setText(Translator.toBeTranslated("Image Column Name: "));
+		imageColumnLabel.setText(Translator.get(DictKeys.LABEL_IMG_COLUM_NAME));
 		
 		// image column name text-box
 		final Text imageColumnText = new Text(innerComposite, SWT.BORDER);
@@ -131,7 +131,7 @@ public final class ImportSidepane {
 		
 		// image separator
 		Label imageSeparatorLabel = new Label(innerComposite, SWT.NONE);
-		imageSeparatorLabel.setText(Translator.toBeTranslated("Image Separator: "));
+		imageSeparatorLabel.setText(Translator.get(DictKeys.LABEL_IMG_SEPARATOR));
 		
 		// image separator column text-box
 		final Text imageSeparatorText = new Text(innerComposite, SWT.BORDER);
@@ -160,11 +160,11 @@ public final class ImportSidepane {
 		});
 		
 		final Button simulateButton = new Button(importComposite, SWT.PUSH);
-		simulateButton.setText(Translator.toBeTranslated("Simulate"));
+		simulateButton.setText(Translator.get(DictKeys.BUTTON_SIMULATE));
 		simulateButton.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		final Button importButton = new Button(importComposite, SWT.PUSH);
-		importButton.setText(Translator.toBeTranslated("Import"));
+		importButton.setText(Translator.get(DictKeys.BUTTON_IMPORT));
 		importButton.setEnabled(false);
 		importButton.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
@@ -173,23 +173,27 @@ public final class ImportSidepane {
 			public void widgetSelected(SelectionEvent e) {
 				try {
 					if (yesButton.getSelection()) {
-						CSVImporter.importCSV(albumNameText.getText(), csvFileNameLabel.getData("CSV_FILE") != null ? ((File) csvFileNameLabel.getData("CSV_FILE")).getAbsolutePath() : "", 
-							separatorCharText.getText(), imageColumnText.getText(), imageSeparatorText.getText(), true);
+						CSVImporter.importCSV(albumNameText.getText(), csvFileNameLabel.getData("CSV_FILE") != null 
+								? ((File) csvFileNameLabel.getData("CSV_FILE")).getAbsolutePath() 
+								: "", 
+								separatorCharText.getText(), imageColumnText.getText(), imageSeparatorText.getText(), true);
 					} else {
-						CSVImporter.importCSV(albumNameText.getText(), csvFileNameLabel.getData("CSV_FILE") != null ? ((File) csvFileNameLabel.getData("CSV_FILE")).getAbsolutePath() : "", 
+						CSVImporter.importCSV(albumNameText.getText(), csvFileNameLabel.getData("CSV_FILE") != null 
+								? ((File) csvFileNameLabel.getData("CSV_FILE")).getAbsolutePath() 
+								: "", 
 								separatorCharText.getText(), true);
 					}
 					
 					importButton.setEnabled(true);
 					
 					ComponentFactory.getMessageBox(
-							Translator.toBeTranslated("Simulation successful"), 
-							Translator.toBeTranslated("The simulation of the CSV was successful. You can now use the import button"), 
+							Translator.get(DictKeys.DIALOG_TITLE_SIMULATION_SUCCESSFUL), 
+							Translator.get(DictKeys.DIALOG_CONTENT_SIMULATION_SUCCESSFUL), 
 							SWT.ICON_INFORMATION).open();
 				} catch (ImportException ex) {
 					ComponentFactory.getMessageBox(
-							Translator.toBeTranslated("Simulation unsuccessful"), 
-							Translator.toBeTranslated("The simulation of the CSV failed due to the following reason: " + ex.getMessage()), 
+							Translator.get(DictKeys.DIALOG_TITLE_SIMULATION_UNSUCCESSFUL), 
+							Translator.get(DictKeys.DIALOG_CONTENT_SIMULATION_UNSUCCESSFUL), 
 							SWT.ICON_WARNING).open();
 				}
 			}
@@ -208,15 +212,15 @@ public final class ImportSidepane {
 					}
 					
 					ComponentFactory.getMessageBox(
-							Translator.toBeTranslated("Import successful"), 
-							Translator.toBeTranslated("The CSV file has been successfully imported"), 
+							Translator.get(DictKeys.DIALOG_TITLE_IMPORT_SUCCESSFUL), 
+							Translator.get(DictKeys.DIALOG_CONTENT_IMPORT_SUCCESSFUL), 
 							SWT.ICON_INFORMATION).open();
 					
 					EventObservable.addEventToQueue(SammelboxEvent.ALBUM_LIST_UPDATED);
 				} catch (ImportException ex) {
 					ComponentFactory.getMessageBox(
-							Translator.toBeTranslated("Import unsuccessful"), 
-							Translator.toBeTranslated("The import of the CSV failed due to the following reason: " + ex.getMessage()), 
+							Translator.get(DictKeys.DIALOG_TITLE_IMPORT_UNSUCCESSFUL), 
+							Translator.get(DictKeys.DIALOG_CONTENT_IMPORT_UNSUCCESSFUL),
 							SWT.ERROR).open();
 				}
 			}

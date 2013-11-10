@@ -18,6 +18,7 @@
 
 package org.sammelbox.model.album;
 
+import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
 
 public enum StarRating {
@@ -40,12 +41,12 @@ public enum StarRating {
 
 	public static String[] toComboBoxArray() {
 		return new String[] {
-				StarRating.ZERO_STARS.getIntegerValue() + Translator.toBeTranslated(" Stars"),
-				StarRating.ONE_STAR.getIntegerValue() + Translator.toBeTranslated(" Stars"),
-				StarRating.TWO_STARS.getIntegerValue() + Translator.toBeTranslated(" Stars"),
-				StarRating.THREE_STARS.getIntegerValue() + Translator.toBeTranslated(" Stars"),
-				StarRating.FOUR_STARS.getIntegerValue() + Translator.toBeTranslated(" Stars"),
-				StarRating.FIVE_STARS.getIntegerValue() + Translator.toBeTranslated(" Stars")};
+				StarRating.ZERO_STARS.getIntegerValue() + " " + Translator.get(DictKeys.COMBOBOX_CONTENT_STARS),
+				StarRating.ONE_STAR.getIntegerValue() + " " + Translator.get(DictKeys.COMBOBOX_CONTENT_STARS),
+				StarRating.TWO_STARS.getIntegerValue() + " " + Translator.get(DictKeys.COMBOBOX_CONTENT_STARS),
+				StarRating.THREE_STARS.getIntegerValue() + " " + Translator.get(DictKeys.COMBOBOX_CONTENT_STARS),
+				StarRating.FOUR_STARS.getIntegerValue() + " " + Translator.get(DictKeys.COMBOBOX_CONTENT_STARS),
+				StarRating.FIVE_STARS.getIntegerValue() + " " + Translator.get(DictKeys.COMBOBOX_CONTENT_STARS)};
 	}
 
 	public static Object getByIntegerValue(int integerValue) {
