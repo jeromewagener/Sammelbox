@@ -40,6 +40,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -174,28 +175,29 @@ public class ImageDropAndManagementComposite extends Composite implements DropTa
 		disposeAllChildren();
 
 		for (final AlbumItemPicture picture : pictures) {			
-			final Image originalImage = new Image(Display.getCurrent(), picture.getOriginalPicturePath());
-			final Image scaledImage;
+			Image originalImage = new Image(Display.getCurrent(), picture.getOriginalPicturePath());
+			Image scaledImage;
 			
-//			int originalWidth = originalImage.getImageData().width;
-//			int originalHeight = originalImage.getImageData().height;
+			Rectangle originalImageBounds =  originalImage.getBounds();
+
+			int originalWidth = originalImageBounds.width;
+			int originalHeight = originalImageBounds.height;
 			
-//			if (originalWidth < originalHeight) {
-//				scaledImage = ImageDropAndManagementComposite.resize(originalImage,
-//						(int) Math.round(originalImage.getImageData().width / ((double)(originalImage.getImageData().height / 100.0))), 100);
-//			} else {
-//				scaledImage = ImageDropAndManagementComposite.resize(originalImage,
-//					100, (int) Math.round(originalImage.getImageData().height / ((double)(originalImage.getImageData().width / 100.0))));
-//			}
-			scaledImage = ImageDropAndManagementComposite.resize(originalImage,
-					100, 100);
+			if (originalWidth < originalHeight) {
+				scaledImage = ImageDropAndManagementComposite.resize(originalImage,
+						(int) Math.round(originalWidth / ((double)(originalHeight / 100.0))), 100);
+			} else {
+				scaledImage = ImageDropAndManagementComposite.resize(originalImage,
+					100, (int) Math.round(originalHeight / ((double)(originalWidth/ 100.0))));
+			}
+			
 			originalImage.dispose();
-			Label pictureLabel = new Label(imageComposite, SWT.NONE);
+			final Label pictureLabel = new Label(imageComposite, SWT.NONE);
 			pictureLabel.setImage(scaledImage);
 			pictureLabel.addDisposeListener(new DisposeListener() {				
 				@Override
 				public void widgetDisposed(DisposeEvent arg0) {
-					scaledImage.dispose();	
+					pictureLabel.getImage().dispose();
 				}
 			});
 			
@@ -327,7 +329,6 @@ public class ImageDropAndManagementComposite extends Composite implements DropTa
 		gc.drawImage(image, 0, 0,
 						image.getBounds().width, image.getBounds().height, 0, 0, width, height);
 		gc.dispose();
-//		image.dispose(); // don't forget about me!
 		return scaled;
 	}
 }
