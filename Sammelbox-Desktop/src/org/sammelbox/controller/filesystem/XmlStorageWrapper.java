@@ -32,6 +32,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.sammelbox.controller.i18n.Language;
 import org.sammelbox.controller.managers.AlbumViewManager.AlbumView;
+import org.sammelbox.controller.settings.SettingsManager;
 import org.sammelbox.model.settings.ApplicationSettings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,6 +63,7 @@ public final class XmlStorageWrapper {
 		xmlOutput.append("\t<userDefinedLanguage>" + applicationSettings.getUserDefinedLanguage().toString() + "</userDefinedLanguage>\n");
 		xmlOutput.append("\t<dateFormat>" + applicationSettings.getDateFormat() + "</dateFormat>\n");
 		xmlOutput.append("\t<detailedViewIsDefault>" + applicationSettings.isDetailedViewDefault() + "</detailedViewIsDefault>\n");
+		xmlOutput.append("\t<showDebugMenu>" + applicationSettings.showDebugMenu() + "</showDebugMenu>\n");
 		xmlOutput.append("</settings>\n");
 		
 		FileSystemAccessWrapper.writeToFile(xmlOutput.toString(), FileSystemLocations.getSettingsXML());
@@ -154,9 +156,16 @@ public final class XmlStorageWrapper {
 			} else {
 				Element element = (Element) root;
 				
-				applicationSettings.setUserDefinedLanguage(Language.valueOf(getValue("userDefinedLanguage", element)));
-				applicationSettings.setDateFormat(getValue("dateFormat", element));
-				applicationSettings.setDetailedViewIsDefault(Boolean.valueOf(getValue("detailedViewIsDefault", element)));
+				try {
+					applicationSettings.setUserDefinedLanguage(Language.valueOf(getValue("userDefinedLanguage", element)));
+					applicationSettings.setDateFormat(getValue("dateFormat", element));
+					applicationSettings.setDetailedViewIsDefault(Boolean.valueOf(getValue("detailedViewIsDefault", element)));
+					applicationSettings.setShowDebugMenu(Boolean.valueOf(getValue("showDebugMenu", element)));
+				} catch (RuntimeException exception) {
+					LOGGER.error("Could not properly load settings file. File will be recreated");
+					SettingsManager.storeToSettingsFile();
+					return retrieveSettings();
+				}
 			}
 		} catch (ParserConfigurationException | IOException | SAXException | XmlParsingException ex) {
 			LOGGER.error("An error occured while parsing the settings XML file", ex);

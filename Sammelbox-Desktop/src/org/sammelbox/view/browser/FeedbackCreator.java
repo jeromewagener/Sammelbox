@@ -189,10 +189,8 @@ public final class FeedbackCreator {
 			   "      <script src=\"" + UIConstants.EFFECTS_JS + "\"></script>" +
 			   "    </head>" +
 			   "    <body>" +
-		       "      <h3>" + Translator.toBeTranslated("Backup in Progress") + "</h3>" +
-		       "      <div>" + Translator.toBeTranslated("This might take a moment. During this time, " + 
-		       "				Sammelbox disables itself, but will notify you as soon as the backup is finished") + 
-		       "      </div>" +
+		       "      <h3>" + Translator.get(DictKeys.BROWSER_BACKUP_IN_PROGESS) + "</h3>" +
+		       "      <div>" + Translator.get(DictKeys.BROWSER_BACKUP_IN_PROGESS_DETAIL) + "</div>" +
 		       "    </body>" +
 		       "  </html>";
 	}
@@ -206,9 +204,8 @@ public final class FeedbackCreator {
 			   "      <script src=\"" + UIConstants.EFFECTS_JS + "\"></script>" +
 			   "    </head>" +
 			   "    <body>" +
-		       "      <h3>" + Translator.toBeTranslated("Backup Finished") + "</h3>" +
-		       "      <div>" + Translator.toBeTranslated("The backup has been created. " + 
-		       "				You can now continue to use Sammelbox") + 
+		       "      <h3>" + Translator.get(DictKeys.BROWSER_BACKUP_FINISHED) + "</h3>" +
+		       "      <div>" + Translator.get(DictKeys.BROWSER_BACKUP_FINISHED_DETAIL) + "</div>" +
 		       "      </div>" +
 		       "    </body>" +
 		       "  </html>";

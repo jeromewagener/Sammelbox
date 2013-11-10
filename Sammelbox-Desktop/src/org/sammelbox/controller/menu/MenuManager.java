@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
+import org.sammelbox.controller.settings.SettingsManager;
 import org.sammelbox.view.ApplicationUI;
 
 public final class MenuManager {
@@ -67,11 +68,11 @@ public final class MenuManager {
 		sammelboxMenuItem.setMenu(sammelboxMenu);
 
 		MenuItem importAlbumItemsMenuItem = new MenuItem(sammelboxMenu, SWT.NONE);
-		importAlbumItemsMenuItem.setText(Translator.toBeTranslated("Import to new album"));
+		importAlbumItemsMenuItem.setText(Translator.get(DictKeys.MENU_CSV_IMPORT));
 		importAlbumItemsMenuItem.addSelectionListener(SammelboxMenuItemListener.getImportAlbumItemsListener());
 		
 		MenuItem exportAlbumMenuItem = new MenuItem(sammelboxMenu, SWT.NONE);
-		exportAlbumMenuItem.setText(Translator.get(DictKeys.MENU_EXPORT_VISIBLE_ITEMS));
+		exportAlbumMenuItem.setText(Translator.get(DictKeys.MENU_EXPORT_SELECTED_ITEMS));
 		exportAlbumMenuItem.addSelectionListener(SammelboxMenuItemListener.getExportAlbumItemsListener());
 		
 		new MenuItem(sammelboxMenu, SWT.SEPARATOR);
@@ -139,20 +140,22 @@ public final class MenuManager {
 		Menu helpMenu = new Menu(menu);
 		helpItem.setMenu(helpMenu);
 
-		MenuItem debugMenuItem = new MenuItem(helpMenu, SWT.CASCADE);
-		debugMenuItem.setText(Translator.toBeTranslated("Debugging"));		
-		Menu debugSubMenu = new Menu(menu.getShell(), SWT.DROP_DOWN);
-		debugMenuItem.setMenu(debugSubMenu);
-		
-		MenuItem dumpHTML = new MenuItem(debugSubMenu, SWT.NONE);
-		dumpHTML.setText(Translator.toBeTranslated("Dump HTML"));
-		dumpHTML.addSelectionListener(HelpMenuItemListener.getDumpHTMLListener());
-
-		MenuItem showBrowserInfo = new MenuItem(debugSubMenu, SWT.NONE);
-		showBrowserInfo.setText(Translator.toBeTranslated("Show Browser Info"));
-		showBrowserInfo.addSelectionListener(HelpMenuItemListener.getShowBrowserInfoListener());
-		
-		new MenuItem(helpMenu, SWT.SEPARATOR);
+		if (SettingsManager.showDebugMenu()) {
+			MenuItem debugMenuItem = new MenuItem(helpMenu, SWT.CASCADE);
+			debugMenuItem.setText("Debugging");
+			Menu debugSubMenu = new Menu(menu.getShell(), SWT.DROP_DOWN);
+			debugMenuItem.setMenu(debugSubMenu);
+			
+			MenuItem dumpHTML = new MenuItem(debugSubMenu, SWT.NONE);
+			dumpHTML.setText("Dump HTML");
+			dumpHTML.addSelectionListener(HelpMenuItemListener.getDumpHTMLListener());
+	
+			MenuItem showBrowserInfo = new MenuItem(debugSubMenu, SWT.NONE);
+			showBrowserInfo.setText("Show Browser Info");
+			showBrowserInfo.addSelectionListener(HelpMenuItemListener.getShowBrowserInfoListener());
+			
+			new MenuItem(helpMenu, SWT.SEPARATOR);
+		}
 		
 		MenuItem helpContentsMenu = new MenuItem(helpMenu, SWT.NONE);
 		helpContentsMenu.setText(Translator.get(DictKeys.MENU_HELP_CONTENTS));

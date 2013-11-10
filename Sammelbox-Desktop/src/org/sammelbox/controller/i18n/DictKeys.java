@@ -24,6 +24,13 @@ public final class DictKeys {
 	}
 	
 	/*  Enumeration Translations  */
+	public static final String FIELD_TYPE_TEXT = "org.sammelbox.enum.FIELD_TYPE_TEXT";
+	public static final String FIELD_TYPE_DECIMAL = "org.sammelbox.enum.FIELD_TYPE_DECIMAL";
+	public static final String FIELD_TYPE_DATE = "org.sammelbox.enum.FIELD_TYPE_DATE";
+	public static final String FIELD_TYPE_STAR_RATING = "org.sammelbox.enum.FIELD_TYPE_STAR_RATING";
+	public static final String FIELD_TYPE_URL = "org.sammelbox.enum.FIELD_TYPE_URL";
+	public static final String FIELD_TYPE_INTEGER = "org.sammelbox.enum.FIELD_TYPE_INTEGER";
+	public static final String FIELD_TYPE_OPTION = "org.sammelbox.enum.FIELD_TYPE_OPTION";
 	public static final String QUERY_OPERATOR_EQUAL = "org.sammelbox.enum.QUERY_OPERATOR_EQUAL";
 	public static final String QUERY_OPERATOR_NOT_EQUAL = "org.sammelbox.enum.QUERY_OPERATOR_NOT_EQUAL";
 	public static final String QUERY_OPERATOR_CONTAINS = "org.sammelbox.enum.QUERY_OPERATOR_CONTAINS";
@@ -43,7 +50,7 @@ public final class DictKeys {
 	public static final String TITLE_MAIN_WINDOW = "collector.window.title.MAIN_WINDOW";
 	
 	/*   Menus   */
-	public static final String MENU_EXPORT_VISIBLE_ITEMS = "collector.menu.EXPORT_VISIBLE_ITEMS";
+	public static final String MENU_EXPORT_SELECTED_ITEMS = "collector.menu.EXPORT_VISIBLE_ITEMS";
 	public static final String MENU_DELETE_SELECTED_ALBUM = "collector.menu.DELETE_SELECTED_ALBUM";
 	public static final String MENU_ALTER_SELECTED_ALBUM = "collector.menu.ALTER_SELECTED_ALBUM";
 	public static final String MENU_BACKUP_ALBUMS_TO_FILE = "collector.menu.BACKUP_ALBUMS_TO_FILE";
@@ -58,6 +65,7 @@ public final class DictKeys {
 	public static final String MENU_ADVANCED_SEARCH = "collector.menu.ADVANCED_SEARCH";
 	public static final String MENU_COLLECTOR = "collector.menu.COLLECTOR";
 	public static final String MENU_SETTINGS = "collector.menu.SETTINGS";
+	public static final String MENU_CSV_IMPORT = "org.sammelbox.menu.CSV_IMPORT";
 	
 	/*   Dropdown Menu   */
 	public static final String DROPDOWN_REMOVE = "collector.dropdown.menu.REMOVE";
@@ -116,6 +124,20 @@ public final class DictKeys {
 	public static final String DIALOG_TITLE_SAMMELBOX_CANT_BE_LAUNCHED = "collector.dialog.title.SAMMELBOX_CANT_BE_LAUNCHED";
 	public static final String DIALOG_CONTENT_SAMMELBOX_CANT_BE_LAUNCHED = "collector.dialog.content.SAMMELBOX_CANT_BE_LAUNCHED";
 	public static final String DIALOG_TITLE_SELECT_CSV_FILE = "org.sammelbox.dialog.title.SELECT_CSV_FILE";
+	public static final String DIALOG_TITLE_SIMULATION_SUCCESSFUL = "org.sammelbox.dialog.title.SIMULATION_SUCCESSFUL";
+	public static final String DIALOG_CONTENT_SIMULATION_SUCCESSFUL = "org.sammelbox.dialog.content.SIMULATION_UNSUCCESSFUL";
+	public static final String DIALOG_TITLE_SIMULATION_UNSUCCESSFUL = "org.sammelbox.dialog.title.SIMULATION_UNSUCCESSFUL";
+	public static final String DIALOG_CONTENT_SIMULATION_UNSUCCESSFUL = "org.sammelbox.dialog.content.SIMULATION_UNSUCCESSFUL";
+	public static final String DIALOG_TITLE_IMPORT_SUCCESSFUL = "org.sammelbox.dialog.title.IMPORT_SUCCESSFUL";
+	public static final String DIALOG_CONTENT_IMPORT_SUCCESSFUL = "org.sammelbox.dialog.content.IMPORT_SUCCESSFUL";
+	public static final String DIALOG_TITLE_IMPORT_UNSUCCESSFUL = "org.sammelbox.dialog.title.IMPORT_UNSUCCESSFUL";
+	public static final String DIALOG_CONTENT_IMPORT_UNSUCCESSFUL = "org.sammelbox.dialog.content.IMPORT_UNSUCCESSFUL";
+	public static final String DIALOG_TITLE_CONTINUE_UNSAVED_CHANGES = "org.sammelbox.dialog.title.CONTINUE_UNSAVED_CHANGES";
+	public static final String DIALOG_CONTENT_CONTINUE_UNSAVED_CHANGES = "org.sammelbox.dialog.content.CONTINUE_UNSAVED_CHANGES";
+	public static final String DIALOG_TITLE_SELECT_SEPARATION_CHAR = "org.sammelbox.dialog.title.SELECT_SEPARATION_CHAR";
+	public static final String DIALOG_CONTENT_SELECT_SEPARATION_CHAR = "org.sammelbox.dialog.content.SELECT_SEPARATION_CHAR";
+	public static final String DIALOG_BUTTON_SELECT_SEPARATION_CHAR = "org.sammelbox.dialog.button.SELECT_SEPARATION_CHAR";
+	
 	
 	/*   Open & Save Dialogs   */
 	public static final String DIALOG_BACKUP_TO_FILE = "collector.savedialog.title.BACKUP_TO_FILE";
@@ -123,6 +145,7 @@ public final class DictKeys {
 	public static final String DIALOG_EXPORT_VISIBLE_ITEMS = "collector.filedialog.EXPORT_VISIBLE_ITEMS";
 	public static final String DIALOG_CSV_FOR_SPREADSHEET = "collector.filedialog.format.CSV_FOR_SPREADSHEET";
 	public static final String DIALOG_HTML_FOR_PRINT = "collector.filedialog.format.HTML_FOR_PRINT";
+	public static final String DIALOG_SELECT_IMAGES = "org.sammelbox.filedialog.format.SELECT_IMAGES";
 	
 	/*   Buttons   */
 	public static final String BUTTON_TOGGLE = "collector.button.caption.TOGGLE";
@@ -162,6 +185,8 @@ public final class DictKeys {
 	public static final String BUTTON_TOOLTIP_UPDATE_ITEM = "org.sammelbox.button.tooltip.UPDATE_ITEM";
 	public static final String BUTTON_TOOLTIP_ADD_ITEM = "org.sammelbox.button.tooltip.ADD_ITEM";
 	public static final String BUTTON_SELECT_CSV_FILE = "org.sammelbox.button.SELECT_CSV_FILE";
+	public static final String BUTTON_SIMULATE = "org.sammelbox.button.SIMULATE";
+	public static final String BUTTON_IMPORT = "org.sammelbox.button.IMPORT";
 	
 	/*   Labels   */
 	public static final String LABEL_ADD_ENTRY = "collector.label.caption.ADD_ENTRY";
@@ -198,9 +223,18 @@ public final class DictKeys {
 	public static final String LABEL_DETAILS_VIEW = "org.sammelbox.label.caption.DETAILS_VIEW";
 	public static final String LABEL_GALLERY_VIEW = "org.sammelbox.label.caption.GALLERY_VIEW";
 	public static final String LABEL_DATE_FORMAT = "org.sammelbox.label.caption.DATE_FORMAT";
+	public static final String LABEL_ALBUM_NAME = "org.sammelbox.label.caption.ALBUM_NAME";
+	public static final String LABEL_SEPARATOR = "org.sammelbox.label.caption.SEPARATOR";
+	public static final String LABEL_IMPORT_IMG_FROM_COLUMN = "org.sammelbox.label.caption.IMPORT_IMG_FROM_COLUMN";
+	public static final String LABEL_IMG_COLUM_NAME = "org.sammelbox.label.caption.IMG_COLUM_NAME";
+	public static final String LABEL_IMG_SEPARATOR = "org.sammelbox.label.caption.IMG_SEPARATOR";
 	
 	/*   Textbox   */
-	public static final String TEXTBOX_MY_NEW_ALBUM = "collector.textbox.content.MY_NEW_ALBUM";
+	public static final String TEXT_MY_NEW_ALBUM = "collector.textbox.content.MY_NEW_ALBUM";
+	public static final String TEXT_SAMPLE_IMPORT_NAME = "org.sammelbox.textbox.content.SAMPLE_IMPORT_NAME";
+	
+	/*   Combo Box   */
+	public static final String COMBOBOX_CONTENT_STARS = "org.sammelbox.combobox.content.STARS";
 	
 	/*   Browser   */
 	public static final String BROWSER_UPDATE = "collector.browser.text.UPDATE";
@@ -246,6 +280,10 @@ public final class DictKeys {
 	public static final String BROWSER_ALBUMS_RESTORED = "collector.browser.text.ALBUMS_RESTORED";
 	public static final String BROWSER_SYNCRONIZATION_HEADER = "collector.browser.text.SYNCRONIZATION_HEADER";
 	public static final String BROWSER_SYNCRONIZATION = "collector.browser.text.SYNCRONIZATION";
+	public static final String BROWSER_BACKUP_IN_PROGESS = "org.sammelbox.browser.text.BACKUP_IN_PROGESS";
+	public static final String BROWSER_BACKUP_IN_PROGESS_DETAIL = "org.sammelbox.browser.text.BACKUP_IN_PROGESS_DETAIL";
+	public static final String BROWSER_BACKUP_FINISHED = "org.sammelbox.browser.text.BACKUP_FINISHED";
+	public static final String BROWSER_BACKUP_FINISHED_DETAIL = "org.sammelbox.browser.text.BACKUP_FINISHED_DETAIL";
 	
 	/*   Status Bar   */
 	public static final String STATUSBAR_PROGRAM_STARTED = "collector.statusbar.PROGRAM_STARTED";

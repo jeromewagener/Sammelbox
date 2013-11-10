@@ -21,6 +21,7 @@ package org.sammelbox.model.album;
 import java.sql.Date;
 import java.sql.Time;
 
+import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,30 +43,30 @@ public enum FieldType {
 	/** Returns a collection of translated field types. Special FieldTypes such as ID and UUID won't be included */
 	public static String[] getTranslatedFieldTypes() {
 		return new String[] {
-				Translator.toBeTranslated("Text"),
-				Translator.toBeTranslated("Decimal"),
-				Translator.toBeTranslated("Date"),
-				Translator.toBeTranslated("Star Rating"),
-				Translator.toBeTranslated("URL"),
-				Translator.toBeTranslated("Integer"),
-				Translator.toBeTranslated("Option")
+				Translator.get(DictKeys.FIELD_TYPE_TEXT),
+				Translator.get(DictKeys.FIELD_TYPE_DECIMAL),
+				Translator.get(DictKeys.FIELD_TYPE_DATE),
+				Translator.get(DictKeys.FIELD_TYPE_STAR_RATING),
+				Translator.get(DictKeys.FIELD_TYPE_URL),
+				Translator.get(DictKeys.FIELD_TYPE_INTEGER),
+				Translator.get(DictKeys.FIELD_TYPE_OPTION)
 		};
 	}
 	
 	public static FieldType valueOfTranslatedFieldType(String translatedFieldType) {
-		if (translatedFieldType.equals(Translator.toBeTranslated("Text"))) {
+		if (translatedFieldType.equals(Translator.get(DictKeys.FIELD_TYPE_TEXT))) {
 			return FieldType.TEXT;
-		} else if (translatedFieldType.equals(Translator.toBeTranslated("Decimal"))) {
+		} else if (translatedFieldType.equals(Translator.get(DictKeys.FIELD_TYPE_DECIMAL))) {
 			return FieldType.DECIMAL;
-		} else if (translatedFieldType.equals(Translator.toBeTranslated("Date"))) {
+		} else if (translatedFieldType.equals(Translator.get(DictKeys.FIELD_TYPE_DATE))) {
 			return FieldType.DATE;
-		} else if (translatedFieldType.equals(Translator.toBeTranslated("Star Rating"))) {
+		} else if (translatedFieldType.equals(Translator.get(DictKeys.FIELD_TYPE_STAR_RATING))) {
 			return FieldType.STAR_RATING;
-		} else if (translatedFieldType.equals(Translator.toBeTranslated("URL"))) {
+		} else if (translatedFieldType.equals(Translator.get(DictKeys.FIELD_TYPE_URL))) {
 			return FieldType.URL;
-		} else if (translatedFieldType.equals(Translator.toBeTranslated("Integer"))) {
+		} else if (translatedFieldType.equals(Translator.get(DictKeys.FIELD_TYPE_INTEGER))) {
 			return FieldType.INTEGER;
-		} else if (translatedFieldType.equals(Translator.toBeTranslated("Option"))) {
+		} else if (translatedFieldType.equals(Translator.get(DictKeys.FIELD_TYPE_OPTION))) {
 			return FieldType.OPTION;
 		}
 		
@@ -77,19 +78,19 @@ public enum FieldType {
 	
 	public static String translateFieldType(FieldType fieldType) {
 		if (fieldType.equals(FieldType.TEXT)) {
-			return Translator.toBeTranslated("Text");
+			return Translator.get(DictKeys.FIELD_TYPE_TEXT);
 		} else if (fieldType.equals(FieldType.DECIMAL)) {
-			return Translator.toBeTranslated("Decimal");
+			return Translator.get(DictKeys.FIELD_TYPE_DECIMAL);
 		} else if (fieldType.equals(FieldType.DATE)) {
-			return Translator.toBeTranslated("Date");
+			return Translator.get(DictKeys.FIELD_TYPE_DATE);
 		} else if (fieldType.equals(FieldType.STAR_RATING)) {
-			return Translator.toBeTranslated("Star Rating");
+			return Translator.get(DictKeys.FIELD_TYPE_STAR_RATING);
 		} else if (fieldType.equals(FieldType.URL)) {
-			return Translator.toBeTranslated("URL");
+			return Translator.get(DictKeys.FIELD_TYPE_URL);
 		} else if (fieldType.equals(FieldType.INTEGER)) {
-			return Translator.toBeTranslated("Integer");
+			return Translator.get(DictKeys.FIELD_TYPE_INTEGER);
 		} else if (fieldType.equals(FieldType.OPTION)) {
-			return Translator.toBeTranslated("Option");
+			return Translator.get(DictKeys.FIELD_TYPE_OPTION);
 		}
 		
 		LOGGER.error("We should never return null at this point. "

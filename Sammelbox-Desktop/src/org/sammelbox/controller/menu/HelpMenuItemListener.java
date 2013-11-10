@@ -6,7 +6,6 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.FileDialog;
 import org.sammelbox.controller.filesystem.FileSystemAccessWrapper;
-import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.view.ApplicationUI;
 import org.sammelbox.view.browser.BrowserFacade;
 import org.sammelbox.view.browser.Utilities;
@@ -23,7 +22,8 @@ public final class HelpMenuItemListener {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {				
 				FileDialog saveFileDialog = new FileDialog(ApplicationUI.getShell(), SWT.SAVE);
-				saveFileDialog.setText(Translator.toBeTranslated("Dump HTML"));
+				// Debugging -> no need to translate
+				saveFileDialog.setText("Dump HTML");
 				saveFileDialog.setFilterPath(System.getProperty("user.home"));
 				String[] filterExt = { "*.html" };
 				saveFileDialog.setFilterExtensions(filterExt);

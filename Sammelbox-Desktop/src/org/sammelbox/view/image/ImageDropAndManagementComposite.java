@@ -102,7 +102,7 @@ public class ImageDropAndManagementComposite extends Composite implements DropTa
 			@Override
 			public void mouseDown(MouseEvent arg0) {
 				FileDialog openFileDialog = new FileDialog(ApplicationUI.getShell(), SWT.MULTI);
-				openFileDialog.setText(Translator.toBeTranslated("Select pictures..."));
+				openFileDialog.setText(Translator.get(DictKeys.DIALOG_SELECT_IMAGES));
 				openFileDialog.setFilterPath(System.getProperty("user.home"));
 				String[] filterExt = { "*.JPEG;*.jpeg;*.JPG;*.jpg;*.PNG;*.png;*.GIF;*.gif;*.BMP;*.bmp;*.ICO;*.ico;*.TIFF;*.tiff" };
 				openFileDialog.setFilterExtensions(filterExt);
