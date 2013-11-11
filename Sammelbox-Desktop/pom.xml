@@ -4,7 +4,7 @@
    <groupId>org.sammelbox</groupId>
    <artifactId>Sammelbox-Desktop</artifactId>
    <packaging>jar</packaging>
-   <version>1.0-BETA</version>
+   <version>1.0-SNAPSHOT</version>
    <name>Sammelbox</name>
    <url>http://www.sammelbox.org</url>
    <properties>
