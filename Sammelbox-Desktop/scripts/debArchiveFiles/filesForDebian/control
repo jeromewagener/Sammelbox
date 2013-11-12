@@ -1,0 +1,15 @@
+Source: sammelbox
+Section: main
+Priority: extra
+Maintainer: Jérôme Wagener <jerome@jeromewagener.com>
+Build-Depends: debhelper (>= 8.0.0)
+Standards-Version: 3.9.2
+Homepage: http://www.sammelbox.org
+Vcs-Browser: https://github.com/jeromewagener/Sammelbox.git
+
+Package: sammelbox
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Sammelbox 1.0 - A free and open-source collection manager
+ Sammelbox is a free and open-source collection manager,
+ with a strong focus on simplicity and customization.

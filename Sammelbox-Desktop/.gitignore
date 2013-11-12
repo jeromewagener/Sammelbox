@@ -3,6 +3,7 @@
 /res/information/buildinfo.properties
 /target
 /release
+/package
 
 # Eclipse specific files
 /.metadata

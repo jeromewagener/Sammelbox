@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Terminal=false
+Exec=/usr/share/sammelbox/sammelbox.sh
+Name=Sammelbox
+Comment=Sammelbox - A free and open-source collection manager
+Icon=/usr/share/sammelbox/sammelbox-icon.png
+Categories=Application,Accessories

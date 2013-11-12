@@ -1,0 +1,55 @@
+#!/usr/bin/make -f
+
+icon = $(CURDIR)/sammelbox-icon.png
+script = $(CURDIR)/sammelbox.sh
+launcher = $(CURDIR)/sammelbox.desktop
+jar = $(CURDIR)/sammelbox.jar
+
+DEST1 = $(CURDIR)/debian/sammelbox/usr/share/sammelbox
+DEST2 = $(CURDIR)/debian/sammelbox/usr/share/applications
+
+build: build-stamp
+
+build-stamp: 
+	dh_testdir
+	touch build-stamp
+
+clean:
+	dh_testdir
+	dh_testroot
+	rm -f build-stamp
+	dh_clean
+
+install: build clean $(icon) $(script) $(launcher) $(jar)
+	dh_testdir
+	dh_testroot
+	dh_prep
+	dh_installdirs
+
+	mkdir -m 755 -p $(DEST1)
+	mkdir -m 755 -p $(DEST2)
+
+	install -m 666 $(icon) $(DEST1)
+	install -m 666 $(jar) $(DEST1)
+	install -m 777 $(script) $(DEST1)
+	install -m 777 $(launcher) $(DEST2)
+
+binary-indep: build install
+	dh_testdir
+	dh_testroot
+	dh_installchangelogs
+	dh_installdocs
+	dh_installexamples
+	dh_installman
+	dh_link
+	dh_compress
+	dh_fixperms
+	dh_installdeb
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
+binary-arch: build install
+
+binary: binary-indep binary-arch
+.PHONY: build clean binary-indep binary-arch binary install
