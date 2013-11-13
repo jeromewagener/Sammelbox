@@ -125,7 +125,7 @@ public final class DictKeys {
 	public static final String DIALOG_CONTENT_SAMMELBOX_CANT_BE_LAUNCHED = "collector.dialog.content.SAMMELBOX_CANT_BE_LAUNCHED";
 	public static final String DIALOG_TITLE_SELECT_CSV_FILE = "org.sammelbox.dialog.title.SELECT_CSV_FILE";
 	public static final String DIALOG_TITLE_SIMULATION_SUCCESSFUL = "org.sammelbox.dialog.title.SIMULATION_SUCCESSFUL";
-	public static final String DIALOG_CONTENT_SIMULATION_SUCCESSFUL = "org.sammelbox.dialog.content.SIMULATION_UNSUCCESSFUL";
+	public static final String DIALOG_CONTENT_SIMULATION_SUCCESSFUL = "org.sammelbox.dialog.content.SIMULATION_SUCCESSFUL";
 	public static final String DIALOG_TITLE_SIMULATION_UNSUCCESSFUL = "org.sammelbox.dialog.title.SIMULATION_UNSUCCESSFUL";
 	public static final String DIALOG_CONTENT_SIMULATION_UNSUCCESSFUL = "org.sammelbox.dialog.content.SIMULATION_UNSUCCESSFUL";
 	public static final String DIALOG_TITLE_IMPORT_SUCCESSFUL = "org.sammelbox.dialog.title.IMPORT_SUCCESSFUL";

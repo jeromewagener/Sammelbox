@@ -48,6 +48,7 @@ public class CSVImportTests {
 	public static final String TEST_CSV_2 =	CSV_TEST_FOLDER + File.separatorChar + "myCollection2.csv";
 	public static final String TEST_CSV_3 =	CSV_TEST_FOLDER + File.separatorChar + "myCollection3.csv";
 	public static final String TEST_CSV_4_FAULTY = CSV_TEST_FOLDER + File.separatorChar + "myCollection4Faulty.csv";
+	public static final String TEST_CSV_5 = CSV_TEST_FOLDER + File.separatorChar + "myCollection5.csv";
 	
 	public static final String PICTURE_A = CSV_TEST_FOLDER + File.separatorChar + "pictureA.png";
 	public static final String PICTURE_B = CSV_TEST_FOLDER + File.separatorChar + "pictureB.png";
@@ -162,6 +163,21 @@ public class CSVImportTests {
 		} catch (ImportException e) {
 			// We have a success if the third import file fails, since it contains a format error
 			return;
+		}
+	}
+	
+	@Test
+	public void testCSVImport5() {		
+		try {
+			CSVImporter.importCSV(IMPORT_ALBUM_NAME, TEST_CSV_5, ";", false);
+			
+			assertTrue("The imported album is not a picture album",
+					!DatabaseOperations.isPictureAlbum(IMPORT_ALBUM_NAME));			
+			assertTrue("There should be two items after the import", 
+					TestQueries.getNumberOfRecordsInTable(DatabaseStringUtilities.generateTableName(IMPORT_ALBUM_NAME)) == 2);
+			
+		} catch (DatabaseWrapperOperationException | ImportException e) {
+			fail(e.getMessage());
 		}
 	}
 }

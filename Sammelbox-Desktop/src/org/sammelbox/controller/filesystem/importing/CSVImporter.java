@@ -119,7 +119,8 @@ public final class CSVImporter {
 	private static void handleData(String line, String albumName, String separationCharacter, List<MetaItemField> metaItemFields, 
 			String pictureSeperationCharacter, int pictureColumnIndex, boolean isSimulation) throws DatabaseWrapperOperationException, ImportException {
 		
-		String[] fieldValues = line.split(separationCharacter, NO_PICTURE_INDEX);
+		// Credit for the regex goes to Bart Kiers (http://stackoverflow.com/a/1757107/2898363)
+		String[] fieldValues = line.split(separationCharacter + "(?=([^\"]*\"[^\"]*\")*[^\"]*$)", NO_PICTURE_INDEX);
 
 		int pictureOffset = pictureColumnIndex == NO_PICTURE_INDEX ? 0 : 1;
 		if ((metaItemFields.size() + pictureOffset) != fieldValues.length) {

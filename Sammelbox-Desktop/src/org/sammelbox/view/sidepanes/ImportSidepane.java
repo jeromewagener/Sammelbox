@@ -68,9 +68,13 @@ public final class ImportSidepane {
 				String[] filterExt = { "*.csv" };
 				openFileDialog.setFilterExtensions(filterExt);
 
-				File file = new File(openFileDialog.open());
-				csvFileNameLabel.setText(file.getName());
-				csvFileNameLabel.setData("CSV_FILE", file);
+				String filename = openFileDialog.open();
+				
+				if (filename != null) {
+					File file = new File(filename);
+					csvFileNameLabel.setText(file.getName());
+					csvFileNameLabel.setData("CSV_FILE", file);
+				}
 			}
 		});
 				
@@ -193,7 +197,7 @@ public final class ImportSidepane {
 				} catch (ImportException ex) {
 					ComponentFactory.getMessageBox(
 							Translator.get(DictKeys.DIALOG_TITLE_SIMULATION_UNSUCCESSFUL), 
-							Translator.get(DictKeys.DIALOG_CONTENT_SIMULATION_UNSUCCESSFUL), 
+							Translator.get(DictKeys.DIALOG_CONTENT_SIMULATION_UNSUCCESSFUL, ex.getMessage()), 
 							SWT.ICON_WARNING).open();
 				}
 			}
@@ -220,7 +224,7 @@ public final class ImportSidepane {
 				} catch (ImportException ex) {
 					ComponentFactory.getMessageBox(
 							Translator.get(DictKeys.DIALOG_TITLE_IMPORT_UNSUCCESSFUL), 
-							Translator.get(DictKeys.DIALOG_CONTENT_IMPORT_UNSUCCESSFUL),
+							Translator.get(DictKeys.DIALOG_CONTENT_IMPORT_UNSUCCESSFUL, ex.getMessage()),
 							SWT.ERROR).open();
 				}
 			}
