@@ -86,6 +86,18 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 	 * @param event the location event used to identify the new location */
 	public void changing(LocationEvent event) {		
 		if (event.location.startsWith(UIConstants.SHOW_UPDATE_ENTRY_COMPOSITE)) {
+			// handle the case of unsaved changes
+			if (GuiController.getGuiState().hasUnsavedAlbumItem()) {
+				// show message box and abort if asked to do so
+				if (!GuiController.continueWithUnsavedModifications()) {
+					// Do not change the page
+					event.doit = false;
+					return;
+				} else {
+					GuiController.getGuiState().setUnsavedAlbumItem(false);
+				}
+			}
+			
 			String id = event.location.substring(UIConstants.SHOW_UPDATE_ENTRY_COMPOSITE.length());
 			id = retrieveStringWithoutQuestionMarkAtEnd(id);
 
