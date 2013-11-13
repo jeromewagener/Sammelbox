@@ -209,8 +209,8 @@ public final class ApplicationUI implements Observer {
 
 		// center the shell to primary screen
 		Rectangle primaryScreenClientArea = getPrimaryScreenClientArea();
-		int xCoordinateForShell = primaryScreenClientArea.width / 2 - shell.getBounds().width / 2;
-		int yCoordinateForShell = primaryScreenClientArea.height / 2 - shell.getBounds().height / 2;
+		int xCoordinateForShell = primaryScreenClientArea.width / 2 - UIConstants.MIN_SHELL_WIDTH / 2;
+		int yCoordinateForShell = primaryScreenClientArea.height / 2 - UIConstants.MIN_SHELL_HEIGHT / 2;
 		shell.setLocation(xCoordinateForShell, yCoordinateForShell);
 
 		// Create the album manager
