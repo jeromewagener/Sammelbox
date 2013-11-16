@@ -74,23 +74,19 @@ import org.sammelbox.sidepanes.SidepaneCreationTests;
 public class TestExecuter {
 	public static final String PATH_TO_TEST_CBK = 
 			System.getProperty("user.dir") + File.separatorChar + "test" +
-					File.separatorChar + "testdata" + 
-					File.separatorChar + "test-albums-version-3.2.cbk";
+					File.separatorChar + "testdata" + File.separatorChar + "test-albums-version-3.3.cbk";
 	
 	public static final String PATH_TO_TEST_PICTURE_1 = 
 			System.getProperty("user.dir") + File.separatorChar + "res" + 
-					File.separator + "graphics"+
-					File.separatorChar + "placeholder.png";
+					File.separator + "graphics" + File.separatorChar + "placeholder.png";
 	
 	public static final String PATH_TO_TEST_PICTURE_2 = 
 			System.getProperty("user.dir") + File.separatorChar + "res" + 
-					File.separator + "graphics"+
-					File.separatorChar + "placeholder2.png";
+					File.separator + "graphics" + File.separatorChar + "placeholder2.png";
 	
 	public static final String PATH_TO_TEST_PICTURE_3 = 
 			System.getProperty("user.dir") + File.separatorChar + "res" + 
-					File.separator + "graphics"+
-					File.separatorChar + "placeholder3.png";
+					File.separator + "graphics" + File.separatorChar + "placeholder3.png";
 	
 	public static void resetTestHome() {
 		try {
