@@ -18,42 +18,61 @@
 
 package org.sammelbox.view.browser;
 
+import java.util.Map;
+
 import org.sammelbox.controller.filesystem.FileSystemAccessWrapper;
+import org.sammelbox.controller.i18n.Language;
 import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.model.album.AlbumItem;
 import org.sammelbox.model.album.AlbumItemResultSet;
 import org.sammelbox.view.ApplicationUI;
 import org.sammelbox.view.UIConstants;
 
-public final class BrowserFacade {
+public final class BrowserFacade {	
 	private BrowserFacade() {
 	}
 	
-	public static void showAlbum() { Utilities.showAlbum(ApplicationUI.getAlbumItemBrowser()); }
+	public static void showAlbum() { BrowserUtils.showAlbum(ApplicationUI.getAlbumItemBrowser()); }
 	public static void loadWelcomePage() { WelcomePageCreator.loadWelcomePage(); }
-	public static void loadHelpPage() { Utilities.loadHelpPage(); }
-	public static String getAnchorForAlbumItemId(long anchorId) { return Utilities.getAnchorForAlbumItemId(anchorId); }
-	public static void jumpToAnchor(String anchor) { Utilities.jumpToAnchor(anchor); }
-	public static void performBrowserQueryAndShow(String sqlQuery) { Utilities.performBrowserQueryAndShow(ApplicationUI.getAlbumItemBrowser(), sqlQuery); }
+	public static String getAnchorForAlbumItemId(long anchorId) { return BrowserUtils.getAnchorForAlbumItemId(anchorId); }
+	public static void jumpToAnchor(String anchor) { BrowserUtils.jumpToAnchor(anchor); }
+	public static void performBrowserQueryAndShow(String sqlQuery) { BrowserUtils.performBrowserQueryAndShow(ApplicationUI.getAlbumItemBrowser(), sqlQuery); }
 	public static void showImageViewer(String pathToPicture, long albumItemId) { PictureViewCreator.showPicture(albumItemId); }
-	public static void resetFutureJumpAnchor() {Utilities.setFutureJumpAnchor(UIConstants.NO_ANCHOR_DEFINED);}
-	public static void setFutureJumpAnchor(String futureJumpAnchor) { Utilities.setFutureJumpAnchor(futureJumpAnchor); }
-	public static String getFutureJumpAnchor() { return Utilities.getFutureJumpAnchor(); }
-	public static void returnFromImageViewer() { Utilities.returnFromImageViewer(); }
-	public static void addAdditionalAlbumItems() { Utilities.addAdditionalAlbumItems(); }
-	public static void showResultSet(AlbumItemResultSet resultSet) { Utilities.showResultSet(ApplicationUI.getAlbumItemBrowser(), resultSet); }
-	public static void loadHtmlFromTranslatedFile(String filename) { 
-		String htmlFile = FileSystemAccessWrapper.readInputStreamIntoString(ApplicationUI.getShell().getClass().getClassLoader().getResourceAsStream("textfiles/" + Translator.getUsedLanguage() + "/" + filename));
-		Utilities.loadHtml(ApplicationUI.getAlbumItemBrowser(), htmlFile); }
+	public static void resetFutureJumpAnchor() {BrowserUtils.setFutureJumpAnchor(UIConstants.NO_ANCHOR_DEFINED);}
+	public static void setFutureJumpAnchor(String futureJumpAnchor) { BrowserUtils.setFutureJumpAnchor(futureJumpAnchor); }
+	public static String getFutureJumpAnchor() { return BrowserUtils.getFutureJumpAnchor(); }
+	public static void returnFromImageViewer() { BrowserUtils.returnFromImageViewer(); }
+	public static void addAdditionalAlbumItems() { BrowserUtils.addAdditionalAlbumItems(); }
+	public static void showResultSet(AlbumItemResultSet resultSet) { BrowserUtils.showResultSet(ApplicationUI.getAlbumItemBrowser(), resultSet); }
 	public static void showCreateNewAlbumPage(AlbumItem albumItem) { FeedbackCreator.showCreateNewAlbumPage(ApplicationUI.getAlbumItemBrowser(), albumItem); }
 	public static void showCreateAlterAlbumPage(AlbumItem albumItem) { FeedbackCreator.showCreateAlterAlbumPage(ApplicationUI.getAlbumItemBrowser(), albumItem); }
 	public static void generateAlbumItemUpdatedPage(long albumItemId) { FeedbackCreator.generatAlbumItemUpdatedPage(albumItemId); }
 	public static void generateAlbumItemAddedPage(long idOfNewAlbumItem) { FeedbackCreator.generateAlbumItemAddedPage(idOfNewAlbumItem); }
 	public static void addModificationToAlterationList(String modification) { FeedbackCreator.addModificationToAlterationList(modification); }
 	public static void clearAlterationList() { FeedbackCreator.clearAlterationList(); }
-	public static void showAlbumDeletedPage(String deletedAlbum) { Utilities.loadHtml(ApplicationUI.getAlbumItemBrowser(), FeedbackCreator.generateAlbumDeletedPage(deletedAlbum));	}
-	public static void showAlbumRestoredPage() { Utilities.loadHtml(ApplicationUI.getAlbumItemBrowser(), FeedbackCreator.generateAlbumsRestoredPage()); }
-	public static void showBackupInProgressPage() { Utilities.loadHtml(ApplicationUI.getAlbumItemBrowser(), FeedbackCreator.generateBackupInProgressPage()); }
-	public static void showBackupFinishedPage() { Utilities.loadHtml(ApplicationUI.getAlbumItemBrowser(), FeedbackCreator.generateBackupFinishedPage()); }
-	public static void showSynchronizePage() { Utilities.loadHtml(ApplicationUI.getAlbumItemBrowser(), FeedbackCreator.generateSynchronizationPage()); }
+	
+	public static Map<String, String> getInitializedContentMap() { return BrowserUtils.getInitializedContentMap(); }
+	
+	public static void loadHtmlFile(String htmlFileFromHtmlPackage) {
+		String htmlFileString = FileSystemAccessWrapper.readInputStreamIntoString(
+				ApplicationUI.getShell().getClass().getClassLoader().getResourceAsStream("html/" + htmlFileFromHtmlPackage));
+		
+		ApplicationUI.getAlbumItemBrowser().setText(htmlFileString);
+	}
+	public static void fillAndLoadTemplate(String htmlTemplatFilename, Map<String, String> templateContent) { 
+		BrowserUtils.fillAndLoadTemplate(ApplicationUI.getAlbumItemBrowser(), htmlTemplatFilename, templateContent); }
+		
+	public static void showAlbumDeletedPage(String deletedAlbum) { FeedbackCreator.showAlbumDeletedPage(deletedAlbum);	}
+	public static void showAlbumRestoredPage() { FeedbackCreator.showAlbumsRestoredPage(); }
+	public static void showBackupInProgressPage() { FeedbackCreator.showBackupInProgressPage(); }
+	public static void showBackupFinishedPage() { FeedbackCreator.showBackupFinishedPage(); }
+	public static void showSynchronizePage() { FeedbackCreator.showSynchronizationPage(); }
+	public static void showSettingsPage() { FeedbackCreator.showSettingsPage(); }
+	public static void showImportPage() { FeedbackCreator.showImportPage(); }
+	public static void showHelpPage() {
+		String htmlHelpString = FileSystemAccessWrapper.readInputStreamIntoString(
+				ApplicationUI.getShell().getClass().getClassLoader().getResourceAsStream(Language.getHelpPage(Translator.getUsedLanguage())));
+		
+		ApplicationUI.getAlbumItemBrowser().setText(htmlHelpString);
+	}
 }

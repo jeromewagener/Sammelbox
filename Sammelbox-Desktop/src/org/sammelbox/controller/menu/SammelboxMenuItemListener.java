@@ -33,6 +33,7 @@ public final class SammelboxMenuItemListener {
 		return new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent evt) {
+				BrowserFacade.showImportPage();
 				ApplicationUI.changeRightCompositeTo(PanelType.IMPORT, ImportSidepane.build(ApplicationUI.getThreePanelComposite()));
 			}
 		};

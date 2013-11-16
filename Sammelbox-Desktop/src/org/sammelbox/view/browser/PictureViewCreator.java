@@ -54,7 +54,7 @@ public final class PictureViewCreator {
 				int counter = 1;
 	
 				for (AlbumItemPicture picture : pictures) {
-					String escapedPicturePath = Utilities.escapeBackslashesInFilePath(picture.getOriginalPicturePath());
+					String escapedPicturePath = BrowserUtils.escapeBackslashesInFilePath(picture.getOriginalPicturePath());
 					smallPictures.append(
 							"<a onMouseover='change(\"bigimg\", \"" + escapedPicturePath + "\");maximizeImageSize(\"bigimg\", 150, 30);'>" + 
 									"  <img border=\"1\" " +

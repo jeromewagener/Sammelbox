@@ -85,6 +85,6 @@ public final class DetailedViewCreator {
 				"</html>";
 		
 		browser.setText(finalPageAsHtml);		
-		Utilities.setLastPageAsHtml(finalPageAsHtml);		
+		BrowserUtils.setLastPageAsHtml(finalPageAsHtml);		
 	}
 }

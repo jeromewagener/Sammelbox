@@ -76,6 +76,7 @@ public final class FileSystemAccessWrapper {
 		errorOccurred = errorOccurred || createDirectoryAndLogError(FileSystemLocations.getAlbumPicturesDir());
 		errorOccurred = errorOccurred || createDirectoryAndLogError(FileSystemLocations.getThumbnailsDir());
 		errorOccurred = errorOccurred || createDirectoryAndLogError(FileSystemLocations.getAppDataDir());
+		errorOccurred = errorOccurred || createDirectoryAndLogError(FileSystemLocations.getAppDataGraphicsDir());
 		errorOccurred = errorOccurred || createDirectoryAndLogError(FileSystemLocations.getBackupDir());
 		
 		if (errorOccurred) {

@@ -47,7 +47,7 @@ public final class WelcomePageCreator {
 				"      <div style=\"float:left; margin:25px;\">" +
 				"        <img width=\"450px\" src=\" " + FileSystemLocations.getLogoPNG() + " \">" +
 				"      </div>" +
-		        "      <div style=\"float:left; margin:25px; padding:10px; background-color:#" + Utilities.getBackgroundColorOfWidgetInHex() + "\">" +
+		        "      <div style=\"float:left; margin:25px; padding:10px; background-color:#" + BrowserUtils.getBackgroundColorOfWidgetInHex() + "\">" +
 					     generateAlbumInformation() +
 					     generateFavorites() +
 			    "      </div>" +

@@ -97,13 +97,13 @@ public final class GalleryViewCreator {
 		       "<script src=\"" + UIConstants.EFFECTS_JS + "\"></script>" +
 		       "<title>sammelbox.org</title>" +
 		     "</head>" +
-		     "<body style=\"background-color:#ffffff;font-family:" +  Utilities.getDefaultSystemFont() + "\">" +
+		     "<body style=\"background-color:#ffffff;font-family:" +  BrowserUtils.getDefaultSystemFont() + "\">" +
 		       "<h2>" + collectionHeader + "</h2>" +
 		       "<div id=\"albumItems\">" + galleryItemHtmlBuilder.toString() + "</div>" +
 		     "</body>" +
 		   "</html>";
 		
 		browser.setText(finalPageAsHtml);
-		Utilities.setLastPageAsHtml(finalPageAsHtml);
+		BrowserUtils.setLastPageAsHtml(finalPageAsHtml);
 	}
 }

@@ -19,12 +19,15 @@
 package org.sammelbox.view.browser;
 
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.widgets.Display;
 import org.sammelbox.controller.GuiController;
 import org.sammelbox.controller.filesystem.FileSystemAccessWrapper;
+import org.sammelbox.controller.filesystem.FileSystemLocations;
 import org.sammelbox.model.album.AlbumItem;
 import org.sammelbox.model.album.AlbumItemResultSet;
 import org.sammelbox.model.album.AlbumItemStore;
@@ -35,8 +38,8 @@ import org.sammelbox.view.UIConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class Utilities {
-	private static final Logger LOGGER = LoggerFactory.getLogger(Utilities.class);
+public final class BrowserUtils {
+	private static final Logger LOGGER = LoggerFactory.getLogger(BrowserUtils.class);
 		
 	/** The anchor to which a jump is performed as soon as the page is fully loaded. 
 	 * This field is used via the set and get methods by the browser progress listener */
@@ -46,7 +49,7 @@ public final class Utilities {
 	/** The default system font */
 	private static String defaultSystemFont = null;
 	
-	private Utilities() {
+	private BrowserUtils() {
 	}
 	
 	static String getAnchorForAlbumItemId(long albumItemId) {
@@ -79,13 +82,13 @@ public final class Utilities {
 	 * This id will be used to jump to an item after the content
 	 * of the HTML document changed and is completely loaded */
 	static void setFutureJumpAnchor(String futureJumpAnchor) {
-		Utilities.futureJumpAnchor = futureJumpAnchor;
+		BrowserUtils.futureJumpAnchor = futureJumpAnchor;
 	}
 
 	/** The browser progress listener uses this method to jump to a previously
 	 * provided anchor, as soon as the HTML document is completely loaded */
 	static String getFutureJumpAnchor() {
-		return Utilities.futureJumpAnchor;
+		return BrowserUtils.futureJumpAnchor;
 	}
 
 	/** Attention: This method must only be used to jump to an anchor (id) if the currently shown
@@ -118,14 +121,23 @@ public final class Utilities {
 		browser.setText(FileSystemAccessWrapper.readInputStreamIntoString(fileInputStream));
 	}
 	
-	static void loadHtml(Browser browser, String htmlString) {
-		browser.setText(htmlString);
+	static Map<String, String> getInitializedContentMap() {
+		Map<String, String> contentMap = new HashMap<>();
+		contentMap.put("EFFECT_JS", FileSystemLocations.getEffectsJS());
+		contentMap.put("STYLE_CSS", FileSystemLocations.getStyleCSS());
+		
+		return contentMap;
 	}
 	
-	static void loadHelpPage() {
-		loadHtmlPage(
-				ApplicationUI.getAlbumItemBrowser(),
-				ApplicationUI.class.getClassLoader().getResourceAsStream("textfiles/ENGLISH/help.html"));
+	static void fillAndLoadTemplate(Browser browser, String htmlTemplateFilename, Map<String, String> templateContent) {
+		String htmlString = FileSystemAccessWrapper.readInputStreamIntoString(
+			ApplicationUI.getShell().getClass().getClassLoader().getResourceAsStream("templates/" + htmlTemplateFilename));
+		
+		for (String key : templateContent.keySet()) {
+			htmlString = htmlString.replace("<!--" + key + "-->", templateContent.get(key));
+		}
+		
+		browser.setText(htmlString);
 	}
 	
 	static String getBackgroundColorOfWidgetInHex() {
@@ -209,7 +221,7 @@ public final class Utilities {
 	}
 
 	static void setLastPageAsHtml(String lastShownContentAsHtml) {
-		Utilities.lastPageAsHtml = lastShownContentAsHtml;
+		BrowserUtils.lastPageAsHtml = lastShownContentAsHtml;
 	}
 	
 	public static String getLastPageAsHtml() {

@@ -36,6 +36,19 @@ public enum Language {
 		}
 	}
 	
+	public static String getHelpPage(Language language) {
+		switch (language) {
+		case ENGLISH:
+			return "internationalization/help_en.html";
+
+		case DEUTSCH:
+			return "internationalization/help_de.html";
+		
+		default:
+			return "internationalization/help_en.html";
+		}
+	}
+	
 	public static String[] allLanguages() {
 		String[] allLanguages = new String[values().length - 1];
 		

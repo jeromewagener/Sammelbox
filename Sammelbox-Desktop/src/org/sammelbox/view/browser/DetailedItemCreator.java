@@ -94,7 +94,7 @@ public final class DetailedItemCreator {
 					htmlDataColumnContent.append(getFieldNameAndValueLine(fieldItem.getName(), ""));
 				}
 			} else  if (fieldItem.getType().equals(FieldType.TEXT)) {
-				htmlDataColumnContent.append(getFieldNameAndValueLine(fieldItem.getName(), Utilities.escapeHtmlString((String) fieldItem.getValue())));
+				htmlDataColumnContent.append(getFieldNameAndValueLine(fieldItem.getName(), BrowserUtils.escapeHtmlString((String) fieldItem.getValue())));
 			} else if (fieldItem.getType().equals(FieldType.INTEGER)) {
 				htmlDataColumnContent.append(getFieldNameAndValueLine(fieldItem.getName(), ((Integer) fieldItem.getValue()).toString()));
 			} else if (fieldItem.getType().equals(FieldType.DECIMAL)) {
@@ -145,27 +145,27 @@ public final class DetailedItemCreator {
 	}
 	
 	private static String getFieldNameAndValueLine(String fieldName, String value) {
-		return "<span class=\"field\"> " + Utilities.escapeHtmlString(fieldName) + "</span> : " + value + "<br>"; 
+		return "<span class=\"field\"> " + BrowserUtils.escapeHtmlString(fieldName) + "</span> : " + value + "<br>"; 
 	}
 	
 	private static String getUrlNameAndLocationLine(String fieldName, String value) {
-		return "<span class=\"field\"> " + Utilities.escapeHtmlString(fieldName) + "</span> : <a href=\"show:///url=" + value + "\">" + value + "</a><br>";
+		return "<span class=\"field\"> " + BrowserUtils.escapeHtmlString(fieldName) + "</span> : <a href=\"show:///url=" + value + "\">" + value + "</a><br>";
 	}
 	
 	private static String getFieldNameAndStars(String fieldName, StarRating rating) {
 		if (rating.equals(StarRating.ONE_STAR)) {
-			return "<span class=\"field\"> " + Utilities.escapeHtmlString(fieldName) + "</span><img alt=\"\" height=\"20\" src=\"" + FileSystemLocations.getOneStarPNG() + "\"><br>";
+			return "<span class=\"field\"> " + BrowserUtils.escapeHtmlString(fieldName) + "</span><img alt=\"\" height=\"20\" src=\"" + FileSystemLocations.getOneStarPNG() + "\"><br>";
 		} else if (rating.equals(StarRating.TWO_STARS)) {
-			return "<span class=\"field\"> " + Utilities.escapeHtmlString(fieldName) + "</span><img alt=\"\" height=\"20\" src=\"" + FileSystemLocations.getTwoStarsPNG() + "\"><br>";
+			return "<span class=\"field\"> " + BrowserUtils.escapeHtmlString(fieldName) + "</span><img alt=\"\" height=\"20\" src=\"" + FileSystemLocations.getTwoStarsPNG() + "\"><br>";
 		} else if (rating.equals(StarRating.THREE_STARS)) {
-			return "<span class=\"field\"> " + Utilities.escapeHtmlString(fieldName) + "</span><img alt=\"\" height=\"20\" src=\"" + FileSystemLocations.getThreeStarsPNG() + "\"><br>";
+			return "<span class=\"field\"> " + BrowserUtils.escapeHtmlString(fieldName) + "</span><img alt=\"\" height=\"20\" src=\"" + FileSystemLocations.getThreeStarsPNG() + "\"><br>";
 		} else if (rating.equals(StarRating.FOUR_STARS)) {
-			return "<span class=\"field\"> " + Utilities.escapeHtmlString(fieldName) + "</span><img alt=\"\" height=\"20\" src=\"" + FileSystemLocations.getFourStarsPNG() + "\"><br>";
+			return "<span class=\"field\"> " + BrowserUtils.escapeHtmlString(fieldName) + "</span><img alt=\"\" height=\"20\" src=\"" + FileSystemLocations.getFourStarsPNG() + "\"><br>";
 		} else if (rating.equals(StarRating.FIVE_STARS)) {
-			return "<span class=\"field\"> " + Utilities.escapeHtmlString(fieldName) + "</span><img alt=\"\" height=\"20\" src=\"" + FileSystemLocations.getFiveStarsPNG() + "\"><br>";
+			return "<span class=\"field\"> " + BrowserUtils.escapeHtmlString(fieldName) + "</span><img alt=\"\" height=\"20\" src=\"" + FileSystemLocations.getFiveStarsPNG() + "\"><br>";
 		}
 		
-		return "<span class=\"field\"> " + Utilities.escapeHtmlString(fieldName) + "</span><img alt=\"\" height=\"20\" src=\"" + FileSystemLocations.getZeroStarsPNG() + "\"><br>";
+		return "<span class=\"field\"> " + BrowserUtils.escapeHtmlString(fieldName) + "</span><img alt=\"\" height=\"20\" src=\"" + FileSystemLocations.getZeroStarsPNG() + "\"><br>";
 	}
 	
 	private static String getAlternativePicturesHtml(long id, List<AlbumItemPicture> pictures, boolean hasButtonsAndLinks) {
@@ -173,7 +173,7 @@ public final class DetailedItemCreator {
 		
 		if (pictures.size() > 1) {
 			for(AlbumItemPicture picture : pictures) {
-				String escapedJavascriptFilePath = Utilities.escapeBackslashesInFilePath(picture.getThumbnailPicturePath());
+				String escapedJavascriptFilePath = BrowserUtils.escapeBackslashesInFilePath(picture.getThumbnailPicturePath());
 				htmlBuilder.append("<div class=\"thumbnailWrapper\">");
 				
 				htmlBuilder.append("<a ");

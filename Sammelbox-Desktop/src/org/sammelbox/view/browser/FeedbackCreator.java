@@ -19,6 +19,7 @@
 package org.sammelbox.view.browser;
 
 import java.util.LinkedList;
+import java.util.Map;
 
 import org.eclipse.swt.browser.Browser;
 import org.sammelbox.controller.i18n.DictKeys;
@@ -85,7 +86,7 @@ public final class FeedbackCreator {
 				"      <script src=\"" + UIConstants.EFFECTS_JS + "\"></script>" +
 				"    </head>" +
 				"    <body bgcolor=white>" +
-				"      <font face=\"" + Utilities.getDefaultSystemFont() + "\">" +
+				"      <font face=\"" + BrowserUtils.getDefaultSystemFont() + "\">" +
 				"        <h3>" + title + "</h3>" +
 				         addOrUpdatedItemContainer +
 				"      </font>" +
@@ -150,79 +151,42 @@ public final class FeedbackCreator {
 		alterations.addFirst(modification);
 	}
 	
-	static String generateAlbumDeletedPage(String deletedAlbum) {
-		return "<!DOCTYPE HTML>" +
-			   "  <html>" +
-			   "    <head>" +
-			   "      <meta " + UIConstants.META_PARAMS + ">" + 
-			   "      <link rel=stylesheet href=\"" + UIConstants.STYLE_CSS + "\" />" +
-			   "      <script src=\"" + UIConstants.EFFECTS_JS + "\"></script>" +
-			   "    </head>" +
-			   "    <body>" +
-		       "      <h3>" + Translator.get(DictKeys.BROWSER_ALBUM_DELETED_HEADER, deletedAlbum) + "</h3>" +
-		       "      <div>" + Translator.get(DictKeys.BROWSER_ALBUM_DELETED) + "</div>" +
-		       "    </body>" +
-		       "  </html>";
+	static void showDefaultTemplate(String header, String message) {
+		Map<String, String> contentMap = BrowserUtils.getInitializedContentMap();
+		
+		contentMap.put("HEADER", header);
+		contentMap.put("MESSAGE", message);
+		
+		BrowserUtils.fillAndLoadTemplate(ApplicationUI.getAlbumItemBrowser(), "default.html", contentMap);
 	}
 	
-	static String generateAlbumsRestoredPage() {
-		return "<!DOCTYPE HTML>" +
-			   "  <html>" +
-			   "    <head>" +
-			   "      <meta " + UIConstants.META_PARAMS + ">" + 
-			   "      <link rel=stylesheet href=\"" + UIConstants.STYLE_CSS + "\" />" +
-			   "      <script src=\"" + UIConstants.EFFECTS_JS + "\"></script>" +
-			   "    </head>" +
-			   "    <body>" +
-		       "      <h3>" + Translator.get(DictKeys.BROWSER_ALBUMS_RESTORED_HEADER) + "</h3>" +
-		       "      <div>" + Translator.get(DictKeys.BROWSER_ALBUM_DELETED) + "</div>" +
-		       "    </body>" +
-		       "  </html>";
+	static void showAlbumDeletedPage(String deletedAlbum) {
+		showDefaultTemplate(Translator.get(DictKeys.BROWSER_ALBUM_DELETED_HEADER, deletedAlbum), Translator.get(DictKeys.BROWSER_ALBUM_DELETED));
+	}
+	
+	static void showAlbumsRestoredPage() {
+		showDefaultTemplate(Translator.get(DictKeys.BROWSER_ALBUMS_RESTORED_HEADER), Translator.get(DictKeys.BROWSER_ALBUM_DELETED));
 	}
 
-	static String generateBackupInProgressPage() {
-		return "<!DOCTYPE HTML>" +
-			   "  <html>" +
-			   "    <head>" +
-			   "      <meta " + UIConstants.META_PARAMS + ">" + 
-			   "      <link rel=stylesheet href=\"" + UIConstants.STYLE_CSS + "\" />" +
-			   "      <script src=\"" + UIConstants.EFFECTS_JS + "\"></script>" +
-			   "    </head>" +
-			   "    <body>" +
-		       "      <h3>" + Translator.get(DictKeys.BROWSER_BACKUP_IN_PROGESS) + "</h3>" +
-		       "      <div>" + Translator.get(DictKeys.BROWSER_BACKUP_IN_PROGESS_DETAIL) + "</div>" +
-		       "    </body>" +
-		       "  </html>";
+	static void showBackupInProgressPage() {
+		showDefaultTemplate(Translator.get(DictKeys.BROWSER_BACKUP_IN_PROGESS), Translator.get(DictKeys.BROWSER_BACKUP_IN_PROGESS_DETAIL));
 	}
 	
-	static String generateBackupFinishedPage() {
-		return "<!DOCTYPE HTML>" +
-			   "  <html>" +
-			   "    <head>" +
-			   "      <meta " + UIConstants.META_PARAMS + ">" + 
-			   "      <link rel=stylesheet href=\"" + UIConstants.STYLE_CSS + "\" />" +
-			   "      <script src=\"" + UIConstants.EFFECTS_JS + "\"></script>" +
-			   "    </head>" +
-			   "    <body>" +
-		       "      <h3>" + Translator.get(DictKeys.BROWSER_BACKUP_FINISHED) + "</h3>" +
-		       "      <div>" + Translator.get(DictKeys.BROWSER_BACKUP_FINISHED_DETAIL) + "</div>" +
-		       "      </div>" +
-		       "    </body>" +
-		       "  </html>";
+	static void showBackupFinishedPage() {
+		showDefaultTemplate(Translator.get(DictKeys.BROWSER_BACKUP_FINISHED), Translator.get(DictKeys.BROWSER_BACKUP_FINISHED_DETAIL));
 	}
 	
-	static String generateSynchronizationPage() {
-		return "<!DOCTYPE HTML>" +
-			   "  <html>" +
-			   "    <head>" +
-			   "      <meta " + UIConstants.META_PARAMS + ">" + 
-			   "      <link rel=stylesheet href=\"" + UIConstants.STYLE_CSS + "\" />" +
-			   "      <script src=\"" + UIConstants.EFFECTS_JS + "\"></script>" +
-			   "    </head>" +
-			   "    <body>" +
-		       "      <h3>" + Translator.get(DictKeys.BROWSER_SYNCRONIZATION_HEADER) + "</h3>" +
-		       "      <div>" + Translator.get(DictKeys.BROWSER_SYNCRONIZATION) + "</div>" +
-		       "    </body>" +
-		       "  </html>";
+	static void showSynchronizationPage() {
+		showDefaultTemplate(Translator.get(DictKeys.BROWSER_SYNCRONIZATION_HEADER), Translator.get(DictKeys.BROWSER_SYNCRONIZATION));
+	}
+	
+	static void showImportPage() {
+		showDefaultTemplate(Translator.toBeTranslated("Importing an Album from CSV File"), 
+				Translator.toBeTranslated("Please note that you can specify the filetype by ..."));
+	}
+	
+	static void showSettingsPage() {
+		showDefaultTemplate(Translator.toBeTranslated("Modifying Settings"), 
+				Translator.toBeTranslated("Please note that you will need to restart after modifying the settings ..."));
 	}
 }

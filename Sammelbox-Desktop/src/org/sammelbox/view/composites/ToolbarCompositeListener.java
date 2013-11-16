@@ -208,7 +208,7 @@ public final class ToolbarCompositeListener {
 			@Override
 			public void mouseUp(MouseEvent mouseEvent) {
 				if (ApplicationUI.getCurrentRightPanelType() != PanelType.HELP) {
-					BrowserFacade.loadHelpPage();
+					BrowserFacade.showHelpPage();
 					ApplicationUI.changeRightCompositeTo(PanelType.HELP, EmptySidepane.build(ApplicationUI.getThreePanelComposite()));
 					StatusBarComposite.getInstance(ApplicationUI.getShell()).writeStatus(Translator.get(DictKeys.STATUSBAR_HELP_OPENED));
 

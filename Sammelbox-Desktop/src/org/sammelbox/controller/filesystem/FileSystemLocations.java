@@ -42,21 +42,22 @@ public final class FileSystemLocations {
 	
 	public static String getActiveHomeDir() 		{ return activeHomeDir; }
 	public static String getAppDataDir() 			{ return activeHomeDir + File.separatorChar + "app-data"; }
+	public static String getAppDataGraphicsDir()    { return activeHomeDir + File.separatorChar + "app-data" + File.separatorChar + "graphics"; }
 	public static String getThumbnailsDir() 		{ return activeHomeDir + File.separatorChar + "thumbnails"; }
 	public static String getBackupDir() 			{ return activeHomeDir + File.separatorChar + "backups"; }
 	public static String getAlbumPicturesDir()		{ return activeHomeDir + File.separatorChar + "album-pictures"; }
 	public static String getDatabaseFile() 			{ return activeHomeDir + File.separatorChar + DATABASE_NAME; }
 	public static String getDatabaseRestoreFile() 	{ return activeHomeDir + File.separatorChar + DATABASE_TO_RESTORE_NAME; }
 	
-	public static String getPlaceholderPNG() 		{ return getAppDataDir() + File.separatorChar + "placeholder.png"; }
-	public static String getPlaceholder2PNG() 		{ return getAppDataDir() + File.separatorChar + "placeholder2.png"; }
-	public static String getPlaceholder3PNG() 		{ return getAppDataDir() + File.separatorChar + "placeholder3.png"; }
-	public static String getZeroStarsPNG() 			{ return getAppDataDir() + File.separatorChar + "zerostars.png"; }
-	public static String getOneStarPNG() 			{ return getAppDataDir() + File.separatorChar + "onestar.png"; }
-	public static String getTwoStarsPNG() 			{ return getAppDataDir() + File.separatorChar + "twostars.png"; }
-	public static String getThreeStarsPNG() 		{ return getAppDataDir() + File.separatorChar + "threestars.png"; }
-	public static String getFourStarsPNG() 			{ return getAppDataDir() + File.separatorChar + "fourstars.png"; }
-	public static String getFiveStarsPNG() 			{ return getAppDataDir() + File.separatorChar + "fivestars.png"; }
+	public static String getPlaceholderPNG() 		{ return getAppDataGraphicsDir() + File.separatorChar + "placeholder.png"; }
+	public static String getPlaceholder2PNG() 		{ return getAppDataGraphicsDir() + File.separatorChar + "placeholder2.png"; }
+	public static String getPlaceholder3PNG() 		{ return getAppDataGraphicsDir() + File.separatorChar + "placeholder3.png"; }
+	public static String getZeroStarsPNG() 			{ return getAppDataGraphicsDir() + File.separatorChar + "zerostars.png"; }
+	public static String getOneStarPNG() 			{ return getAppDataGraphicsDir() + File.separatorChar + "onestar.png"; }
+	public static String getTwoStarsPNG() 			{ return getAppDataGraphicsDir() + File.separatorChar + "twostars.png"; }
+	public static String getThreeStarsPNG() 		{ return getAppDataGraphicsDir() + File.separatorChar + "threestars.png"; }
+	public static String getFourStarsPNG() 			{ return getAppDataGraphicsDir() + File.separatorChar + "fourstars.png"; }
+	public static String getFiveStarsPNG() 			{ return getAppDataGraphicsDir() + File.separatorChar + "fivestars.png"; }
 	public static String getLogoPNG() 				{ return getAppDataDir() + File.separatorChar + "logo.png"; }
 	public static String getLogoSmallPNG() 			{ return getAppDataDir() + File.separatorChar + "logo-small.png"; }
 	public static String getWelcomeXML() 			{ return getAppDataDir() + File.separatorChar + "welcome.xml"; }

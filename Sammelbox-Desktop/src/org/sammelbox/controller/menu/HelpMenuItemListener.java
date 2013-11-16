@@ -1,14 +1,17 @@
 package org.sammelbox.controller.menu;
 
+import java.util.Map;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.FileDialog;
 import org.sammelbox.controller.filesystem.FileSystemAccessWrapper;
+import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.view.ApplicationUI;
 import org.sammelbox.view.browser.BrowserFacade;
-import org.sammelbox.view.browser.Utilities;
+import org.sammelbox.view.browser.BrowserUtils;
 import org.sammelbox.view.sidepanes.EmptySidepane;
 import org.sammelbox.view.various.PanelType;
 
@@ -30,7 +33,7 @@ public final class HelpMenuItemListener {
 				
 				String filepath = saveFileDialog.open();
 				if (filepath != null) {
-					FileSystemAccessWrapper.writeToFile(Utilities.getLastPageAsHtml(), filepath);
+					FileSystemAccessWrapper.writeToFile(BrowserUtils.getLastPageAsHtml(), filepath);
 				}
 			}
 		};
@@ -42,7 +45,7 @@ public final class HelpMenuItemListener {
 			public void widgetSelected(SelectionEvent arg0) {
 				// No default album is selected on help
 				ApplicationUI.refreshAlbumList();
-				BrowserFacade.loadHtmlFromTranslatedFile("help.html");
+				BrowserFacade.showHelpPage();
 				ApplicationUI.changeRightCompositeTo(PanelType.HELP, EmptySidepane.build(ApplicationUI.getThreePanelComposite()));
 			}
 		};
@@ -54,7 +57,10 @@ public final class HelpMenuItemListener {
 			public void widgetSelected(SelectionEvent arg0) {
 				// No default album is selected on help
 				ApplicationUI.refreshAlbumList();
-				BrowserFacade.loadHtmlFromTranslatedFile("about.html");
+				Map<String, String> templateContent = BrowserFacade.getInitializedContentMap();
+				templateContent.put("HEADER", Translator.toBeTranslated("License"));
+				templateContent.put("MESSAGE", Translator.toBeTranslated("Sammelbox: Collection Manager</b> A free and open-source collection manager for Windows & Linux</b>Copyright (C) 2011 Jerome Wagener & Paul Bicheler"));
+				BrowserFacade.fillAndLoadTemplate("about.html", templateContent);
 				ApplicationUI.changeRightCompositeTo(PanelType.HELP, EmptySidepane.build(ApplicationUI.getThreePanelComposite()));
 			}
 		};
@@ -65,7 +71,7 @@ public final class HelpMenuItemListener {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				ApplicationUI.refreshAlbumList();
-				BrowserFacade.loadHtmlFromTranslatedFile("browserinfo.html");
+				BrowserFacade.loadHtmlFile("browserinfo.html");
 				ApplicationUI.changeRightCompositeTo(PanelType.HELP, EmptySidepane.build(ApplicationUI.getThreePanelComposite()));
 			}
 		};
