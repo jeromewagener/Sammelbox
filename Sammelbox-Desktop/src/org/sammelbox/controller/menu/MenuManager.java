@@ -157,6 +157,12 @@ public final class MenuManager {
 			new MenuItem(helpMenu, SWT.SEPARATOR);
 		}
 		
+		MenuItem updatesAvailable = new MenuItem(helpMenu, SWT.NONE);
+		updatesAvailable.setText(Translator.toBeTranslated("Check for updates..."));
+		updatesAvailable.addSelectionListener(HelpMenuItemListener.getCheckForUpdatesListener());
+		
+		new MenuItem(helpMenu, SWT.SEPARATOR);
+		
 		MenuItem helpContentsMenu = new MenuItem(helpMenu, SWT.NONE);
 		helpContentsMenu.setText(Translator.get(DictKeys.MENU_HELP_CONTENTS));
 		helpContentsMenu.addSelectionListener(HelpMenuItemListener.getHelpContentsListener());

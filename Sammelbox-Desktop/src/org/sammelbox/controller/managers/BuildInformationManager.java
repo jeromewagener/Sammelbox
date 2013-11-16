@@ -57,4 +57,8 @@ public final class BuildInformationManager {
 	public String getBuildTimeStamp() {
 		return buildInfoBundle.getString("build.time");
 	}
+	
+	public String getPublicVersionString() {
+		return getApplicationName() + "-" + getVersion();
+	}
 }

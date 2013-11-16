@@ -1,6 +1,9 @@
 package org.sammelbox.controller.menu;
 
+import java.io.IOException;
+import java.net.URL;
 import java.util.Map;
+import java.util.Scanner;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -9,13 +12,19 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.FileDialog;
 import org.sammelbox.controller.filesystem.FileSystemAccessWrapper;
 import org.sammelbox.controller.i18n.Translator;
+import org.sammelbox.controller.managers.BuildInformationManager;
 import org.sammelbox.view.ApplicationUI;
 import org.sammelbox.view.browser.BrowserFacade;
 import org.sammelbox.view.browser.BrowserUtils;
 import org.sammelbox.view.sidepanes.EmptySidepane;
+import org.sammelbox.view.various.ComponentFactory;
 import org.sammelbox.view.various.PanelType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class HelpMenuItemListener {
+	private static final Logger LOGGER = LoggerFactory.getLogger(HelpMenuItemListener.class);
+	
 	private HelpMenuItemListener() {
 		// not needed
 	}
@@ -73,6 +82,38 @@ public final class HelpMenuItemListener {
 				ApplicationUI.refreshAlbumList();
 				BrowserFacade.loadHtmlFile("browserinfo.html");
 				ApplicationUI.changeRightCompositeTo(PanelType.HELP, EmptySidepane.build(ApplicationUI.getThreePanelComposite()));
+			}
+		};
+	}
+
+	public static SelectionListener getCheckForUpdatesListener() {		
+		return new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				try (Scanner versionScanner = new Scanner(new URL("http://www.sammelbox.org/current").openStream(), "UTF-8").useDelimiter("\\A")) {
+					String currentVersion = versionScanner.next();
+					
+					System.out.println(BuildInformationManager.instance().getPublicVersionString() + "|" + currentVersion);
+					
+					if (BuildInformationManager.instance().getPublicVersionString().trim().equals(currentVersion.trim())) {
+						ComponentFactory.getMessageBox(
+								Translator.toBeTranslated("Current version installed"), 
+								Translator.toBeTranslated("It looks like you have the current version of Sammelbox installed. Great!"),
+								SWT.ICON_INFORMATION).open();
+					} else {
+						ComponentFactory.getMessageBox(
+								Translator.toBeTranslated("Sammelbox is out-of-date"), 
+								Translator.toBeTranslated("It looks like a newer version of Sammelbox is available. You can download it from www.sammelbox.org"),
+								SWT.ICON_INFORMATION).open();
+					}
+				} catch (IOException ioe) {
+					LOGGER.error("An error occured while checking for updates.", ioe);
+					
+					ComponentFactory.getMessageBox(
+							Translator.toBeTranslated("Could not connect to www.sammelbox.org"), 
+							Translator.toBeTranslated("Please check again later, or go directly to www.sammelbox.org to check for updates!"),
+							SWT.ICON_INFORMATION).open();
+				}
 			}
 		};
 	}
