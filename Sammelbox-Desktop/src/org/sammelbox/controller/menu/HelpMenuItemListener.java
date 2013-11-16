@@ -42,8 +42,7 @@ public final class HelpMenuItemListener {
 			public void widgetSelected(SelectionEvent arg0) {
 				// No default album is selected on help
 				ApplicationUI.refreshAlbumList();
-				BrowserFacade.loadHtmlFromInputStream(
-						ApplicationUI.getShell().getClass().getClassLoader().getResourceAsStream("htmlfiles/help.html"));
+				BrowserFacade.loadHtmlFromTranslatedFile("help.html");
 				ApplicationUI.changeRightCompositeTo(PanelType.HELP, EmptySidepane.build(ApplicationUI.getThreePanelComposite()));
 			}
 		};
@@ -55,8 +54,7 @@ public final class HelpMenuItemListener {
 			public void widgetSelected(SelectionEvent arg0) {
 				// No default album is selected on help
 				ApplicationUI.refreshAlbumList();
-				BrowserFacade.loadHtmlFromInputStream(
-						ApplicationUI.getShell().getClass().getClassLoader().getResourceAsStream("htmlfiles/about.html"));
+				BrowserFacade.loadHtmlFromTranslatedFile("about.html");
 				ApplicationUI.changeRightCompositeTo(PanelType.HELP, EmptySidepane.build(ApplicationUI.getThreePanelComposite()));
 			}
 		};
@@ -67,8 +65,7 @@ public final class HelpMenuItemListener {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				ApplicationUI.refreshAlbumList();
-				BrowserFacade.loadHtmlFromInputStream(
-						ApplicationUI.getShell().getClass().getClassLoader().getResourceAsStream("htmlfiles/browserinfo.html"));
+				BrowserFacade.loadHtmlFromTranslatedFile("browserinfo.html");
 				ApplicationUI.changeRightCompositeTo(PanelType.HELP, EmptySidepane.build(ApplicationUI.getThreePanelComposite()));
 			}
 		};

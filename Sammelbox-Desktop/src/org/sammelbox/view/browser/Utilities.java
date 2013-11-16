@@ -118,14 +118,14 @@ public final class Utilities {
 		browser.setText(FileSystemAccessWrapper.readInputStreamIntoString(fileInputStream));
 	}
 	
-	static void loadHtmlPage(Browser browser, String htmlString) {
+	static void loadHtml(Browser browser, String htmlString) {
 		browser.setText(htmlString);
 	}
 	
 	static void loadHelpPage() {
 		loadHtmlPage(
 				ApplicationUI.getAlbumItemBrowser(),
-				ApplicationUI.class.getClassLoader().getResourceAsStream("htmlfiles/help.html"));
+				ApplicationUI.class.getClassLoader().getResourceAsStream("textfiles/ENGLISH/help.html"));
 	}
 	
 	static String getBackgroundColorOfWidgetInHex() {

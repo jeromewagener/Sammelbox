@@ -174,12 +174,6 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 
 			// Do not change the page
 			event.doit = false;
-		} else if (event.location.startsWith("file:///")) {
-			if (event.location.contains(".collector/app-data/loading.html")) {
-				event.doit = true;
-			} else {
-				event.doit = false;
-			}
 		} else if (event.location.equals(UIConstants.ADD_ADDITIONAL_ALBUM_ITEMS)) {
 			BrowserFacade.addAdditionalAlbumItems();
 

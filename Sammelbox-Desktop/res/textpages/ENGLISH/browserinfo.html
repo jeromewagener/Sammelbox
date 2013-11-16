@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+	<!-- Adapted from http://www.w3schools.com/js/js_window_navigator.asp -->
+	<body>
+		<h3>Browser Information</h3>
+		<hr>
+		<div id="infoContainer"></div>
+		<script>
+			infoContainerText =  "<p> <b>Browser Code Name: </b>"   + navigator.appCodeName    + "</p>";
+			infoContainerText += "<p> <b>Browser Name: </b>"        + navigator.appName        + "</p>";
+			infoContainerText += "<p> <b>Browser Version: </b>"     + navigator.appVersion     + "</p>";
+			infoContainerText += "<p> <b>Cookies Enabled: </b>"     + navigator.cookieEnabled  + "</p>";
+			infoContainerText += "<p> <b>Browser Language: </b>"    + navigator.language       + "</p>";
+			infoContainerText += "<p> <b>Browser Online: </b>"      + navigator.onLine         + "</p>";
+			infoContainerText += "<p> <b>Platform: </b>"            + navigator.platform       + "</p>";
+			infoContainerText += "<p> <b>User-agent header: </b>"   + navigator.userAgent      + "</p>";
+			infoContainerText += "<p> <b>User-agent language: </b>" + navigator.systemLanguage + "</p>";
+			
+			document.getElementById("infoContainer").innerHTML = infoContainerText;
+		</script>
+	</body>
+</html>
