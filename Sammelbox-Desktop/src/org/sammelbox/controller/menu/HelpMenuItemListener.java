@@ -90,10 +90,10 @@ public final class HelpMenuItemListener {
 		return new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				try (Scanner versionScanner = new Scanner(new URL("http://www.sammelbox.org/current").openStream(), "UTF-8").useDelimiter("\\A")) {
+				try (Scanner versionScanner = new Scanner(new URL("http://www.sammelbox.org/current.php").openStream(), "UTF-8").useDelimiter("\\A")) {
 					String currentVersion = versionScanner.next();
 					
-					System.out.println(BuildInformationManager.instance().getPublicVersionString() + "|" + currentVersion);
+					System.out.println(currentVersion);
 					
 					if (BuildInformationManager.instance().getPublicVersionString().trim().equals(currentVersion.trim())) {
 						ComponentFactory.getMessageBox(

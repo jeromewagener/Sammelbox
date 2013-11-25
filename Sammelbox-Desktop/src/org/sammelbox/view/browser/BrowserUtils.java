@@ -18,7 +18,10 @@
 
 package org.sammelbox.view.browser;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,6 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class BrowserUtils {
+	public static final String PROJECT_WEBSITE = "http://www.sammelbox.org";
 	private static final Logger LOGGER = LoggerFactory.getLogger(BrowserUtils.class);
 		
 	/** The anchor to which a jump is performed as soon as the page is fully loaded. 
@@ -236,5 +240,18 @@ public final class BrowserUtils {
 	 */
 	public static String escapeBackslashesInFilePath(String filePath) {
 		return filePath.replaceAll("\\\\", "\\\\\\\\");	
+	}
+	
+	public static boolean isProjectWebsiteReachable() {
+		try {
+			URL sammelboxOrg = new URL(PROJECT_WEBSITE); 
+		    HttpURLConnection httpURLConnection = (HttpURLConnection) sammelboxOrg.openConnection();
+			httpURLConnection.setRequestMethod("HEAD");
+			return (httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK);
+		} catch (IOException ex) {
+			LOGGER.info("Could not connect to " + PROJECT_WEBSITE);
+		}
+		
+		return false;
 	}
 }

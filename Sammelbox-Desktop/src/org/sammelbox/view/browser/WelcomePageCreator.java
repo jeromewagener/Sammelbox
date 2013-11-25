@@ -35,14 +35,15 @@ public final class WelcomePageCreator {
 	
 	static void loadWelcomePage() {
 		String browserIframe = new String("");		
-		if ((Boolean) ApplicationUI.getAlbumItemBrowser().evaluate("return navigator.onLine;")) {
+		if (BrowserUtils.isProjectWebsiteReachable()) {
 			browserIframe = 
-					" <iframe style=\"border:none;width:100%; height:30px;\"" +
+					" <iframe style=\"border:none; width:100%; height:30px; overflow:hidden;\"" +
+					"         scrolling=\"no\"" +
 					"         src=\"http://www.sammelbox.org/current.php?current=" + BuildInformationManager.instance().getPublicVersionString() +
 					                                                   "&language=" + Translator.getUsedLanguage() + "\"></iframe> ";
 		}
 		
-		ApplicationUI.getAlbumItemBrowser().setText( //document.getElementById('updateCheck').visibility='hidden';\"
+		ApplicationUI.getAlbumItemBrowser().setText(
 				"<!DOCTYPE HTML>" +
 				"<html>" +
 				"  <head>" +
@@ -52,7 +53,7 @@ public final class WelcomePageCreator {
 				"    <script src=\"" + UIConstants.EFFECTS_JS + "\"></script>" +
 				"  </head>" +
 				"  <body>" +
-					 browserIframe +
+				"	 <div>" + browserIframe + "</div>" +
 				"    <div style=\"width:100%;\">" +
 				"      <div style=\"float:left; margin:25px;\">" +
 				"        <img width=\"450px\" src=\" " + FileSystemLocations.getLogoPNG() + " \">" +
