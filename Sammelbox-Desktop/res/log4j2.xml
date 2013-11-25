@@ -1,23 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configuration status="WARN">
+<configuration>
 	<appenders>
 		<Console name="Console" target="SYSTEM_OUT">
-		 	<PatternLayout charset="UTF-8" pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger - %msg%n"/>
+		 	<PatternLayout charset="UTF-8" pattern="%d{MM-dd-yyyy @ HH:mm:ss} [%t] %-5level %logger - %msg%n"/>
 		</Console>
-		<File name="error-log" fileName="logs/collector-error.log">
-			 <ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY"/>
-			<PatternLayout charset="UTF-8" pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger - %msg%n"/>
-		</File>
-		<File name="debug-log" fileName="logs/collector-debug.log">
-			<ThresholdFilter level="trace" onMatch="ACCEPT" onMismatch="DENY"/>
-			<PatternLayout charset="UTF-8" pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger - %msg%n"/>
+		<File name="logfile" fileName="${sys:user.home}/.sammelbox/app-data/sammelbox.log">
+			<PatternLayout charset="UTF-8" pattern="%d{MM-dd-yyyy @ HH:mm:ss} [%t] %-5level %logger - %msg%n"/>
 		</File>
 	</appenders>	
-	<loggers>		
-		<root level="error">
+	<loggers>
+		<logger name="org.jdbcdslog">
+		  <level value="warn"/> 
+		</logger>
+		<root level="info">
 			<appender-ref ref="Console"/>
-			<appender-ref ref="error-log"/>
-			<appender-ref ref="debug-log"/>
+			<appender-ref ref="logfile"/>
 		</root>
 	</loggers>
 </configuration>
