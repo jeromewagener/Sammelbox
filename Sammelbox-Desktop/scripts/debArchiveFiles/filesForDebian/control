@@ -8,8 +8,8 @@ Homepage: http://www.sammelbox.org
 Vcs-Browser: https://github.com/jeromewagener/Sammelbox.git
 
 Package: sammelbox
-Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: Sammelbox 1.0 - A free and open-source collection manager
+Architecture:VAR_ARCH
+Depends: ${shlibs:Depends}, ${misc:Depends}, ${java:Depends}, libwebkitgtk-dev
+Description: A free and open-source collection manager
  Sammelbox is a free and open-source collection manager,
  with a strong focus on simplicity and customization.
