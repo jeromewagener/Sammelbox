@@ -93,8 +93,6 @@ public final class HelpMenuItemListener {
 				try (Scanner versionScanner = new Scanner(new URL("http://www.sammelbox.org/current.php").openStream(), "UTF-8").useDelimiter("\\A")) {
 					String currentVersion = versionScanner.next();
 					
-					System.out.println(currentVersion);
-					
 					if (BuildInformationManager.instance().getPublicVersionString().trim().equals(currentVersion.trim())) {
 						ComponentFactory.getMessageBox(
 								Translator.toBeTranslated("Current version installed"), 
@@ -114,6 +112,21 @@ public final class HelpMenuItemListener {
 							Translator.toBeTranslated("Please check again later, or go directly to www.sammelbox.org to check for updates!"),
 							SWT.ICON_INFORMATION).open();
 				}
+			}
+		};
+	}
+	
+	public static SelectionListener getReportingIssuesListener() {
+		return new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				ComponentFactory.getMessageBox(
+						Translator.toBeTranslated("Reporting an issue"), 
+						Translator.toBeTranslated("Thanks for helping us to improve Sammelbox!\n\n"
+								+ "To report issues, please use bugs@sammelbox.org or add an issue ticket via "
+								+ "our GitHub issue tracker. \n\n"
+								+ "https://github.com/jeromewagener/Sammelbox/issues"),
+						SWT.ICON_INFORMATION).open();
 			}
 		};
 	}
