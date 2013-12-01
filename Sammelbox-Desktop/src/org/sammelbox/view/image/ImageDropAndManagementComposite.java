@@ -57,7 +57,9 @@ import org.sammelbox.model.album.AlbumItemPicture;
 import org.sammelbox.view.ApplicationUI;
 import org.sammelbox.view.various.ComponentFactory;
 
-public class ImageDropAndManagementComposite extends Composite implements DropTargetListener{
+public class ImageDropAndManagementComposite extends Composite implements DropTargetListener {
+	String[] ALLOWED_EXTENSIONS = new String[] { ".jpeg", ".jpg", ".png", ".gif", ".bmp", ".ico", ".tiff" };
+	
 	/** A list of images pointing to copies of the original files, located within the corresponding album folder */
 	private LinkedList<AlbumItemPicture> pictures = new LinkedList<AlbumItemPicture>();
 	/** An inner composite presenting the pictures */
@@ -287,16 +289,29 @@ public class ImageDropAndManagementComposite extends Composite implements DropTa
 		if (!ApplicationUI.isAlbumSelectedAndShowMessageIfNot()) {
 			return;
 		}
+		
 		if (event.data instanceof String[]) {
 			String[] filenames = (String[]) event.data;
-			if (filenames.length > 0){
+			if (filenames.length > 0) {
 				for (String filename : filenames) {
-					AlbumItemPicture picture = ImageManipulator.adaptAndStoreImageForCollector(
-							new File(filename), GuiController.getGuiState().getSelectedAlbum());
-					if (picture == null) {
-						showDroppedUnsupportedFileMessageBox(filename);
+					boolean processFile = false;
+					for (String allowedExtension : ALLOWED_EXTENSIONS) {
+						if (filename.toLowerCase().endsWith(allowedExtension)) {
+							processFile = true;
+							break;
+						}
+					}
+					
+					if (processFile) {
+						AlbumItemPicture picture = ImageManipulator.adaptAndStoreImageForCollector(
+								new File(filename), GuiController.getGuiState().getSelectedAlbum());
+						if (picture == null) {
+							showDroppedUnsupportedFileMessageBox(filename);
+						} else {
+							pictures.add(picture);
+						}
 					} else {
-						pictures.add(picture);
+						showDroppedUnsupportedFileMessageBox(filename);
 					}
 				}
 				refreshImageComposite();

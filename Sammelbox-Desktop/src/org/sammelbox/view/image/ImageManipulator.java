@@ -83,6 +83,8 @@ public final class ImageManipulator {
 				
 				thumbnailImage = Scalr.resize(sourceImage, Scalr.Method.SPEED, Scalr.Mode.FIT_TO_WIDTH, newWidth, newHeight, Scalr.OP_ANTIALIAS);			   
 				sourceImage.flush();
+			} else {
+				thumbnailImage = sourceImage;
 			}
 			
             File thumbnailDestination = new File(newFileLocationForThumbnail); 
