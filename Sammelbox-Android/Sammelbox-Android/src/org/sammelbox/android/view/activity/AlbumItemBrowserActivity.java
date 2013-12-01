@@ -2,7 +2,6 @@ package org.sammelbox.android.view.activity;
 
 import org.sammelbox.R;
 import org.sammelbox.android.GlobalState;
-import org.sammelbox.android.controller.DatabaseQueryOperation;
 import org.sammelbox.android.model.SimplifiedAlbumItemResultSet;
 import org.sammelbox.android.view.AlbumItemList;
 
@@ -26,7 +25,7 @@ public class AlbumItemBrowserActivity extends Activity {
 		TextView heading = (TextView)findViewById(R.id.lblAlbumItemBrowserHeading);
 		heading.setText(GlobalState.getSelectedAlbum());
 		
-		SimplifiedAlbumItemResultSet simplifiedAlbumItemResultSet = DatabaseQueryOperation.getAllAlbumItemsFromAlbum(this);
+		SimplifiedAlbumItemResultSet simplifiedAlbumItemResultSet = GlobalState.getSimplifiedAlbumItemResultSet();
 		
 		AlbumItemList adapter = new AlbumItemList(
 				AlbumItemBrowserActivity.this,

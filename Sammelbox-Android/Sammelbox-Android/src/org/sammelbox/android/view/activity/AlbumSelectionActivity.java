@@ -26,7 +26,7 @@ public class AlbumSelectionActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_album_selection);
 		
-		final Map<String,String> albumNameToTableName = DatabaseQueryOperation.getAlbumNamesToAlbumTablesMapping(this);
+		final Map<String,String> albumNameToTableName = GlobalState.getAlbumNameToTableName(this);
 		final String[] albumNames = Arrays.copyOf(albumNameToTableName.keySet().toArray(), albumNameToTableName.keySet().toArray().length, String[].class);
 		
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, albumNames);
@@ -37,6 +37,7 @@ public class AlbumSelectionActivity extends Activity {
 			public void onItemClick(AdapterView<?> arg0, View v, int position, long id) {
 				GlobalState.setSelectedAlbum(albumNames[position]);
 				GlobalState.setAlbumNameToTableName(albumNameToTableName);
+				GlobalState.setSimplifiedAlbumItemResultSet(DatabaseQueryOperation.getAllAlbumItemsFromAlbum(AlbumSelectionActivity.this));
 				
 				Intent openAlbumItemListToBrowse = new Intent(AlbumSelectionActivity.this, AlbumItemBrowserActivity.class);
                 startActivity(openAlbumItemListToBrowse);

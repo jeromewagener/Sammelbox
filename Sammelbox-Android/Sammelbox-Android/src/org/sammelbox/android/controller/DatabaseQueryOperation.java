@@ -37,12 +37,17 @@ public class DatabaseQueryOperation {
 	}
 	
 	public static SimplifiedAlbumItemResultSet getAllAlbumItemsFromAlbum(Context context) {
-		SimplifiedAlbumItemResultSet simplifiedAlbumItemResultSet = new SimplifiedAlbumItemResultSet();
-		
-		String selectedTableName = GlobalState.getAlbumNameToTableName().get(GlobalState.getSelectedAlbum());
+		String selectedTableName = GlobalState.getAlbumNameToTableName(context).get(GlobalState.getSelectedAlbum());
 		Cursor cursor = DatabaseWrapper.executeRawSQLQuery(
 				DatabaseWrapper.getSQLiteDatabase(context), "select * from " + selectedTableName);
 		
+		return getAlbumItems(context, cursor);
+	}
+	
+	public static SimplifiedAlbumItemResultSet getAlbumItems(Context context, Cursor cursor) {
+		SimplifiedAlbumItemResultSet simplifiedAlbumItemResultSet = new SimplifiedAlbumItemResultSet();
+		
+		String selectedTableName = GlobalState.getAlbumNameToTableName(context).get(GlobalState.getSelectedAlbum());
 		Map<String, FieldType> fieldNameToTypeMapping = 
 				retrieveFieldnameToFieldTypeMapping(DatabaseWrapper.getSQLiteDatabase(context), context, selectedTableName);
 		

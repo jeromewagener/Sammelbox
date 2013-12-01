@@ -18,5 +18,11 @@
     <string name="help_info">Please select a help topic from below. Please note that you will need
 	    to first synchronize with a desktop computer before using Sammelbox on your Android device!</string>
     <string name="title_activity_search">Search Activity</string>
+    <string name="select_album">Select an album:</string>
+    <string name="select_album_field">Select an album item field:</string>
+    <string name="select_operator">Select an operator:</string>
+    <string name="select_value_to_match">Value to match:</string>
+    <string name="search_matching_items">Search for matching items:</string>
+    <string name="value_to_search_for">Value to search for</string>
 
 </resources>
