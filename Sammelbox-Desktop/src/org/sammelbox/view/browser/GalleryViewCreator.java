@@ -77,9 +77,7 @@ public final class GalleryViewCreator {
 					                         " class=\"pictureContainer\" " +
 					                         " onMouseOver=\"parent.location.href=&quot;" + UIConstants.SHOW_DETAILS + id + "&quot;\" " +
 					                         " onClick=\"parent.location.href=&quot;" + UIConstants.SHOW_UPDATE_ENTRY_COMPOSITE + id + "&quot;\">");
-			galleryItemHtmlBuilder.append("<div class=\"innerPictureContainer\">");
 			galleryItemHtmlBuilder.append("<img alt=\"\" src=\"" + picturePath + "\">");
-			galleryItemHtmlBuilder.append("</div>");
 			galleryItemHtmlBuilder.append("</div>");
 		}
 
