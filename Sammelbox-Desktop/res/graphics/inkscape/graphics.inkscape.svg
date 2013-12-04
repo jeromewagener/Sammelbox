@@ -14,7 +14,7 @@
    height="1052.3622047"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.3.1 r9886"
+   inkscape:version="0.48.4 r9939"
    sodipodi:docname="graphics.inkscape.svg">
   <defs
      id="defs4">
@@ -2059,16 +2059,16 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="4"
-     inkscape:cx="659.72201"
-     inkscape:cy="723.29633"
+     inkscape:zoom="16"
+     inkscape:cx="156.74641"
+     inkscape:cy="657.92873"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:window-width="1295"
-     inkscape:window-height="829"
-     inkscape:window-x="2130"
-     inkscape:window-y="121"
+     inkscape:window-height="715"
+     inkscape:window-x="69"
+     inkscape:window-y="24"
      inkscape:window-maximized="0"
      inkscape:snap-global="false"
      showguides="true"
@@ -5275,5 +5275,44 @@
        inkscape:export-filename="/home/luxem/Desktop/browse.png"
        inkscape:export-xdpi="305.00278"
        inkscape:export-ydpi="305.00278" />
+    <path
+       sodipodi:type="arc"
+       style="fill:#999999;fill-opacity:1;stroke:none"
+       id="path4306-3"
+       sodipodi:cx="164.95312"
+       sodipodi:cy="509.83093"
+       sodipodi:rx="1.734375"
+       sodipodi:ry="7.96875"
+       d="m 166.6875,509.83093 a 1.734375,7.96875 0 1 1 -3.46875,0 1.734375,7.96875 0 1 1 3.46875,0 z"
+       transform="matrix(0.81726751,-0.45311044,0.60331029,0.61380099,-281.92833,150.54671)"
+       inkscape:export-filename="/home/luxem/GitHub/Sammelbox-Android/Sammelbox-Android/res/drawable-mdpi/remove.png"
+       inkscape:export-xdpi="86.801491"
+       inkscape:export-ydpi="86.801491" />
+    <path
+       sodipodi:type="arc"
+       style="fill:#999999;fill-opacity:1;stroke:none"
+       id="path4306-4-3"
+       sodipodi:cx="164.95312"
+       sodipodi:cy="509.83093"
+       sodipodi:rx="1.734375"
+       sodipodi:ry="7.96875"
+       d="m 166.6875,509.83093 a 1.734375,7.96875 0 1 1 -3.46875,0 1.734375,7.96875 0 1 1 3.46875,0 z"
+       transform="matrix(0.81726751,0.45311044,0.60331029,-0.61380099,-281.92833,626.93221)"
+       inkscape:export-filename="/home/luxem/GitHub/Sammelbox-Android/Sammelbox-Android/res/drawable-mdpi/remove.png"
+       inkscape:export-xdpi="86.801491"
+       inkscape:export-ydpi="86.801491" />
+    <path
+       sodipodi:type="arc"
+       style="fill:none;stroke:#494949;stroke-width:0.55500001;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:2.5;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       id="path3698"
+       sodipodi:cx="104.75"
+       sodipodi:cy="420.86218"
+       sodipodi:rx="8"
+       sodipodi:ry="8"
+       d="m 112.75,420.86218 a 8,8 0 1 1 -16,0 8,8 0 1 1 16,0 z"
+       transform="translate(55.757582,-32.208948)"
+       inkscape:export-filename="/home/luxem/GitHub/Sammelbox-Android/Sammelbox-Android/res/drawable-mdpi/remove.png"
+       inkscape:export-xdpi="86"
+       inkscape:export-ydpi="86" />
   </g>
 </svg>
