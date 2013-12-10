@@ -18,6 +18,7 @@
 
 package org.sammelbox.view.sidepanes;
 
+import java.net.InetAddress;
 import java.util.HashMap;
 
 import org.eclipse.swt.SWT;
@@ -34,7 +35,12 @@ import org.sammelbox.view.various.ComponentFactory;
 import org.sammelbox.view.various.SynchronizeCompositeHelper;
 import org.sammelbox.view.various.SynchronizeStep;
 
+import com.jeromewagener.soutils.desktop.beaconing.BeaconSender;
+import com.jeromewagener.soutils.desktop.networking.NetworkFacade;
+
 public final class SynchronizeSidepane {
+	private static BeaconSender beaconSender;
+	
 	private SynchronizeSidepane() {
 		// use build method instead
 	}
@@ -55,9 +61,6 @@ public final class SynchronizeSidepane {
 		final Button startButton = new Button(synchronizeComposite, SWT.PUSH);
 		startButton.setText(Translator.get(DictKeys.BUTTON_START_SYNCHRONIZATION));
 		startButton.setLayoutData(new GridData(GridData.FILL_BOTH));
-		startButton.setEnabled(false); 
-		// TODO implement the synchronization with mobile devices
-		// listener after cancel button since this button reference is needed
 
 		// separator
 		new Label(synchronizeComposite, SWT.SEPARATOR | SWT.HORIZONTAL).setLayoutData(minHeightGridData);
@@ -102,6 +105,9 @@ public final class SynchronizeSidepane {
 				establishConnectionLabel.setEnabled(true);
 				cancelButton.setEnabled(true);
 				startButton.setEnabled(false);
+				
+				beaconSender = new BeaconSender("Hello", NetworkFacade.getAllIPsAndAssignedBroadcastAddresses().values().iterator().next()); // TODO test code only!
+				beaconSender.start();
 			}
 		});
 
@@ -114,6 +120,8 @@ public final class SynchronizeSidepane {
 				finishLabel.setEnabled(false);
 				cancelButton.setEnabled(false);
 				startButton.setEnabled(true);
+				
+				beaconSender.done();
 			}
 		});
 
