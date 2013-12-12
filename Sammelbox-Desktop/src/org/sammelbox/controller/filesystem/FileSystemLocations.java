@@ -23,12 +23,13 @@ import java.io.File;
 public final class FileSystemLocations {
 	public static final String DATABASE_NAME					= "sammelbox.db";
 	public static final String DATABASE_TO_RESTORE_NAME			= "sammelbox.restore.db";
-
-	public static final String TEMP_DIR 						= System.getProperty("java.io.tmpdir");
+	public static final String THUMBNAILS_DIR_NAME				= "thumbnails";
+	
+	public static final String TEMP_DIR 						= System.getProperty("java.io.tmpdir") + File.separatorChar;
 	public static final String USER_HOME 						= System.getProperty("user.home");
 	public static final String DEFAULT_SAMMELBOX_HOME			= System.getProperty("user.home") + File.separatorChar + ".sammelbox";
 	public static final String DEFAULT_SAMMELBOX_TEST_HOME		= System.getProperty("user.home") + File.separatorChar + ".sammelbox.tests";
-	
+		
 	private FileSystemLocations() {}
 	
 	/** The path to the currently active home directory */
@@ -43,7 +44,7 @@ public final class FileSystemLocations {
 	public static String getActiveHomeDir() 		{ return activeHomeDir; }
 	public static String getAppDataDir() 			{ return activeHomeDir + File.separatorChar + "app-data"; }
 	public static String getAppDataGraphicsDir()    { return activeHomeDir + File.separatorChar + "app-data" + File.separatorChar + "graphics"; }
-	public static String getThumbnailsDir() 		{ return activeHomeDir + File.separatorChar + "thumbnails"; }
+	public static String getThumbnailsDir() 		{ return activeHomeDir + File.separatorChar + THUMBNAILS_DIR_NAME; }
 	public static String getBackupDir() 			{ return activeHomeDir + File.separatorChar + "backups"; }
 	public static String getAlbumPicturesDir()		{ return activeHomeDir + File.separatorChar + "album-pictures"; }
 	public static String getDatabaseFile() 			{ return activeHomeDir + File.separatorChar + DATABASE_NAME; }

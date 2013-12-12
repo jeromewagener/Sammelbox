@@ -98,7 +98,7 @@ public class CSVImportTests {
 	@Test
 	public void testCSVImport() {		
 		try {
-			String tmpCSVFilePath = FileSystemLocations.TEMP_DIR + File.separatorChar + "csvFileWithAbsolutImagePathPlaceholders.csv";
+			String tmpCSVFilePath = FileSystemLocations.TEMP_DIR + "csvFileWithAbsolutImagePathPlaceholders.csv";
 			replaceImagePlaceholdersAndWriteToOutputFilePath(TEST_CSV_1, tmpCSVFilePath);
 			
 			CSVImporter.importCSV(IMPORT_ALBUM_NAME, tmpCSVFilePath, ";", "IMG", "!", true);
@@ -123,7 +123,7 @@ public class CSVImportTests {
 	@Test
 	public void testCSVImport2() {		
 		try {
-			String tmpCSVFilePath = FileSystemLocations.TEMP_DIR + File.separatorChar + "csvFileWithAbsolutImagePathPlaceholders.csv";
+			String tmpCSVFilePath = FileSystemLocations.TEMP_DIR + "csvFileWithAbsolutImagePathPlaceholders.csv";
 			replaceImagePlaceholdersAndWriteToOutputFilePath(TEST_CSV_2, tmpCSVFilePath);
 			
 			CSVImporter.importCSV(IMPORT_ALBUM_NAME, tmpCSVFilePath, "#", "pics", "%", true);

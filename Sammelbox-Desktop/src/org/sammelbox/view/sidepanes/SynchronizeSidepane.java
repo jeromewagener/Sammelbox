@@ -18,7 +18,6 @@
 
 package org.sammelbox.view.sidepanes;
 
-import java.net.InetAddress;
 import java.util.HashMap;
 
 import org.eclipse.swt.SWT;
@@ -31,6 +30,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
+import org.sammelbox.controller.synchronization.SyncServerService;
 import org.sammelbox.view.various.ComponentFactory;
 import org.sammelbox.view.various.SynchronizeCompositeHelper;
 import org.sammelbox.view.various.SynchronizeStep;
@@ -108,6 +108,8 @@ public final class SynchronizeSidepane {
 				
 				beaconSender = new BeaconSender("Hello", NetworkFacade.getAllIPsAndAssignedBroadcastAddresses().values().iterator().next()); // TODO test code only!
 				beaconSender.start();
+				
+				SyncServerService.Default.getServiceInstance().createZipForSynchronziation();
 			}
 		});
 
