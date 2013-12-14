@@ -176,7 +176,7 @@ public final class ToolbarCompositeListener {
 		return new MouseListener() {
 			@Override
 			public void mouseUp(MouseEvent mouseEvent) {
-				BrowserFacade.showSynchronizePage();
+				BrowserFacade.showSynchronizePage(Translator.get(DictKeys.BROWSER_SYNCRONIZATION_PRESS_START));
 				
 				if (ApplicationUI.getCurrentRightPanelType() != PanelType.SYNCHRONIZATION) {
 					ApplicationUI.changeRightCompositeTo(PanelType.SYNCHRONIZATION, SynchronizeSidepane.build(ApplicationUI.getThreePanelComposite()));

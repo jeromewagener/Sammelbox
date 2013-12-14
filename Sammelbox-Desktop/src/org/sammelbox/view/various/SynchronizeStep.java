@@ -20,7 +20,6 @@ package org.sammelbox.view.various;
 
 public enum SynchronizeStep {
 	ESTABLISH_CONNECTION,
-	UPLOAD_DATA,
-	INSTALL_DATA,
+	TRANSFER_DATA,
 	FINISH
 }

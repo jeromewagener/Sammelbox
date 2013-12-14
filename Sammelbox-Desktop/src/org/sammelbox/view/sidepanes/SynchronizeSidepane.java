@@ -31,15 +31,13 @@ import org.eclipse.swt.widgets.Label;
 import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.controller.synchronization.SyncServerService;
+import org.sammelbox.view.browser.BrowserFacade;
 import org.sammelbox.view.various.ComponentFactory;
 import org.sammelbox.view.various.SynchronizeCompositeHelper;
 import org.sammelbox.view.various.SynchronizeStep;
 
-import com.jeromewagener.soutils.desktop.beaconing.BeaconSender;
-import com.jeromewagener.soutils.desktop.networking.NetworkFacade;
-
 public final class SynchronizeSidepane {
-	private static BeaconSender beaconSender;
+	private static SyncServerService syncServerService = SyncServerService.Default.getServiceInstance();
 	
 	private SynchronizeSidepane() {
 		// use build method instead
@@ -72,15 +70,10 @@ public final class SynchronizeSidepane {
 		establishConnectionLabel.setEnabled(false);
 		synchronizeStepsToLabelsMap.put(SynchronizeStep.ESTABLISH_CONNECTION, establishConnectionLabel);
 
-		final Label uploadDataLabel = ComponentFactory.getH4Label(synchronizeComposite, "\u25CF " + Translator.get(DictKeys.LABEL_UPLOAD_DATA));
-		uploadDataLabel.setLayoutData(minHeightGridData);
-		uploadDataLabel.setEnabled(false);
-		synchronizeStepsToLabelsMap.put(SynchronizeStep.UPLOAD_DATA, uploadDataLabel);
-
-		final Label installDataLabel = ComponentFactory.getH4Label(synchronizeComposite, "\u25CF " + Translator.get(DictKeys.LABEL_INSTALL_DATA));
-		installDataLabel.setLayoutData(minHeightGridData);
-		installDataLabel.setEnabled(false);
-		synchronizeStepsToLabelsMap.put(SynchronizeStep.INSTALL_DATA, installDataLabel);
+		final Label transferingDataLabel = ComponentFactory.getH4Label(synchronizeComposite, "\u25CF " + Translator.get(DictKeys.TRANSFER_DATA));
+		transferingDataLabel.setLayoutData(minHeightGridData);
+		transferingDataLabel.setEnabled(false);
+		synchronizeStepsToLabelsMap.put(SynchronizeStep.TRANSFER_DATA, transferingDataLabel);
 
 		final Label finishLabel = ComponentFactory.getH4Label(synchronizeComposite, "\u25CF " + Translator.get(DictKeys.LABEL_FINISH));
 		finishLabel.setLayoutData(minHeightGridData);
@@ -88,8 +81,7 @@ public final class SynchronizeSidepane {
 		synchronizeStepsToLabelsMap.put(SynchronizeStep.FINISH, finishLabel);
 
 		// Add Observers
-		SynchronizeCompositeHelper synchronizeCompositeHelper = new SynchronizeCompositeHelper();
-		synchronizeCompositeHelper.storeSynchronizeCompositeLabels(synchronizeStepsToLabelsMap);
+		SynchronizeCompositeHelper.storeSynchronizeCompositeLabels(synchronizeStepsToLabelsMap);
 
 		// separator
 		new Label(synchronizeComposite, SWT.SEPARATOR | SWT.HORIZONTAL).setLayoutData(minHeightGridData);
@@ -106,24 +98,30 @@ public final class SynchronizeSidepane {
 				cancelButton.setEnabled(true);
 				startButton.setEnabled(false);
 				
-				beaconSender = new BeaconSender("Hello", NetworkFacade.getAllIPsAndAssignedBroadcastAddresses().values().iterator().next()); // TODO test code only!
-				beaconSender.start();
+				BrowserFacade.showSynchronizePage(Translator.get(
+						DictKeys.BROWSER_SYNCRONIZATION_ENTER_CODE, 
+						"<br><br><b>" + syncServerService.getSynchronizationCode() + "</b>"));
 				
-				SyncServerService.Default.getServiceInstance().createZipForSynchronziation();
+				syncServerService.startBeaconingHashedSynchronizationCode();
+				syncServerService.startCommunicationChannel();
 			}
 		});
 
 		cancelButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				syncServerService.stopBeaconingHashedSynchronizationCode();
+				syncServerService.stopCommunicationChannel();
+				syncServerService.stopFileTransferServer();
+				
 				establishConnectionLabel.setEnabled(false);
-				uploadDataLabel.setEnabled(false);
-				installDataLabel.setEnabled(false);
+				transferingDataLabel.setEnabled(false);
 				finishLabel.setEnabled(false);
 				cancelButton.setEnabled(false);
 				startButton.setEnabled(true);
 				
-				beaconSender.done();
+				syncServerService.stopBeaconingHashedSynchronizationCode();
+				syncServerService.stopCommunicationChannel();
 			}
 		});
 

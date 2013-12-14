@@ -176,8 +176,8 @@ public final class FeedbackCreator {
 		showDefaultTemplate(Translator.get(DictKeys.BROWSER_BACKUP_FINISHED), Translator.get(DictKeys.BROWSER_BACKUP_FINISHED_DETAIL));
 	}
 	
-	static void showSynchronizationPage() {
-		showDefaultTemplate(Translator.get(DictKeys.BROWSER_SYNCRONIZATION_HEADER), Translator.get(DictKeys.BROWSER_SYNCRONIZATION));
+	static void showSynchronizationPage(String messageToShow) {
+		showDefaultTemplate(Translator.get(DictKeys.BROWSER_SYNCRONIZATION_HEADER), messageToShow);
 	}
 	
 	static void showImportPage() {

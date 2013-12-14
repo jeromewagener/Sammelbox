@@ -66,7 +66,7 @@ public final class BrowserFacade {
 	public static void showAlbumRestoredPage() { FeedbackCreator.showAlbumsRestoredPage(); }
 	public static void showBackupInProgressPage() { FeedbackCreator.showBackupInProgressPage(); }
 	public static void showBackupFinishedPage() { FeedbackCreator.showBackupFinishedPage(); }
-	public static void showSynchronizePage() { FeedbackCreator.showSynchronizationPage(); }
+	public static void showSynchronizePage(String messageToShow) { FeedbackCreator.showSynchronizationPage(messageToShow); }
 	public static void showSettingsPage() { FeedbackCreator.showSettingsPage(); }
 	public static void showImportPage() { FeedbackCreator.showImportPage(); }
 	public static void showHelpPage() {

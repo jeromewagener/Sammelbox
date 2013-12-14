@@ -82,6 +82,13 @@
         <type>jar</type>
         <scope>compile</scope>
      </dependency>
+     <dependency>
+        <groupId>com.jeromewagener.soutils</groupId>
+        <artifactId>soutils-common</artifactId>
+        <version>1.0-beta-snapshot</version>
+        <type>jar</type>
+        <scope>compile</scope>
+     </dependency>
    </dependencies>
 
 

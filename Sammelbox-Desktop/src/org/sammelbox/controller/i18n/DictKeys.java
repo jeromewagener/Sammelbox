@@ -193,8 +193,7 @@ public final class DictKeys {
 	public static final String LABEL_UPDATE_ENTRY = "collector.label.caption.UPDATE_ENTRY";
 	public static final String LABEL_SYNCHRONIZE = "collector.label.caption.SYNCHRONIZE";
 	public static final String LABEL_ESTABLISHING_CONNECTION = "collector.label.caption.ESTABLISHING_CONNECTION";
-	public static final String LABEL_UPLOAD_DATA = "collector.label.caption.UPLOAD_DATA";
-	public static final String LABEL_INSTALL_DATA = "collector.label.caption.INSTALL_DATA";
+	public static final String TRANSFER_DATA = "collector.label.caption.TRANSFER_DATA";
 	public static final String LABEL_FINISH = "collector.label.caption.FINISH";
 	public static final String LABEL_FIELD_TYPE = "collector.label.caption.FIELD_TYPE";
 	public static final String LABEL_FIELD_NAME = "collector.label.caption.FIELD_NAME";
@@ -279,7 +278,8 @@ public final class DictKeys {
 	public static final String BROWSER_ALBUMS_RESTORED_HEADER = "collector.browser.text.ALBUMS_RESTORED_HEADER";
 	public static final String BROWSER_ALBUMS_RESTORED = "collector.browser.text.ALBUMS_RESTORED";
 	public static final String BROWSER_SYNCRONIZATION_HEADER = "collector.browser.text.SYNCRONIZATION_HEADER";
-	public static final String BROWSER_SYNCRONIZATION = "collector.browser.text.SYNCRONIZATION";
+	public static final String BROWSER_SYNCRONIZATION_PRESS_START = "collector.browser.text.SYNCRONIZATION_PRESS_START";
+	public static final String BROWSER_SYNCRONIZATION_ENTER_CODE = "collector.browser.text.SYNCRONIZATION_ENTER_CODE";
 	public static final String BROWSER_BACKUP_IN_PROGESS = "org.sammelbox.browser.text.BACKUP_IN_PROGESS";
 	public static final String BROWSER_BACKUP_IN_PROGESS_DETAIL = "org.sammelbox.browser.text.BACKUP_IN_PROGESS_DETAIL";
 	public static final String BROWSER_BACKUP_FINISHED = "org.sammelbox.browser.text.BACKUP_FINISHED";

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>com.jeromewagener.soutils</groupId>
+  <artifactId>soutils-common</artifactId>
+  <versioning>
+    <release>1.0-beta-snapshot</release>
+    <versions>
+      <version>1.0-beta-snapshot</version>
+    </versions>
+    <lastUpdated>20131213195141</lastUpdated>
+  </versioning>
+</metadata>
