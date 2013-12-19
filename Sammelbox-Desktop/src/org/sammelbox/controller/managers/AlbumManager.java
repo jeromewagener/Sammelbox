@@ -23,7 +23,7 @@ import java.util.List;
 
 import org.sammelbox.controller.events.EventObservable;
 import org.sammelbox.controller.events.SammelboxEvent;
-import org.sammelbox.controller.filesystem.XmlStorageWrapper;
+import org.sammelbox.controller.filesystem.xml.XmlStorageWrapper;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 import org.sammelbox.model.database.operations.DatabaseOperations;
 import org.slf4j.Logger;

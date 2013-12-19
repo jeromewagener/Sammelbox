@@ -100,7 +100,7 @@ public final class SynchronizeSidepane {
 				
 				BrowserFacade.showSynchronizePage(Translator.get(
 						DictKeys.BROWSER_SYNCRONIZATION_ENTER_CODE, 
-						"<br><br><b>" + syncServerService.getSynchronizationCode() + "</b>"));
+						"<br><br><b>" + syncServerService.getCurrentSynchronizationCode() + "</b>"));
 				
 				syncServerService.startBeaconingHashedSynchronizationCode();
 				syncServerService.startCommunicationChannel();

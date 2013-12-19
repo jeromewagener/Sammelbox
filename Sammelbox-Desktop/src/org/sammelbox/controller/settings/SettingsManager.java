@@ -20,7 +20,7 @@ package org.sammelbox.controller.settings;
 
 import java.util.Locale;
 
-import org.sammelbox.controller.filesystem.XmlStorageWrapper;
+import org.sammelbox.controller.filesystem.xml.XmlStorageWrapper;
 import org.sammelbox.controller.i18n.Language;
 import org.sammelbox.model.settings.ApplicationSettings;
 

@@ -12,7 +12,7 @@ public interface SyncServerService extends MessageReceptionObserver {
 	/** Creates a new synchronization code */
 	public void createSynchronizationCode();
 	/** Returns the current synchronization code */
-	public String getSynchronizationCode();
+	public String getCurrentSynchronizationCode();
 	/** Returns a hash of the current synchronization code */
 	public String getHashedSynchronizationCode();
 	

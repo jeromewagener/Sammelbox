@@ -20,6 +20,9 @@ package org.sammelbox.controller.synchronization;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.swt.widgets.Display;
 import org.sammelbox.controller.filesystem.FileSystemAccessWrapper;
@@ -28,8 +31,8 @@ import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.view.browser.BrowserFacade;
 import org.sammelbox.view.various.SynchronizeCompositeHelper;
 import org.sammelbox.view.various.SynchronizeStep;
-import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.jeromewagener.soutils.Utilities;
 import com.jeromewagener.soutils.desktop.beaconing.BeaconSender;
@@ -38,17 +41,20 @@ import com.jeromewagener.soutils.desktop.networking.NetworkFacade;
 import com.jeromewagener.soutils.filetransfer.FileTransferServer;
 
 public class SyncServerServiceImpl implements SyncServerService {
-	private static final String SYNC_FOLDER = "sammelbox-sync";
 	private static final Logger LOGGER = LoggerFactory.getLogger(SyncServerServiceImpl.class);
+	private static final int SYNC_PORT = 12345;
+	private static final String SYNC_DIRECTORY_PATH = FileSystemLocations.TEMP_DIR + "sammelbox-sync" + File.separatorChar;
+	private static final String SYNC_ZIP_ARCHIVE_PATH = FileSystemLocations.TEMP_DIR + "sammelbox-sync.zip";
 	
-	private String synchronizationCode = null;	
+	private String currentSynchronizationCode = null;
+	
 	private CommunicationManager communicationManager = null;
 	private FileTransferServer fileTransferServer = null;
-	private BeaconSender beaconSender = null;
+	private List<BeaconSender> beaconSenders = null;
 	
 	@Override
 	public File zipHomeForSynchronziation() {
-		File syncFolder = new File(FileSystemLocations.TEMP_DIR + SYNC_FOLDER);
+		File syncFolder = new File(SYNC_DIRECTORY_PATH);
 		
 		if (syncFolder.exists()) {
 			FileSystemAccessWrapper.deleteDirectoryRecursively(syncFolder);
@@ -59,51 +65,55 @@ public class SyncServerServiceImpl implements SyncServerService {
 
 			FileSystemAccessWrapper.copyFile(
 					new File(FileSystemLocations.getDatabaseFile()), 
-					new File(FileSystemLocations.TEMP_DIR + SYNC_FOLDER + File.separatorChar + FileSystemLocations.DATABASE_NAME));
+					new File(SYNC_DIRECTORY_PATH + FileSystemLocations.DATABASE_NAME));
 
 			FileSystemAccessWrapper.copyDirectory(
 					new File(FileSystemLocations.getThumbnailsDir()), 
-					new File(FileSystemLocations.TEMP_DIR + SYNC_FOLDER + File.separatorChar + FileSystemLocations.THUMBNAILS_DIR_NAME)); // TODO uncomment
+					new File(SYNC_DIRECTORY_PATH + FileSystemLocations.THUMBNAILS_DIR_NAME));
 
-			FileSystemAccessWrapper.zipFolderToFile(
-					syncFolder.getAbsolutePath(), FileSystemLocations.TEMP_DIR + SYNC_FOLDER + ".zip");
+			FileSystemAccessWrapper.zipFolderToFile(syncFolder.getAbsolutePath(), SYNC_ZIP_ARCHIVE_PATH);
 		} catch (IOException ioe) {
 			LOGGER.error("An error occured while packaging the information before synchronization", ioe);
 		}
 		
-		return new File(FileSystemLocations.TEMP_DIR + SYNC_FOLDER + ".zip");
+		return new File(SYNC_ZIP_ARCHIVE_PATH);
 	}
 
 	@Override
 	public void createSynchronizationCode() {
-		synchronizationCode = String.valueOf(Utilities.randomNumberBetweenIntervals(10000, 99999));
+		currentSynchronizationCode = String.valueOf(Utilities.randomNumberBetweenIntervals(10000, 99999));
 	}
 	
 	@Override
-	public String getSynchronizationCode() {
-		if (synchronizationCode == null) {
+	public String getCurrentSynchronizationCode() {
+		if (currentSynchronizationCode == null) {
 			createSynchronizationCode();
 		}
 		
-		return synchronizationCode;
+		return currentSynchronizationCode;
 	}
 	
 	@Override
 	public String getHashedSynchronizationCode() {
-		if (synchronizationCode == null) {
+		if (currentSynchronizationCode == null) {
 			createSynchronizationCode();
 		}
 		
-		return Utilities.stringToMD5(synchronizationCode);
+		return Utilities.stringToMD5(currentSynchronizationCode);
 	}
 
 	@Override
 	public void startBeaconingHashedSynchronizationCode() {
-		if (beaconSender == null) {
-			beaconSender = new BeaconSender(
-					"sammelbox-desktop:sync-code:" + getHashedSynchronizationCode(), 
-					NetworkFacade.getAllIPsAndAssignedBroadcastAddresses().values().iterator().next()); // TODO test code only!
-			beaconSender.start();
+		if (beaconSenders == null) {
+			beaconSenders = new ArrayList<BeaconSender>();
+			for (InetAddress ipAddress : NetworkFacade.getAllIPsAndAssignedBroadcastAddresses().keySet()) {
+				BeaconSender beaconSender = new BeaconSender(
+						"sammelbox-desktop:sync-code:" + getHashedSynchronizationCode(), 
+						NetworkFacade.getAllIPsAndAssignedBroadcastAddresses().get(ipAddress));
+				beaconSender.start();
+				
+				beaconSenders.add(beaconSender);
+			}
 		} else {
 			LOGGER.warn("Beacons are already sent!");
 		}
@@ -111,16 +121,18 @@ public class SyncServerServiceImpl implements SyncServerService {
 
 	@Override
 	public void stopBeaconingHashedSynchronizationCode() {
-		if (beaconSender != null) {
-			beaconSender.done();
-			beaconSender = null;
+		if (beaconSenders != null) {
+			for (BeaconSender beaconSender : beaconSenders) {
+				beaconSender.done();
+			}
+			beaconSenders = null;
 		}
 	}
 
 	@Override
 	public void startCommunicationChannel() {
 		if (communicationManager == null) {
-			communicationManager = new CommunicationManager(12345); // TODO define port
+			communicationManager = new CommunicationManager(SYNC_PORT);
 			communicationManager.registerMessageReceptionObserver(this);
 			communicationManager.start();
 		} else {
@@ -162,7 +174,7 @@ public class SyncServerServiceImpl implements SyncServerService {
 	@Override
 	public void reactToMessage(String ipAddress, String message) {
 		if (message.startsWith("sammelbox-android:connect:")) {
-			if (getSynchronizationCode().equals(message.split(":")[2])) {
+			if (getCurrentSynchronizationCode().equals(message.split(":")[2])) {
 				openFileTransferServer(zipHomeForSynchronziation().getAbsolutePath());
 				stopBeaconingHashedSynchronizationCode();
 				communicationManager.sendMessageToAllConnectedPeers("sammelbox-desktop:accept-transfer");
@@ -182,8 +194,6 @@ public class SyncServerServiceImpl implements SyncServerService {
 						Thread.sleep(500); // TODO avoid busy waiting here!
 						System.out.println("Transfering data"); // TODO show percentage
 					} catch (InterruptedException e) {
-						
-						
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
