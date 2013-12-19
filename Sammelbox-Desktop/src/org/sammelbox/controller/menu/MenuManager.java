@@ -158,13 +158,13 @@ public final class MenuManager {
 		}
 		
 		MenuItem reportingIssues = new MenuItem(helpMenu, SWT.NONE);
-		reportingIssues.setText(Translator.toBeTranslated("Reporting issues..."));
+		reportingIssues.setText(Translator.get(DictKeys.MENU_REPORTING_ISSUES));
 		reportingIssues.addSelectionListener(HelpMenuItemListener.getReportingIssuesListener());
 		
 		new MenuItem(helpMenu, SWT.SEPARATOR);
 		
 		MenuItem updatesAvailable = new MenuItem(helpMenu, SWT.NONE);
-		updatesAvailable.setText(Translator.toBeTranslated("Check for updates..."));
+		updatesAvailable.setText(Translator.get(DictKeys.MENU_CHECK_FOR_UPDATES));
 		updatesAvailable.addSelectionListener(HelpMenuItemListener.getCheckForUpdatesListener());
 		
 		new MenuItem(helpMenu, SWT.SEPARATOR);

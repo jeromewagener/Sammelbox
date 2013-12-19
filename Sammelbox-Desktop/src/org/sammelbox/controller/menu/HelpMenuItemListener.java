@@ -11,6 +11,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.FileDialog;
 import org.sammelbox.controller.filesystem.FileSystemAccessWrapper;
+import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.controller.managers.BuildInformationManager;
 import org.sammelbox.view.ApplicationUI;
@@ -95,21 +96,21 @@ public final class HelpMenuItemListener {
 					
 					if (BuildInformationManager.instance().getPublicVersionString().trim().equals(currentVersion.trim())) {
 						ComponentFactory.getMessageBox(
-								Translator.toBeTranslated("Current version installed"), 
-								Translator.toBeTranslated("It looks like you have the current version of Sammelbox installed. Great!"),
+								Translator.get(DictKeys.DIALOG_TITLE_VERSION_CHECK_LATEST), 
+								Translator.get(DictKeys.DIALOG_CONTENT_VERSION_CHECK_LATEST),
 								SWT.ICON_INFORMATION).open();
 					} else {
 						ComponentFactory.getMessageBox(
-								Translator.toBeTranslated("Sammelbox is out-of-date"), 
-								Translator.toBeTranslated("It looks like a newer version of Sammelbox is available. You can download it from www.sammelbox.org"),
+								Translator.get(DictKeys.DIALOG_TITLE_VERSION_CHECK_OUTDATED), 
+								Translator.get(DictKeys.DIALOG_CONTENT_VERSION_CHECK_OUTDATED),
 								SWT.ICON_INFORMATION).open();
 					}
 				} catch (IOException ioe) {
 					LOGGER.error("An error occured while checking for updates.", ioe);
 					
 					ComponentFactory.getMessageBox(
-							Translator.toBeTranslated("Could not connect to www.sammelbox.org"), 
-							Translator.toBeTranslated("Please check again later, or go directly to www.sammelbox.org to check for updates!"),
+							Translator.get(DictKeys.DIALOG_TITLE_VERSION_CHECK_ERROR), 
+							Translator.get(DictKeys.DIALOG_CONTENT_VERSION_CHECK_ERROR),
 							SWT.ICON_INFORMATION).open();
 				}
 			}
@@ -121,11 +122,8 @@ public final class HelpMenuItemListener {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				ComponentFactory.getMessageBox(
-						Translator.toBeTranslated("Reporting an issue"), 
-						Translator.toBeTranslated("Thanks for helping us to improve Sammelbox!\n\n"
-								+ "To report issues, please use bugs@sammelbox.org or add an issue ticket via "
-								+ "our GitHub issue tracker. \n\n"
-								+ "https://github.com/jeromewagener/Sammelbox/issues"),
+						Translator.get(DictKeys.DIALOG_TITLE_REPORT_ISSUES), 
+						Translator.get(DictKeys.DIALOG_CONTENT_REPORT_ISSUES),
 						SWT.ICON_INFORMATION).open();
 			}
 		};
