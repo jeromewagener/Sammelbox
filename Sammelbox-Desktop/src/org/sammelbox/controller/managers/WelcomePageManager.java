@@ -28,7 +28,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.sammelbox.controller.filesystem.XmlStorageWrapper;
+import org.sammelbox.controller.filesystem.xml.XmlStorageWrapper;
 import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.controller.settings.SettingsManager;

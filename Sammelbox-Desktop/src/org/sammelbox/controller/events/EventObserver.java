@@ -16,24 +16,8 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ** ----------------------------------------------------------------- */
 
-package org.sammelbox.controller.filesystem;
+package org.sammelbox.controller.events;
 
-public class XmlParsingException extends Exception {
-	private static final long serialVersionUID = 7309071797276673929L;
-
-	public XmlParsingException() {
-		super();
-	}
-	
-	public XmlParsingException(String message) {
-		super(message);
-	}
-	
-	public XmlParsingException(Throwable throwable) {
-		super(throwable);
-	}
-	
-	public XmlParsingException(String message, Throwable throwable) {
-		super(message, throwable);
-	}
+public interface EventObserver {
+	void update(SammelboxEvent event);
 }

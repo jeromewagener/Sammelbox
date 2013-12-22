@@ -66,6 +66,8 @@ public final class DictKeys {
 	public static final String MENU_COLLECTOR = "collector.menu.COLLECTOR";
 	public static final String MENU_SETTINGS = "collector.menu.SETTINGS";
 	public static final String MENU_CSV_IMPORT = "org.sammelbox.menu.CSV_IMPORT";
+	public static final String MENU_REPORTING_ISSUES = "org.sammelbox.menu.REPORTING_ISSUES";
+	public static final String MENU_CHECK_FOR_UPDATES = "org.sammelbox.menu.CHECK_FOR_UPDATES";
 	
 	/*   Dropdown Menu   */
 	public static final String DROPDOWN_REMOVE = "collector.dropdown.menu.REMOVE";
@@ -137,7 +139,14 @@ public final class DictKeys {
 	public static final String DIALOG_TITLE_SELECT_SEPARATION_CHAR = "org.sammelbox.dialog.title.SELECT_SEPARATION_CHAR";
 	public static final String DIALOG_CONTENT_SELECT_SEPARATION_CHAR = "org.sammelbox.dialog.content.SELECT_SEPARATION_CHAR";
 	public static final String DIALOG_BUTTON_SELECT_SEPARATION_CHAR = "org.sammelbox.dialog.button.SELECT_SEPARATION_CHAR";
-	
+	public static final String DIALOG_TITLE_REPORT_ISSUES = "org.sammelbox.dialog.title.REPORT_ISSUES";
+	public static final String DIALOG_CONTENT_REPORT_ISSUES = "org.sammelbox.dialog.content.REPORT_ISSUES";
+	public static final String DIALOG_TITLE_VERSION_CHECK_LATEST = "org.sammelbox.dialog.title.VERSION_CHECK_LATEST";
+	public static final String DIALOG_CONTENT_VERSION_CHECK_LATEST = "org.sammelbox.dialog.content.VERSION_CHECK_LATEST";		
+	public static final String DIALOG_TITLE_VERSION_CHECK_OUTDATED = "org.sammelbox.dialog.title.VERSION_CHECK_OUTDATED";
+	public static final String DIALOG_CONTENT_VERSION_CHECK_OUTDATED = "org.sammelbox.dialog.content.VERSION_CHECK_OUTDATED";	
+	public static final String DIALOG_TITLE_VERSION_CHECK_ERROR = "org.sammelbox.dialog.title.VERSION_CHECK_ERROR";
+	public static final String DIALOG_CONTENT_VERSION_CHECK_ERROR = "org.sammelbox.dialog.content.VERSION_CHECK_ERROR";
 	
 	/*   Open & Save Dialogs   */
 	public static final String DIALOG_BACKUP_TO_FILE = "collector.savedialog.title.BACKUP_TO_FILE";

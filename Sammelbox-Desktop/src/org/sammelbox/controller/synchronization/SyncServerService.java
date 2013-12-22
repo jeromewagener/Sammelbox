@@ -9,8 +9,6 @@ public interface SyncServerService extends SoutilsObserver {
 	 * Sammelbox home for synchronization with mobile devices */
 	public File zipHomeForSynchronziation();
 	
-	/** Creates a new synchronization code */
-	public void createSynchronizationCode();
 	/** Returns the current synchronization code */
 	public String getSynchronizationCode();
 	/** Returns a hash of the current synchronization code */

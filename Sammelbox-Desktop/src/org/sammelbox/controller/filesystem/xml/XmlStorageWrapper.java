@@ -16,7 +16,7 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ** ----------------------------------------------------------------- */
 
-package org.sammelbox.controller.filesystem;
+package org.sammelbox.controller.filesystem.xml;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -30,6 +30,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.sammelbox.controller.filesystem.FileSystemAccessWrapper;
+import org.sammelbox.controller.filesystem.FileSystemLocations;
 import org.sammelbox.controller.i18n.Language;
 import org.sammelbox.controller.managers.AlbumViewManager.AlbumView;
 import org.sammelbox.controller.settings.SettingsManager;

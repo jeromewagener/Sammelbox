@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.sammelbox.controller.GuiController;
 import org.sammelbox.controller.events.EventObservable;
-import org.sammelbox.controller.events.Observer;
+import org.sammelbox.controller.events.EventObserver;
 import org.sammelbox.controller.events.SammelboxEvent;
 import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
@@ -42,7 +42,7 @@ import org.sammelbox.view.various.PanelType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ToolbarComposite extends Composite implements Observer {
+public class ToolbarComposite extends Composite implements EventObserver {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ToolbarComposite.class);
 	
 	private Image homeIcon = null, addNewAlbumIcon = null, addAlbumItemIcon = null, detailedViewIcon = null, 

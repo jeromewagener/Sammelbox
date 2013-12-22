@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 public final class EventObservable {
 	private static final Logger LOGGER = LoggerFactory.getLogger(EventObservable.class);
 	
-	private static List<Observer> observers = new ArrayList<Observer>();
+	private static List<EventObserver> observers = new ArrayList<EventObserver>();
 	private static Queue<SammelboxEvent> sammelboxEvents = new LinkedList<SammelboxEvent>();
 	
 	private EventObservable() {
@@ -50,11 +50,11 @@ public final class EventObservable {
 		notifyObservers();
 	}
 	
-	public static void registerObserver(Observer observer) {
+	public static void registerObserver(EventObserver observer) {
 		observers.add(observer);
 	}
 
-	public static void unregisterObserver(Observer observer) {
+	public static void unregisterObserver(EventObserver observer) {
 		observers.remove(observer);
 	}
 
@@ -65,7 +65,7 @@ public final class EventObservable {
 	public static void notifyObservers() {		
 		SammelboxEvent event = sammelboxEvents.poll();
 		
-		for (Observer observer : observers) {
+		for (EventObserver observer : observers) {
 			observer.update(event);
 		}
 	}

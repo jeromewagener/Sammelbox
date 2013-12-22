@@ -22,7 +22,9 @@ import java.io.File;
 import java.io.IOException;
 import java.net.SocketException;
 import java.security.NoSuchAlgorithmException;
-
+import java.net.InetAddress;
+import java.util.ArrayList;
+import java.util.List;
 import org.eclipse.swt.widgets.Display;
 import org.sammelbox.controller.filesystem.FileSystemAccessWrapper;
 import org.sammelbox.controller.filesystem.FileSystemLocations;
@@ -42,17 +44,19 @@ import com.jeromewagener.soutils.utilities.InetAddressUtilities;
 import com.jeromewagener.soutils.utilities.Soutilities;
 
 public class SyncServerServiceImpl implements SyncServerService {
-	private static final String SYNC_FOLDER = "sammelbox-sync";
 	private static final Logger LOGGER = LoggerFactory.getLogger(SyncServerServiceImpl.class);
+	private static final String SYNC_DIRECTORY_PATH = FileSystemLocations.TEMP_DIR + "sammelbox-sync" + File.separatorChar;
+	private static final String SYNC_ZIP_ARCHIVE_PATH = FileSystemLocations.TEMP_DIR + "sammelbox-sync.zip";
 	
-	private String synchronizationCode = null;	
+	private String synchronizationCode = null;
+	
 	private CommunicationManager communicationManager = null;
 	private FileTransferServer fileTransferServer = null;
-	private BeaconSender beaconSender = null;
+	private List<BeaconSender> beaconSenders = null;
 	
 	@Override
 	public File zipHomeForSynchronziation() {
-		File syncFolder = new File(FileSystemLocations.TEMP_DIR + SYNC_FOLDER);
+		File syncFolder = new File(SYNC_DIRECTORY_PATH);
 		
 		if (syncFolder.exists()) {
 			FileSystemAccessWrapper.deleteDirectoryRecursively(syncFolder);
@@ -63,30 +67,24 @@ public class SyncServerServiceImpl implements SyncServerService {
 
 			FileSystemAccessWrapper.copyFile(
 					new File(FileSystemLocations.getDatabaseFile()), 
-					new File(FileSystemLocations.TEMP_DIR + SYNC_FOLDER + File.separatorChar + FileSystemLocations.DATABASE_NAME));
+					new File(SYNC_DIRECTORY_PATH + FileSystemLocations.DATABASE_NAME));
 
 			FileSystemAccessWrapper.copyDirectory(
 					new File(FileSystemLocations.getThumbnailsDir()), 
-					new File(FileSystemLocations.TEMP_DIR + SYNC_FOLDER + File.separatorChar + FileSystemLocations.THUMBNAILS_DIR_NAME)); // TODO uncomment
+					new File(SYNC_DIRECTORY_PATH + FileSystemLocations.THUMBNAILS_DIR_NAME));
 
-			FileSystemAccessWrapper.zipFolderToFile(
-					syncFolder.getAbsolutePath(), FileSystemLocations.TEMP_DIR + SYNC_FOLDER + ".zip");
+			FileSystemAccessWrapper.zipFolderToFile(syncFolder.getAbsolutePath(), SYNC_ZIP_ARCHIVE_PATH);
 		} catch (IOException ioe) {
 			LOGGER.error("An error occured while packaging the information before synchronization", ioe);
 		}
 		
-		return new File(FileSystemLocations.TEMP_DIR + SYNC_FOLDER + ".zip");
-	}
-
-	@Override
-	public void createSynchronizationCode() {
-		synchronizationCode = String.valueOf(Soutilities.randomNumberBetweenIntervals(10000, 99999));
+		return new File(SYNC_ZIP_ARCHIVE_PATH);
 	}
 	
 	@Override
 	public String getSynchronizationCode() {
 		if (synchronizationCode == null) {
-			createSynchronizationCode();
+			synchronizationCode = String.valueOf(Soutilities.randomNumberBetweenIntervals(10000, 99999));
 		}
 		
 		return synchronizationCode;
@@ -95,7 +93,7 @@ public class SyncServerServiceImpl implements SyncServerService {
 	@Override
 	public String getHashedSynchronizationCode() {
 		if (synchronizationCode == null) {
-			createSynchronizationCode();
+			getSynchronizationCode();
 		}
 		
 		try {
@@ -109,13 +107,19 @@ public class SyncServerServiceImpl implements SyncServerService {
 
 	@Override
 	public void startBeaconingHashedSynchronizationCode() {
-		if (beaconSender == null) {
-			try {
-				beaconSender = new BeaconSender(
-						"sammelbox-desktop:sync-code:" + getHashedSynchronizationCode(), 
-						InetAddressUtilities.getAllIPsAndAssignedBroadcastAddresses().values().iterator().next(),
-						5454, this); // TODO hard coded test code only!
-				beaconSender.start();
+		if (beaconSenders == null) {
+			try {	
+
+				beaconSenders = new ArrayList<BeaconSender>();
+				for (InetAddress ipAddress : InetAddressUtilities.getAllIPsAndAssignedBroadcastAddresses().keySet()) {
+					BeaconSender beaconSender = new BeaconSender(
+							"sammelbox-desktop:sync-code:" + getHashedSynchronizationCode(), 
+							InetAddressUtilities.getAllIPsAndAssignedBroadcastAddresses().get(ipAddress),
+							5454, this);
+					beaconSender.start();
+
+					beaconSenders.add(beaconSender);
+				}
 			} catch (SocketException socketException) {
 				LOGGER.error("Could not retrieve broadcast addresses", socketException);
 			}
@@ -126,9 +130,11 @@ public class SyncServerServiceImpl implements SyncServerService {
 
 	@Override
 	public void stopBeaconingHashedSynchronizationCode() {
-		if (beaconSender != null) {
-			beaconSender.done();
-			beaconSender = null;
+		if (beaconSenders != null) {
+			for (BeaconSender beaconSender : beaconSenders) {
+				beaconSender.done();
+			}
+			beaconSenders = null;
 		}
 	}
 

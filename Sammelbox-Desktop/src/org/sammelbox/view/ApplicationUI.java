@@ -38,7 +38,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.sammelbox.controller.GuiController;
 import org.sammelbox.controller.events.EventObservable;
-import org.sammelbox.controller.events.Observer;
+import org.sammelbox.controller.events.EventObserver;
 import org.sammelbox.controller.events.SammelboxEvent;
 import org.sammelbox.controller.filesystem.FileSystemLocations;
 import org.sammelbox.controller.i18n.DictKeys;
@@ -64,7 +64,7 @@ import org.sammelbox.view.various.PanelType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class ApplicationUI implements Observer {	
+public final class ApplicationUI implements EventObserver {	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationUI.class);
 	/** A reference to the main display */
 	private static final Display DISPLAY = new Display();
