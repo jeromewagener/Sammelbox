@@ -2,9 +2,9 @@ package org.sammelbox.controller.synchronization;
 
 import java.io.File;
 
-import com.jeromewagener.soutils.desktop.networking.MessageReceptionObserver;
+import com.jeromewagener.soutils.messaging.SoutilsObserver;
 
-public interface SyncServerService extends MessageReceptionObserver {
+public interface SyncServerService extends SoutilsObserver {
 	/** Creates a ZIP-archive which contains a reduced version of the 
 	 * Sammelbox home for synchronization with mobile devices */
 	public File zipHomeForSynchronziation();
@@ -23,7 +23,7 @@ public interface SyncServerService extends MessageReceptionObserver {
 	public void stopCommunicationChannel();
 	
 	public void openFileTransferServer(String storageLocationAsAbsolutPath);
-	public int getFileTransferProgressPercentage();
+	public long getFileTransferProgressPercentage();
 	public void stopFileTransferServer();
 	
 	public static class Default {

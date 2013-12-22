@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata modelVersion="1.1.0">
+  <groupId>com.jeromewagener.soutils</groupId>
+  <artifactId>soutils</artifactId>
+  <version>1.0-BETA-SNAPSHOT</version>
+  <versioning>
+    <snapshot>
+      <localCopy>true</localCopy>
+    </snapshot>
+    <lastUpdated>20131220231421</lastUpdated>
+    <snapshotVersions>
+      <snapshotVersion>
+        <extension>jar</extension>
+        <value>1.0-BETA-SNAPSHOT</value>
+        <updated>20131220231421</updated>
+      </snapshotVersion>
+      <snapshotVersion>
+        <extension>pom</extension>
+        <value>1.0-BETA-SNAPSHOT</value>
+        <updated>20131220231421</updated>
+      </snapshotVersion>
+    </snapshotVersions>
+  </versioning>
+</metadata>

@@ -20,22 +20,26 @@ package org.sammelbox.controller.synchronization;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.SocketException;
+import java.security.NoSuchAlgorithmException;
 
 import org.eclipse.swt.widgets.Display;
 import org.sammelbox.controller.filesystem.FileSystemAccessWrapper;
 import org.sammelbox.controller.filesystem.FileSystemLocations;
 import org.sammelbox.controller.i18n.Translator;
+import org.sammelbox.view.ApplicationUI;
 import org.sammelbox.view.browser.BrowserFacade;
 import org.sammelbox.view.various.SynchronizeCompositeHelper;
 import org.sammelbox.view.various.SynchronizeStep;
-import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.jeromewagener.soutils.Utilities;
-import com.jeromewagener.soutils.desktop.beaconing.BeaconSender;
-import com.jeromewagener.soutils.desktop.networking.CommunicationManager;
-import com.jeromewagener.soutils.desktop.networking.NetworkFacade;
+import com.jeromewagener.soutils.beaconing.BeaconSender;
+import com.jeromewagener.soutils.communication.CommunicationManager;
 import com.jeromewagener.soutils.filetransfer.FileTransferServer;
+import com.jeromewagener.soutils.messaging.SoutilsMessage;
+import com.jeromewagener.soutils.utilities.InetAddressUtilities;
+import com.jeromewagener.soutils.utilities.Soutilities;
 
 public class SyncServerServiceImpl implements SyncServerService {
 	private static final String SYNC_FOLDER = "sammelbox-sync";
@@ -76,7 +80,7 @@ public class SyncServerServiceImpl implements SyncServerService {
 
 	@Override
 	public void createSynchronizationCode() {
-		synchronizationCode = String.valueOf(Utilities.randomNumberBetweenIntervals(10000, 99999));
+		synchronizationCode = String.valueOf(Soutilities.randomNumberBetweenIntervals(10000, 99999));
 	}
 	
 	@Override
@@ -94,16 +98,27 @@ public class SyncServerServiceImpl implements SyncServerService {
 			createSynchronizationCode();
 		}
 		
-		return Utilities.stringToMD5(synchronizationCode);
+		try {
+			return Soutilities.stringToMD5(synchronizationCode);
+		} catch (NoSuchAlgorithmException noSuchAlgorithmException) {
+			LOGGER.error("Could not calculate the hash", noSuchAlgorithmException);
+		}
+		
+		return null;
 	}
 
 	@Override
 	public void startBeaconingHashedSynchronizationCode() {
 		if (beaconSender == null) {
-			beaconSender = new BeaconSender(
-					"sammelbox-desktop:sync-code:" + getHashedSynchronizationCode(), 
-					NetworkFacade.getAllIPsAndAssignedBroadcastAddresses().values().iterator().next()); // TODO test code only!
-			beaconSender.start();
+			try {
+				beaconSender = new BeaconSender(
+						"sammelbox-desktop:sync-code:" + getHashedSynchronizationCode(), 
+						InetAddressUtilities.getAllIPsAndAssignedBroadcastAddresses().values().iterator().next(),
+						5454, this); // TODO hard coded test code only!
+				beaconSender.start();
+			} catch (SocketException socketException) {
+				LOGGER.error("Could not retrieve broadcast addresses", socketException);
+			}
 		} else {
 			LOGGER.warn("Beacons are already sent!");
 		}
@@ -120,8 +135,7 @@ public class SyncServerServiceImpl implements SyncServerService {
 	@Override
 	public void startCommunicationChannel() {
 		if (communicationManager == null) {
-			communicationManager = new CommunicationManager(12345); // TODO define port
-			communicationManager.registerMessageReceptionObserver(this);
+			communicationManager = new CommunicationManager(12345, this); // TODO define port
 			communicationManager.start();
 		} else {
 			LOGGER.warn("Communication channel is already up and running!");
@@ -139,7 +153,7 @@ public class SyncServerServiceImpl implements SyncServerService {
 	@Override
 	public void openFileTransferServer(String storageLocationAsAbsolutPath) {
 		if (fileTransferServer == null) {
-			fileTransferServer = new FileTransferServer(storageLocationAsAbsolutPath);
+			fileTransferServer = new FileTransferServer(storageLocationAsAbsolutPath, 6565 ,this); // TODO define port
 			fileTransferServer.start();
 		} else {
 			LOGGER.warn("File transfer server already up and running!");
@@ -147,8 +161,8 @@ public class SyncServerServiceImpl implements SyncServerService {
 	}
 	
 	@Override
-	public int getFileTransferProgressPercentage() {
-		return fileTransferServer.isDone() ? 1 : 0; // TODO return percentage
+	public long getFileTransferProgressPercentage() {
+		return fileTransferServer.getFileTransferPercentage();
 	}
 	
 	@Override
@@ -160,59 +174,59 @@ public class SyncServerServiceImpl implements SyncServerService {
 	}
 
 	@Override
-	public void reactToMessage(String ipAddress, String message) {
-		if (message.startsWith("sammelbox-android:connect:")) {
-			if (getSynchronizationCode().equals(message.split(":")[2])) {
-				openFileTransferServer(zipHomeForSynchronziation().getAbsolutePath());
-				stopBeaconingHashedSynchronizationCode();
-				communicationManager.sendMessageToAllConnectedPeers("sammelbox-desktop:accept-transfer");
-				
-				SynchronizeCompositeHelper.disableSynchronizeStep(SynchronizeStep.ESTABLISH_CONNECTION);
-				SynchronizeCompositeHelper.enabledSynchronizeStep(SynchronizeStep.TRANSFER_DATA);
-				
-				Display.getDefault().asyncExec(new Runnable() {
-				    public void run() {
-				    	BrowserFacade.showSynchronizePage(Translator.toBeTranslated(
-				    			"Data transfer in progress. This might take some time. <b>Please Wait</b>"));
-				    }
-				});
-				
-				while (getFileTransferProgressPercentage() != 1) {
-					try {
-						Thread.sleep(500); // TODO avoid busy waiting here!
-						System.out.println("Transfering data"); // TODO show percentage
-					} catch (InterruptedException e) {
-						
-						
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+	public void handleSoutilsMessage(SoutilsMessage soutilsMessage) {
+		LOGGER.info(soutilsMessage.getMessageType() + ":" + soutilsMessage.getContent() + ":" + soutilsMessage.getSenderAddress(), soutilsMessage.getThrowable());
+		
+		if (soutilsMessage.getContent().startsWith("sammelbox-android:connect:") && getSynchronizationCode().equals(soutilsMessage.getContent().split(":")[2])) {
+			openFileTransferServer(zipHomeForSynchronziation().getAbsolutePath());
+			stopBeaconingHashedSynchronizationCode();
+			communicationManager.sendMessageToAllConnectedPeers(
+					"sammelbox-desktop:accept-transfer:" + new File(zipHomeForSynchronziation().getAbsolutePath()).length());
+			
+			SynchronizeCompositeHelper.disableSynchronizeStep(SynchronizeStep.ESTABLISH_CONNECTION);
+			SynchronizeCompositeHelper.enabledSynchronizeStep(SynchronizeStep.TRANSFER_DATA);
+			executeSyncPageWithProgressbarUpdateInUIThread(Translator.toBeTranslated("Data transfer in progress. This might take some time. <b>Please Wait</b>"));
+			
+			while (!fileTransferServer.isDone()) {
+				try {
+					Thread.sleep(200);
+					Display.getDefault().asyncExec(new Runnable() {
+					    public void run() {
+					    	ApplicationUI.getAlbumItemBrowser().execute("updateProgress('" + getFileTransferProgressPercentage() + "%')");
+					    }
+					});    	
+											
+				} catch (InterruptedException interrruptedException) {
+					LOGGER.error("An error occurred while updating the progress bar", interrruptedException);
 				}
-				
-				SynchronizeCompositeHelper.disableSynchronizeStep(SynchronizeStep.TRANSFER_DATA);
-				SynchronizeCompositeHelper.enabledSynchronizeStep(SynchronizeStep.FINISH);
-				
-				Display.getDefault().asyncExec(new Runnable() {
-				    public void run() {
-				    	BrowserFacade.showSynchronizePage(Translator.toBeTranslated("Terminating Synchronization"));
-				    }
-				});
-						
-				communicationManager.sendMessageToAllConnectedPeers("sammelbox-desktop:transfer-finished");
-				
-				SynchronizeCompositeHelper.disableSynchronizeStep(SynchronizeStep.FINISH);
-				
-				Display.getDefault().asyncExec(new Runnable() {
-				    public void run() {
-				    	BrowserFacade.showSynchronizePage(Translator.toBeTranslated(
-				    			"Synchronization finished. You can now use your albums on your mobile device!"));
-				    }
-				});
-			} else {
-				LOGGER.info("Received faulty synchronization code");
 			}
+			
+			SynchronizeCompositeHelper.disableSynchronizeStep(SynchronizeStep.TRANSFER_DATA);
+			SynchronizeCompositeHelper.enabledSynchronizeStep(SynchronizeStep.FINISH);
+			executeSyncPageUpdateInUIThread(Translator.toBeTranslated("Terminating Synchronization"));
+					
+			communicationManager.sendMessageToAllConnectedPeers("sammelbox-desktop:transfer-finished");
+			
+			SynchronizeCompositeHelper.disableSynchronizeStep(SynchronizeStep.FINISH);
+			executeSyncPageUpdateInUIThread(Translator.toBeTranslated("Synchronization finished. You can now use your albums on your mobile device!"));
 		} else {
-			LOGGER.info("Received message in unknown format");
+			LOGGER.info("Received message in unknown format or faulty synchronization code");
 		}
+	}
+	
+	private void executeSyncPageUpdateInUIThread(final String message) {
+		Display.getDefault().asyncExec(new Runnable() {
+		    public void run() {
+		    	BrowserFacade.showSynchronizePage(message);
+		    }
+		});
+	}
+	
+	private void executeSyncPageWithProgressbarUpdateInUIThread(final String message) {
+		Display.getDefault().asyncExec(new Runnable() {
+		    public void run() {
+		    	BrowserFacade.showSynchronizePageWithProgressBar(message);
+		    }
+		});
 	}
 }

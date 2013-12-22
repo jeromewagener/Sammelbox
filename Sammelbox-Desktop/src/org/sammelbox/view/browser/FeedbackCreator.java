@@ -151,42 +151,46 @@ public final class FeedbackCreator {
 		alterations.addFirst(modification);
 	}
 	
-	static void showDefaultTemplate(String header, String message) {
+	static void showTemplate(String templateFileName, String header, String message) {
 		Map<String, String> contentMap = BrowserUtils.getInitializedContentMap();
 		
 		contentMap.put("HEADER", header);
 		contentMap.put("MESSAGE", message);
 		
-		BrowserUtils.fillAndLoadTemplate(ApplicationUI.getAlbumItemBrowser(), "default.html", contentMap);
+		BrowserUtils.fillAndLoadTemplate(ApplicationUI.getAlbumItemBrowser(), templateFileName, contentMap);
 	}
 	
 	static void showAlbumDeletedPage(String deletedAlbum) {
-		showDefaultTemplate(Translator.get(DictKeys.BROWSER_ALBUM_DELETED_HEADER, deletedAlbum), Translator.get(DictKeys.BROWSER_ALBUM_DELETED));
+		showTemplate("default.html", Translator.get(DictKeys.BROWSER_ALBUM_DELETED_HEADER, deletedAlbum), Translator.get(DictKeys.BROWSER_ALBUM_DELETED));
 	}
 	
 	static void showAlbumsRestoredPage() {
-		showDefaultTemplate(Translator.get(DictKeys.BROWSER_ALBUMS_RESTORED_HEADER), Translator.get(DictKeys.BROWSER_ALBUM_DELETED));
+		showTemplate("default.html", Translator.get(DictKeys.BROWSER_ALBUMS_RESTORED_HEADER), Translator.get(DictKeys.BROWSER_ALBUM_DELETED));
 	}
 
 	static void showBackupInProgressPage() {
-		showDefaultTemplate(Translator.get(DictKeys.BROWSER_BACKUP_IN_PROGESS), Translator.get(DictKeys.BROWSER_BACKUP_IN_PROGESS_DETAIL));
+		showTemplate("default.html", Translator.get(DictKeys.BROWSER_BACKUP_IN_PROGESS), Translator.get(DictKeys.BROWSER_BACKUP_IN_PROGESS_DETAIL));
 	}
 	
 	static void showBackupFinishedPage() {
-		showDefaultTemplate(Translator.get(DictKeys.BROWSER_BACKUP_FINISHED), Translator.get(DictKeys.BROWSER_BACKUP_FINISHED_DETAIL));
+		showTemplate("default.html", Translator.get(DictKeys.BROWSER_BACKUP_FINISHED), Translator.get(DictKeys.BROWSER_BACKUP_FINISHED_DETAIL));
 	}
 	
 	static void showSynchronizationPage(String messageToShow) {
-		showDefaultTemplate(Translator.get(DictKeys.BROWSER_SYNCRONIZATION_HEADER), messageToShow);
+		showTemplate("default.html", Translator.get(DictKeys.BROWSER_SYNCRONIZATION_HEADER), messageToShow);
+	}
+	
+	static void showSynchronizationPageWithProgressBar(String messageToShow) {
+		showTemplate("transfer.html", Translator.get(DictKeys.BROWSER_SYNCRONIZATION_HEADER), messageToShow);
 	}
 	
 	static void showImportPage() {
-		showDefaultTemplate(Translator.toBeTranslated("Importing an Album from CSV File"), 
+		showTemplate("default.html", Translator.toBeTranslated("Importing an Album from CSV File"), 
 				Translator.toBeTranslated("Please note that you can specify the filetype by ..."));
 	}
 	
 	static void showSettingsPage() {
-		showDefaultTemplate(Translator.toBeTranslated("Modifying Settings"), 
+		showTemplate("default.html", Translator.toBeTranslated("Modifying Settings"), 
 				Translator.toBeTranslated("Please note that you will need to restart after modifying the settings ..."));
 	}
 }
