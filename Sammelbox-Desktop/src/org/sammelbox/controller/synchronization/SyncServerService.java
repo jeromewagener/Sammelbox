@@ -4,25 +4,26 @@ import java.io.File;
 
 import com.jeromewagener.soutils.messaging.SoutilsObserver;
 
+// TODO fully comment
 public interface SyncServerService extends SoutilsObserver {
 	/** Creates a ZIP-archive which contains a reduced version of the 
 	 * Sammelbox home for synchronization with mobile devices */
-	public File zipHomeForSynchronziation();
+	File zipHomeForSynchronziation();
 	
 	/** Returns the current synchronization code */
-	public String getSynchronizationCode();
+	String getSynchronizationCode();
 	/** Returns a hash of the current synchronization code */
-	public String getHashedSynchronizationCode();
+	String getHashedSynchronizationCode();
 	
-	public void startBeaconingHashedSynchronizationCode();
-	public void stopBeaconingHashedSynchronizationCode();
+	void startBeaconingHashedSynchronizationCode();
+	void stopBeaconingHashedSynchronizationCode();
 	
-	public void startCommunicationChannel();
-	public void stopCommunicationChannel();
+	void startCommunicationChannel();
+	void stopCommunicationChannel();
 	
-	public void openFileTransferServer(String storageLocationAsAbsolutPath);
-	public long getFileTransferProgressPercentage();
-	public void stopFileTransferServer();
+	void openFileTransferServer(String storageLocationAsAbsolutPath);
+	long getFileTransferProgressPercentage();
+	void stopFileTransferServer();
 	
 	public static class Default {
 		public static SyncServerService getServiceInstance() {
