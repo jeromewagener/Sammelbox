@@ -51,11 +51,9 @@ public final class GalleryViewCreator {
 			for (ItemField fieldItem : albumItem.getFields()) {				
 				if (fieldItem.getType().equals(FieldType.UUID)) {
 					// schema or content version UUID --> ignore
-				} else if (fieldItem.getType().equals(FieldType.ID)) {
-					if (!fieldItem.getName().equals("typeinfo")) {
-						// do not show, but store id
-						id = fieldItem.getValue();
-					}
+				} else if (fieldItem.getType().equals(FieldType.ID) && !fieldItem.getName().equals("typeinfo")) {
+					// do not show, but store id
+					id = fieldItem.getValue();
 				}
 			}		
 

@@ -54,6 +54,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class QuickControlSidepane {
+	private static final int SAVED_SEARCHES_WIDTH = 125;
+	private static final int SAVED_SEARCHES_HEIGHT = 200;
+	private static final int ALBUM_LIST_WIDTH = 125;
+	private static final int ALBUM_LIST_HEIGHT = 100;
+	private static final int ALBUM_LIST_LABEL_FONT_SIZE = 11;
+	private static final int SEPARATOR_MIN_HEIGHT = 15;
 	private static final Logger LOGGER = LoggerFactory.getLogger(QuickControlSidepane.class);
 	
 	private QuickControlSidepane() {
@@ -70,12 +76,13 @@ public final class QuickControlSidepane {
 
 		// separator grid data
 		GridData seperatorGridData = new GridData(GridData.FILL_BOTH);
-		seperatorGridData.minimumHeight = 15;
+		seperatorGridData.minimumHeight = SEPARATOR_MIN_HEIGHT;
 
 		// quick-search label
 		Label quickSearchLabel = new Label(quickControlComposite, SWT.NONE);
 		quickSearchLabel.setText(Translator.get(DictKeys.LABEL_QUICKSEARCH));
-		quickSearchLabel.setFont(new Font(parentComposite.getDisplay(), quickSearchLabel.getFont().getFontData()[0].getName(), 11, SWT.BOLD));
+		quickSearchLabel.setFont(new Font(parentComposite.getDisplay(), 
+				quickSearchLabel.getFont().getFontData()[0].getName(), ALBUM_LIST_LABEL_FONT_SIZE, SWT.BOLD));
 
 		// quick-search text-box
 		final Text quickSearchText = new Text(quickControlComposite, SWT.BORDER);
@@ -89,14 +96,15 @@ public final class QuickControlSidepane {
 		// select album label
 		Label selectAlbumLabel = new Label(quickControlComposite, SWT.NONE);
 		selectAlbumLabel.setText(Translator.get(DictKeys.LABEL_ALBUM_LIST));
-		selectAlbumLabel.setFont(new Font(parentComposite.getDisplay(), selectAlbumLabel.getFont().getFontData()[0].getName(), 11, SWT.BOLD));
+		selectAlbumLabel.setFont(new Font(parentComposite.getDisplay(), 
+				selectAlbumLabel.getFont().getFontData()[0].getName(), ALBUM_LIST_LABEL_FONT_SIZE, SWT.BOLD));
 
 		// the list of albums (listener is added later)
 		final List albumList = new List(quickControlComposite, SWT.SINGLE | SWT.BORDER | SWT.V_SCROLL);
 
 		GridData gridData = new GridData(GridData.FILL_BOTH);
-		gridData.heightHint = 100;
-		gridData.widthHint = 125;
+		gridData.heightHint = ALBUM_LIST_HEIGHT;
+		gridData.widthHint = ALBUM_LIST_WIDTH;
 		albumList.setLayoutData(gridData);
 
 		// Set the currently active album
@@ -108,14 +116,15 @@ public final class QuickControlSidepane {
 		// select album label
 		Label selectViewLabel = new Label(quickControlComposite, SWT.NONE);
 		selectViewLabel.setText(Translator.get(DictKeys.LABEL_SAVED_SEARCHES));
-		selectViewLabel.setFont(new Font(parentComposite.getDisplay(), selectAlbumLabel.getFont().getFontData()[0].getName(), 11, SWT.BOLD));
+		selectViewLabel.setFont(new Font(parentComposite.getDisplay(),
+				selectAlbumLabel.getFont().getFontData()[0].getName(), ALBUM_LIST_LABEL_FONT_SIZE, SWT.BOLD));
 
 		// the list of albums (listener is added later)
 		final List viewList = new List(quickControlComposite, SWT.SINGLE | SWT.BORDER | SWT.V_SCROLL);
 
 		GridData gridData2 = new GridData(GridData.FILL_BOTH);
-		gridData2.heightHint = 200;
-		gridData2.widthHint = 125;
+		gridData2.heightHint = SAVED_SEARCHES_HEIGHT;
+		gridData2.widthHint = SAVED_SEARCHES_WIDTH;
 		viewList.setLayoutData(gridData2);		
 		ApplicationUI.setViewList(viewList);
 
@@ -254,7 +263,7 @@ public final class QuickControlSidepane {
 		
 		viewList.addSelectionListener(new SelectionListener() {
 			@Override
-			public void widgetDefaultSelected(SelectionEvent arg0) {}
+			public void widgetDefaultSelected(SelectionEvent selectionEvent) {}
 
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {															
@@ -286,7 +295,7 @@ public final class QuickControlSidepane {
 				if (!GuiController.getGuiState().isAlbumSelected()) {
 					// A view has to have a parent album. Don't do anything if no album has been selected
 					event.doit = false;
-				} else if ( (viewList.getItemCount() > 0) && (viewList.getSelectionIndex() < 0)) {
+				} else if ((viewList.getItemCount() > 0) && (viewList.getSelectionIndex() < 0)) {
 					viewList.select(0);
 				}
 			}

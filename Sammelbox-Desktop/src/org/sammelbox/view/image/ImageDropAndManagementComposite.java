@@ -58,7 +58,7 @@ import org.sammelbox.view.ApplicationUI;
 import org.sammelbox.view.various.ComponentFactory;
 
 public class ImageDropAndManagementComposite extends Composite implements DropTargetListener {
-	String[] ALLOWED_EXTENSIONS = new String[] { ".jpeg", ".jpg", ".png", ".gif", ".bmp", ".ico", ".tiff" };
+	private final String[] ALLOWED_EXTENSIONS = new String[] { ".jpeg", ".jpg", ".png", ".gif", ".bmp", ".ico", ".tiff" };
 	
 	/** A list of images pointing to copies of the original files, located within the corresponding album folder */
 	private LinkedList<AlbumItemPicture> pictures = new LinkedList<AlbumItemPicture>();

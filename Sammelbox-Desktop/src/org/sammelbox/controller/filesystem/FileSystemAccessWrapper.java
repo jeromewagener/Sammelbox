@@ -149,11 +149,9 @@ public final class FileSystemAccessWrapper {
 			for (String albumName : DatabaseOperations.getListOfAllAlbums()) {
 				File albumDirectory = new File(getFilePathForAlbum(albumName));
 
-				if (DatabaseOperations.isPictureAlbum(albumName) && !albumDirectory.exists()) {
-					if (!albumDirectory.mkdir()) {
-						LOGGER.error("Cannot create album directory although it seems that it does not exist");
-						return false;
-					}
+				if (DatabaseOperations.isPictureAlbum(albumName) && !albumDirectory.exists() && !albumDirectory.mkdir()) {
+					LOGGER.error("Cannot create album directory although it seems that it does not exist");
+					return false;
 				}
 			}
 			return true;
@@ -385,15 +383,13 @@ public final class FileSystemAccessWrapper {
 	 * @return true if the directory was successfully deleted, false otherwise
 	 */
 	public static boolean deleteDirectoryRecursively(File directory) {
-		if( directory.exists() ) {
-			if (directory.isDirectory()) {
-				File[] files = directory.listFiles();
-				for(int i=0; i<files.length; i++) {
-					if(files[i].isDirectory()) {
-						deleteDirectoryRecursively(files[i]);
-					} else {
-						files[i].delete();
-					}
+		if(directory.exists() && directory.isDirectory()) {
+			File[] files = directory.listFiles();
+			for(int i=0; i<files.length; i++) {
+				if(files[i].isDirectory()) {
+					deleteDirectoryRecursively(files[i]);
+				} else {
+					files[i].delete();
 				}
 			}
 		}

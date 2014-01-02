@@ -191,10 +191,8 @@ public class ToolbarComposite extends Composite implements EventObserver {
 		} else if (event.equals(SammelboxEvent.ALBUM_SELECTED)) {
 			String currentlySelectedAlbum = ApplicationUI.getSelectedAlbum();
 			enableAlbumButtons(currentlySelectedAlbum);
-		} else if (event.equals(SammelboxEvent.ALBUM_LIST_UPDATED)) {				
-			if (!GuiController.getGuiState().isAlbumSelected()) {
-				setButtonsWhenNoAlbumIsSelected();
-			}
+		} else if (event.equals(SammelboxEvent.ALBUM_LIST_UPDATED) && !GuiController.getGuiState().isAlbumSelected()) {				
+			setButtonsWhenNoAlbumIsSelected();
 		}
 	}
 
