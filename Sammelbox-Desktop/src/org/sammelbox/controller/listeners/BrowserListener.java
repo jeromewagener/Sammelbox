@@ -89,7 +89,7 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 			// handle the case of unsaved changes
 			if (GuiController.getGuiState().hasUnsavedAlbumItem()) {
 				// show message box and abort if asked to do so
-				if (!GuiController.continueWithUnsavedModifications()) {
+				if (!GuiController.continueWithUnsavedModifications(ApplicationUI.getShell())) {
 					// Do not change the page
 					event.doit = false;
 					return;

@@ -134,7 +134,7 @@ public final class QuickControlSidepane {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (albumList.getSelectionIndex() != -1 && GuiController.continueWithUnsavedModifications()) {
+				if (albumList.getSelectionIndex() != -1 && GuiController.continueWithUnsavedModifications(ApplicationUI.getShell())) {
 					GuiController.getGuiState().setUnsavedAlbumItem(false);
 					
 					ApplicationUI.setSelectedAlbum(albumList.getItem(albumList.getSelectionIndex()));

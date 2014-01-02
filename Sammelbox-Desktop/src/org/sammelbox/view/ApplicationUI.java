@@ -313,7 +313,7 @@ public final class ApplicationUI implements EventObserver {
 	 * @param albumItemId to be used in case the right composite is used to show an album item */
 	public static void changeRightCompositeTo(PanelType panelType, Composite newRightComposite, long albumItemId) {
 		// handle the case of unsaved changes
-		if (GuiController.continueWithUnsavedModifications()) {
+		if (GuiController.continueWithUnsavedModifications(getShell())) {
 			GuiController.getGuiState().setUnsavedAlbumItem(false);
 		} else {
 			newRightComposite.dispose();

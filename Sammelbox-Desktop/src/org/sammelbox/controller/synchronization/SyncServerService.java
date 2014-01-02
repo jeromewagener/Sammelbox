@@ -25,7 +25,7 @@ public interface SyncServerService extends SoutilsObserver {
 	long getFileTransferProgressPercentage();
 	void stopFileTransferServer();
 	
-	static class Default {
+	class Default {
 		public static SyncServerService getServiceInstance() {
 			return new SyncServerServiceImpl();
 		}

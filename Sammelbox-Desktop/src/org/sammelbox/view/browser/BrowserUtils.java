@@ -137,8 +137,8 @@ public final class BrowserUtils {
 		String htmlString = FileSystemAccessWrapper.readInputStreamIntoString(
 			ApplicationUI.getShell().getClass().getClassLoader().getResourceAsStream("templates/" + htmlTemplateFilename));
 		
-		for (String key : templateContent.keySet()) {
-			htmlString = htmlString.replace("<!--" + key + "-->", templateContent.get(key));
+		for (Map.Entry<String, String> mapEntry : templateContent.entrySet()) {
+			htmlString = htmlString.replace("<!--" + mapEntry.getKey() + "-->", templateContent.get(mapEntry.getValue()));
 		}
 		
 		browser.setText(htmlString);

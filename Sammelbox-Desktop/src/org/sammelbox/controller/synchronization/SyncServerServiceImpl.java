@@ -112,6 +112,7 @@ public class SyncServerServiceImpl implements SyncServerService {
 
 				beaconSenders = new ArrayList<BeaconSender>();
 				for (InetAddress ipAddress : InetAddressUtilities.getAllIPsAndAssignedBroadcastAddresses().keySet()) {
+					// TODO define broadcast port
 					BeaconSender beaconSender = new BeaconSender(
 							"sammelbox-desktop:sync-code:" + getHashedSynchronizationCode(), 
 							InetAddressUtilities.getAllIPsAndAssignedBroadcastAddresses().get(ipAddress),
@@ -141,7 +142,8 @@ public class SyncServerServiceImpl implements SyncServerService {
 	@Override
 	public void startCommunicationChannel() {
 		if (communicationManager == null) {
-			communicationManager = new CommunicationManager(12345, this); // TODO define port
+			// TODO define communication port
+			communicationManager = new CommunicationManager(12345, this);
 			communicationManager.start();
 		} else {
 			LOGGER.warn("Communication channel is already up and running!");
@@ -159,7 +161,8 @@ public class SyncServerServiceImpl implements SyncServerService {
 	@Override
 	public void openFileTransferServer(String storageLocationAsAbsolutPath) {
 		if (fileTransferServer == null) {
-			fileTransferServer = new FileTransferServer(storageLocationAsAbsolutPath, 6565 ,this); // TODO define port
+			// TODO define file transfer port
+			fileTransferServer = new FileTransferServer(storageLocationAsAbsolutPath, 6565 ,this);
 			fileTransferServer.start();
 		} else {
 			LOGGER.warn("File transfer server already up and running!");

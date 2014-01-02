@@ -54,8 +54,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class QueryOperations {
-	private static final String SQLITE_INDEX_COLUMN_NAME = "COLUMN_NAME";
 	private static final Logger LOGGER = LoggerFactory.getLogger(QueryOperations.class);
+	private static final String SQLITE_INDEX_COLUMN_NAME = "COLUMN_NAME";
+	
+	private static final int PICTURE_ID_COLUMN_INDEX = 1;
+	private static final int THUMBNAIL_PICTURE_NAME_COLUMN_INDEX = 2;
+	private static final int ORIGINAL_PICTURE_NAME_COLUMN_INDEX = 3;
+	private static final int ALBUM_ITEM_ID_COLUMN_INDEX = 4;
 	
 	private QueryOperations() {
 		// use static methods
@@ -337,7 +342,12 @@ public final class QueryOperations {
 				 ResultSet rs = statement.executeQuery(picturesQuery);) {			
 			
 				while (rs.next()) {
-					pictures.add(new AlbumItemPicture(rs.getLong(1), rs.getString(2), rs.getString(3), albumName, rs.getLong(4)));
+					pictures.add(new AlbumItemPicture(
+							rs.getLong(PICTURE_ID_COLUMN_INDEX), 
+							rs.getString(THUMBNAIL_PICTURE_NAME_COLUMN_INDEX), 
+							rs.getString(ORIGINAL_PICTURE_NAME_COLUMN_INDEX), 
+							albumName, 
+							rs.getLong(ALBUM_ITEM_ID_COLUMN_INDEX)));
 				}			
 			} catch (SQLException e) {			
 				throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE, e);

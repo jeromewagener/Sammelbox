@@ -31,6 +31,10 @@ import org.sammelbox.view.ApplicationUI;
 import org.sammelbox.view.composites.StatusBarComposite;
 
 public final class AlbumItemStore {
+	private static final int UPPER_EXCLUSIVE_BOUND_FOR_RANDOM_OPTION = 3;
+	private static final int UPPER_EXCLUSIVE_BOUND_FOR_RANDOM_STAR_RATING = 6;
+	private static final int MULTIPLIER_FOR_RANDOM_DECIMAL = 100;
+	private static final int MAX_RANDOM_INT = 100;
 	private static final String SAMPLE = "Sample";
 	private static final int DEFAULT_STOP_INDEX_INCREASE_AMOUNT = 30;
 	// TODO Temporarily disable the dynamic addition by loading all available album items immediately
@@ -161,13 +165,13 @@ public final class AlbumItemStore {
 				} else if (metaItemField.getType().equals(FieldType.DATE)) {
 					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), new java.sql.Date(System.currentTimeMillis()), false));
 				} else if (metaItemField.getType().equals(FieldType.INTEGER)) {
-					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), new Random().nextInt(100), false));
+					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), new Random().nextInt(MAX_RANDOM_INT), false));
 				} else if (metaItemField.getType().equals(FieldType.DECIMAL)) {
-					BigDecimal randomDecimal = new BigDecimal(Math.random() * 100);
+					BigDecimal randomDecimal = new BigDecimal(Math.random() * MULTIPLIER_FOR_RANDOM_DECIMAL);
 				    randomDecimal = randomDecimal.setScale(2, BigDecimal.ROUND_HALF_UP);
 					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), randomDecimal.doubleValue()));
 				} else if (metaItemField.getType().equals(FieldType.OPTION)) {
-					int option = new Random().nextInt(3);
+					int option = new Random().nextInt(UPPER_EXCLUSIVE_BOUND_FOR_RANDOM_OPTION);
 					
 					if (option == 0) {
 						itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), OptionType.NO, false));
@@ -178,7 +182,8 @@ public final class AlbumItemStore {
 					}
 					
 				} else if (metaItemField.getType().equals(FieldType.STAR_RATING)) {
-					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), StarRating.values()[new Random().nextInt(6)], false));
+					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), 
+							StarRating.values()[new Random().nextInt(UPPER_EXCLUSIVE_BOUND_FOR_RANDOM_STAR_RATING)], false));
 				} else if (metaItemField.getType().equals(FieldType.TIME)) {
 					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), System.currentTimeMillis(), false));
 				} else if (metaItemField.getType().equals(FieldType.URL)) {

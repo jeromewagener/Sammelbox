@@ -34,13 +34,15 @@ public final class WelcomePageCreator {
 	}
 	
 	static void loadWelcomePage() {
-		String browserIframe = new String("");		
+		String browserIframe;		
 		if (BrowserUtils.isProjectWebsiteReachable()) {
 			browserIframe = 
 					" <iframe style=\"border:none; width:100%; height:30px; overflow:hidden;\"" +
 					"         scrolling=\"no\"" +
 					"         src=\"http://www.sammelbox.org/current.php?current=" + BuildInformationManager.instance().getPublicVersionString() +
 					                                                   "&language=" + Translator.getUsedLanguage() + "\"></iframe> ";
+		} else {
+			browserIframe = "";
 		}
 		
 		ApplicationUI.getAlbumItemBrowser().setText(

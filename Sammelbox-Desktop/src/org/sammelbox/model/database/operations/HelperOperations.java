@@ -42,6 +42,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class HelperOperations {
+	private static final int PRIMARY_KEY_COLUMN_INDEX = 4;
+	private static final int FOREIGN_KEY_COLUMN_INDEX = 8;
 	private static final Logger LOGGER = LoggerFactory.getLogger(HelperOperations.class);
 	
 	private HelperOperations() {
@@ -147,8 +149,8 @@ public final class HelperOperations {
 		
 		try (ResultSet dbmetars = dbmetadata.getImportedKeys(null, null, tableName)) {
 			// Get the primary and foreign keys
-			String primaryKey = dbmetars.getString(4);
-			String foreignKey = dbmetars.getString(8);
+			String primaryKey = dbmetars.getString(PRIMARY_KEY_COLUMN_INDEX);
+			String foreignKey = dbmetars.getString(FOREIGN_KEY_COLUMN_INDEX);
 			
 			if (columnName.equalsIgnoreCase(primaryKey) || columnName.equalsIgnoreCase(foreignKey)) {
 				return FieldType.ID; 

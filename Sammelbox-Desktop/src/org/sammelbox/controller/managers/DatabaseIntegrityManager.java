@@ -45,7 +45,7 @@ public final class DatabaseIntegrityManager {
 	/** A prefix for those databases that have been corrupted */
 	static final String CORRUPT_DATABASE_SNAPSHOT_PREFIX = "corruptDatabaseSnapshot_";
 	/** The maximum amount of autosaves that can be stored until the existing autosaves are overwritten */
-	private static int autoSaveLimit = 5;
+	private static final int AUTO_SAVE_LIMIT = 5;
 	/** The last change time in milliseconds */
 	private static long lastChangeTimeStampInMS = -1;
 	
@@ -264,9 +264,6 @@ public final class DatabaseIntegrityManager {
 				File.separator + "PERIODICAL_BACKUP_" + programVersion + "_";
 	
 		List<File> previousAutoSaveList = getAllAutoSaves();
-		if (DatabaseIntegrityManager.autoSaveLimit < 1) {			
-			return;
-		}
 	
 		if (previousAutoSaveList.isEmpty()) {
 			// When no changes were made then the timestamp is the current time
@@ -288,7 +285,7 @@ public final class DatabaseIntegrityManager {
 			}
 	
 			// Auto save limit reached, delete the oldest
-			if (previousAutoSaveList.size() >= DatabaseIntegrityManager.autoSaveLimit) {
+			if (previousAutoSaveList.size() >= DatabaseIntegrityManager.AUTO_SAVE_LIMIT) {
 				File oldestAutoSave = previousAutoSaveList.get(previousAutoSaveList.size()-1);
 				if (oldestAutoSave.exists() && !oldestAutoSave.delete()) {
 					LOGGER.error("Autosave - cannot delete old autosave");

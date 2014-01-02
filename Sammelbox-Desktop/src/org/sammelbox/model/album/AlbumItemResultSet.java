@@ -48,15 +48,23 @@ public class AlbumItemResultSet {
 	 * @throws DatabaseWrapperOperationException 
 	 */
 	public AlbumItemResultSet(Connection connection, String sqlStatement) throws DatabaseWrapperOperationException {
-		
+		Statement statement = null;
 		try {
-			Statement statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
+			statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
 			this.items = statement.executeQuery(sqlStatement);
 			this.metaData = items.getMetaData();
 			this.albumName = DatabaseOperations.getAlbumName(metaData.getTableName(1));			
 			this.metaInfoMap = DatabaseOperations.getAlbumItemMetaMap(albumName);
 		} catch (SQLException sqlException) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE, sqlException);
+		} finally {
+			if (statement != null) {
+				try {
+					statement.close();
+				} catch (SQLException e) {
+					LOGGER.error("After an exception was raised, but the statment was not properly closed!", e);
+				}
+			}
 		}		
 	}	
 	
@@ -77,6 +85,14 @@ public class AlbumItemResultSet {
 			this.albumName = DatabaseOperations.getAlbumName(metaData.getTableName(1));	
 		} catch (SQLException e) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE, e);
+		} finally {
+			if (statement != null) {
+				try {
+					statement.close();
+				} catch (SQLException e) {
+					LOGGER.error("After an exception was raised, but the statment was not properly closed!", e);
+				}
+			}
 		}
 	}
 	
@@ -91,13 +107,22 @@ public class AlbumItemResultSet {
 	 */
 	public AlbumItemResultSet(Connection connection, String albumName, String sqlStatement, Map<Integer, MetaItemField> metaInfoMap) throws DatabaseWrapperOperationException {
 		this.metaInfoMap = metaInfoMap;
+		Statement statement = null;
 		try {
-			Statement statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			this.items = statement.executeQuery(sqlStatement);
 			this.metaData = items.getMetaData();
 			this.albumName = albumName;
 		} catch (SQLException e) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE, e);
+		} finally {
+			if (statement != null) {
+				try {
+					statement.close();
+				} catch (SQLException e) {
+					LOGGER.error("After an exception was raised, but the statment was not properly closed!", e);
+				}
+			}
 		}
 	}
 

@@ -20,10 +20,10 @@ package org.sammelbox.controller;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Shell;
 import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.model.GuiState;
-import org.sammelbox.view.ApplicationUI;
 
 public final class GuiController {
 	private static GuiState guiState = new GuiState();
@@ -39,9 +39,9 @@ public final class GuiController {
 		GuiController.guiState = guiState;
 	}
 	
-	public static boolean continueWithUnsavedModifications() {
+	public static boolean continueWithUnsavedModifications(Shell shell) {
 		if (GuiController.getGuiState().hasUnsavedAlbumItem()) {
-			MessageBox dialog = new MessageBox(ApplicationUI.getShell(), SWT.ICON_QUESTION | SWT.YES| SWT.NO);
+			MessageBox dialog = new MessageBox(shell, SWT.ICON_QUESTION | SWT.YES| SWT.NO);
 			dialog.setText(Translator.get(DictKeys.DIALOG_TITLE_CONTINUE_UNSAVED_CHANGES));
 			dialog.setMessage(Translator.get(DictKeys.DIALOG_CONTENT_CONTINUE_UNSAVED_CHANGES));
 

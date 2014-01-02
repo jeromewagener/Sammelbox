@@ -19,6 +19,10 @@
 package org.sammelbox.model.album;
 
 public class MetaItemField {
+	private static final int RANDOM_PRIME_FOR_HASHING = 31;
+	private static final int RANDOM_INT_FOR_HASHING_IF_NON_QUICKSEARCHABLE = 1237;
+	private static final int RANDOM_INT_FOR_HASHING_IF_QUICKSEARCHABLE = 1231;
+	
 	private String name;
 	private FieldType type;
 	private boolean quickSearchable;
@@ -90,10 +94,11 @@ public class MetaItemField {
 	
 	@Override
 	public int hashCode() {
-		final int prime = 31;
 		int result = 1;
+		final int prime = RANDOM_PRIME_FOR_HASHING;
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + (quickSearchable ? 1231 : 1237);
+		result = prime * result + (quickSearchable ? 
+				 RANDOM_INT_FOR_HASHING_IF_QUICKSEARCHABLE : RANDOM_INT_FOR_HASHING_IF_NON_QUICKSEARCHABLE);
 		result = prime * result + ((type == null) ? 0 : type.hashCode());
 		return result;
 	}

@@ -92,8 +92,8 @@ public final class XmlStorageWrapper {
 		
 		xmlOutput.append("<views>\n");
 		
-		for (String albumName : albumNamesToAlbumViews.keySet()) {
-			for (AlbumView albumView : albumNamesToAlbumViews.get(albumName)) {
+		for (Map.Entry<String, List<AlbumView>> mapEntry : albumNamesToAlbumViews.entrySet()) {
+			for (AlbumView albumView : mapEntry.getValue()) {
 				xmlOutput.append("\t<view>\n");
 				xmlOutput.append("\t\t<name><![CDATA[" + albumView.getName() + "]]></name>\n");
 				xmlOutput.append("\t\t<album><![CDATA[" + albumView.getAlbum() + "]]></album>\n");
@@ -115,17 +115,17 @@ public final class XmlStorageWrapper {
 		
 		xmlOutput.append("<welcomePageInformation>\n");
 		
-		for (String albumOrViewName : albumAndViewsToClicks.keySet()) {
+		for (Map.Entry<String, Integer> mapEntry : albumAndViewsToClicks.entrySet()) {
 			xmlOutput.append("\t<albumAndViewsToClicks>\n");
-			xmlOutput.append("\t\t<name><![CDATA[" + albumOrViewName + "]]></name>\n");
-			xmlOutput.append("\t\t<clicks><![CDATA[" + albumAndViewsToClicks.get(albumOrViewName) + "]]></clicks>\n");
+			xmlOutput.append("\t\t<name><![CDATA[" + mapEntry.getKey() + "]]></name>\n");
+			xmlOutput.append("\t\t<clicks><![CDATA[" + mapEntry.getValue() + "]]></clicks>\n");
 			xmlOutput.append("\t</albumAndViewsToClicks>\n");
 		}
 		
-		for (String albumName : albumToLastModified.keySet()) {
+		for (Map.Entry<String, Long> mapEntry : albumToLastModified.entrySet()) {
 			xmlOutput.append("\t<albumToLastModified>\n");
-			xmlOutput.append("\t\t<albumName><![CDATA[" + albumName + "]]></albumName>\n");
-			xmlOutput.append("\t\t<lastModified><![CDATA[" + albumToLastModified.get(albumName) + "]]></lastModified>\n");
+			xmlOutput.append("\t\t<albumName><![CDATA[" + mapEntry.getKey() + "]]></albumName>\n");
+			xmlOutput.append("\t\t<lastModified><![CDATA[" + mapEntry.getValue() + "]]></lastModified>\n");
 			xmlOutput.append("\t</albumToLastModified>\n");
 		}
 		
