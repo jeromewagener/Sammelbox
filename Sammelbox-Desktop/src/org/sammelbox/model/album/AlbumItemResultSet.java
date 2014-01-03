@@ -57,14 +57,6 @@ public class AlbumItemResultSet {
 			this.metaInfoMap = DatabaseOperations.getAlbumItemMetaMap(albumName);
 		} catch (SQLException sqlException) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE, sqlException);
-		} finally {
-			if (statement != null) {
-				try {
-					statement.close();
-				} catch (SQLException e) {
-					LOGGER.error("After an exception was raised, but the statment was not properly closed!", e);
-				}
-			}
 		}		
 	}	
 	
@@ -85,14 +77,6 @@ public class AlbumItemResultSet {
 			this.albumName = DatabaseOperations.getAlbumName(metaData.getTableName(1));	
 		} catch (SQLException e) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE, e);
-		} finally {
-			if (statement != null) {
-				try {
-					statement.close();
-				} catch (SQLException e) {
-					LOGGER.error("After an exception was raised, but the statment was not properly closed!", e);
-				}
-			}
 		}
 	}
 	
@@ -115,14 +99,6 @@ public class AlbumItemResultSet {
 			this.albumName = albumName;
 		} catch (SQLException e) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE, e);
-		} finally {
-			if (statement != null) {
-				try {
-					statement.close();
-				} catch (SQLException e) {
-					LOGGER.error("After an exception was raised, but the statment was not properly closed!", e);
-				}
-			}
 		}
 	}
 
