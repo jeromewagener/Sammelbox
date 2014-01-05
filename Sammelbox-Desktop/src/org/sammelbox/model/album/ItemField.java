@@ -108,7 +108,7 @@ public class ItemField extends MetaItemField {
 	 * @param value The value. It may be any supported types.
 	 * @see {@link FieldType} for supported types.
 	 */
-	public void setValue(Object value) {
+	public final void setValue(Object value) {
 		this.value = value;
 	}
 

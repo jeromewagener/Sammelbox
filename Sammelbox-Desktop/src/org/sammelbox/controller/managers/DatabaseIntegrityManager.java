@@ -127,8 +127,8 @@ public final class DatabaseIntegrityManager {
 		// create temporary directory which includes backup files
 		String tempDirName = java.util.UUID.randomUUID().toString();
 		File tempDir = new File(System.getProperty("user.home") + File.separator, tempDirName);
-		if (!tempDir.exists()) {
-			tempDir.mkdir();
+		if (!tempDir.exists() && !tempDir.mkdir()) {
+			LOGGER.error("Could not create temp directory");
 		}
 	
 		// backup home directory

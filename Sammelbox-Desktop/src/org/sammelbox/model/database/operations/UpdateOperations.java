@@ -46,6 +46,12 @@ import org.slf4j.LoggerFactory;
 public final class UpdateOperations {
 	private static final Logger LOGGER = LoggerFactory.getLogger(UpdateOperations.class);
 	
+	private static final int FIRST_PARAM_INDEX = 1;	
+	private static final int NEW_ALBUM_NAME_PARAM_INDEX = 1;
+	private static final int NEW_ALBUM_TABLE_NAME_PARAM_INDEX = 2;
+	private static final int PICTURE_ALBUM_FLAG_PARAM_INDEX = 3;
+	private static final int OLD_ALBUM_NAME_PARAM_INDEX = 4;
+	
 	private UpdateOperations() {
 		// use static methods
 	}
@@ -673,31 +679,31 @@ public final class UpdateOperations {
 			
 			switch (columnMetaInfo.getType()) {
 			case TEXT: 
-				preparedStatement.setString(1, (String) columnMetaInfo.getType().getDefaultValue());
+				preparedStatement.setString(FIRST_PARAM_INDEX, (String) columnMetaInfo.getType().getDefaultValue());
 				break;
 			case DECIMAL: 
-				preparedStatement.setDouble(1, (Double) columnMetaInfo.getType().getDefaultValue());
+				preparedStatement.setDouble(FIRST_PARAM_INDEX, (Double) columnMetaInfo.getType().getDefaultValue());
 				break;
 			case INTEGER: 
-				preparedStatement.setInt(1, (Integer) columnMetaInfo.getType().getDefaultValue());
+				preparedStatement.setInt(FIRST_PARAM_INDEX, (Integer) columnMetaInfo.getType().getDefaultValue());
 				break;
 			case DATE: 
-				preparedStatement.setDate(1, (Date) columnMetaInfo.getType().getDefaultValue());
+				preparedStatement.setDate(FIRST_PARAM_INDEX, (Date) columnMetaInfo.getType().getDefaultValue());
 				break;
 			case TIME:
-				preparedStatement.setTime(1, (Time) columnMetaInfo.getType().getDefaultValue());
+				preparedStatement.setTime(FIRST_PARAM_INDEX, (Time) columnMetaInfo.getType().getDefaultValue());
 				break;
 			case OPTION: 
 				String option = columnMetaInfo.getType().getDefaultValue().toString();
-				preparedStatement.setString(1, option);
+				preparedStatement.setString(FIRST_PARAM_INDEX, option);
 				break;
 			case URL: 
 				String url = columnMetaInfo.getType().getDefaultValue().toString();
-				preparedStatement.setString(1, url);
+				preparedStatement.setString(FIRST_PARAM_INDEX, url);
 				break;
 			case STAR_RATING: 
 				String rating = columnMetaInfo.getType().getDefaultValue().toString();
-				preparedStatement.setString(1, rating);
+				preparedStatement.setString(FIRST_PARAM_INDEX, rating);
 				break;
 			default:
 				break;
@@ -723,13 +729,13 @@ public final class UpdateOperations {
 
 		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(addAlbumQuery)){			
 			// New album name
-			preparedStatement.setString(1, DatabaseStringUtilities.removeQuotesEnclosingName(albumName));
+			preparedStatement.setString(NEW_ALBUM_NAME_PARAM_INDEX, DatabaseStringUtilities.removeQuotesEnclosingName(albumName));
 			// New album table name
-			preparedStatement.setString(2, DatabaseStringUtilities.generateTableName(
+			preparedStatement.setString(NEW_ALBUM_TABLE_NAME_PARAM_INDEX, DatabaseStringUtilities.generateTableName(
 					DatabaseStringUtilities.removeQuotesEnclosingName(albumName)));
 			// New album contains picture flag
 			OptionType hasPictureFlag = hasPictures ? OptionType.YES : OptionType.NO ; 
-			preparedStatement.setString(3, hasPictureFlag.toString());
+			preparedStatement.setString(PICTURE_ALBUM_FLAG_PARAM_INDEX, hasPictureFlag.toString());
 			preparedStatement.executeUpdate();
 		} catch (SQLException e) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE, e);
@@ -747,7 +753,7 @@ public final class UpdateOperations {
 
 		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(unRegisterNewAlbumFromAlbumMasterableString)){  			
 			// WHERE album name
-			preparedStatement.setString(1, albumName);
+			preparedStatement.setString(FIRST_PARAM_INDEX, albumName);
 			preparedStatement.executeUpdate();
 		} catch (SQLException e) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE, e);
@@ -781,17 +787,17 @@ public final class UpdateOperations {
 
 		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(unRegisterNewAlbumFromAlbumMasterableString);){			
 			// New album name
-			preparedStatement.setString(1, newAlbumName);
+			preparedStatement.setString(NEW_ALBUM_NAME_PARAM_INDEX, newAlbumName);
 			// New album table name
-			preparedStatement.setString(2, DatabaseStringUtilities.generateTableName(newAlbumName));
+			preparedStatement.setString(NEW_ALBUM_TABLE_NAME_PARAM_INDEX, DatabaseStringUtilities.generateTableName(newAlbumName));
 			if (newHasPicturesFlag != OptionType.UNKNOWN) {
 				// New hasPictures flag
-				preparedStatement.setString(3, newHasPicturesFlag.toString());				
+				preparedStatement.setString(PICTURE_ALBUM_FLAG_PARAM_INDEX, newHasPicturesFlag.toString());				
 				// Where old album name
-				preparedStatement.setString(4, oldAlbumName);
+				preparedStatement.setString(OLD_ALBUM_NAME_PARAM_INDEX, oldAlbumName);
 			} else {		
 				// Where old album name
-				preparedStatement.setString(3, oldAlbumName);
+				preparedStatement.setString(PICTURE_ALBUM_FLAG_PARAM_INDEX, oldAlbumName);
 			}
 			
 			preparedStatement.executeUpdate();

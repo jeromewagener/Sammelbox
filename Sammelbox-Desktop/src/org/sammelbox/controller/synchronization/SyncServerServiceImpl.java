@@ -63,7 +63,9 @@ public class SyncServerServiceImpl implements SyncServerService {
 		}
 		
 		try {
-			syncFolder.mkdir();
+			if (syncFolder.mkdir()) {
+				LOGGER.error("Could not create sync folder");
+			}
 
 			FileSystemAccessWrapper.copyFile(
 					new File(FileSystemLocations.getDatabaseFile()), 

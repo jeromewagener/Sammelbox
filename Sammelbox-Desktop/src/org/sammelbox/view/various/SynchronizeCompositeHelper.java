@@ -23,8 +23,10 @@ import java.util.HashMap;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 
-public class SynchronizeCompositeHelper {	
+public final class SynchronizeCompositeHelper {	
 	private static HashMap<SynchronizeStep, Label> synchronizeStepsToLabelsMap = null;
+	
+	private SynchronizeCompositeHelper() {}
 	
 	public static void storeSynchronizeCompositeLabels(HashMap<SynchronizeStep, Label> syncronizeStepsToLabelsMap) {
 		SynchronizeCompositeHelper.synchronizeStepsToLabelsMap = syncronizeStepsToLabelsMap;

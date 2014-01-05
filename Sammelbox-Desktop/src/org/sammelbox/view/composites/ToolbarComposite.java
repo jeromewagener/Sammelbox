@@ -45,10 +45,11 @@ import org.slf4j.LoggerFactory;
 public class ToolbarComposite extends Composite implements EventObserver {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ToolbarComposite.class);
 	
+	private static final int TOOLBAR_LEFT_MARGIN = 15;
+	private static final int NUMBER_OF_TOOLBAR_BUTTONS = 7;
+	
 	private Image homeIcon = null, addNewAlbumIcon = null, addAlbumItemIcon = null, detailedViewIcon = null, 
 			pictureViewIcon = null, advancedSearchIcon = null, synchronizeIcon = null, helpIcon = null;
-	private Image homeActiveIcon = null, addNewAlbumActiveIcon = null, addAlbumItemActiveIcon = null, 
-			advancedSearchActiveIcon = null, synchronizeActiveIcon = null, helpActiveIcon = null;
 	private Button homeButton = null, addNewAlbumButton = null, addAlbumItemButton = null,
 			toggleViewButton = null, advancedSearchButton = null, synchronizeButton = null, helpButton = null;
 	private PanelType lastSelectedPanelType = PanelType.EMPTY;
@@ -75,6 +76,9 @@ public class ToolbarComposite extends Composite implements EventObserver {
 
 	public ToolbarComposite(final Composite parentComposite) {
 		super(parentComposite, SWT.NONE);
+		
+		Image homeActiveIcon = null, addNewAlbumActiveIcon = null, addAlbumItemActiveIcon = null, 
+		      advancedSearchActiveIcon = null, synchronizeActiveIcon = null, helpActiveIcon = null;
 		Composite toolbarComposite = new Composite(parentComposite, SWT.NONE);
 
 		EventObservable.registerObserver(this);
@@ -82,13 +86,13 @@ public class ToolbarComposite extends Composite implements EventObserver {
 		GridLayout gridLayout = new GridLayout(1, false);
 		gridLayout.marginHeight = 0;
 		gridLayout.marginWidth = 0;
-		gridLayout.marginLeft = 15;
+		gridLayout.marginLeft = TOOLBAR_LEFT_MARGIN;
 
 		toolbarComposite.setLayout(gridLayout);
 
 		Composite innerComposite = new Composite(toolbarComposite, SWT.NONE);
 
-		gridLayout = new GridLayout(7, false);
+		gridLayout = new GridLayout(NUMBER_OF_TOOLBAR_BUTTONS, false);
 		gridLayout.marginHeight = 0;
 		gridLayout.marginWidth = 0;
 

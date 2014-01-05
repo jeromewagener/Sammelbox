@@ -21,6 +21,7 @@ package org.sammelbox.view;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
@@ -65,6 +66,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class ApplicationUI implements EventObserver {	
+	private static final int NUMBER_OF_MAIN_PANEL_COMPOSITES = 3;
 	private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationUI.class);
 	/** A reference to the main display */
 	private static final Display DISPLAY = new Display();
@@ -92,7 +94,7 @@ public final class ApplicationUI implements EventObserver {
 	private static ApplicationUI instance = null;
 	
 	/** Defines the panel size for the different panel types */
-	private static HashMap<PanelType, Integer> panelTypeToPixelSize = new HashMap<PanelType, Integer>() {
+	private static Map<PanelType, Integer> panelTypeToPixelSize = new HashMap<PanelType, Integer>() {
 		private static final long serialVersionUID = 1L;	{
 			put(PanelType.EMPTY, UIConstants.RIGHT_PANEL_NO_WIDTH);
 			put(PanelType.ADD_ALBUM, UIConstants.RIGHT_PANEL_LARGE_WIDTH);
@@ -151,7 +153,7 @@ public final class ApplicationUI implements EventObserver {
 		gridDataForThreePanelComposite.grabExcessVerticalSpace = true;
 		gridDataForThreePanelComposite.verticalAlignment = GridData.FILL;
 		gridDataForThreePanelComposite.horizontalAlignment = GridData.FILL;
-		GridLayout mainGridLayout = new GridLayout(3, false);
+		GridLayout mainGridLayout = new GridLayout(NUMBER_OF_MAIN_PANEL_COMPOSITES, false);
 
 		// define left (upper & lower) composite layout data
 		GridData gridDataForLeftComposite = new GridData(GridData.FILL_BOTH);

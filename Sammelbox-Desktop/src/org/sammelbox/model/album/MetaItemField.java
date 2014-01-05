@@ -72,7 +72,7 @@ public class MetaItemField {
 	 * Setter for the name.
 	 * @param name The new name.
 	 */
-	public void setName(String name) {
+	public final void setName(String name) {
 		this.name = name;
 	}
 
@@ -88,7 +88,7 @@ public class MetaItemField {
 	 * Setter for the type.
 	 * @param type The new type.
 	 */
-	public void setType(FieldType type) {
+	public final void setType(FieldType type) {
 		this.type = type;
 	}
 	

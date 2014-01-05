@@ -58,7 +58,12 @@ import org.sammelbox.view.ApplicationUI;
 import org.sammelbox.view.various.ComponentFactory;
 
 public class ImageDropAndManagementComposite extends Composite implements DropTargetListener {
-	private final String[] ALLOWED_EXTENSIONS = new String[] { ".jpeg", ".jpg", ".png", ".gif", ".bmp", ".ico", ".tiff" };
+	private static final String[] ALLOWED_EXTENSIONS = new String[] { ".jpeg", ".jpg", ".png", ".gif", ".bmp", ".ico", ".tiff" };
+
+	private static final double PERCENTAGE_DIVISOR = 100.0;
+	private static final int MAX_HEIGHT_OR_WIDTH_IN_PIXELS = 100;
+	private static final int IMAGE_LIST_HEIGHT_IN_PIXELS = 130;
+	private static final int NUMBER_OF_IMAGE_LIST_COLUMNS = 4;
 	
 	/** A list of images pointing to copies of the original files, located within the corresponding album folder */
 	private LinkedList<AlbumItemPicture> pictures = new LinkedList<AlbumItemPicture>();
@@ -98,7 +103,7 @@ public class ImageDropAndManagementComposite extends Composite implements DropTa
 		dropTextLabel.addMouseListener(new MouseListener() {
 			
 			@Override
-			public void mouseUp(MouseEvent arg0) {
+			public void mouseUp(MouseEvent mouseEvent) {
 				// cannot be used since this could be a drag event
 			}
 			
@@ -136,13 +141,13 @@ public class ImageDropAndManagementComposite extends Composite implements DropTa
 		imageScrolledComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		imageComposite = new Composite(imageScrolledComposite, SWT.NONE);
-		imageComposite.setLayout(new GridLayout(4, false));
+		imageComposite.setLayout(new GridLayout(NUMBER_OF_IMAGE_LIST_COLUMNS, false));
 		imageComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		imageScrolledComposite.setContent(imageComposite);
 
 		GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
-		gridData.heightHint = 130;
+		gridData.heightHint = IMAGE_LIST_HEIGHT_IN_PIXELS;
 
 		imageScrolledComposite.setLayoutData(gridData);
 
@@ -173,7 +178,7 @@ public class ImageDropAndManagementComposite extends Composite implements DropTa
 	/** This method refreshes the ImageDropAndManagementComposite in a sense that the image composite is completely rebuild. This method
 	 * should be called after the creation of a ImageDropAndManagementComposite when pictures are provided, or in case a new picture 
 	 * has been added to the picture list */
-	public void refreshImageComposite() {
+	public final void refreshImageComposite() {
 		disposeAllChildren();
 
 		for (final AlbumItemPicture picture : pictures) {			
@@ -187,10 +192,12 @@ public class ImageDropAndManagementComposite extends Composite implements DropTa
 			
 			if (originalWidth < originalHeight) {
 				scaledImage = ImageDropAndManagementComposite.resize(originalImage,
-						(int) Math.round(originalWidth / ((double)(originalHeight / 100.0))), 100);
+						(int) Math.round(originalWidth / ((double)(originalHeight / PERCENTAGE_DIVISOR))), 
+						MAX_HEIGHT_OR_WIDTH_IN_PIXELS);
 			} else {
 				scaledImage = ImageDropAndManagementComposite.resize(originalImage,
-					100, (int) Math.round(originalHeight / ((double)(originalWidth/ 100.0))));
+						MAX_HEIGHT_OR_WIDTH_IN_PIXELS, 
+						(int) Math.round(originalHeight / ((double)(originalWidth/ PERCENTAGE_DIVISOR))));
 			}
 			
 			originalImage.dispose();
@@ -198,7 +205,7 @@ public class ImageDropAndManagementComposite extends Composite implements DropTa
 			pictureLabel.setImage(scaledImage);
 			pictureLabel.addDisposeListener(new DisposeListener() {				
 				@Override
-				public void widgetDisposed(DisposeEvent arg0) {
+				public void widgetDisposed(DisposeEvent disposeEvent) {
 					pictureLabel.getImage().dispose();
 				}
 			});
@@ -208,7 +215,7 @@ public class ImageDropAndManagementComposite extends Composite implements DropTa
 			deleteButton.setText(Translator.get(DictKeys.BUTTON_REMOVE));
 			deleteButton.addSelectionListener(new SelectionAdapter() {
 				@Override
-				public void widgetSelected(SelectionEvent e) {
+				public void widgetSelected(SelectionEvent selectionEvent) {
 					pictures.remove(picture);
 					refreshImageComposite();
 				}

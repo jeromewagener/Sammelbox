@@ -7,9 +7,9 @@ public class QueryComponent {
 	private String value;
 
 	public QueryComponent(String fieldName, QueryOperator operator, String value) {
-		this.setFieldName(fieldName);
-		this.setOperator(operator);
-		this.setValue(value);
+		this.fieldName = fieldName;
+		this.operator = operator;
+		this.value = value;
 	}
 
 	public String getFieldName() {

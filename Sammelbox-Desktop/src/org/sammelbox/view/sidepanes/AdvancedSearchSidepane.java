@@ -60,6 +60,9 @@ import org.slf4j.LoggerFactory;
 public final class AdvancedSearchSidepane {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AdvancedSearchSidepane.class);
 	
+	private static final int INNER_COMPSITE_COLUMN_NUMBER = 2;
+	private static final int SEARCH_TABLE_HEIGHT_IN_PIXELS = 110;
+	
 	private AdvancedSearchSidepane() {
 		// use build method instead
 	}
@@ -78,7 +81,7 @@ public final class AdvancedSearchSidepane {
 		ComponentFactory.getPanelHeaderComposite(advancedSearchComposite, Translator.get(DictKeys.LABEL_ADVANCED_SEARCH));
 
 		Composite innerComposite = new Composite(advancedSearchComposite, SWT.BORDER);
-		innerComposite.setLayout(new GridLayout(2, false));
+		innerComposite.setLayout(new GridLayout(INNER_COMPSITE_COLUMN_NUMBER, false));
 		innerComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		Label fieldToSearchLabel = new Label(innerComposite, SWT.NONE);
@@ -220,7 +223,7 @@ public final class AdvancedSearchSidepane {
 
 		// Set table layout data
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
-		data.heightHint = 110;
+		data.heightHint = SEARCH_TABLE_HEIGHT_IN_PIXELS;
 		searchQueryTable.setLayoutData(data);	
 
 		ComponentFactory.getSmallBoldItalicLabel(advancedSearchComposite, Translator.get(DictKeys.LABEL_CONNECT_SEARCH_TERMS_BY));

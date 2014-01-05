@@ -34,17 +34,17 @@ public class DatabaseWrapperOperationException extends Exception {
 	
 	public DatabaseWrapperOperationException(DBErrorState errorState, String message) {
 		super(message);
-		this.setErrorState(errorState);
+		this.errorState = errorState;
 	}
 	
 	public DatabaseWrapperOperationException(DBErrorState errorState) {
 		super();
-		this.setErrorState(errorState);
+		this.errorState = errorState;
 	}
 	
 	public DatabaseWrapperOperationException(DBErrorState errorState, Throwable cause) {
 		super(cause);
-		this.setErrorState(errorState);
+		this.errorState = errorState;
 	}
 
 	public DBErrorState getErrorState() {

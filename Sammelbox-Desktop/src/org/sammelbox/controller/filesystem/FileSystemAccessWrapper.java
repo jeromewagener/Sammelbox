@@ -28,6 +28,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -88,8 +89,8 @@ public final class FileSystemAccessWrapper {
 		// Add the lock file
 		try {
 			File lockFile = new File(FileSystemLocations.getLockFile());
-			if (!lockFile.exists()) {
-				lockFile.createNewFile();
+			if (!lockFile.exists() && !lockFile.createNewFile()) {
+				LOGGER.error("Could not create lock file");
 			}
 		} catch (IOException e) {
 			LOGGER.error("Cannot create '" + FileSystemLocations.getLockFile() + "' "
@@ -192,8 +193,8 @@ public final class FileSystemAccessWrapper {
 	public static void copyDirectory(File sourceLocation , File targetLocation, String excludeFileRegex) throws IOException {
 
 		if (sourceLocation.isDirectory()) {
-			if (!targetLocation.exists()) {
-				targetLocation.mkdir();
+			if (!targetLocation.exists() && !targetLocation.mkdir()) {
+				LOGGER.error("Could not create target location");
 			}
 
 			String[] children = sourceLocation.list();
@@ -334,7 +335,9 @@ public final class FileSystemAccessWrapper {
 					File destFile = new File(folderLocation, entry.getName());
 					File destinationParent = destFile.getParentFile();
 
-					destinationParent.mkdirs();
+					if (!destinationParent.mkdirs()) {
+						LOGGER.error("Could not create destination parent");
+					}
 
 					try (FileOutputStream fileOutputStream = new FileOutputStream(destFile);
 						 InputStream inputStream = zipFile.getInputStream(entry);) {
@@ -389,7 +392,9 @@ public final class FileSystemAccessWrapper {
 				if(files[i].isDirectory()) {
 					deleteDirectoryRecursively(files[i]);
 				} else {
-					files[i].delete();
+					if (!files[i].delete()) {
+						LOGGER.error("An error occured while recursively deleting directories");
+					}
 				}
 			}
 		}
@@ -407,8 +412,8 @@ public final class FileSystemAccessWrapper {
 		for (int i=0; i<files.length; i++) {
 			if (files[i].isDirectory()) {
 				deleteDirectoryRecursively(files[i]);
-			} else if (!files[i].getName().equals(FileSystemLocations.DATABASE_NAME)) {
-				files[i].delete();
+			} else if (!files[i].getName().equals(FileSystemLocations.DATABASE_NAME) && !files[i].delete()) {
+				LOGGER.error("Could not delete: " + FileSystemLocations.DATABASE_NAME);
 			}
 		}
 	}
@@ -422,9 +427,11 @@ public final class FileSystemAccessWrapper {
 		if (homeDirectory.exists()) {
 			FileSystemAccessWrapper.clearHomeDirectory();
 
-			new File(FileSystemLocations.getDatabaseFile()).delete();
+			File databaseFile = new File(FileSystemLocations.getDatabaseFile());
 
-			homeDirectory.delete();
+			if (!databaseFile.delete() || !homeDirectory.delete()) {
+				LOGGER.error("Couldnt delete database file and/or the home directory");
+			}
 		}
 	}
 
@@ -465,11 +472,9 @@ public final class FileSystemAccessWrapper {
 
 	public static void writeToFile(String content, String filepath) {
 		try {
-			PrintWriter out = new PrintWriter(filepath);
-
-			out.write(content);
-
-			out.close();
+			PrintWriter printWriter = new PrintWriter(filepath, Charset.defaultCharset().name());
+			printWriter.write(content);
+			printWriter.close();
 		} catch (Exception ex) {
 			LOGGER.error("An error occured while writing '" + content + "' to filepath", ex);
 		}
@@ -491,19 +496,19 @@ public final class FileSystemAccessWrapper {
 			bufferedInputStream.read(buffer);
 			bufferedInputStream.close();
 
-			return new String(buffer);
+			return new String(buffer, Charset.defaultCharset());
 		} catch (Exception e) {
 			LOGGER.error("An error occured while reading the file (" + filePath + ") into a string", e);
 		}
 
-		return new String(buffer);
+		return new String(buffer, Charset.defaultCharset());
 	}
 	
 	public static String readInputStreamIntoString(InputStream fileInputStream) {
 		StringBuilder stringBuilder = new StringBuilder();
 
 		try {
-			BufferedReader reader = new BufferedReader(new InputStreamReader(fileInputStream));
+			BufferedReader reader = new BufferedReader(new InputStreamReader(fileInputStream, Charset.defaultCharset()));
 			String line = null;
 			String ls = System.getProperty("line.separator");
 			while((line = reader.readLine()) != null) {

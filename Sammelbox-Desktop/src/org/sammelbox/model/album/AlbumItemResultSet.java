@@ -56,6 +56,14 @@ public class AlbumItemResultSet {
 			this.albumName = DatabaseOperations.getAlbumName(metaData.getTableName(1));			
 			this.metaInfoMap = DatabaseOperations.getAlbumItemMetaMap(albumName);
 		} catch (SQLException sqlException) {
+			try {
+				if (statement != null) {
+					statement.close();
+				}
+			} catch (SQLException innerSqlException) {
+				LOGGER.error("Failed to close statment while recovering from an error. "
+						+ "Additional exceptions might reveal the cause of this problem.", innerSqlException);
+			}
 			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE, sqlException);
 		}		
 	}	
@@ -75,8 +83,16 @@ public class AlbumItemResultSet {
 			this.items = statement.executeQuery(sqlStatement);
 			this.metaData = items.getMetaData();
 			this.albumName = DatabaseOperations.getAlbumName(metaData.getTableName(1));	
-		} catch (SQLException e) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE, e);
+		} catch (SQLException sqlException) {
+			try {
+				if (statement != null) {
+					statement.close();
+				}
+			} catch (SQLException innerSqlException) {
+				LOGGER.error("Failed to close statment while recovering from an error. "
+						+ "Additional exceptions might reveal the cause of this problem.", innerSqlException);
+			}
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE, sqlException);
 		}
 	}
 	
@@ -97,8 +113,16 @@ public class AlbumItemResultSet {
 			this.items = statement.executeQuery(sqlStatement);
 			this.metaData = items.getMetaData();
 			this.albumName = albumName;
-		} catch (SQLException e) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE, e);
+		} catch (SQLException sqlException) {
+			try {
+				if (statement != null) {
+					statement.close();
+				}
+			} catch (SQLException innerSqlException) {
+				LOGGER.error("Failed to close statment while recovering from an error. "
+						+ "Additional exceptions might reveal the cause of this problem.", innerSqlException);
+			}
+			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_CLEAN_STATE, sqlException);
 		}
 	}
 
