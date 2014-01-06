@@ -56,6 +56,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class AlterAlbumSidepane {
+	private static final int FIELD_NAMES_TO_TYPES_TABLE_HEIGHT_IN_PIXELS = 110;
+	private static final int BUTTON_LAYOUT_HEIGHT_IN_PIXELS = 15;
 	private static final Logger LOGGER = LoggerFactory.getLogger(AlterAlbumSidepane.class);
 	
 	private AlterAlbumSidepane() {
@@ -90,7 +92,7 @@ public final class AlterAlbumSidepane {
 		renameAlbumButton.setLayoutData(new GridData(GridData.FILL_BOTH));
 		Label seperator = new Label(alterAlbumComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
 		GridData gridData= new GridData(GridData.FILL_BOTH);
-		gridData.heightHint = 15;
+		gridData.heightHint = BUTTON_LAYOUT_HEIGHT_IN_PIXELS;
 		seperator.setLayoutData(gridData);
 
 		Composite innerComposite = new Composite(alterAlbumComposite, SWT.BORDER);
@@ -115,7 +117,7 @@ public final class AlterAlbumSidepane {
 		
 		Label innerSeperator = new Label(innerComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
 		GridData gridDataForInnerSeperator = new GridData(GridData.FILL_BOTH);
-		gridDataForInnerSeperator.heightHint = 15;
+		gridDataForInnerSeperator.heightHint = BUTTON_LAYOUT_HEIGHT_IN_PIXELS;
 		innerSeperator.setLayoutData(gridDataForInnerSeperator);
 
 		// fieldname label and text-box to enter the name of the field
@@ -387,7 +389,7 @@ public final class AlterAlbumSidepane {
 
 		// Set table layout data
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
-		data.heightHint = 110;
+		data.heightHint = FIELD_NAMES_TO_TYPES_TABLE_HEIGHT_IN_PIXELS;
 		albumFieldNamesAndTypesTable.setLayoutData(data);
 
 		albumFieldNamesAndTypesTable.addListener(SWT.Selection, new Listener() {

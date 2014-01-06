@@ -56,6 +56,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class CreateAlbumSidepane {
+	private static final int SEPARATOR_HEIGHT_IN_PIXELS = 10;
+	private static final int NUMBER_OF_IMAGE_QUESTION_COLUMNS = 3;
+	private static final int FIELD_NAMES_TO_TYPES_TABLE_HEIGHT_IN_PIXELS = 175;
 	private static final Logger LOGGER = LoggerFactory.getLogger(CreateAlbumSidepane.class);
 	
 	private CreateAlbumSidepane() {
@@ -83,12 +86,12 @@ public final class CreateAlbumSidepane {
 
 		Label seperator = new Label(createNewAlbumComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
 		GridData gridDataForSeperator = new GridData(GridData.FILL_BOTH);
-		gridDataForSeperator.heightHint = 10;
+		gridDataForSeperator.heightHint = SEPARATOR_HEIGHT_IN_PIXELS;
 		seperator.setLayoutData(gridDataForSeperator);
 
 		// picture question label & radio buttons
 		Composite pictureQuestionComposite = new Composite(createNewAlbumComposite, SWT.NULL);
-		pictureQuestionComposite.setLayout(new GridLayout(3, false));
+		pictureQuestionComposite.setLayout(new GridLayout(NUMBER_OF_IMAGE_QUESTION_COLUMNS, false));
 		pictureQuestionComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		Label label = new Label(pictureQuestionComposite, SWT.NONE);
 		label.setText(Translator.get(DictKeys.LABEL_SHOULD_CONTAIN_IMAGES) + "   ");
@@ -226,7 +229,7 @@ public final class CreateAlbumSidepane {
 
 		// Set table layout data
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
-		data.heightHint = 175;
+		data.heightHint = FIELD_NAMES_TO_TYPES_TABLE_HEIGHT_IN_PIXELS;
 		albumFieldNamesAndTypesTable.setLayoutData(data);
 		
 		// Add listener to Add-field-button
@@ -349,11 +352,6 @@ public final class CreateAlbumSidepane {
 				ApplicationUI.changeRightCompositeTo(PanelType.EMPTY, EmptySidepane.build(parentComposite));
 			}
 		});
-
-		GridData gridData = new GridData();
-		gridData.widthHint = 600;
-		gridData.heightHint = 600;
-		createNewAlbumComposite.setLayoutData(gridData);
 
 		// Load matching browser window
 		BrowserFacade.showCreateNewAlbumPage(AlbumItemStore.getSamplePictureAlbumItemWithoutFields());

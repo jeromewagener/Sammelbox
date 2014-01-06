@@ -44,6 +44,13 @@ import com.jeromewagener.soutils.utilities.InetAddressUtilities;
 import com.jeromewagener.soutils.utilities.Soutilities;
 
 public class SyncServerServiceImpl implements SyncServerService {
+	// TODO define file transfer port
+	private static final int FILE_TRANSFER_PORT = 6565;
+	// TODO define communication port
+	private static final int COMMUNICATION_PORT = 12345;
+	// TODO define broadcast port
+	private static final int BROADCAST_PORT = 5454;
+	
 	private static final Logger LOGGER = LoggerFactory.getLogger(SyncServerServiceImpl.class);
 	private static final String SYNC_DIRECTORY_PATH = FileSystemLocations.TEMP_DIR + "sammelbox-sync" + File.separatorChar;
 	private static final String SYNC_ZIP_ARCHIVE_PATH = FileSystemLocations.TEMP_DIR + "sammelbox-sync.zip";
@@ -114,11 +121,10 @@ public class SyncServerServiceImpl implements SyncServerService {
 
 				beaconSenders = new ArrayList<BeaconSender>();
 				for (InetAddress ipAddress : InetAddressUtilities.getAllIPsAndAssignedBroadcastAddresses().keySet()) {
-					// TODO define broadcast port
 					BeaconSender beaconSender = new BeaconSender(
 							"sammelbox-desktop:sync-code:" + getHashedSynchronizationCode(), 
 							InetAddressUtilities.getAllIPsAndAssignedBroadcastAddresses().get(ipAddress),
-							5454, this);
+							BROADCAST_PORT, this);
 					beaconSender.start();
 
 					beaconSenders.add(beaconSender);
@@ -144,8 +150,7 @@ public class SyncServerServiceImpl implements SyncServerService {
 	@Override
 	public void startCommunicationChannel() {
 		if (communicationManager == null) {
-			// TODO define communication port
-			communicationManager = new CommunicationManager(12345, this);
+			communicationManager = new CommunicationManager(COMMUNICATION_PORT, this);
 			communicationManager.start();
 		} else {
 			LOGGER.warn("Communication channel is already up and running!");
@@ -163,8 +168,7 @@ public class SyncServerServiceImpl implements SyncServerService {
 	@Override
 	public void openFileTransferServer(String storageLocationAsAbsolutPath) {
 		if (fileTransferServer == null) {
-			// TODO define file transfer port
-			fileTransferServer = new FileTransferServer(storageLocationAsAbsolutPath, 6565 ,this);
+			fileTransferServer = new FileTransferServer(storageLocationAsAbsolutPath, FILE_TRANSFER_PORT ,this);
 			fileTransferServer.start();
 		} else {
 			LOGGER.warn("File transfer server already up and running!");
