@@ -43,9 +43,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class FileSystemAccessWrapper {
-	private static final int ONE_KB_BUFFER_SIZE = 1024;
 	private static final Logger LOGGER = LoggerFactory.getLogger(FileSystemAccessWrapper.class);
 	private static final boolean OVERWRITE_EXISITING_FILES = true;	
+	private static final int ONE_KB_BUFFER_SIZE = 1024;
 	/** A simple regular expression.. to prevent album names whose folders of the same name cause problems on the filesystem
 	 * Minimum length is 3 alphanumeric characters possibly white spaces, underscores (u005F) hyphen_minuses (u002D). */
 	private static final String ALBUM_NAME_REGEX = "^(\\w|\\u005F|\\s|\\u002D){3,}$";
@@ -62,66 +62,72 @@ public final class FileSystemAccessWrapper {
 		
 		if (!directory.exists() && !directory.mkdir()) {
 			LOGGER.error("Cannot create '" + directoryPath + "' although it seems that the directory does not yet exist");
-			return true;
-		}
-		
-		return false;
-	}
-	
-	/** This method is used to create and update the file-structure
-	 *  This method must be called during initialization of the program.*/
-	public static boolean updateSammelboxFileStructure() {		
-		boolean errorOccurred = false;
-				
-		errorOccurred = errorOccurred || createDirectoryAndLogError(FileSystemLocations.getActiveHomeDir());
-		errorOccurred = errorOccurred || createDirectoryAndLogError(FileSystemLocations.getAlbumPicturesDir());
-		errorOccurred = errorOccurred || createDirectoryAndLogError(FileSystemLocations.getThumbnailsDir());
-		errorOccurred = errorOccurred || createDirectoryAndLogError(FileSystemLocations.getAppDataDir());
-		errorOccurred = errorOccurred || createDirectoryAndLogError(FileSystemLocations.getAppDataGraphicsDir());
-		errorOccurred = errorOccurred || createDirectoryAndLogError(FileSystemLocations.getBackupDir());
-		
-		if (errorOccurred) {
-			return false;
-		}
-			
-		extractAllResources();
-
-		// Add the lock file
-		try {
-			File lockFile = new File(FileSystemLocations.getLockFile());
-			if (!lockFile.exists() && !lockFile.createNewFile()) {
-				LOGGER.error("Could not create lock file");
-			}
-		} catch (IOException e) {
-			LOGGER.error("Cannot create '" + FileSystemLocations.getLockFile() + "' "
-					+ "although it seems that the directory does not yet exist", e);
 			return false;
 		}
 		
 		return true;
 	}
+	
+	/** This method is used to create and update the file-structure
+	 *  This method must be called during initialization of the program.*/
+	public static boolean updateSammelboxFileStructure() {		
+		boolean dirsCreatedWithoutError = true;
+				
+		dirsCreatedWithoutError &= createDirectoryAndLogError(FileSystemLocations.getActiveHomeDir());
+		dirsCreatedWithoutError &= dirsCreatedWithoutError && createDirectoryAndLogError(FileSystemLocations.getAlbumPicturesDir());
+		dirsCreatedWithoutError &= dirsCreatedWithoutError && createDirectoryAndLogError(FileSystemLocations.getThumbnailsDir());
+		dirsCreatedWithoutError &= dirsCreatedWithoutError && createDirectoryAndLogError(FileSystemLocations.getAppDataDir());
+		dirsCreatedWithoutError &= dirsCreatedWithoutError && createDirectoryAndLogError(FileSystemLocations.getAppDataGraphicsDir());
+		dirsCreatedWithoutError &= dirsCreatedWithoutError && createDirectoryAndLogError(FileSystemLocations.getBackupDir());
+		
+		if (!dirsCreatedWithoutError || !extractAllResources() || !createLockFile()) {
+			return false;
+		}
+		
+		return true;
+	}
+	
+	private static boolean createLockFile() {
+		try {
+			File lockFile = new File(FileSystemLocations.getLockFile());
+			if (!lockFile.exists() && !lockFile.createNewFile()) {
+				LOGGER.error("Could not create lock file");
+			}
+			
+			return true;
+			
+		} catch (IOException e) {
+			LOGGER.error("Cannot create '" + FileSystemLocations.getLockFile() + "' "
+					+ "although it seems that the directory does not yet exist", e);
+			return false;
+		}
+	}
 
 	/** Extracts all resources from the jar to the file system */
-	private static void extractAllResources() {
-		extractResourceToFile("graphics/placeholder.png", FileSystemLocations.getPlaceholderPNG());
-		extractResourceToFile("graphics/placeholder2.png", FileSystemLocations.getPlaceholder2PNG());
-		extractResourceToFile("graphics/placeholder3.png", FileSystemLocations.getPlaceholder3PNG());
-		extractResourceToFile("graphics/zerostars.png", FileSystemLocations.getZeroStarsPNG());
-		extractResourceToFile("graphics/onestar.png", FileSystemLocations.getOneStarPNG());
-		extractResourceToFile("graphics/twostars.png", FileSystemLocations.getTwoStarsPNG());
-		extractResourceToFile("graphics/threestars.png", FileSystemLocations.getThreeStarsPNG());
-		extractResourceToFile("graphics/fourstars.png", FileSystemLocations.getFourStarsPNG());
-		extractResourceToFile("graphics/fivestars.png", FileSystemLocations.getFiveStarsPNG());
-		extractResourceToFile("graphics/logo.png", FileSystemLocations.getLogoPNG());
-		extractResourceToFile("graphics/logo-small.png", FileSystemLocations.getLogoSmallPNG());
-		extractResourceToFile("javascript/effects.js", FileSystemLocations.getEffectsJS());
-		extractResourceToFile("stylesheets/style.css", FileSystemLocations.getStyleCSS());
+	private static boolean extractAllResources() {
+		boolean isSuccess = true;
+		
+		isSuccess &= extractResourceToFile("graphics/placeholder.png", FileSystemLocations.getPlaceholderPNG());
+		isSuccess &= extractResourceToFile("graphics/placeholder2.png", FileSystemLocations.getPlaceholder2PNG());
+		isSuccess &= extractResourceToFile("graphics/placeholder3.png", FileSystemLocations.getPlaceholder3PNG());
+		isSuccess &= extractResourceToFile("graphics/zerostars.png", FileSystemLocations.getZeroStarsPNG());
+		isSuccess &= extractResourceToFile("graphics/onestar.png", FileSystemLocations.getOneStarPNG());
+		isSuccess &= extractResourceToFile("graphics/twostars.png", FileSystemLocations.getTwoStarsPNG());
+		isSuccess &= extractResourceToFile("graphics/threestars.png", FileSystemLocations.getThreeStarsPNG());
+		isSuccess &= extractResourceToFile("graphics/fourstars.png", FileSystemLocations.getFourStarsPNG());
+		isSuccess &= extractResourceToFile("graphics/fivestars.png", FileSystemLocations.getFiveStarsPNG());
+		isSuccess &= extractResourceToFile("graphics/logo.png", FileSystemLocations.getLogoPNG());
+		isSuccess &= extractResourceToFile("graphics/logo-small.png", FileSystemLocations.getLogoSmallPNG());
+		isSuccess &= extractResourceToFile("javascript/effects.js", FileSystemLocations.getEffectsJS());
+		isSuccess &= extractResourceToFile("stylesheets/style.css", FileSystemLocations.getStyleCSS());
+		
+		return isSuccess;
 	}
 	
 	/** Extracts the specified resource to the specified output location
 	 * @param resourceName the name of the resource to be extracted 
 	 * @param outputResourcePath the absolute location to which the resource should be extracted */
-	private static void extractResourceToFile(String resourceName, String outputResourcePath) {
+	private static boolean extractResourceToFile(String resourceName, String outputResourcePath) {
 		File resource = new File(outputResourcePath);
 		
 		if (!resource.exists() || OVERWRITE_EXISITING_FILES) {			
@@ -136,8 +142,11 @@ public final class FileSystemAccessWrapper {
 				}
 			} catch (IOException ioe) {
 				LOGGER.error("An error occured while extracting the resource (" + resourceName + ") to " + outputResourcePath, ioe);
+				return false;
 			}
 		}
+		
+		return true;
 	}
 
 	/** This method is used to create album picture folders if the album is set to contain pictures and the folder does not exist yet.

@@ -101,7 +101,7 @@ public class AlterAlbumTests {
 
 			assertTrue("The album item count incorrectly changed", 
 					originalAlbumItemCount == DatabaseOperations.getNumberOfItemsInAlbum("Books"));
-		}catch (DatabaseWrapperOperationException e ) {
+		} catch (DatabaseWrapperOperationException e) {
 			fail(e.getMessage());
 		}
 	}

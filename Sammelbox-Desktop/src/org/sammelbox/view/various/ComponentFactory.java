@@ -45,6 +45,14 @@ import org.sammelbox.view.sidepanes.EmptySidepane;
 
 public final class ComponentFactory {
 	
+	private static final int DEFAULT_SEPARATOR_HEIGHT_IN_PIXELS = 10;
+	private static final int DEFAULT_HEADER_HEIGHT_IN_PIXELS = 35;
+	
+	public static final int FONT_SIZE_OF_H1_LABEL = 16;
+	public static final int FONT_SIZE_OF_H2_LABEL = 14;
+	public static final int FONT_SIZE_OF_H3_LABEL = 12;
+	public static final int FONT_SIZE_OF_H4_LABEL = 10;
+
 	private ComponentFactory() {
 		// not needed
 	}
@@ -106,7 +114,7 @@ public final class ComponentFactory {
 	 * @param textForLabel the text for the label 
 	 * @return a new label */
 	public static Label getH1Label(Composite parentComposite, String textForLabel) {
-		return getLabel(parentComposite, textForLabel, 16);
+		return getLabel(parentComposite, textForLabel, FONT_SIZE_OF_H1_LABEL);
 	}
 
 	/** Returns a H2 label similar to the HTML H2 tag 
@@ -114,7 +122,7 @@ public final class ComponentFactory {
 	 * @param textForLabel the text for the label 
 	 * @return a new label */
 	public static Label getH2Label(Composite parentComposite, String textForLabel) {
-		return getLabel(parentComposite, textForLabel, 14);
+		return getLabel(parentComposite, textForLabel, FONT_SIZE_OF_H2_LABEL);
 	}
 
 	/** Returns a H3 label similar to the HTML H3 tag 
@@ -122,7 +130,7 @@ public final class ComponentFactory {
 	 * @param textForLabel the text for the label 
 	 * @return a new label */
 	public static Label getH3Label(Composite parentComposite, String textForLabel) {
-		return getLabel(parentComposite, textForLabel, 12);
+		return getLabel(parentComposite, textForLabel, FONT_SIZE_OF_H3_LABEL);
 	}
 
 	/** Returns a H4 label similar to the HTML H3 tag 
@@ -130,7 +138,7 @@ public final class ComponentFactory {
 	 * @param textForLabel the text for the label 
 	 * @return a new label */
 	public static Label getH4Label(Composite parentComposite, String textForLabel) {
-		return getLabel(parentComposite, textForLabel, 10);
+		return getLabel(parentComposite, textForLabel, FONT_SIZE_OF_H4_LABEL);
 	}
 
 	/** Returns a standard SWT label
@@ -214,7 +222,7 @@ public final class ComponentFactory {
 		
 		GridData headerGridData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		
-		headerGridData.minimumHeight = 35;
+		headerGridData.minimumHeight = DEFAULT_HEADER_HEIGHT_IN_PIXELS;
 		
 		headerComposite.setLayoutData(headerGridData);
 
@@ -302,7 +310,7 @@ public final class ComponentFactory {
 
 		// min height griddata
 		GridData minHeightGridData = new GridData(GridData.FILL_BOTH);
-		minHeightGridData.minimumHeight = 10;
+		minHeightGridData.minimumHeight = DEFAULT_SEPARATOR_HEIGHT_IN_PIXELS;
 
 		// separator
 		new Label(panelComposite, SWT.SEPARATOR | SWT.HORIZONTAL).setLayoutData(minHeightGridData);

@@ -37,6 +37,8 @@ import org.sammelbox.view.various.SynchronizeCompositeHelper;
 import org.sammelbox.view.various.SynchronizeStep;
 
 public final class SynchronizeSidepane {
+	private static final int DEFAULT_COMPOSITE_HEIGHT_IN_PIXELS = 20;
+	
 	private static SyncServerService syncServerService = SyncServerService.Default.getServiceInstance();
 	
 	private SynchronizeSidepane() {
@@ -54,7 +56,7 @@ public final class SynchronizeSidepane {
 
 		// min height griddata
 		GridData minHeightGridData = new GridData(GridData.FILL_BOTH);
-		minHeightGridData.minimumHeight = 20;
+		minHeightGridData.minimumHeight = DEFAULT_COMPOSITE_HEIGHT_IN_PIXELS;
 
 		final Button startButton = new Button(synchronizeComposite, SWT.PUSH);
 		startButton.setText(Translator.get(DictKeys.BUTTON_START_SYNCHRONIZATION));

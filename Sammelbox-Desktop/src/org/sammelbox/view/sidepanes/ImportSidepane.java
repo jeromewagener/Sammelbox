@@ -23,6 +23,8 @@ import org.sammelbox.view.ApplicationUI;
 import org.sammelbox.view.various.ComponentFactory;
 
 public final class ImportSidepane {
+	private static final int DEFAULT_COMPOSITE_HEIGHT_IN_PIXELS = 25;
+
 	private ImportSidepane() {
 		// use build method
 	}
@@ -35,7 +37,7 @@ public final class ImportSidepane {
 		
 		// separator grid data
 		GridData seperatorGridData = new GridData(GridData.FILL_BOTH);
-		seperatorGridData.minimumHeight = 15;
+		seperatorGridData.minimumHeight = DEFAULT_COMPOSITE_HEIGHT_IN_PIXELS;
 		
 		// Span grid data
 		GridData spanGridData = new GridData(GridData.VERTICAL_ALIGN_END);
@@ -103,11 +105,11 @@ public final class ImportSidepane {
 		GridData compositeGridData = new GridData(SWT.FILL, SWT.FILL, false, false);
 		compositeGridData.horizontalSpan = 2;
 		compositeGridData.horizontalAlignment = GridData.FILL;
-		compositeGridData.heightHint = 25;
+		compositeGridData.heightHint = DEFAULT_COMPOSITE_HEIGHT_IN_PIXELS;
 		
-		Label lastColumnPictureLabel = new Label(innerComposite, SWT.HORIZONTAL);
-		lastColumnPictureLabel.setText(Translator.get(DictKeys.LABEL_IMPORT_IMG_FROM_COLUMN));		
-	    lastColumnPictureLabel.setLayoutData(compositeGridData);
+		Label importImgFromColumn = new Label(innerComposite, SWT.HORIZONTAL);
+		importImgFromColumn.setText(Translator.get(DictKeys.LABEL_IMPORT_IMG_FROM_COLUMN));		
+	    importImgFromColumn.setLayoutData(compositeGridData);
 		
 		Composite lastColumnPictureLinksComposite = new Composite(innerComposite, SWT.FILL);
 		lastColumnPictureLinksComposite.setLayoutData(compositeGridData);

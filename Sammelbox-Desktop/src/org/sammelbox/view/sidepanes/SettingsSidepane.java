@@ -53,6 +53,8 @@ public final class SettingsSidepane {
         myDateExamplesToFormats.put(AMERICAN_SLASH, "MM/dd/yyyy");
         DATE_EXAMPLES_TO_FORMATS = Collections.unmodifiableMap(myDateExamplesToFormats);
     }
+    
+    private static final int DEFAULT_COMPOSITE_HEIGHT_IN_PIXELS = 15;
 	
     private SettingsSidepane() {
 		// use build method instead
@@ -108,7 +110,7 @@ public final class SettingsSidepane {
 		
 		Label seperator = new Label(settingsComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
 		GridData gridDataForSeperator = new GridData(GridData.FILL_BOTH);
-		gridDataForSeperator.heightHint = 15;
+		gridDataForSeperator.heightHint = DEFAULT_COMPOSITE_HEIGHT_IN_PIXELS;
 		seperator.setLayoutData(gridDataForSeperator);
 		
 		Button saveSettingsButton = new Button(settingsComposite, SWT.PUSH);

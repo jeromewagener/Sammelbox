@@ -138,7 +138,7 @@ public final class BrowserUtils {
 			ApplicationUI.getShell().getClass().getClassLoader().getResourceAsStream("templates/" + htmlTemplateFilename));
 		
 		for (Map.Entry<String, String> mapEntry : templateContent.entrySet()) {
-			htmlString = htmlString.replace("<!--" + mapEntry.getKey() + "-->", templateContent.get(mapEntry.getValue()));
+			htmlString = htmlString.replace("<!--" + mapEntry.getKey() + "-->", mapEntry.getValue());
 		}
 		
 		browser.setText(htmlString);

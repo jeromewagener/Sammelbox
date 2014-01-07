@@ -31,6 +31,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 public class TextInputDialog extends Dialog {
+	private static final int INPUT_DIALOG_HEIGHT_IN_PIXELS = 200;
 	/** Stores the value which is eventually entered */
 	private String value = null;
 
@@ -63,7 +64,7 @@ public class TextInputDialog extends Dialog {
 		inputText.setText(textBoxValue);
 		
 		GridData gridData = new GridData();
-		gridData.widthHint = 200;
+		gridData.widthHint = INPUT_DIALOG_HEIGHT_IN_PIXELS;
 		inputText.setLayoutData(gridData);		
 	    
 		final Button button = new Button(shell, SWT.PUSH);

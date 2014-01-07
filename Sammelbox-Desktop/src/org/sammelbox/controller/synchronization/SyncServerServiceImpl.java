@@ -54,6 +54,10 @@ public class SyncServerServiceImpl implements SyncServerService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(SyncServerServiceImpl.class);
 	private static final String SYNC_DIRECTORY_PATH = FileSystemLocations.TEMP_DIR + "sammelbox-sync" + File.separatorChar;
 	private static final String SYNC_ZIP_ARCHIVE_PATH = FileSystemLocations.TEMP_DIR + "sammelbox-sync.zip";
+
+	private static final int SYNC_FINISH_LOOP_TIME_SLEEP_IN_MILLISECONDS = 200;
+	private static final int MAX_VALUE_FOR_SYNC_CODE = 99999;
+	private static final int MIN_VALUE_FOR_SYNC_CODE = 10000;
 	
 	private String synchronizationCode = null;
 	
@@ -93,7 +97,8 @@ public class SyncServerServiceImpl implements SyncServerService {
 	@Override
 	public String getSynchronizationCode() {
 		if (synchronizationCode == null) {
-			synchronizationCode = String.valueOf(Soutilities.randomNumberBetweenIntervals(10000, 99999));
+			synchronizationCode = String.valueOf(
+					Soutilities.randomNumberBetweenIntervals(MIN_VALUE_FOR_SYNC_CODE, MAX_VALUE_FOR_SYNC_CODE));
 		}
 		
 		return synchronizationCode;
@@ -204,7 +209,7 @@ public class SyncServerServiceImpl implements SyncServerService {
 			
 			while (!fileTransferServer.isDone()) {
 				try {
-					Thread.sleep(200);
+					Thread.sleep(SYNC_FINISH_LOOP_TIME_SLEEP_IN_MILLISECONDS);
 					Display.getDefault().asyncExec(new Runnable() {
 					    public void run() {
 					    	ApplicationUI.getAlbumItemBrowser().execute("updateProgress('" + getFileTransferProgressPercentage() + "%')");
