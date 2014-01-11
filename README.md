@@ -13,7 +13,7 @@ local SVN repository, no prior revision history before the 20th April 2013 is av
   any time. The user interface will adapt itself automatically to the "Album" that you just created!
 - Search & filter using the power of native SQL queries
 - Synchronize your collection with a mobile device over your local LAN or WLAN. While synchronizing,
-  no data will be sent through the internet, making your collection invisible to other people. (Not fully implemented yet)
+  no data will be sent through the internet, making your collection invisible to other people.
 - Import & Export features (CSV, HTML) as well as a standardized SQLite database in which all data is stored.
   This means that your data is always available on a local database that you have total control over.
 
