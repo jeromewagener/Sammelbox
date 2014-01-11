@@ -34,7 +34,17 @@ public final class SammelboxMenuItemListener {
 			@Override
 			public void widgetSelected(SelectionEvent evt) {
 				BrowserFacade.showImportPage();
-				ApplicationUI.changeRightCompositeTo(PanelType.IMPORT, ImportSidepane.build(ApplicationUI.getThreePanelComposite()));
+				ApplicationUI.changeRightCompositeTo(PanelType.IMPORT, ImportSidepane.build(ApplicationUI.getThreePanelComposite(), false));
+			}
+		};
+	}
+	
+	static SelectionAdapter getAppendAlbumItemsListener() {
+		return new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent evt) {
+				// TODO showAppendPage() similar to showImportPage
+				ApplicationUI.changeRightCompositeTo(PanelType.IMPORT, ImportSidepane.build(ApplicationUI.getThreePanelComposite(), true));
 			}
 		};
 	}

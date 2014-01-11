@@ -39,9 +39,9 @@ import org.sammelbox.model.database.operations.DatabaseOperations;
 import org.sammelbox.view.image.ImageManipulator;
 
 public final class CSVImporter {
-	private static final int NO_PICTURE_INDEX = -1;
-	private static final String NO_PICTURE_COLUMN_NAME = "NO_PICTURE_COLUMN_NAME";
-	private static final String NO_PICTURE_SEPARATION_CHARACTER = "NO_PICTURE_SEPARATION_CHARACTER";
+	public static final int NO_PICTURE_INDEX = -1;
+	public static final String NO_PICTURE_COLUMN_NAME = "NO_PICTURE_COLUMN_NAME";
+	public static final String NO_PICTURE_SEPARATION_CHARACTER = "NO_PICTURE_SEPARATION_CHARACTER";
 
 	private CSVImporter() {
 	}
@@ -116,7 +116,7 @@ public final class CSVImporter {
 		return pictureColumnIndex;
 	}
 	
-	private static void handleData(String line, String albumName, String separationCharacter, List<MetaItemField> metaItemFields, 
+	static void handleData(String line, String albumName, String separationCharacter, List<MetaItemField> metaItemFields, 
 			String pictureSeperationCharacter, int pictureColumnIndex, boolean isSimulation) throws DatabaseWrapperOperationException, ImportException {
 		
 		// Credit for the regex goes to Bart Kiers (http://stackoverflow.com/a/1757107/2898363)

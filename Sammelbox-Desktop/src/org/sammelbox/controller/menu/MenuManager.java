@@ -71,6 +71,10 @@ public final class MenuManager {
 		importAlbumItemsMenuItem.setText(Translator.get(DictKeys.MENU_CSV_IMPORT));
 		importAlbumItemsMenuItem.addSelectionListener(SammelboxMenuItemListener.getImportAlbumItemsListener());
 		
+		MenuItem appendAlbumItemsMenuItem = new MenuItem(sammelboxMenu, SWT.NONE);
+		appendAlbumItemsMenuItem.setText(Translator.toBeTranslated("Append data from CSV"));
+		appendAlbumItemsMenuItem.addSelectionListener(SammelboxMenuItemListener.getAppendAlbumItemsListener());
+		
 		MenuItem exportAlbumMenuItem = new MenuItem(sammelboxMenu, SWT.NONE);
 		exportAlbumMenuItem.setText(Translator.get(DictKeys.MENU_EXPORT_SELECTED_ITEMS));
 		exportAlbumMenuItem.addSelectionListener(SammelboxMenuItemListener.getExportAlbumItemsListener());

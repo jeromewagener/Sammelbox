@@ -204,6 +204,13 @@ public final class DatabaseOperations {
 		return QueryOperations.getListOfAllAlbums();
 	}
 	
+	public static String[] getArrayOfAllAlbums() throws DatabaseWrapperOperationException {
+		List<String> listOfAllAlbums = getListOfAllAlbums();
+		String[] albumArray = new String[listOfAllAlbums.size()];
+		
+		return listOfAllAlbums.toArray(albumArray);
+	}
+	
 	/**
 	 * Lists all the columns of a table which are indexed. Indexed columns are also taken into account for 
 	 * the quick-search feature.

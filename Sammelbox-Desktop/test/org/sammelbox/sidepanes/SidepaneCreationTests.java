@@ -94,7 +94,10 @@ public class SidepaneCreationTests {
 		sidepane = EmptySidepane.build(ApplicationUI.getShell());
 		assertTrue(NOT_INITIALIZED_ASSERT_MESSAGE, sidepane != null);
 		
-		sidepane = ImportSidepane.build(ApplicationUI.getShell());
+		sidepane = ImportSidepane.build(ApplicationUI.getShell(), true);
+		assertTrue(NOT_INITIALIZED_ASSERT_MESSAGE, sidepane != null);
+		
+		sidepane = ImportSidepane.build(ApplicationUI.getShell(), false);
 		assertTrue(NOT_INITIALIZED_ASSERT_MESSAGE, sidepane != null);
 		
 		sidepane = QuickControlSidepane.build(ApplicationUI.getShell());

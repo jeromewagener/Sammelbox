@@ -176,7 +176,7 @@ public final class QueryOperations {
 				DatabaseConstants.ALBUM_MASTER_TABLE_NAME, DatabaseConstants.ALBUMNAME_IN_ALBUM_MASTER_TABLE);
 
 		try (Statement statement = ConnectionManager.getConnection().createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
-			 ResultSet rs = statement.executeQuery(queryAllAlbumsSQL);) {
+			ResultSet rs = statement.executeQuery(queryAllAlbumsSQL);) {
 
 			while(rs.next()) {
 				albumList.add(rs.getString(1));
