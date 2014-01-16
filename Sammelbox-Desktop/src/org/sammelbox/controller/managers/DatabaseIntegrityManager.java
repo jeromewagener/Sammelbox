@@ -47,8 +47,16 @@ public final class DatabaseIntegrityManager {
 	/** The maximum amount of autosaves that can be stored until the existing autosaves are overwritten */
 	private static final int AUTO_SAVE_LIMIT = 5;
 	/** The last change time in milliseconds */
-	private static long lastChangeTimeStampInMS = -1;
-	
+	private static long lastChangeTimeStampInMillis = -1;
+	private static final String SAVEPOINT = "SAVEPOINT";
+	private static final String ROLLBACK_TO = "ROLLBACK TO";
+	private static final String BACKUP_TO = "BACKUP_TO";
+	private static final String RESTORE_FROM = "RESTORE FROM"; 
+	private static final String REGEX_BEGIN_OF_LINE = "^";
+	private static final String REGEX_END_OF_LINE = "$";
+	private static final String REGEX_OR = "|";
+	private static final String LOCK_FILE_REGEX = REGEX_BEGIN_OF_LINE + "\\.lock" + REGEX_END_OF_LINE;	
+	private static final String DATABASE_FILE_REGEX = REGEX_BEGIN_OF_LINE + FileSystemLocations.DATABASE_NAME + REGEX_END_OF_LINE;
 	private DatabaseIntegrityManager() {
 		// not needed
 	}
@@ -63,7 +71,7 @@ public final class DatabaseIntegrityManager {
 		String savepointName = UUID.randomUUID().toString();
 	
 		try (PreparedStatement createSavepointStatement = ConnectionManager.getConnection().prepareStatement(
-				"SAVEPOINT " + DatabaseStringUtilities.encloseNameWithQuotes(savepointName));) {			
+				SAVEPOINT + DatabaseStringUtilities.encloseNameWithQuotes(savepointName));) {			
 			createSavepointStatement.execute();
 			return savepointName;
 		} catch (SQLException e) {
@@ -110,7 +118,7 @@ public final class DatabaseIntegrityManager {
 		}	
 	
 		try (PreparedStatement rollbackToSavepointStatement = ConnectionManager.getConnection().prepareStatement(
-				"ROLLBACK TO SAVEPOINT " + DatabaseStringUtilities.encloseNameWithQuotes(savepointName))){
+				ROLLBACK_TO + SAVEPOINT + DatabaseStringUtilities.encloseNameWithQuotes(savepointName))){
 			rollbackToSavepointStatement.execute();
 		} catch (SQLException sqlEx) {
 			LOGGER.error("Rolling back the savepoint {} failed", savepointName);
@@ -135,7 +143,7 @@ public final class DatabaseIntegrityManager {
 		File tempAppDataDir = new File(tempDir.getPath());
 		File sourceAppDataDir = new File(FileSystemLocations.getActiveHomeDir());
 		try {
-			String excludeRegex = "^\\.lock$|^" + FileSystemLocations.DATABASE_NAME + "$"; 
+			String excludeRegex = LOCK_FILE_REGEX + REGEX_OR + DATABASE_FILE_REGEX; 
 			FileSystemAccessWrapper.copyDirectory(sourceAppDataDir, tempAppDataDir, excludeRegex);
 		} catch (IOException e) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE,e);
@@ -143,7 +151,7 @@ public final class DatabaseIntegrityManager {
 	
 		// backup database to file
 		try (Statement statement = ConnectionManager.getConnection().createStatement()){				
-			statement.executeUpdate("backup to '" + tempDir.getPath() + File.separatorChar + FileSystemLocations.DATABASE_TO_RESTORE_NAME + "'");
+			statement.executeUpdate(BACKUP_TO  + "'" + tempDir.getPath() + File.separatorChar + FileSystemLocations.DATABASE_TO_RESTORE_NAME + "'");
 		} catch (SQLException e) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE,e);
 		}
@@ -165,11 +173,11 @@ public final class DatabaseIntegrityManager {
 		FileSystemAccessWrapper.unzipFileToFolder(filePath, FileSystemLocations.getActiveHomeDir());
 	
 		try (Statement statement = ConnectionManager.getConnection().createStatement()) {			
-			statement.executeUpdate("restore from '" + FileSystemLocations.getDatabaseRestoreFile() + "'");
+			statement.executeUpdate(RESTORE_FROM + " '" + FileSystemLocations.getDatabaseRestoreFile() + "'");
 			try {
-				DatabaseIntegrityManager.lastChangeTimeStampInMS = DatabaseIntegrityManager.extractTimeStamp(new File(filePath));
+				DatabaseIntegrityManager.lastChangeTimeStampInMillis = DatabaseIntegrityManager.extractTimeStamp(new File(filePath));
 			} catch (DatabaseWrapperOperationException e) {
-				DatabaseIntegrityManager.lastChangeTimeStampInMS = System.currentTimeMillis();
+				DatabaseIntegrityManager.lastChangeTimeStampInMillis = System.currentTimeMillis();
 			}
 		} catch (SQLException e) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE,e);
@@ -196,11 +204,11 @@ public final class DatabaseIntegrityManager {
 	 * @return The time in milliseconds when the last change to the database occured. -1 If not initialized.
 	 */
 	public static long getLastDatabaseChangeTimeStamp() {
-		return DatabaseIntegrityManager.lastChangeTimeStampInMS;
+		return DatabaseIntegrityManager.lastChangeTimeStampInMillis;
 	}
 	
 	public static void updateLastDatabaseChangeTimeStamp() {
-		DatabaseIntegrityManager.lastChangeTimeStampInMS = System.currentTimeMillis();
+		DatabaseIntegrityManager.lastChangeTimeStampInMillis = System.currentTimeMillis();
 	}
 	
 	/**

@@ -47,11 +47,13 @@ public final class ComponentFactory {
 	
 	private static final int DEFAULT_SEPARATOR_HEIGHT_IN_PIXELS = 10;
 	private static final int DEFAULT_HEADER_HEIGHT_IN_PIXELS = 35;
+	private static final int DEFAULT_HEADER_COLUMN_COUNT = 4;
 	
 	public static final int FONT_SIZE_OF_H1_LABEL = 16;
 	public static final int FONT_SIZE_OF_H2_LABEL = 14;
 	public static final int FONT_SIZE_OF_H3_LABEL = 12;
 	public static final int FONT_SIZE_OF_H4_LABEL = 10;
+	
 
 	private ComponentFactory() {
 		// not needed
@@ -214,11 +216,11 @@ public final class ComponentFactory {
 	public static Composite getPanelHeaderComposite(final Composite panelComposite, String headerLabelString, String saveButtonTooltip) {
 		Composite headerComposite = new Composite(panelComposite, SWT.NONE);
 		
-		int numberOfCellsNeeded = 4;
+		int numberOfColumnsNeeded = DEFAULT_HEADER_COLUMN_COUNT;
 		if (saveButtonTooltip != null) {
-			numberOfCellsNeeded += 1;
+			numberOfColumnsNeeded += 1;
 		}
-		headerComposite.setLayout(new GridLayout(numberOfCellsNeeded, false));
+		headerComposite.setLayout(new GridLayout(numberOfColumnsNeeded, false));
 		
 		GridData headerGridData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		

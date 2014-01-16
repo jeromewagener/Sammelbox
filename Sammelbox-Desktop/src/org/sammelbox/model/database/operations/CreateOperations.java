@@ -88,6 +88,7 @@ public final class CreateOperations {
 		List<MetaItemField> columns =  new ArrayList<MetaItemField>(fields);
 		// TODO comment. Whats up with this temporary table?
 		boolean temporary = (columns == null);
+		String sqlTableName = tableName;
 
 		if (temporary) {
 			// Retrieve the typeInfo of the old Album before creating a new temp table
@@ -96,7 +97,7 @@ public final class CreateOperations {
 			columns.remove(new MetaItemField("id", FieldType.ID));
 			// Remove the type info  field from the old table
 			columns.remove(new MetaItemField(DatabaseConstants.TYPE_INFO_COLUMN_NAME, FieldType.ID));
-			tableName = DatabaseStringUtilities.encloseNameWithQuotes(DatabaseStringUtilities.generateTempTableName(albumName));
+			sqlTableName = DatabaseStringUtilities.encloseNameWithQuotes(DatabaseStringUtilities.generateTempTableName(albumName));
 			
 			typeInfoTableName = DatabaseStringUtilities.encloseNameWithQuotes(
 					DatabaseStringUtilities.generateTypeInfoTableName(albumName));
@@ -119,7 +120,7 @@ public final class CreateOperations {
 		sb.append(createTempTableSQL);
 		
 		sb.append(" TABLE ");
-		sb.append(tableName);
+		sb.append(sqlTableName);
 		sb.append(" ( id INTEGER PRIMARY KEY");
 
 
