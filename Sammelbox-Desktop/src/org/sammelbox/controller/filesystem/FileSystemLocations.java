@@ -24,6 +24,7 @@ public final class FileSystemLocations {
 	public static final String DATABASE_NAME					= "sammelbox.db";
 	public static final String DATABASE_TO_RESTORE_NAME			= "sammelbox.restore.db";
 	public static final String THUMBNAILS_DIR_NAME				= "thumbnails";
+	public static final String APP_DATA_DIR_NAME				= "app-data";
 	
 	public static final String TEMP_DIR 						= System.getProperty("java.io.tmpdir") + File.separatorChar;
 	public static final String USER_HOME 						= System.getProperty("user.home");
@@ -42,8 +43,8 @@ public final class FileSystemLocations {
 	}
 	
 	public static String getActiveHomeDir() 		{ return activeHomeDir; }
-	public static String getAppDataDir() 			{ return activeHomeDir + File.separatorChar + "app-data"; }
-	public static String getAppDataGraphicsDir()    { return activeHomeDir + File.separatorChar + "app-data" + File.separatorChar + "graphics"; }
+	public static String getAppDataDir() 			{ return activeHomeDir + File.separatorChar + APP_DATA_DIR_NAME; }
+	public static String getAppDataGraphicsDir()    { return activeHomeDir + File.separatorChar + APP_DATA_DIR_NAME + File.separatorChar + "graphics"; }
 	public static String getThumbnailsDir() 		{ return activeHomeDir + File.separatorChar + THUMBNAILS_DIR_NAME; }
 	public static String getBackupDir() 			{ return activeHomeDir + File.separatorChar + "backups"; }
 	public static String getAlbumPicturesDir()		{ return activeHomeDir + File.separatorChar + "album-pictures"; }

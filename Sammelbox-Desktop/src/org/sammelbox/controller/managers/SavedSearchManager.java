@@ -47,20 +47,20 @@ public final class SavedSearchManager {
 	
 	/** Initializes saved searches without notifying any attached observers */
 	public static void initialize() {
-		SavedSearchManager.loadViews();
+		SavedSearchManager.loadSavedSearches();
 	}
 	
 	/** Returns the complete list of saved searches names for all available albums */
 	public static List<String> getSavedSearchesNames() {
-		List<String> allViewNames = new LinkedList<String>();
+		List<String> allSavedSearchesNames = new LinkedList<String>();
 		
 		for (String albumName : albumNamesToSavedSearches.keySet()) {
-			for (SavedSearch albumView : albumNamesToSavedSearches.get(albumName)) {
-				allViewNames.add(albumView.name);
+			for (SavedSearch savedSearch : albumNamesToSavedSearches.get(albumName)) {
+				allSavedSearchesNames.add(savedSearch.name);
 			}
 		}
 		
-		return allViewNames;
+		return allSavedSearchesNames;
 	}
 	
 	/** Returns the list of saved searches for a specific album */
@@ -75,15 +75,15 @@ public final class SavedSearchManager {
 	}
 	
 	public static String[] getSavedSearchesNamesArray(String albumName) {
-		List<SavedSearch> albumViews = getSavedSearches(albumName);
+		List<SavedSearch> savedSearches = getSavedSearches(albumName);
 		
-		String[] albumViewNames = new String[albumViews.size()];
+		String[] savedSearchesNames = new String[savedSearches.size()];
 		
-		for (int i=0; i<albumViews.size(); i++) {
-			albumViewNames[i] = albumViews.get(i).getName();
+		for (int i=0; i<savedSearches.size(); i++) {
+			savedSearchesNames[i] = savedSearches.get(i).getName();
 		}
 		
-		return albumViewNames;
+		return savedSearchesNames;
 	}
 	
 	public static void addSavedSearch(String name, String album, List<QueryComponent> queryComponents, boolean connectByAnd) {
@@ -93,24 +93,24 @@ public final class SavedSearchManager {
 	public static void addSavedSearch(String name, String album, String orderByField, boolean orderAscending, 
 			List<QueryComponent> queryComponents, boolean connectByAnd) {
 		if (albumNamesToSavedSearches.get(album) == null) {
-			List<SavedSearch> albumViews = new LinkedList<>();
-			albumViews.add(new SavedSearch(name, album, orderByField, orderAscending, queryComponents, connectByAnd));
-			albumNamesToSavedSearches.put(album, albumViews);
+			List<SavedSearch> savedSearches = new LinkedList<>();
+			savedSearches.add(new SavedSearch(name, album, orderByField, orderAscending, queryComponents, connectByAnd));
+			albumNamesToSavedSearches.put(album, savedSearches);
 		} else {
-			List<SavedSearch> albumViews = albumNamesToSavedSearches.get(album);
-			albumViews.add(new SavedSearch(name, album, orderByField, orderAscending, queryComponents, connectByAnd));
-			albumNamesToSavedSearches.put(album, albumViews);
+			List<SavedSearch> savedSearches = albumNamesToSavedSearches.get(album);
+			savedSearches.add(new SavedSearch(name, album, orderByField, orderAscending, queryComponents, connectByAnd));
+			albumNamesToSavedSearches.put(album, savedSearches);
 		}
 		
 		storeSavedSearchesAndAddListUpdatedEvent();
 	}
 	
-	public static void removeSavedSearch(String albumName, String viewName) {
-		List<SavedSearch> albumViews = albumNamesToSavedSearches.get(albumName);
+	public static void removeSavedSearch(String albumName, String savedSearchName) {
+		List<SavedSearch> savedSearches = albumNamesToSavedSearches.get(albumName);
 		
-		for (SavedSearch albumView : albumViews) {
-			if (albumView.getName().equals(viewName)) {
-				albumViews.remove(albumView);
+		for (SavedSearch savedSearch : savedSearches) {
+			if (savedSearch.getName().equals(savedSearchName)) {
+				savedSearches.remove(savedSearch);
 				break;
 			}
 		}
@@ -118,15 +118,15 @@ public final class SavedSearchManager {
 		storeSavedSearchesAndAddListUpdatedEvent();
 	}
 	
-	public static boolean isNameAlreadyUsed(String albumName, String viewName) {
-		List<SavedSearch> albumViews = albumNamesToSavedSearches.get(albumName);
+	public static boolean isNameAlreadyUsed(String albumName, String savedSearchName) {
+		List<SavedSearch> savedSearches = albumNamesToSavedSearches.get(albumName);
 		
-		if (albumViews == null) {
+		if (savedSearches == null) {
 			return false;
 		}
 		
-		for (SavedSearch albumView : albumViews) {
-			if (albumView.name.equals(viewName)) {
+		for (SavedSearch savedSearch : savedSearches) {
+			if (savedSearch.name.equals(savedSearchName)) {
 				return true;
 			}
 		}
@@ -134,11 +134,11 @@ public final class SavedSearchManager {
 		return false;
 	}
 	
-	private static void storeViews() {
+	private static void storeSavedSearches() {
 		XmlStorageWrapper.storeSavedSearches(albumNamesToSavedSearches);
 	}
 	
-	private static void loadViews() {
+	private static void loadSavedSearches() {
 		albumNamesToSavedSearches = XmlStorageWrapper.retrieveSavedSearches();
 		
 		for (String albumName : albumNamesToSavedSearches.keySet()) {
@@ -151,7 +151,7 @@ public final class SavedSearchManager {
 			}
 		}
 		
-		SavedSearchManager.storeViews();
+		SavedSearchManager.storeSavedSearches();
 	}
 	
 	public static class SavedSearch {
@@ -271,11 +271,11 @@ public final class SavedSearchManager {
 	}
 	
 	public static boolean hasAlbumSavedSearches(String albumName) {
-		List<SavedSearch> albumViews = albumNamesToSavedSearches.get(albumName);
+		List<SavedSearch> savedSearches = albumNamesToSavedSearches.get(albumName);
 		
-		if (albumViews != null) {
-			for (SavedSearch albumView : albumViews) {
-				if (albumView.getAlbum().equals(albumName)) {
+		if (savedSearches != null) {
+			for (SavedSearch savedSearch : savedSearches) {
+				if (savedSearch.getAlbum().equals(albumName)) {
 					return true;
 				}
 			}
@@ -285,47 +285,47 @@ public final class SavedSearchManager {
 	}
 
 	public static void moveToFront(String albumName, int selectionIndex) {
-		List<SavedSearch> albumViews = albumNamesToSavedSearches.get(albumName);
+		List<SavedSearch> savedSearches = albumNamesToSavedSearches.get(albumName);
 		
-		SavedSearch tmp = ((LinkedList<SavedSearch>) albumViews).get(selectionIndex);
-		((LinkedList<SavedSearch>) albumViews).remove(selectionIndex);
-		((LinkedList<SavedSearch>) albumViews).addFirst(tmp);
+		SavedSearch tmp = ((LinkedList<SavedSearch>) savedSearches).get(selectionIndex);
+		((LinkedList<SavedSearch>) savedSearches).remove(selectionIndex);
+		((LinkedList<SavedSearch>) savedSearches).addFirst(tmp);
 		
 		storeSavedSearchesAndAddListUpdatedEvent();
 	}
 
 	public static void moveOneUp(String albumName, int selectionIndex) {
-		List<SavedSearch> albumViews = albumNamesToSavedSearches.get(albumName);
+		List<SavedSearch> savedSearches = albumNamesToSavedSearches.get(albumName);
 		
 		if (selectionIndex-1 >= 0) {
-			SavedSearch tmp = ((LinkedList<SavedSearch>) albumViews).get(selectionIndex-1);
+			SavedSearch tmp = ((LinkedList<SavedSearch>) savedSearches).get(selectionIndex-1);
 			
-			((LinkedList<SavedSearch>) albumViews).set(selectionIndex-1, ((LinkedList<SavedSearch>) albumViews).get(selectionIndex));
-			((LinkedList<SavedSearch>) albumViews).set(selectionIndex, tmp);
+			((LinkedList<SavedSearch>) savedSearches).set(selectionIndex-1, ((LinkedList<SavedSearch>) savedSearches).get(selectionIndex));
+			((LinkedList<SavedSearch>) savedSearches).set(selectionIndex, tmp);
 			
 			storeSavedSearchesAndAddListUpdatedEvent();
 		}
 	}
 
 	public static void moveOneDown(String albumName, int selectionIndex) {
-		List<SavedSearch> albumViews = albumNamesToSavedSearches.get(albumName);
+		List<SavedSearch> savedSearches = albumNamesToSavedSearches.get(albumName);
 		
-		if (selectionIndex+1 <= albumViews.size()-1) {
-			SavedSearch tmp = ((LinkedList<SavedSearch>) albumViews).get(selectionIndex+1);
+		if (selectionIndex+1 <= savedSearches.size()-1) {
+			SavedSearch tmp = ((LinkedList<SavedSearch>) savedSearches).get(selectionIndex+1);
 			
-			((LinkedList<SavedSearch>) albumViews).set(selectionIndex+1, ((LinkedList<SavedSearch>) albumViews).get(selectionIndex));
-			((LinkedList<SavedSearch>) albumViews).set(selectionIndex, tmp);
+			((LinkedList<SavedSearch>) savedSearches).set(selectionIndex+1, ((LinkedList<SavedSearch>) savedSearches).get(selectionIndex));
+			((LinkedList<SavedSearch>) savedSearches).set(selectionIndex, tmp);
 			
 			storeSavedSearchesAndAddListUpdatedEvent();
 		}
 	}
 
 	public static void moveToBottom(String albumName, int selectionIndex) {
-		List<SavedSearch> albumViews = albumNamesToSavedSearches.get(albumName);
+		List<SavedSearch> savedSearches = albumNamesToSavedSearches.get(albumName);
 		
-		SavedSearch tmp = ((LinkedList<SavedSearch>) albumViews).get(selectionIndex);
-		((LinkedList<SavedSearch>) albumViews).remove(selectionIndex);
-		((LinkedList<SavedSearch>) albumViews).addLast(tmp);
+		SavedSearch tmp = ((LinkedList<SavedSearch>) savedSearches).get(selectionIndex);
+		((LinkedList<SavedSearch>) savedSearches).remove(selectionIndex);
+		((LinkedList<SavedSearch>) savedSearches).addLast(tmp);
 		
 		storeSavedSearchesAndAddListUpdatedEvent();
 	}
@@ -337,8 +337,8 @@ public final class SavedSearchManager {
 	}
 	
 	private static void storeSavedSearchesAndAddListUpdatedEvent() {
-		storeViews();
-		EventObservable.addEventToQueue(SammelboxEvent.ALBUM_VIEW_LIST_UPDATED);
+		storeSavedSearches();
+		EventObservable.addEventToQueue(SammelboxEvent.SAVED_SEARCHES_LIST_UPDATED);
 	}
 
 	public static void updateAlbumNameIfNecessary(String oldAlbumName, String newAlbumName) {
@@ -348,7 +348,7 @@ public final class SavedSearchManager {
 			savedSearch.album = newAlbumName;			
 		}
 		
-		storeViews();
+		storeSavedSearches();
 		initialize();
 	}
 }

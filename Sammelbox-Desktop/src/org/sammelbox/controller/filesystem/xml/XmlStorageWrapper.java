@@ -122,14 +122,14 @@ public final class XmlStorageWrapper {
 	}
 	
 	public static void storeWelcomePageManagerInformation(
-			Map<String, Integer> albumAndViewsToClicks,
+			Map<String, Integer> albumAndSavedSearchesToClicks,
 			Map<String, Long> albumToLastModified) {
 		
 		StringBuilder xmlOutput = new StringBuilder();
 		
 		xmlOutput.append("<welcomePageInformation>\n");
 		
-		for (Map.Entry<String, Integer> mapEntry : albumAndViewsToClicks.entrySet()) {
+		for (Map.Entry<String, Integer> mapEntry : albumAndSavedSearchesToClicks.entrySet()) {
 			xmlOutput.append("\t<albumAndViewsToClicks>\n");
 			xmlOutput.append("\t\t<name><![CDATA[" + mapEntry.getKey() + "]]></name>\n");
 			xmlOutput.append("\t\t<clicks><![CDATA[" + mapEntry.getValue() + "]]></clicks>\n");
@@ -211,12 +211,12 @@ public final class XmlStorageWrapper {
 			if (!root.getNodeName().equals("albums")) {
 				throw new XmlParsingException("Invalid Album File");
 			} else {
-				NodeList viewNodes = document.getElementsByTagName("album");
+				NodeList albumNodes = document.getElementsByTagName("album");
 				
 				String name = "";
 				
-				for (int i = 0; i < viewNodes.getLength(); i++) {
-					Node node = viewNodes.item(i);
+				for (int i = 0; i < albumNodes.getLength(); i++) {
+					Node node = albumNodes.item(i);
 
 					if (node.getNodeType() == Node.ELEMENT_NODE) {
 						Element element = (Element) node;
@@ -255,15 +255,15 @@ public final class XmlStorageWrapper {
 			if (!root.getNodeName().equals("savedSearches")) {
 				throw new XmlParsingException("Invalid Saved Searches File");
 			} else {
-				NodeList viewNodes = document.getElementsByTagName("savedSearch");
+				NodeList savedSearchesNodes = document.getElementsByTagName("savedSearch");
 				
 				String name = "";
 				String album = "";
 				String orderByField = "";
 				String orderAscending = "";
 				
-				for (int i = 0; i < viewNodes.getLength(); i++) {
-					Node node = viewNodes.item(i);
+				for (int i = 0; i < savedSearchesNodes.getLength(); i++) {
+					Node node = savedSearchesNodes.item(i);
 
 					if (node.getNodeType() == Node.ELEMENT_NODE) {
 						Element element = (Element) node;
@@ -289,13 +289,13 @@ public final class XmlStorageWrapper {
 						}
 						
 						if (albumNamesToSavedSearches.get(album) == null) {
-							List<SavedSearch> albumViews = new LinkedList<>();
-							albumViews.add(new SavedSearch(name, album, orderByField, Boolean.valueOf(orderAscending), queryComponents, Boolean.valueOf(connectedByAnd)));
-							albumNamesToSavedSearches.put(album, albumViews);
+							List<SavedSearch> savedSearches = new LinkedList<>();
+							savedSearches.add(new SavedSearch(name, album, orderByField, Boolean.valueOf(orderAscending), queryComponents, Boolean.valueOf(connectedByAnd)));
+							albumNamesToSavedSearches.put(album, savedSearches);
 						} else {
-							List<SavedSearch> albumViews = albumNamesToSavedSearches.get(album);
-							albumViews.add(new SavedSearch(name, album, orderByField, Boolean.valueOf(orderAscending), queryComponents, Boolean.valueOf(connectedByAnd)));
-							albumNamesToSavedSearches.put(album, albumViews);
+							List<SavedSearch> savedSearches = albumNamesToSavedSearches.get(album);
+							savedSearches.add(new SavedSearch(name, album, orderByField, Boolean.valueOf(orderAscending), queryComponents, Boolean.valueOf(connectedByAnd)));
+							albumNamesToSavedSearches.put(album, savedSearches);
 						}
 					}
 				}
@@ -328,13 +328,13 @@ public final class XmlStorageWrapper {
 			if (!root.getNodeName().equals("welcomePageInformation")) {
 				throw new XmlParsingException("Invalid Welcome Page File");
 			} else {
-				NodeList viewNodes = document.getElementsByTagName("albumToLastModified");
+				NodeList albumToLastModifiedNodes = document.getElementsByTagName("albumToLastModified");
 				
 				String name = "";
 				Long lastModified = 0L;
 
-				for (int i = 0; i < viewNodes.getLength(); i++) {
-					Node node = viewNodes.item(i);
+				for (int i = 0; i < albumToLastModifiedNodes.getLength(); i++) {
+					Node node = albumToLastModifiedNodes.item(i);
 
 					if (node.getNodeType() == Node.ELEMENT_NODE) {
 						Element element = (Element) node;
@@ -353,13 +353,13 @@ public final class XmlStorageWrapper {
 		return albumToLastModified;
 	}
 
-	public static Map<String, Integer> retrieveAlbumAndViewsToClicks() {
+	public static Map<String, Integer> retrieveAlbumAndSavedSearchesToClicks() {
 		String welcomePageInformationXml = FileSystemAccessWrapper.readFileAsString(FileSystemLocations.getWelcomeXML());
 		
-		Map<String, Integer> albumAndViewsToClicks = new HashMap<String, Integer>();
+		Map<String, Integer> albumAndSavedSearchesToClicks = new HashMap<String, Integer>();
 		
 		if (welcomePageInformationXml.isEmpty()) {
-			return albumAndViewsToClicks;
+			return albumAndSavedSearchesToClicks;
 		}
 		
 		try {
@@ -374,13 +374,13 @@ public final class XmlStorageWrapper {
 			if (!root.getNodeName().equals("welcomePageInformation")) {
 				throw new XmlParsingException("Invalid Welcome Page File");
 			} else {
-				NodeList viewNodes = document.getElementsByTagName("albumAndViewsToClicks");
+				NodeList albumAndSavedSearchesToClicksNodes = document.getElementsByTagName("albumAndViewsToClicks");
 				
 				String name = "";
 				Integer clicks = 0;
 
-				for (int i = 0; i < viewNodes.getLength(); i++) {
-					Node node = viewNodes.item(i);
+				for (int i = 0; i < albumAndSavedSearchesToClicksNodes.getLength(); i++) {
+					Node node = albumAndSavedSearchesToClicksNodes.item(i);
 
 					if (node.getNodeType() == Node.ELEMENT_NODE) {
 						Element element = (Element) node;
@@ -388,7 +388,7 @@ public final class XmlStorageWrapper {
 						name = getValue("name", element);
 						clicks = Integer.parseInt(getValue("clicks", element));
 						
-						albumAndViewsToClicks.put(name, clicks);
+						albumAndSavedSearchesToClicks.put(name, clicks);
 					}
 				}
 			}
@@ -396,6 +396,6 @@ public final class XmlStorageWrapper {
 			LOGGER.error("An error occured while parsing the welcome page XML file");
 		}
 		
-		return albumAndViewsToClicks;
+		return albumAndSavedSearchesToClicks;
 	}
 }

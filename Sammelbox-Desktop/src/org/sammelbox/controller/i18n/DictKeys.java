@@ -107,12 +107,13 @@ public final class DictKeys {
 	public static final String DIALOG_CONTENT_ALBUM_CREATE_ERROR = "collector.dialog.content.ALBUM_CREATE_ERROR";
 	public static final String DIALOG_TITLE_ALBUM_NAME_INVALID = "collector.dialog.title.ALBUM_NAME_INVALID";
 	public static final String DIALOG_CONTENT_ALBUM_NAME_INVALID = "collector.dialog.content.ALBUM_NAME_INVALID";
-	public static final String DIALOG_TITLE_VIEW_NAME_ALREADY_USED = "collector.dialog.title.VIEW_NAME_ALREADY_USED";
-	public static final String DIALOG_CONTENT_VIEW_NAME_ALREADY_USED = "collector.dialog.content.VIEW_NAME_ALREADY_USED";
-	public static final String DIALOG_TITLE_ENTER_VIEW_NAME = "collector.dialog.title.ENTER_VIEW_NAME";
-	public static final String DIALOG_CONTENT_ENTER_VIEW_NAME = "collector.dialog.content.ENTER_VIEW_NAME";
-	public static final String DIALOG_TEXTBOX_ENTER_VIEW_NAME = "collector.dialog.textbox.ENTER_VIEW_NAME";
-	public static final String DIALOG_BUTTON_ENTER_VIEW_NAME = "collector.dialog.button.ENTER_VIEW_NAME";
+	// TODO replace view name in translation files
+	public static final String DIALOG_TITLE_SAVED_SEARCH_NAME_ALREADY_USED = "collector.dialog.title.VIEW_NAME_ALREADY_USED"; 
+	public static final String DIALOG_CONTENT_SAVED_SEARCH_NAME_ALREADY_USED = "collector.dialog.content.VIEW_NAME_ALREADY_USED";
+	public static final String DIALOG_TITLE_ENTER_SAVED_SEARCH_NAME = "collector.dialog.title.ENTER_VIEW_NAME";
+	public static final String DIALOG_CONTENT_ENTER_SAVED_SEARCH_NAME = "collector.dialog.content.ENTER_VIEW_NAME";
+	public static final String DIALOG_TEXTBOX_ENTER_SAVED_SEARCH_NAME = "collector.dialog.textbox.ENTER_VIEW_NAME";
+	public static final String DIALOG_BUTTON_ENTER_SAVED_SEARCH_NAME = "collector.dialog.button.ENTER_VIEW_NAME";
 	public static final String DIALOG_TITLE_SELECT_QUERY_COMPONENTS = "collector.dialog.title.SELECT_QUERY_COMPONENTS";
 	public static final String DIALOG_CONTENT_SELECT_QUERY_COMPONENTS = "collector.dialog.content.SELECT_QUERY_COMPONENTS";
 	public static final String DIALOG_TITLE_DELETE_SAVED_SEARCH = "collector.dialog.title.DELETE_SAVED_SEARCH";

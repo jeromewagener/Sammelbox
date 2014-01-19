@@ -85,6 +85,10 @@ public class SyncServerServiceImpl implements SyncServerService {
 			FileSystemAccessWrapper.copyDirectory(
 					new File(FileSystemLocations.getThumbnailsDir()), 
 					new File(SYNC_DIRECTORY_PATH + FileSystemLocations.THUMBNAILS_DIR_NAME));
+			
+			FileSystemAccessWrapper.copyDirectory(
+					new File(FileSystemLocations.getAppDataDir()), 
+					new File(SYNC_DIRECTORY_PATH + FileSystemLocations.APP_DATA_DIR_NAME));
 
 			FileSystemAccessWrapper.zipFolderToFile(syncFolder.getAbsolutePath(), SYNC_ZIP_ARCHIVE_PATH);
 		} catch (IOException ioe) {

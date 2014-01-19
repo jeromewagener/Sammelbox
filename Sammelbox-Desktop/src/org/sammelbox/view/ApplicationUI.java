@@ -425,7 +425,7 @@ public final class ApplicationUI implements EventObserver {
 	/** After adding/removing albums, this method should be used to refresh the album list with the current album names thus leaving no album selected.*/
 	public static void refreshAlbumList() {
 		EventObservable.addEventToQueue(SammelboxEvent.ALBUM_LIST_UPDATED);
-		EventObservable.addEventToQueue(SammelboxEvent.ALBUM_VIEW_LIST_UPDATED);
+		EventObservable.addEventToQueue(SammelboxEvent.SAVED_SEARCHES_LIST_UPDATED);
 		ApplicationUI.getQuickSearchTextField().setEnabled(false);
 	}
 
@@ -495,7 +495,7 @@ public final class ApplicationUI implements EventObserver {
 			BrowserFacade.resetFutureJumpAnchor();
 		} else if (event.equals(SammelboxEvent.SAVED_SEARCH_SELECTED)) {
 			BrowserFacade.resetFutureJumpAnchor();
-		} else if (event.equals(SammelboxEvent.ALBUM_VIEW_LIST_UPDATED)) {
+		} else if (event.equals(SammelboxEvent.SAVED_SEARCHES_LIST_UPDATED)) {
 			viewList.removeAll();
 
 			for (SavedSearch albumView : SavedSearchManager.getSavedSearches(GuiController.getGuiState().getSelectedAlbum())) {

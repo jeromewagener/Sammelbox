@@ -335,18 +335,18 @@ public final class AdvancedSearchSidepane {
 
 				TextInputDialog textInputDialog = new TextInputDialog(parentComposite.getShell());
 				String savedSearchName = textInputDialog.open(
-						Translator.get(DictKeys.DIALOG_TITLE_ENTER_VIEW_NAME), 
-						Translator.get(DictKeys.DIALOG_CONTENT_ENTER_VIEW_NAME), 
-						Translator.get(DictKeys.DIALOG_TEXTBOX_ENTER_VIEW_NAME),
-						Translator.get(DictKeys.DIALOG_BUTTON_ENTER_VIEW_NAME));
+						Translator.get(DictKeys.DIALOG_TITLE_ENTER_SAVED_SEARCH_NAME), 
+						Translator.get(DictKeys.DIALOG_CONTENT_ENTER_SAVED_SEARCH_NAME), 
+						Translator.get(DictKeys.DIALOG_TEXTBOX_ENTER_SAVED_SEARCH_NAME),
+						Translator.get(DictKeys.DIALOG_BUTTON_ENTER_SAVED_SEARCH_NAME));
 
 				if (savedSearchName != null && !SavedSearchManager.isNameAlreadyUsed(album, savedSearchName)) {
 					SavedSearchManager.addSavedSearch(
 							savedSearchName, ApplicationUI.getSelectedAlbum(), fieldToSortCombo.getText(), sortAscendingButton.getSelection(), queryComponents, connectByAnd);
 				} else {
 					ComponentFactory.getMessageBox(
-							Translator.get(DictKeys.DIALOG_TITLE_VIEW_NAME_ALREADY_USED), 
-							Translator.get(DictKeys.DIALOG_CONTENT_VIEW_NAME_ALREADY_USED), 
+							Translator.get(DictKeys.DIALOG_TITLE_SAVED_SEARCH_NAME_ALREADY_USED), 
+							Translator.get(DictKeys.DIALOG_CONTENT_SAVED_SEARCH_NAME_ALREADY_USED), 
 							SWT.ICON_INFORMATION).open();
 				}
 			}

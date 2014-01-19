@@ -47,7 +47,7 @@ public final class WelcomePageManager {
 	}
 	
 	public static void initializeFromWelcomeFile() {
-		albumAndViewsToClicks = XmlStorageWrapper.retrieveAlbumAndViewsToClicks();
+		albumAndViewsToClicks = XmlStorageWrapper.retrieveAlbumAndSavedSearchesToClicks();
 		albumToLastModified = XmlStorageWrapper.retrieveAlbumToLastModified();
 	}
 
