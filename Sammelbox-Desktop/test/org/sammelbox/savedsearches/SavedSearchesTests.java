@@ -16,10 +16,12 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ** ----------------------------------------------------------------- */
 
-package org.sammelbox.albumviews;
+package org.sammelbox.savedsearches;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+
+import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.List;
@@ -29,16 +31,19 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.sammelbox.TestExecuter;
-import org.sammelbox.controller.managers.AlbumViewManager;
 import org.sammelbox.controller.managers.ConnectionManager;
 import org.sammelbox.controller.managers.DatabaseIntegrityManager;
-import org.sammelbox.controller.managers.AlbumViewManager.AlbumView;
+import org.sammelbox.controller.managers.SavedSearchManager;
+import org.sammelbox.controller.managers.SavedSearchManager.SavedSearch;
 import org.sammelbox.model.album.AlbumItemResultSet;
 import org.sammelbox.model.album.AlbumItemStore;
+import org.sammelbox.model.database.QueryBuilderException;
+import org.sammelbox.model.database.QueryComponent;
+import org.sammelbox.model.database.QueryOperator;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 import org.sammelbox.view.ApplicationUI;
 
-public class GeneralAlbumViewTests {
+public class SavedSearchesTests {
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 	}
@@ -53,7 +58,7 @@ public class GeneralAlbumViewTests {
 		TestExecuter.resetTestHome();
 		
 		// Although the list is wrongly assigned to the shell itself, this allows to test the view behavior
-		ApplicationUI.setViewList(new List(ApplicationUI.getShell(), SWT.SINGLE | SWT.BORDER | SWT.V_SCROLL));
+		ApplicationUI.setSavedSearchesList(new List(ApplicationUI.getShell(), SWT.SINGLE | SWT.BORDER | SWT.V_SCROLL));
 	}
 
 	@After
@@ -62,26 +67,28 @@ public class GeneralAlbumViewTests {
 	}
 
 	@Test
-	public void addAnotherViewToDVDs() {
+	public void addAnotherSavedSearchToDVDs() {
 		try {
 			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
 			
-			AlbumViewManager.initialize();
+			SavedSearchManager.initialize();
 			
-			assertTrue("The first view should be: My favorite DVDs", 
-					AlbumViewManager.getAlbumViews("DVDs").get(0).getName().equals("My favorite DVDs"));
-			assertTrue("The second view should be: Unwatched", 
-					AlbumViewManager.getAlbumViews("DVDs").get(1).getName().equals("Unwatched"));
+			assertTrue("The first saved search should be: My favorite DVDs", 
+					SavedSearchManager.getSavedSearches("DVDs").get(0).getName().equals("My favorite DVDs"));
+			assertTrue("The second saved search should be: Unwatched", 
+					SavedSearchManager.getSavedSearches("DVDs").get(1).getName().equals("Unwatched"));
 			
-			AlbumViewManager.addAlbumView("Before 2000", "DVDs", "SELECT * FROM DVDs WHERE [Year] <= 2000");
+			java.util.List<QueryComponent> queryComponents = new ArrayList<QueryComponent>();
+			queryComponents.add(new QueryComponent("Year", QueryOperator.SMALLER_OR_EQUAL, "2000"));
+			
+			SavedSearchManager.addSavedSearch("Before 2000", "DVDs", queryComponents, true);
 			
 			assertTrue("After adding another view, there should be 3 views in total for the DVD album", 
-					AlbumViewManager.getAlbumViews("DVDs").size() == 3);
+					SavedSearchManager.getSavedSearches("DVDs").size() == 3);
 			
-			for (AlbumView albumView : AlbumViewManager.getAlbumViews("DVDs")) {
-				if (albumView.getName().equals("Before 2000")) {
-					AlbumItemStore.reinitializeStore(new AlbumItemResultSet(
-							ConnectionManager.getConnection(), albumView.getSqlQuery()));
+			for (SavedSearch savedSearch : SavedSearchManager.getSavedSearches("DVDs")) {
+				if (savedSearch.getName().equals("Before 2000")) {
+					AlbumItemStore.reinitializeStore(new AlbumItemResultSet(ConnectionManager.getConnection(), savedSearch.getSQLQueryString()));
 					
 					assertTrue("There should be 5 movies from before the year 2000 (or equal)", 
 							AlbumItemStore.getAllAlbumItems().size() == 5);
@@ -89,42 +96,42 @@ public class GeneralAlbumViewTests {
 			}
 			
 			assertTrue("Since views are immediately saved, a reinitialization should still yield the three views", 
-					AlbumViewManager.getAlbumViews("DVDs").size() == 3);
+					SavedSearchManager.getSavedSearches("DVDs").size() == 3);
 			
 			assertTrue("The first view should be: My favorite DVDs", 
-					AlbumViewManager.getAlbumViews("DVDs").get(0).getName().equals("My favorite DVDs"));
+					SavedSearchManager.getSavedSearches("DVDs").get(0).getName().equals("My favorite DVDs"));
 			assertTrue("The second view should be: Unwatched", 
-					AlbumViewManager.getAlbumViews("DVDs").get(1).getName().equals("Unwatched"));
+					SavedSearchManager.getSavedSearches("DVDs").get(1).getName().equals("Unwatched"));
 			assertTrue("The third view should be: Before 2000", 
-					AlbumViewManager.getAlbumViews("DVDs").get(2).getName().equals("Before 2000"));
+					SavedSearchManager.getSavedSearches("DVDs").get(2).getName().equals("Before 2000"));
 			
-		} catch (DatabaseWrapperOperationException ex) {
+		} catch (DatabaseWrapperOperationException | QueryBuilderException ex) {
 			fail(ex.getMessage());
 		}
 	}
 	
 	@Test
-	public void testRemoveView() {
+	public void testRemoveSavedSearch() {
 		try {
 			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
 			
-			AlbumViewManager.initialize();
+			SavedSearchManager.initialize();
 			
 			assertTrue("The first view should be: My favorite DVDs", 
-					AlbumViewManager.getAlbumViews("DVDs").get(0).getName().equals("My favorite DVDs"));
+					SavedSearchManager.getSavedSearches("DVDs").get(0).getName().equals("My favorite DVDs"));
 			assertTrue("The second view should be: Unwatched", 
-					AlbumViewManager.getAlbumViews("DVDs").get(1).getName().equals("Unwatched"));
+					SavedSearchManager.getSavedSearches("DVDs").get(1).getName().equals("Unwatched"));
 
 
-			AlbumViewManager.removeAlbumView("DVDs", "My favorite DVDs");
+			SavedSearchManager.removeSavedSearch("DVDs", "My favorite DVDs");
 			
 			assertTrue("The first view should be: Unwatched", 
-					AlbumViewManager.getAlbumViews("DVDs").get(0).getName().equals("Unwatched"));
+					SavedSearchManager.getSavedSearches("DVDs").get(0).getName().equals("Unwatched"));
 			
-			AlbumViewManager.initialize();
+			SavedSearchManager.initialize();
 			
 			assertTrue("The first view should be: Unwatched", 
-					AlbumViewManager.getAlbumViews("DVDs").get(0).getName().equals("Unwatched"));
+					SavedSearchManager.getSavedSearches("DVDs").get(0).getName().equals("Unwatched"));
 			
 		} catch (DatabaseWrapperOperationException ex) {
 			fail(ex.getMessage());
@@ -132,19 +139,19 @@ public class GeneralAlbumViewTests {
 	}
 	
 	@Test
-	public void testRemoveAllViewFromDVDs() {
+	public void testRemoveAllSavedSearchesFromDVDs() {
 		try {
 			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
 			
-			AlbumViewManager.initialize();
+			SavedSearchManager.initialize();
 						
 			assertTrue("There should be two views for the DVD album", 
-					AlbumViewManager.getAlbumViews("DVDs").size() == 2);
+					SavedSearchManager.getSavedSearches("DVDs").size() == 2);
 			
-			AlbumViewManager.removeAlbumViewsFromAlbum("DVDs");
+			SavedSearchManager.removeSavedSearchesFromAlbum("DVDs");
 			
 			assertTrue("There should no longer be views for the DVD album", 
-					AlbumViewManager.getAlbumViews("DVDs").isEmpty());
+					SavedSearchManager.getSavedSearches("DVDs").isEmpty());
 			
 		} catch (DatabaseWrapperOperationException ex) {
 			fail(ex.getMessage());

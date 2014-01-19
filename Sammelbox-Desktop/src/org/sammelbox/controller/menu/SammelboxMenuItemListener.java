@@ -9,7 +9,7 @@ import org.sammelbox.controller.filesystem.exporting.CSVExporter;
 import org.sammelbox.controller.filesystem.exporting.HTMLExporter;
 import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
-import org.sammelbox.controller.managers.AlbumViewManager;
+import org.sammelbox.controller.managers.SavedSearchManager;
 import org.sammelbox.controller.managers.DatabaseIntegrityManager;
 import org.sammelbox.model.album.AlbumItemStore;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
@@ -138,7 +138,7 @@ public final class SammelboxMenuItemListener {
 				if (path != null) {
 					try {
 						DatabaseIntegrityManager.restoreFromFile(path);
-						AlbumViewManager.initialize();
+						SavedSearchManager.initialize();
 					} catch (DatabaseWrapperOperationException ex) {
 						LOGGER.error("An error occured while trying to restore albums from a backup file", ex);
 					}

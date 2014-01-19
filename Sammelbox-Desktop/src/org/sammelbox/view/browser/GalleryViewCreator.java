@@ -82,7 +82,7 @@ public final class GalleryViewCreator {
 		// Build header using album name. Include view name if appropriated
 		String collectionHeader = GuiController.getGuiState().getSelectedAlbum();
 		if (GuiController.getGuiState().isViewSelected()) {
-			collectionHeader += " - " + GuiController.getGuiState().getSelectedView();
+			collectionHeader += " - " + GuiController.getGuiState().getSelectedSavedSearch();
 		}
 		
 		String finalPageAsHtml = "<!DOCTYPE html>\n" +

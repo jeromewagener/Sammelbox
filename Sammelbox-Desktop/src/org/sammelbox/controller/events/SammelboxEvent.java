@@ -20,7 +20,7 @@ package org.sammelbox.controller.events;
 
 public enum SammelboxEvent {
 	ALBUM_SELECTED,
-	ALBUM_VIEW_SELECTED,
+	SAVED_SEARCH_SELECTED,
 	ALBUM_LIST_UPDATED,
 	ALBUM_VIEW_LIST_UPDATED,
 	TOOLBAR_BUTTON_PRESSED,

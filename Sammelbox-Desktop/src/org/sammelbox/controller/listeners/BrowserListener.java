@@ -36,7 +36,7 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.sammelbox.controller.GuiController;
 import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
-import org.sammelbox.controller.managers.AlbumViewManager;
+import org.sammelbox.controller.managers.SavedSearchManager;
 import org.sammelbox.model.album.AlbumItem;
 import org.sammelbox.model.album.FieldType;
 import org.sammelbox.model.album.ItemField;
@@ -185,8 +185,8 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 			if (!GuiController.getGuiState().isViewSelected()) {
 				BrowserFacade.performBrowserQueryAndShow(QueryBuilder.createSelectStarQuery(GuiController.getGuiState().getSelectedAlbum()));
 			} else {
-				BrowserFacade.performBrowserQueryAndShow(AlbumViewManager.getSqlQueryByViewName(
-						GuiController.getGuiState().getSelectedAlbum(), GuiController.getGuiState().getSelectedView()));
+				BrowserFacade.performBrowserQueryAndShow(SavedSearchManager.getSqlQueryBySavedSearchName(
+						GuiController.getGuiState().getSelectedAlbum(), GuiController.getGuiState().getSelectedSavedSearch()));
 			}
 			
 			BrowserFacade.setFutureJumpAnchor(BrowserFacade.getAnchorForAlbumItemId(Long.parseLong(albumItemId)));

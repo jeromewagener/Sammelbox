@@ -20,6 +20,7 @@ package org.sammelbox.controller.filesystem.xml;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -33,8 +34,10 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.sammelbox.controller.filesystem.FileSystemAccessWrapper;
 import org.sammelbox.controller.filesystem.FileSystemLocations;
 import org.sammelbox.controller.i18n.Language;
-import org.sammelbox.controller.managers.AlbumViewManager.AlbumView;
+import org.sammelbox.controller.managers.SavedSearchManager.SavedSearch;
 import org.sammelbox.controller.settings.SettingsManager;
+import org.sammelbox.model.database.QueryComponent;
+import org.sammelbox.model.database.QueryOperator;
 import org.sammelbox.model.settings.ApplicationSettings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,24 +90,35 @@ public final class XmlStorageWrapper {
 		FileSystemAccessWrapper.writeToFile(xmlOutput.toString(), FileSystemLocations.getAlbumsXML());
 	}
 	
-	public static void storeViews(Map<String, List<AlbumView>> albumNamesToAlbumViews) {
+	public static void storeSavedSearches(Map<String, List<SavedSearch>> albumNamesToSavedSearches) {
 		StringBuilder xmlOutput = new StringBuilder();
 		
-		xmlOutput.append("<views>\n");
+		xmlOutput.append("<savedSearches>\n");
 		
-		for (Map.Entry<String, List<AlbumView>> mapEntry : albumNamesToAlbumViews.entrySet()) {
-			for (AlbumView albumView : mapEntry.getValue()) {
-				xmlOutput.append("\t<view>\n");
-				xmlOutput.append("\t\t<name><![CDATA[" + albumView.getName() + "]]></name>\n");
-				xmlOutput.append("\t\t<album><![CDATA[" + albumView.getAlbum() + "]]></album>\n");
-				xmlOutput.append("\t\t<sqlQuery><![CDATA[" + albumView.getSqlQuery() + "]]></sqlQuery>\n");
-				xmlOutput.append("\t</view>\n");
+		for (Map.Entry<String, List<SavedSearch>> mapEntry : albumNamesToSavedSearches.entrySet()) {
+			for (SavedSearch savedSearch : mapEntry.getValue()) {
+				xmlOutput.append("\t<savedSearch>\n");
+				xmlOutput.append("\t\t<name><![CDATA[" + savedSearch.getName() + "]]></name>\n");
+				xmlOutput.append("\t\t<album><![CDATA[" + savedSearch.getAlbum() + "]]></album>\n");
+				xmlOutput.append("\t\t<orderByField><![CDATA[" + savedSearch.getOrderByField() + "]]></orderByField>\n");
+				xmlOutput.append("\t\t<isOrderAscending><![CDATA[" + savedSearch.isOrderAscending() + "]]></isOrderAscending>\n");
+				
+				for (QueryComponent queryComponent : savedSearch.getQueryComponents()) {
+					xmlOutput.append("\t\t<queryComponent>\n");
+					xmlOutput.append("\t\t\t<fieldName><![CDATA[" + queryComponent.getFieldName() + "]]></fieldName>\n");
+					xmlOutput.append("\t\t\t<operator><![CDATA[" + queryComponent.getOperator() + "]]></operator>\n");
+					xmlOutput.append("\t\t\t<value><![CDATA[" + queryComponent.getValue() + "]]></value>\n");
+					xmlOutput.append("\t\t</queryComponent>\n");
+				}
+				
+				xmlOutput.append("\t\t<isConnectedByAnd><![CDATA[" + savedSearch.isConnectedByAnd() + "]]></isConnectedByAnd>\n");
+				xmlOutput.append("\t</savedSearch>\n");
 			}
 		}
 		
-		xmlOutput.append("</views>\n");
+		xmlOutput.append("</savedSearches>\n");
 		
-		FileSystemAccessWrapper.writeToFile(xmlOutput.toString(), FileSystemLocations.getViewsXML());
+		FileSystemAccessWrapper.writeToFile(xmlOutput.toString(), FileSystemLocations.getSavedSearchesXML());
 	}
 	
 	public static void storeWelcomePageManagerInformation(
@@ -220,32 +234,33 @@ public final class XmlStorageWrapper {
 		return albumToPosition;
 	}
 	
-	public static Map<String, List<AlbumView>> retrieveViews() {
-		String albumViewsAsXml = FileSystemAccessWrapper.readFileAsString(FileSystemLocations.getViewsXML());
+	public static Map<String, List<SavedSearch>> retrieveSavedSearches() {
+		String savedSearchesXml = FileSystemAccessWrapper.readFileAsString(FileSystemLocations.getSavedSearchesXML());
 		
-		Map<String, List<AlbumView>> albumNamesToAlbumViews = new HashMap<String, List<AlbumView>>();
+		Map<String, List<SavedSearch>> albumNamesToSavedSearches = new HashMap<String, List<SavedSearch>>();
 		
-		if (albumViewsAsXml.isEmpty()) {
-			return albumNamesToAlbumViews;
+		if (savedSearchesXml.isEmpty()) {
+			return albumNamesToSavedSearches;
 		}
 		
 		try {
 			DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
 			InputSource inputSource = new InputSource();
-			inputSource.setCharacterStream(new StringReader(albumViewsAsXml));
+			inputSource.setCharacterStream(new StringReader(savedSearchesXml));
 
 			Document document = documentBuilder.parse(inputSource);
 			Node root = document.getFirstChild();
 
-			if (!root.getNodeName().equals("views")) {
-				throw new XmlParsingException("Invalid Album View File");
+			if (!root.getNodeName().equals("savedSearches")) {
+				throw new XmlParsingException("Invalid Saved Searches File");
 			} else {
-				NodeList viewNodes = document.getElementsByTagName("view");
+				NodeList viewNodes = document.getElementsByTagName("savedSearch");
 				
 				String name = "";
 				String album = "";
-				String sqlQuery = "";
+				String orderByField = "";
+				String orderAscending = "";
 				
 				for (int i = 0; i < viewNodes.getLength(); i++) {
 					Node node = viewNodes.item(i);
@@ -255,25 +270,41 @@ public final class XmlStorageWrapper {
 						
 						name = getValue("name", element);
 						album = getValue("album", element);
-						sqlQuery = getValue("sqlQuery", element);
+						orderByField = getValue("orderByField", element);
+						orderAscending = getValue("isOrderAscending", element);
+						List<QueryComponent> queryComponents = new ArrayList<QueryComponent>();
+						String connectedByAnd = getValue("isConnectedByAnd", element);
 						
-						if (albumNamesToAlbumViews.get(album) == null) {
-							List<AlbumView> albumViews = new LinkedList<>();
-							albumViews.add(new AlbumView(name, album, sqlQuery));
-							albumNamesToAlbumViews.put(album, albumViews);
+						NodeList queryComponentNodes = element.getElementsByTagName("queryComponent");
+						for (int j=0; j<queryComponentNodes.getLength(); j++) {
+							if (node.getNodeType() == Node.ELEMENT_NODE) {
+								Element queryComponentElement = (Element) queryComponentNodes.item(j);
+								
+								String fieldName = getValue("fieldName", queryComponentElement);
+								String operator = getValue("operator", queryComponentElement);
+								String value = getValue("value", queryComponentElement);
+								
+								queryComponents.add(new QueryComponent(fieldName, QueryOperator.valueOf(operator), value));
+							}
+						}
+						
+						if (albumNamesToSavedSearches.get(album) == null) {
+							List<SavedSearch> albumViews = new LinkedList<>();
+							albumViews.add(new SavedSearch(name, album, orderByField, Boolean.valueOf(orderAscending), queryComponents, Boolean.valueOf(connectedByAnd)));
+							albumNamesToSavedSearches.put(album, albumViews);
 						} else {
-							List<AlbumView> albumViews = albumNamesToAlbumViews.get(album);
-							albumViews.add(new AlbumView(name, album, sqlQuery));
-							albumNamesToAlbumViews.put(album, albumViews);
+							List<SavedSearch> albumViews = albumNamesToSavedSearches.get(album);
+							albumViews.add(new SavedSearch(name, album, orderByField, Boolean.valueOf(orderAscending), queryComponents, Boolean.valueOf(connectedByAnd)));
+							albumNamesToSavedSearches.put(album, albumViews);
 						}
 					}
 				}
 			}
 		} catch (ParserConfigurationException | IOException | SAXException | XmlParsingException ex) {
-			LOGGER.error("An error occured while parsing the album views XML file");
+			LOGGER.error("An error occured while parsing the saved search XML file");
 		}
 		
-		return albumNamesToAlbumViews;
+		return albumNamesToSavedSearches;
 	}
 
 	public static Map<String, Long> retrieveAlbumToLastModified() {

@@ -21,6 +21,7 @@ package org.sammelbox.model.database;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.sammelbox.controller.i18n.DictKeys;
@@ -57,6 +58,18 @@ public final class QueryBuilder {
         SEARCH_TO_SQL_OPERATORS = Collections.unmodifiableMap(mySearchToSQLOperators);
     }
 	
+    public static String getHumanReadableQueryOperator(QueryOperator queryOperator) {
+    	for (Map.Entry<String, String> searchToSqlOperator : SEARCH_TO_SQL_OPERATORS.entrySet()) {
+    		if (searchToSqlOperator.getValue().equals(queryOperator.toSqlOperator())) {
+    			return searchToSqlOperator.getKey();
+    		}
+    	}
+    	
+    	LOGGER.error("Could not find a translation for " + queryOperator);
+    	
+    	return "ERROR";
+    }
+    
     public static QueryOperator getQueryOperator(String searchOperator) {
     	return QueryOperator.valueOfSQL(SEARCH_TO_SQL_OPERATORS.get(searchOperator));
     }
@@ -124,9 +137,10 @@ public final class QueryBuilder {
 	 * @param connectByAnd a boolean specifying whether the query components are connected by AND (connectedByAnd == true) 
 	 * 						or by OR (connectedByAnd == false). 
 	 * @param album the name of the album which should be queried. 
-	 * @return a valid SQL query as a string. By default a 'SELECT *' is performed on the field/column names. */
-	public static String buildQuery(ArrayList<QueryComponent> queryComponents, boolean connectByAnd, String album) {
-		return buildQuery(queryComponents, connectByAnd, album, null, false);
+	 * @return a valid SQL query as a string. By default a 'SELECT *' is performed on the field/column names. 
+	 * @throws QueryBuilderException */
+	public static String buildQuery(List<QueryComponent> queryComponents, boolean connectByAnd, String albumName) throws QueryBuilderException {
+		return buildQuery(queryComponents, connectByAnd, albumName, null, false);
 	}
 	
 	/** This method builds a SQL query string out of multiple query components 
@@ -136,8 +150,9 @@ public final class QueryBuilder {
 	 * @param albumName the name of the album which should be queried.
 	 * @param sortField the field upon which the results should be sorted. Can be null or empty if not needed
 	 * @param sortAscending only if a sortField is specified. In this case, true means that the results are sorted ascending, false means descending
-	 * @return a valid SQL query as a string. By default a 'SELECT *' is performed on the field/column names. */
-	public static String buildQuery(ArrayList<QueryComponent> queryComponents, boolean connectByAnd, String albumName, String sortField, boolean sortAscending) {
+	 * @return a valid SQL query as a string. By default a 'SELECT *' is performed on the field/column names. 
+	 * @throws QueryBuilderException */
+	public static String buildQuery(List<QueryComponent> queryComponents, boolean connectByAnd, String albumName, String sortField, boolean sortAscending) throws QueryBuilderException {
 		StringBuilder query = new StringBuilder();
 		query.append("SELECT * FROM " + DatabaseStringUtilities.encloseNameWithQuotes(DatabaseStringUtilities.generateTableName(albumName)));
 		
@@ -153,6 +168,11 @@ public final class QueryBuilder {
 		}
 			
 		for (int i=0; i<queryComponents.size(); i++) {	
+			if (fieldNameToFieldTypeMap.get(queryComponents.get(i).getFieldName()) == null) {
+				throw new QueryBuilderException(Translator.toBeTranslated(
+						"The following field seems to cause problems: " + queryComponents.get(i).getFieldName() + " " +
+						"Is this a renamed or deleted field? If yes, please adapt the search using the edit functionality."));
+			}
 			
 			if (fieldNameToFieldTypeMap.get(queryComponents.get(i).getFieldName()).equals(FieldType.OPTION) ||
 					fieldNameToFieldTypeMap.get(queryComponents.get(i).getFieldName()).equals(FieldType.URL) ||
@@ -202,8 +222,9 @@ public final class QueryBuilder {
 	 * @param queryComponents a list of query components
 	 * @param connectByAnd a boolean specifying whether the query components are connected by AND (connectedByAnd == true) 
 	 * 						or by OR (connectedByAnd == false) 
-	 * @param album the name of the album which should be queried */
-	public static void buildQueryAndExecute(ArrayList<QueryComponent> queryComponents, boolean connectByAnd, String album) {
+	 * @param album the name of the album which should be queried 
+	 * @throws QueryBuilderException */
+	public static void buildQueryAndExecute(ArrayList<QueryComponent> queryComponents, boolean connectByAnd, String album) throws QueryBuilderException {
 		String query = buildQuery(queryComponents, connectByAnd, album, null, false);		
 		BrowserFacade.performBrowserQueryAndShow(query);
 	}
@@ -215,20 +236,11 @@ public final class QueryBuilder {
 	 * 						or by OR (connectedByAnd == false) 
 	 * @param sortField the field upon which the results should be sorted. Can be null or empty if not needed
 	 * @param sortAscending only if a sortField is specified. In this case, true means that the results are sorted ascending, false means descending
-	 * @param album the name of the album which should be queried */
-	public static void buildQueryAndExecute(ArrayList<QueryComponent> queryComponents, boolean connectByAnd, String album, String sortField, boolean sortAscending) {
+	 * @param album the name of the album which should be queried 
+	 * @throws QueryBuilderException */
+	public static void buildQueryAndExecute(ArrayList<QueryComponent> queryComponents, boolean connectByAnd, String album, String sortField, boolean sortAscending) throws QueryBuilderException {
 		String query = buildQuery(queryComponents, connectByAnd, album, sortField, sortAscending);
 		BrowserFacade.performBrowserQueryAndShow(query);
-	}
-	
-	/** This method builds a SQL query out of multiple query components and returns the resulting query string.
-	 * @param queryComponents a list of query components
-	 * @param connectByAnd a boolean specifying whether the query components are connected by AND (connectedByAnd == true) 
-	 * 						or by OR (connectedByAnd == false) 
-	 * @param album the name of the album which should be queried 
-	 * @return a valid SQL query as a string. By default a 'SELECT *' is performed on the field/column names */
-	public static String buildQueryString(ArrayList<QueryComponent> queryComponents, boolean connectByAnd, String album) {
-		return buildQuery(queryComponents, connectByAnd, album, null, false);
 	}
 	
 	/**

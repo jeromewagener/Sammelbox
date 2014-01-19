@@ -7,7 +7,7 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.sammelbox.controller.GuiController;
 import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
-import org.sammelbox.controller.managers.AlbumViewManager;
+import org.sammelbox.controller.managers.SavedSearchManager;
 import org.sammelbox.model.GuiState;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 import org.sammelbox.model.database.operations.DatabaseOperations;
@@ -73,7 +73,7 @@ public final class AlbumMenuItemListener {
 					
 					if (messageBox.open() == SWT.YES) {
 						try {
-							AlbumViewManager.removeAlbumViewsFromAlbum(ApplicationUI.getSelectedAlbum());
+							SavedSearchManager.removeSavedSearchesFromAlbum(ApplicationUI.getSelectedAlbum());
 							DatabaseOperations.removeAlbumAndAlbumPictures(ApplicationUI.getSelectedAlbum());
 							BrowserFacade.showAlbumDeletedPage(ApplicationUI.getSelectedAlbum());
 							GuiController.getGuiState().setSelectedAlbum(GuiState.NO_ALBUM_SELECTED);

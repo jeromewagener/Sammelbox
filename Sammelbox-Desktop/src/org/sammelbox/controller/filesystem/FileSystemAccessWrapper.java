@@ -344,7 +344,7 @@ public final class FileSystemAccessWrapper {
 					File destFile = new File(folderLocation, entry.getName());
 					File destinationParent = destFile.getParentFile();
 
-					if (!destinationParent.mkdirs()) {
+					if (!destinationParent.exists() && !destinationParent.mkdirs()) {
 						LOGGER.error("Could not create destination parent");
 					}
 

@@ -16,7 +16,7 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ** ----------------------------------------------------------------- */
 
-package org.sammelbox.albumviews;
+package org.sammelbox.savedsearches;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -29,15 +29,16 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.sammelbox.TestExecuter;
-import org.sammelbox.controller.managers.AlbumViewManager;
 import org.sammelbox.controller.managers.ConnectionManager;
 import org.sammelbox.controller.managers.DatabaseIntegrityManager;
-import org.sammelbox.controller.managers.AlbumViewManager.AlbumView;
+import org.sammelbox.controller.managers.SavedSearchManager;
+import org.sammelbox.controller.managers.SavedSearchManager.SavedSearch;
 import org.sammelbox.model.album.AlbumItemResultSet;
 import org.sammelbox.model.album.AlbumItemStore;
+import org.sammelbox.model.database.QueryBuilderException;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 
-public class RunAlbumViewTests {
+public class RunSavedSearchesTests {
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 	}
@@ -59,57 +60,57 @@ public class RunAlbumViewTests {
 	}
 
 	@Test
-	public void testExistingViewsForBooks() {
+	public void testExistingSavedSearchesForBooks() {
 		try {
 			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
 			
-			AlbumViewManager.initialize();
+			SavedSearchManager.initialize();
 			
-			List<AlbumView> albumViews = AlbumViewManager.getAlbumViews("Books");
-			assertTrue("There should be one album view for the book album", albumViews.size() == 1);
+			List<SavedSearch> savedSearches = SavedSearchManager.getSavedSearches("Books");
+			assertTrue("There should be one saved search for the book album", savedSearches.size() == 1);
 			
-			if (albumViews.get(0).getName().equals("Programming Languages")) {
+			if (savedSearches.get(0).getName().equals("Programming Languages")) {
 				AlbumItemStore.reinitializeStore(new AlbumItemResultSet(
-						ConnectionManager.getConnection(), albumViews.get(0).getSqlQuery()));
+						ConnectionManager.getConnection(), savedSearches.get(0).getSQLQueryString()));
 				
 				assertTrue("There should be two books about programming languages", AlbumItemStore.getAllAlbumItems().size() == 2);
 			} else {
 				fail("The first view should be Programming Languages");
 			}
 			
-		} catch (DatabaseWrapperOperationException e) {
+		} catch (DatabaseWrapperOperationException | QueryBuilderException e) {
 			fail(e.getMessage());
 		}
 	}
 	
 	@Test
-	public void testExistingViewsForDVDs() {
+	public void testExistingSavedSearchesForDVDs() {
 		try {
 			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
 			
-			AlbumViewManager.initialize();
+			SavedSearchManager.initialize();
 			
-			List<AlbumView> albumViews = AlbumViewManager.getAlbumViews("DVDs");
+			List<SavedSearch> albumViews = SavedSearchManager.getSavedSearches("DVDs");
 			
-			assertTrue("There should be two album views for the dvd album", albumViews.size() == 2);
+			assertTrue("There should be two saved searches for the dvd album", albumViews.size() == 2);
 			
-			for (AlbumView albumView : albumViews) {
+			for (SavedSearch albumView : albumViews) {
 				if (albumView.getName().equals("Unwatched")) {
 					AlbumItemStore.reinitializeStore(new AlbumItemResultSet(
-							ConnectionManager.getConnection(), albumView.getSqlQuery()));
+							ConnectionManager.getConnection(), albumView.getSQLQueryString()));
 					
 					assertTrue("Both views should show three items", AlbumItemStore.getAllAlbumItems().size() == 3);
 				} else if (albumView.getName().equals("My favorite DVDs")) {
 					AlbumItemStore.reinitializeStore(new AlbumItemResultSet(
-							ConnectionManager.getConnection(), albumView.getSqlQuery()));
+							ConnectionManager.getConnection(), albumView.getSQLQueryString()));
 					
 					assertTrue("Both views should show three items", AlbumItemStore.getAllAlbumItems().size() == 3);
 				} else {
-					fail("There should be no ither album view than ");
+					fail("There should be no other saved searches than Unwatched and My favorite DVDs");
 				}
 			}
 			
-		} catch (DatabaseWrapperOperationException e) {
+		} catch (DatabaseWrapperOperationException | QueryBuilderException e) {
 			fail(e.getMessage());
 		}
 	}

@@ -43,6 +43,7 @@ import org.sammelbox.controller.MetaItemFieldFilter;
 import org.sammelbox.controller.filesystem.FileSystemAccessWrapper;
 import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
+import org.sammelbox.controller.managers.SavedSearchManager;
 import org.sammelbox.model.album.AlbumItemStore;
 import org.sammelbox.model.album.FieldType;
 import org.sammelbox.model.album.MetaItemField;
@@ -212,6 +213,8 @@ public final class AlterAlbumSidepane {
 					ApplicationUI.refreshAlbumList();
 					ApplicationUI.setSelectedAlbum(newAlbumName);
 
+					SavedSearchManager.updateAlbumNameIfNecessary(oldAlbumName, newAlbumName);
+					
 					BrowserFacade.addModificationToAlterationList(Translator.get(DictKeys.BROWSER_ALBUM_RENAMED, oldAlbumName, newAlbumName));
 					
 					AlterAlbumSidepane.updateAlterAlbumPage(yesButtonForIncludingImages, albumFieldNamesAndTypesTable);
@@ -303,9 +306,9 @@ public final class AlterAlbumSidepane {
 		});
 
 		new MenuItem(popupMenu, SWT.SEPARATOR);
-		MenuItem rename = new MenuItem(popupMenu, SWT.NONE);
-		rename.setText(Translator.get(DictKeys.DROPDOWN_RENAME));
-		rename.addSelectionListener(new SelectionAdapter() {
+		MenuItem renameAlbumField = new MenuItem(popupMenu, SWT.NONE);
+		renameAlbumField.setText(Translator.get(DictKeys.DROPDOWN_RENAME));
+		renameAlbumField.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				TableItem item = albumFieldNamesAndTypesTable.getItem(albumFieldNamesAndTypesTable.getSelectionIndex());
 
@@ -321,10 +324,16 @@ public final class AlterAlbumSidepane {
 
 					String albumName = albumNameText.getData().toString();
 					try {
-					    DatabaseOperations.renameAlbumItemField( albumName, oldMetaItemField, newMetaItemField);
+					    DatabaseOperations.renameAlbumItemField(albumName, oldMetaItemField, newMetaItemField);
 					    item.setText(1, newFieldName);
 						BrowserFacade.addModificationToAlterationList(Translator.get(DictKeys.BROWSER_ALBUMFIELD_RENAMED, oldMetaItemField.getName(), newMetaItemField.getName()));
 						AlterAlbumSidepane.updateAlterAlbumPage(yesButtonForIncludingImages, albumFieldNamesAndTypesTable);
+						
+						if (SavedSearchManager.hasAlbumSavedSearches(albumName)) {
+							ComponentFactory.getMessageBox(Translator.toBeTranslated("Warning!"),
+									Translator.toBeTranslated("Please note that saved searches that reference this field will no longer work. "
+										+ "You will need to adapt these searches accordingly."), SWT.ICON_INFORMATION).open();
+						}
 					} catch (DatabaseWrapperOperationException ex) {
 						LOGGER.error("An error occured while renaming the album field", ex);
 					}
@@ -350,6 +359,12 @@ public final class AlterAlbumSidepane {
 							DatabaseOperations.removeAlbumItemField(albumName, new MetaItemField(item.getText(1), FieldType.valueOfTranslatedFieldType(item.getText(2)), item.getChecked()));
 							BrowserFacade.addModificationToAlterationList(Translator.get(DictKeys.BROWSER_ALBUMFIELD_REMOVED, item.getText(1)));
 							AlterAlbumSidepane.updateAlterAlbumPage(yesButtonForIncludingImages, albumFieldNamesAndTypesTable);
+							
+							if (SavedSearchManager.hasAlbumSavedSearches(albumName)) {
+								ComponentFactory.getMessageBox(Translator.toBeTranslated("Warning!"),
+										Translator.toBeTranslated("Please note that saved searches that reference this field will no longer work. "
+											+ "You will need to adapt these searches accordingly."), SWT.ICON_INFORMATION).open();
+							}
 						} catch (DatabaseWrapperOperationException ex) {
 							LOGGER.error("An error occured while trying to delete an album item from the " + albumName + " album", ex);
 						}

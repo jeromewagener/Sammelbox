@@ -46,8 +46,8 @@ import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.controller.listeners.BrowserListener;
 import org.sammelbox.controller.managers.AlbumManager;
-import org.sammelbox.controller.managers.AlbumViewManager;
-import org.sammelbox.controller.managers.AlbumViewManager.AlbumView;
+import org.sammelbox.controller.managers.SavedSearchManager;
+import org.sammelbox.controller.managers.SavedSearchManager.SavedSearch;
 import org.sammelbox.controller.managers.DatabaseIntegrityManager;
 import org.sammelbox.controller.menu.MenuManager;
 import org.sammelbox.model.GuiState;
@@ -221,8 +221,8 @@ public final class ApplicationUI implements EventObserver {
 			albumList.add(albumName);
 		}
 		
-		// Create the album view manager
-		AlbumViewManager.initialize();
+		// Create the saved searches manager
+		SavedSearchManager.initialize();
 		
 		// SWT display management
 		shell.pack();
@@ -415,7 +415,7 @@ public final class ApplicationUI implements EventObserver {
 		
 		BrowserFacade.performBrowserQueryAndShow(QueryBuilder.createSelectStarQuery(albumName));
 		
-		ApplicationUI.getViewList().setEnabled(AlbumViewManager.hasAlbumViewsAttached(albumName));
+		ApplicationUI.getViewList().setEnabled(SavedSearchManager.hasAlbumSavedSearches(albumName));
 		EventObservable.addEventToQueue(SammelboxEvent.ALBUM_SELECTED);
 		toolbarComposite.enableAlbumButtons(albumName);
 		
@@ -437,7 +437,7 @@ public final class ApplicationUI implements EventObserver {
 
 	/** Sets the the list of views
 	 * @param albumList the list of albums */ 
-	public static void setViewList(List viewList) {
+	public static void setSavedSearchesList(List viewList) {
 		ApplicationUI.viewList = viewList;
 	}
 
@@ -491,14 +491,14 @@ public final class ApplicationUI implements EventObserver {
 				albumList.add(album);
 			}
 		} else if (event.equals(SammelboxEvent.ALBUM_SELECTED)) {			
-			viewList.setItems(AlbumViewManager.getAlbumViewNamesArray(GuiController.getGuiState().getSelectedAlbum()));
+			viewList.setItems(SavedSearchManager.getSavedSearchesNamesArray(GuiController.getGuiState().getSelectedAlbum()));
 			BrowserFacade.resetFutureJumpAnchor();
-		} else if (event.equals(SammelboxEvent.ALBUM_VIEW_SELECTED)) {
+		} else if (event.equals(SammelboxEvent.SAVED_SEARCH_SELECTED)) {
 			BrowserFacade.resetFutureJumpAnchor();
 		} else if (event.equals(SammelboxEvent.ALBUM_VIEW_LIST_UPDATED)) {
 			viewList.removeAll();
 
-			for (AlbumView albumView : AlbumViewManager.getAlbumViews(GuiController.getGuiState().getSelectedAlbum())) {
+			for (SavedSearch albumView : SavedSearchManager.getSavedSearches(GuiController.getGuiState().getSelectedAlbum())) {
 				viewList.add(albumView.getName());				
 			}
 			

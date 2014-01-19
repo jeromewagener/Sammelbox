@@ -74,14 +74,14 @@ public class GuiState {
 	}
 
 	public boolean isViewSelected() {
-		if (getSelectedView() != null && !getSelectedView().isEmpty() && !getSelectedView().equals(NO_VIEW_SELECTED)) {
+		if (getSelectedSavedSearch() != null && !getSelectedSavedSearch().isEmpty() && !getSelectedSavedSearch().equals(NO_VIEW_SELECTED)) {
 			return true;
 		}
 		
 		return false;
 	}
 	
-	public String getSelectedView() {
+	public String getSelectedSavedSearch() {
 		return selectedView;
 	}
 

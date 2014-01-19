@@ -32,14 +32,14 @@ import org.sammelbox.albumitems.AddAlbumItemTests;
 import org.sammelbox.albumitems.AlbumItemPictureTests;
 import org.sammelbox.albumitems.RemoveAlbumItemTests;
 import org.sammelbox.albumitems.UpdateAlbumItemTests;
-import org.sammelbox.albumviews.GeneralAlbumViewTests;
-import org.sammelbox.albumviews.ModifyAlbumViewTests;
-import org.sammelbox.albumviews.RunAlbumViewTests;
 import org.sammelbox.controller.filesystem.FileSystemAccessWrapper;
 import org.sammelbox.controller.filesystem.FileSystemLocations;
 import org.sammelbox.controller.managers.ConnectionManager;
 import org.sammelbox.exporting.ExportTests;
 import org.sammelbox.importing.CSVImportTests;
+import org.sammelbox.savedsearches.ModifySavedSearchesTests;
+import org.sammelbox.savedsearches.RunSavedSearchesTests;
+import org.sammelbox.savedsearches.SavedSearchesTests;
 import org.sammelbox.searching.AdvancedSearchTests;
 import org.sammelbox.searching.QuickSearchTests;
 import org.sammelbox.sidepanes.SidepaneCreationTests;
@@ -58,9 +58,9 @@ import org.sammelbox.sidepanes.SidepaneCreationTests;
 	UpdateAlbumItemTests.class,
 	AlbumItemPictureTests.class,
 	
-	GeneralAlbumViewTests.class,
-	ModifyAlbumViewTests.class,
-	RunAlbumViewTests.class,
+	SavedSearchesTests.class,
+	ModifySavedSearchesTests.class,
+	RunSavedSearchesTests.class,
 	
 	AdvancedSearchTests.class,
 	QuickSearchTests.class,
@@ -74,7 +74,7 @@ import org.sammelbox.sidepanes.SidepaneCreationTests;
 public class TestExecuter {
 	public static final String PATH_TO_TEST_CBK = 
 			System.getProperty("user.dir") + File.separatorChar + "test" +
-					File.separatorChar + "testdata" + File.separatorChar + "test-albums-version-3.3.cbk";
+					File.separatorChar + "testdata" + File.separatorChar + "test-albums-version-3.4.cbk";
 	
 	public static final String PATH_TO_TEST_PICTURE_1 = 
 			System.getProperty("user.dir") + File.separatorChar + "res" + 

@@ -62,7 +62,7 @@ public final class FileSystemLocations {
 	public static String getLogoPNG() 				{ return getAppDataDir() + File.separatorChar + "logo.png"; }
 	public static String getLogoSmallPNG() 			{ return getAppDataDir() + File.separatorChar + "logo-small.png"; }
 	public static String getWelcomeXML() 			{ return getAppDataDir() + File.separatorChar + "welcome.xml"; }
-	public static String getViewsXML() 				{ return getAppDataDir() + File.separatorChar + "views.xml"; }
+	public static String getSavedSearchesXML() 		{ return getAppDataDir() + File.separatorChar + "saved-searches.xml"; }
 	public static String getAlbumsXML() 			{ return getAppDataDir() + File.separatorChar + "albums.xml"; }
 	public static String getSettingsXML()			{ return getAppDataDir() + File.separatorChar + "settings.xml"; }
 	public static String getLockFile() 				{ return getAppDataDir() + File.separatorChar + ".lock"; }

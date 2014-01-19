@@ -61,7 +61,7 @@ public final class ConnectionManager {
 				// failures anyway and we have only a single connection so concurrency is not relevant either.		
 				ConnectionManager.connection.setAutoCommit(true);
 
-				LOGGER.info("Autocommit is on {}", connection.getAutoCommit());				
+				LOGGER.debug("Autocommit is on {}", connection.getAutoCommit());				
 			}
 			
 			// Create the album master table if it does not exist 

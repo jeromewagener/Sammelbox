@@ -46,6 +46,7 @@ import org.sammelbox.model.album.MetaItemField;
 import org.sammelbox.model.album.OptionType;
 import org.sammelbox.model.database.DatabaseStringUtilities;
 import org.sammelbox.model.database.QueryBuilder;
+import org.sammelbox.model.database.QueryBuilderException;
 import org.sammelbox.model.database.QueryComponent;
 import org.sammelbox.model.database.QueryOperator;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
@@ -139,7 +140,11 @@ public final class QueryOperations {
 				}
 			}// end of for - fields
 			if (queryFields != null && !queryFields.isEmpty()) {
-				query += QueryBuilder.buildQuery(queryFields, false, albumName);
+				try {
+					query += QueryBuilder.buildQuery(queryFields, false, albumName);
+				} catch (QueryBuilderException queryBuilderException) {
+					LOGGER.error("With a quick search query, we should never get this problem: ", queryBuilderException);
+				}
 			}
 
 		}// end of for - terms

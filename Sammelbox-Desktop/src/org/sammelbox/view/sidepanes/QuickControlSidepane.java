@@ -41,7 +41,8 @@ import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.controller.listeners.QuickSearchModifyListener;
 import org.sammelbox.controller.managers.AlbumManager;
-import org.sammelbox.controller.managers.AlbumViewManager;
+import org.sammelbox.controller.managers.SavedSearchManager;
+import org.sammelbox.controller.managers.SavedSearchManager.SavedSearch;
 import org.sammelbox.controller.managers.WelcomePageManager;
 import org.sammelbox.model.GuiState;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
@@ -120,13 +121,13 @@ public final class QuickControlSidepane {
 				selectAlbumLabel.getFont().getFontData()[0].getName(), ALBUM_LIST_LABEL_FONT_SIZE, SWT.BOLD));
 
 		// the list of albums (listener is added later)
-		final List viewList = new List(quickControlComposite, SWT.SINGLE | SWT.BORDER | SWT.V_SCROLL);
+		final List savedSearchesList = new List(quickControlComposite, SWT.SINGLE | SWT.BORDER | SWT.V_SCROLL);
 
 		GridData gridData2 = new GridData(GridData.FILL_BOTH);
 		gridData2.heightHint = SAVED_SEARCHES_HEIGHT;
 		gridData2.widthHint = SAVED_SEARCHES_WIDTH;
-		viewList.setLayoutData(gridData2);		
-		ApplicationUI.setViewList(viewList);
+		savedSearchesList.setLayoutData(gridData2);		
+		ApplicationUI.setSavedSearchesList(savedSearchesList);
 
 		albumList.addSelectionListener(new SelectionListener() {
 			@Override
@@ -225,7 +226,7 @@ public final class QuickControlSidepane {
 					if (messageBox.open() == SWT.YES) {
 						try {							
 							DatabaseOperations.removeAlbumAndAlbumPictures(ApplicationUI.getSelectedAlbum());
-							AlbumViewManager.removeAlbumViewsFromAlbum(ApplicationUI.getSelectedAlbum());
+							SavedSearchManager.removeSavedSearchesFromAlbum(ApplicationUI.getSelectedAlbum());
 							BrowserFacade.showAlbumDeletedPage(ApplicationUI.getSelectedAlbum());
 							GuiController.getGuiState().setSelectedAlbum(GuiState.NO_ALBUM_SELECTED);
 							ApplicationUI.refreshAlbumList();
@@ -261,131 +262,145 @@ public final class QuickControlSidepane {
 		
 		quickSearchText.setEnabled(false);
 		
-		viewList.addSelectionListener(new SelectionListener() {
+		savedSearchesList.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetDefaultSelected(SelectionEvent selectionEvent) {}
 
 			@Override
-			public void widgetSelected(SelectionEvent arg0) {															
-				if (viewList.getItemCount() == 0) {
+			public void widgetSelected(SelectionEvent selectionEvent) {															
+				if (savedSearchesList.getItemCount() == 0) {
 					return;
-				} else if (viewList.getSelectionIndex() < 0) {
-					viewList.select(0);					
+				} else if (savedSearchesList.getSelectionIndex() < 0) {
+					savedSearchesList.select(0);					
 				}
 				
-				String viewListItem = viewList.getItem(viewList.getSelectionIndex());
+				String savedSearchesListItem = savedSearchesList.getItem(savedSearchesList.getSelectionIndex());
 					
-				GuiController.getGuiState().setSelectedView(viewListItem);
-				EventObservable.addEventToQueue(SammelboxEvent.ALBUM_VIEW_SELECTED);
+				GuiController.getGuiState().setSelectedView(savedSearchesListItem);
+				EventObservable.addEventToQueue(SammelboxEvent.SAVED_SEARCH_SELECTED);
 				
-				BrowserFacade.performBrowserQueryAndShow(AlbumViewManager.getSqlQueryByViewName(
-						GuiController.getGuiState().getSelectedAlbum(), GuiController.getGuiState().getSelectedView()));
+				BrowserFacade.performBrowserQueryAndShow(SavedSearchManager.getSqlQueryBySavedSearchName(
+						GuiController.getGuiState().getSelectedAlbum(), GuiController.getGuiState().getSelectedSavedSearch()));
 
-				WelcomePageManager.increaseClickCountForAlbumOrView(viewList.getItem(viewList.getSelectionIndex()));
+				WelcomePageManager.increaseClickCountForAlbumOrView(savedSearchesList.getItem(savedSearchesList.getSelectionIndex()));
 							
 			}
 		});			
 
-		Menu popupMenuForViewsList = new Menu(viewList);
+		Menu popupMenuForSavedSearchList = new Menu(savedSearchesList);
 		
-		viewList.addListener(SWT.MenuDetect, new Listener() {
+		savedSearchesList.addListener(SWT.MenuDetect, new Listener() {
 
 			@Override
 			public void handleEvent(Event event) {
 				if (!GuiController.getGuiState().isAlbumSelected()) {
 					// A view has to have a parent album. Don't do anything if no album has been selected
 					event.doit = false;
-				} else if ((viewList.getItemCount() > 0) && (viewList.getSelectionIndex() < 0)) {
-					viewList.select(0);
+				} else if ((savedSearchesList.getItemCount() > 0) && (savedSearchesList.getSelectionIndex() < 0)) {
+					savedSearchesList.select(0);
 				}
 			}
 		});		
 
-		final MenuItem moveViewTop = new MenuItem(popupMenuForViewsList, SWT.NONE);
+		final MenuItem moveViewTop = new MenuItem(popupMenuForSavedSearchList, SWT.NONE);
 		moveViewTop.setText(Translator.get(DictKeys.DROPDOWN_MOVE_TO_TOP));
 		moveViewTop.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				if (viewList.getSelectionIndex() > 0) {
-					AlbumViewManager.moveToFront(
-							GuiController.getGuiState().getSelectedAlbum(), viewList.getSelectionIndex());
+				if (savedSearchesList.getSelectionIndex() > 0) {
+					SavedSearchManager.moveToFront(
+							GuiController.getGuiState().getSelectedAlbum(), savedSearchesList.getSelectionIndex());
 				}
 			}
 		});
 
-		final MenuItem moveViewOneUp = new MenuItem(popupMenuForViewsList, SWT.NONE);
+		final MenuItem moveViewOneUp = new MenuItem(popupMenuForSavedSearchList, SWT.NONE);
 		moveViewOneUp.setText(Translator.get(DictKeys.DROPDOWN_MOVE_ONE_UP));
 		moveViewOneUp.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				if (viewList.getSelectionIndex() > 0) {
-					AlbumViewManager.moveOneUp(
-							GuiController.getGuiState().getSelectedAlbum(), viewList.getSelectionIndex());
+				if (savedSearchesList.getSelectionIndex() > 0) {
+					SavedSearchManager.moveOneUp(
+							GuiController.getGuiState().getSelectedAlbum(), savedSearchesList.getSelectionIndex());
 				}
 			}
 		});
 
-		final MenuItem moveViewOneDown = new MenuItem(popupMenuForViewsList, SWT.NONE);
+		final MenuItem moveViewOneDown = new MenuItem(popupMenuForSavedSearchList, SWT.NONE);
 		moveViewOneDown.setText(Translator.get(DictKeys.DROPDOWN_MOVE_ONE_DOWN));
 		moveViewOneDown.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				if (viewList.getSelectionIndex() > 0) {
-					AlbumViewManager.moveOneDown(
-							GuiController.getGuiState().getSelectedAlbum(), viewList.getSelectionIndex());
+				if (savedSearchesList.getSelectionIndex() > 0) {
+					SavedSearchManager.moveOneDown(
+							GuiController.getGuiState().getSelectedAlbum(), savedSearchesList.getSelectionIndex());
 				}
 			}
 		});
 
-		final MenuItem moveViewBottom = new MenuItem(popupMenuForViewsList, SWT.NONE);
+		final MenuItem moveViewBottom = new MenuItem(popupMenuForSavedSearchList, SWT.NONE);
 		moveViewBottom.setText(Translator.get(DictKeys.DROPDOWN_MOVE_TO_BOTTOM));
 		moveViewBottom.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				if (viewList.getSelectionIndex() < viewList.getItemCount()-1) {
-					AlbumViewManager.moveToBottom(
-							GuiController.getGuiState().getSelectedAlbum(), viewList.getSelectionIndex());
+				if (savedSearchesList.getSelectionIndex() < savedSearchesList.getItemCount()-1) {
+					SavedSearchManager.moveToBottom(
+							GuiController.getGuiState().getSelectedAlbum(), savedSearchesList.getSelectionIndex());
 				}
 			}
 		});
 
-		final MenuItem viewListPopupMenuItemSeparator1 = new MenuItem(popupMenuForViewsList, SWT.SEPARATOR);
+		final MenuItem viewListPopupMenuItemSeparator1 = new MenuItem(popupMenuForSavedSearchList, SWT.SEPARATOR);
 
-		final MenuItem removeSavedSearch = new MenuItem(popupMenuForViewsList, SWT.NONE);
+		final MenuItem editSavedSearch = new MenuItem(popupMenuForSavedSearchList, SWT.NONE);
+		editSavedSearch.setText(Translator.toBeTranslated("Edit saved search"));
+		editSavedSearch.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if (savedSearchesList.getSelectionIndex() >= 0) {
+					SavedSearch savedSearch = SavedSearchManager.getSavedSearchByName(
+							GuiController.getGuiState().getSelectedAlbum(), GuiController.getGuiState().getSelectedSavedSearch());
+					
+					ApplicationUI.changeRightCompositeTo(PanelType.ADVANCED_SEARCH, 
+							AdvancedSearchSidepane.build(ApplicationUI.getThreePanelComposite(), ApplicationUI.getSelectedAlbum(), savedSearch));
+				}
+			}
+		});
+		
+		final MenuItem removeSavedSearch = new MenuItem(popupMenuForSavedSearchList, SWT.NONE);
 		removeSavedSearch.setText(Translator.get(DictKeys.DROPDOWN_REMOVE));
 		removeSavedSearch.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				if (viewList.getSelectionIndex() >= 0) {
+				if (savedSearchesList.getSelectionIndex() >= 0) {
 					MessageBox messageBox = ComponentFactory.getMessageBox(Translator.get(DictKeys.DIALOG_TITLE_DELETE_SAVED_SEARCH), 
-							Translator.get(DictKeys.DIALOG_CONTENT_DELETE_SAVED_SEARCH, viewList.getItem(viewList.getSelectionIndex())),
+							Translator.get(DictKeys.DIALOG_CONTENT_DELETE_SAVED_SEARCH, savedSearchesList.getItem(savedSearchesList.getSelectionIndex())),
 							SWT.ICON_WARNING | SWT.YES | SWT.NO);
 					
 					if (messageBox.open() == SWT.YES) {
-						AlbumViewManager.removeAlbumView(
-								GuiController.getGuiState().getSelectedAlbum(), viewList.getItem(viewList.getSelectionIndex()));
+						SavedSearchManager.removeSavedSearch(
+								GuiController.getGuiState().getSelectedAlbum(), savedSearchesList.getItem(savedSearchesList.getSelectionIndex()));
 					}
 				}
 			}
 		});	
 
-		final MenuItem viewListPopupMenuItemSeparator2 = new MenuItem(popupMenuForViewsList, SWT.SEPARATOR);
+		final MenuItem viewListPopupMenuItemSeparator2 = new MenuItem(popupMenuForSavedSearchList, SWT.SEPARATOR);
 
-		final MenuItem addSavedSearch = new MenuItem(popupMenuForViewsList, SWT.NONE);
+		final MenuItem addSavedSearch = new MenuItem(popupMenuForSavedSearchList, SWT.NONE);
 		addSavedSearch.setText(Translator.get(DictKeys.DROPDOWN_ADD_ANOTHER_SAVED_SEARCH));
 		addSavedSearch.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				if (viewList.getSelectionIndex() >= 0) {
+				if (savedSearchesList.getSelectionIndex() >= 0) {
 					ApplicationUI.changeRightCompositeTo(PanelType.ADVANCED_SEARCH, 
 							AdvancedSearchSidepane.build(ApplicationUI.getThreePanelComposite(), ApplicationUI.getSelectedAlbum()));
 				}
 			}
 		});		
 
-		viewList.setMenu(popupMenuForViewsList);
+		savedSearchesList.setMenu(popupMenuForSavedSearchList);
 		
-		popupMenuForViewsList.addListener(SWT.Show, new Listener() {
+		popupMenuForSavedSearchList.addListener(SWT.Show, new Listener() {
 
 			@Override
 			public void handleEvent(Event event) {			
 				boolean extraMenuItemsEnabled = true;
 				
-				if (viewList.getItemCount() == 0) {
+				if (savedSearchesList.getItemCount() == 0) {
 					extraMenuItemsEnabled = false;
 				}
 				

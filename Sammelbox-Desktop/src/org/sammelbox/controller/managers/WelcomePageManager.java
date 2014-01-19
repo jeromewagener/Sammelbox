@@ -75,7 +75,7 @@ public final class WelcomePageManager {
 		while (albumOrViewNameIterator.hasNext()) {
 			String albumOrViewName = albumOrViewNameIterator.next();
 			if (!AlbumManager.getAlbums().contains(albumOrViewName)
-					&& !AlbumViewManager.getAlbumViewNames().contains(albumOrViewName)) {
+					&& !SavedSearchManager.getSavedSearchesNames().contains(albumOrViewName)) {
 				albumOrViewNameIterator.remove();
 			}
 		}

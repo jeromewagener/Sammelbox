@@ -42,11 +42,13 @@ import org.eclipse.swt.widgets.Text;
 import org.sammelbox.controller.MetaItemFieldFilter;
 import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
-import org.sammelbox.controller.managers.AlbumViewManager;
+import org.sammelbox.controller.managers.SavedSearchManager;
+import org.sammelbox.controller.managers.SavedSearchManager.SavedSearch;
 import org.sammelbox.model.album.FieldType;
 import org.sammelbox.model.album.MetaItemField;
 import org.sammelbox.model.album.OptionType;
 import org.sammelbox.model.database.QueryBuilder;
+import org.sammelbox.model.database.QueryBuilderException;
 import org.sammelbox.model.database.QueryComponent;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 import org.sammelbox.model.database.operations.DatabaseOperations;
@@ -73,13 +75,21 @@ public final class AdvancedSearchSidepane {
 	 * @param album the album upon which the query should be executed. The composite will be based on the fields of this album.
 	 * @return a new advanced search composite */
 	public static Composite build(final Composite parentComposite, final String album) {
+		return build(parentComposite, album, null);
+	}
+	
+	public static Composite build(final Composite parentComposite, final String album, final SavedSearch savedSearch) {
 		// setup advanced composite
 		final Composite advancedSearchComposite = new Composite(parentComposite, SWT.NONE);
 		advancedSearchComposite.setLayout(new GridLayout(1, false));
 		advancedSearchComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		ComponentFactory.getPanelHeaderComposite(advancedSearchComposite, Translator.get(DictKeys.LABEL_ADVANCED_SEARCH));
-
+		if (savedSearch != null) {
+			ComponentFactory.getPanelHeaderComposite(advancedSearchComposite, Translator.toBeTranslated("Edit Saved Search"));
+		} else {
+			ComponentFactory.getPanelHeaderComposite(advancedSearchComposite, Translator.get(DictKeys.LABEL_ADVANCED_SEARCH));
+		}
+			
 		Composite innerComposite = new Composite(advancedSearchComposite, SWT.BORDER);
 		innerComposite.setLayout(new GridLayout(INNER_COMPSITE_COLUMN_NUMBER, false));
 		innerComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -88,7 +98,7 @@ public final class AdvancedSearchSidepane {
 		fieldToSearchLabel.setText(Translator.get(DictKeys.LABEL_FIELD_TO_SEARCH));
 		final Combo fieldToSearchCombo = new Combo(innerComposite, SWT.DROP_DOWN | SWT.READ_ONLY);
 		fieldToSearchCombo.setLayoutData(new GridData(GridData.FILL_BOTH));
-
+		
 		try {
 			// Fill the comboBox
 			fieldToSearchCombo.setData("validMetaItemFields", MetaItemFieldFilter.getValidMetaItemFields(DatabaseOperations.getAlbumItemFieldNamesAndTypes(album)));
@@ -195,6 +205,15 @@ public final class AdvancedSearchSidepane {
 		searchQueryTable.getColumn(1).pack ();
 		searchQueryTable.getColumn(2).pack ();
 
+		if (savedSearch != null) {
+			for (QueryComponent queryComponent : savedSearch.getQueryComponents()) {
+				TableItem item = new TableItem(searchQueryTable, SWT.NONE);
+				item.setText(0, queryComponent.getFieldName());
+				item.setText(1, QueryBuilder.getHumanReadableQueryOperator(queryComponent.getOperator()));
+				item.setText(2, queryComponent.getValue());
+			}
+		}
+		
 		// Pop-Up menu
 		Menu popupMenu = new Menu(searchQueryTable);
 		MenuItem remove = new MenuItem(popupMenu, SWT.NONE);
@@ -244,9 +263,9 @@ public final class AdvancedSearchSidepane {
 
 		Label fieldToSortLabel = new Label(composite, SWT.NONE);
 		fieldToSortLabel.setText(Translator.get(DictKeys.LABEL_FIELD_TO_SORT));
-		final Combo fieldToSortCombo = new Combo(composite, SWT.DROP_DOWN);
+		final Combo fieldToSortCombo = new Combo(composite, SWT.READ_ONLY);
 		fieldToSortCombo.setLayoutData(new GridData(GridData.FILL_BOTH));
-
+				
 		try {
 			// Fill the comboBox
 			fieldToSortCombo.setData("validMetaItemFields", MetaItemFieldFilter.getValidMetaItemFields(DatabaseOperations.getAlbumItemFieldNamesAndTypes(album)));
@@ -255,11 +274,21 @@ public final class AdvancedSearchSidepane {
 			LOGGER.error("A database related error occured", ex);
 		}
 		
+		if (savedSearch != null && savedSearch.getOrderByField() != null && !savedSearch.getOrderByField().isEmpty()) {
+			fieldToSortCombo.setText(savedSearch.getOrderByField());
+		}
+		
 		final Button sortAscendingButton = new Button(composite, SWT.RADIO);
 		sortAscendingButton.setText(Translator.get(DictKeys.BUTTON_SORT_ASCENDING));
-		sortAscendingButton.setSelection(true);
 		Button sortDescendingButton = new Button(composite, SWT.RADIO);
 		sortDescendingButton.setText(Translator.get(DictKeys.BUTTON_SORT_DESCENDING));
+		
+		if (savedSearch == null || savedSearch.isOrderAscending()) {
+			sortAscendingButton.setSelection(true);
+		} else {
+			sortDescendingButton.setSelection(true);
+		}
+		
 
 		Button searchButton = new Button(advancedSearchComposite, SWT.PUSH);
 		searchButton.setText(Translator.get(DictKeys.BUTTON_EXECUTE_SEARCH));
@@ -274,10 +303,15 @@ public final class AdvancedSearchSidepane {
 					connectByAnd = true;
 				}
 
-				if (fieldToSortCombo.getSelectionIndex() != -1) {
-					QueryBuilder.buildQueryAndExecute(queryComponents, connectByAnd, album, fieldToSortCombo.getItem(fieldToSortCombo.getSelectionIndex()), sortAscendingButton.getSelection());
-				} else {
-					QueryBuilder.buildQueryAndExecute(queryComponents, connectByAnd, album);
+				try {
+					if (fieldToSortCombo.getSelectionIndex() != -1) {
+						QueryBuilder.buildQueryAndExecute(queryComponents, connectByAnd, album, fieldToSortCombo.getItem(fieldToSortCombo.getSelectionIndex()), sortAscendingButton.getSelection());
+					} else {
+						QueryBuilder.buildQueryAndExecute(queryComponents, connectByAnd, album);
+					}
+				} catch (QueryBuilderException queryBuilderException) {
+					ComponentFactory.getMessageBox(Translator.toBeTranslated("An error occurred"), queryBuilderException.getMessage(), SWT.ICON_ERROR);
+					LOGGER.error("An error occurred while executing the saved search: ", queryBuilderException);
 				}
 			}
 		});
@@ -300,23 +334,15 @@ public final class AdvancedSearchSidepane {
 				}
 
 				TextInputDialog textInputDialog = new TextInputDialog(parentComposite.getShell());
-				String viewName = textInputDialog.open(
+				String savedSearchName = textInputDialog.open(
 						Translator.get(DictKeys.DIALOG_TITLE_ENTER_VIEW_NAME), 
 						Translator.get(DictKeys.DIALOG_CONTENT_ENTER_VIEW_NAME), 
 						Translator.get(DictKeys.DIALOG_TEXTBOX_ENTER_VIEW_NAME),
 						Translator.get(DictKeys.DIALOG_BUTTON_ENTER_VIEW_NAME));
 
-				if (viewName != null && !AlbumViewManager.hasViewWithName(album, viewName)) {				
-					if (fieldToSortCombo.getSelectionIndex() != -1) {
-						AlbumViewManager.addAlbumView(
-								viewName, ApplicationUI.getSelectedAlbum(), 
-								QueryBuilder.buildQuery(queryComponents, connectByAnd, album, 
-										fieldToSortCombo.getItem(fieldToSortCombo.getSelectionIndex()), sortAscendingButton.getSelection()));
-					} else {
-						AlbumViewManager.addAlbumView(
-								viewName, ApplicationUI.getSelectedAlbum(), 
-								QueryBuilder.buildQuery(queryComponents, connectByAnd, album));						
-					}
+				if (savedSearchName != null && !SavedSearchManager.isNameAlreadyUsed(album, savedSearchName)) {
+					SavedSearchManager.addSavedSearch(
+							savedSearchName, ApplicationUI.getSelectedAlbum(), fieldToSortCombo.getText(), sortAscendingButton.getSelection(), queryComponents, connectByAnd);
 				} else {
 					ComponentFactory.getMessageBox(
 							Translator.get(DictKeys.DIALOG_TITLE_VIEW_NAME_ALREADY_USED), 
