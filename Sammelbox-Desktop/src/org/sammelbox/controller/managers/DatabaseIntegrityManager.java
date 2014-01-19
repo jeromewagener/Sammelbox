@@ -48,10 +48,10 @@ public final class DatabaseIntegrityManager {
 	private static final int AUTO_SAVE_LIMIT = 5;
 	/** The last change time in milliseconds */
 	private static long lastChangeTimeStampInMillis = -1;
-	private static final String SAVEPOINT = "SAVEPOINT";
-	private static final String ROLLBACK_TO = "ROLLBACK TO";
-	private static final String BACKUP_TO = "BACKUP_TO";
-	private static final String RESTORE_FROM = "RESTORE FROM"; 
+	private static final String SAVEPOINT = "SAVEPOINT ";
+	private static final String ROLLBACK_TO = "rollback to ";
+	private static final String BACKUP_TO = "backup to ";
+	private static final String RESTORE_FROM = "restore from "; 
 	private static final String REGEX_BEGIN_OF_LINE = "^";
 	private static final String REGEX_END_OF_LINE = "$";
 	private static final String REGEX_OR = "|";
