@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
-import org.sammelbox.controller.settings.SettingsManager;
+import org.sammelbox.controller.managers.SettingsManager;
 import org.sammelbox.view.ApplicationUI;
 
 public final class MenuManager {

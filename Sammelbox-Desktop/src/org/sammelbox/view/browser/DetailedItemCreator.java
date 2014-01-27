@@ -24,7 +24,7 @@ import java.util.List;
 import org.sammelbox.controller.filesystem.FileSystemLocations;
 import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
-import org.sammelbox.controller.settings.SettingsManager;
+import org.sammelbox.controller.managers.SettingsManager;
 import org.sammelbox.model.album.AlbumItem;
 import org.sammelbox.model.album.AlbumItemPicture;
 import org.sammelbox.model.album.FieldType;

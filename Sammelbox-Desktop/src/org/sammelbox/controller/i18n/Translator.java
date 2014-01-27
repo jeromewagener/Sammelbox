@@ -22,7 +22,7 @@ import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import org.sammelbox.controller.settings.SettingsManager;
+import org.sammelbox.controller.managers.SettingsManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

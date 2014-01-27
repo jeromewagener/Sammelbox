@@ -34,7 +34,7 @@ import org.eclipse.swt.widgets.Label;
 import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Language;
 import org.sammelbox.controller.i18n.Translator;
-import org.sammelbox.controller.settings.SettingsManager;
+import org.sammelbox.controller.managers.SettingsManager;
 import org.sammelbox.model.settings.ApplicationSettings;
 import org.sammelbox.view.various.ComponentFactory;
 

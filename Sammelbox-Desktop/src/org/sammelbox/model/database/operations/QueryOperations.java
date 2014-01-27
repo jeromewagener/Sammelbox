@@ -37,7 +37,7 @@ import java.util.UUID;
 import java.util.regex.Pattern;
 
 import org.sammelbox.controller.managers.ConnectionManager;
-import org.sammelbox.controller.settings.SettingsManager;
+import org.sammelbox.controller.managers.SettingsManager;
 import org.sammelbox.model.album.AlbumItem;
 import org.sammelbox.model.album.AlbumItemPicture;
 import org.sammelbox.model.album.AlbumItemResultSet;

@@ -19,7 +19,7 @@
 package org.sammelbox.model;
 
 import org.eclipse.swt.widgets.Composite;
-import org.sammelbox.controller.settings.SettingsManager;
+import org.sammelbox.controller.managers.SettingsManager;
 import org.sammelbox.view.various.PanelType;
 
 public class GuiState {
@@ -31,7 +31,7 @@ public class GuiState {
 	/** The currently selected album */
 	private String selectedAlbum = null;
 	/** The currently selected saved search */
-	private String selectedView = null;
+	private String selectedSavedSearch = null;
 	/** The quick search terms string that is currently displayed */
 	private String quickSearchTerms = null;
 	/** True if detailed view is selected, false if gallery view is selected */
@@ -53,7 +53,7 @@ public class GuiState {
 	
 	public GuiState(String selectedAlbum, String selectedView, String quickSearchTerms, boolean isViewDetailed) {
 		this.selectedAlbum = selectedAlbum;
-		this.selectedView = selectedView;
+		this.selectedSavedSearch = selectedView;
 		this.quickSearchTerms = quickSearchTerms;
 		this.isViewDetailed = isViewDetailed;
 	}
@@ -82,11 +82,11 @@ public class GuiState {
 	}
 	
 	public String getSelectedSavedSearch() {
-		return selectedView;
+		return selectedSavedSearch;
 	}
 
 	public void setSelectedView(String selectedView) {
-		this.selectedView = selectedView;
+		this.selectedSavedSearch = selectedView;
 	}
 
 	public String getQuickSearchTerms() {

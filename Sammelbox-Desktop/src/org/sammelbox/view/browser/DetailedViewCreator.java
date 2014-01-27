@@ -42,7 +42,7 @@ public final class DetailedViewCreator {
 		StringBuilder htmlDataColumnContent = new StringBuilder();
 		StringBuilder htmlPictureColumnContent = new StringBuilder();
 
-		// Add all available album items to a html table
+		// Add all available album items
 		for (AlbumItem albumItem : AlbumItemStore.getAlbumItems(AlbumItemStore.getStopIndex())) {
 			htmlDataColumnContent.delete(0, htmlDataColumnContent.length());
 			htmlPictureColumnContent.delete(0, htmlPictureColumnContent.length());

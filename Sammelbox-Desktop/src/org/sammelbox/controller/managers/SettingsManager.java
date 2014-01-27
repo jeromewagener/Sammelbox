@@ -16,7 +16,7 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ** ----------------------------------------------------------------- */
 
-package org.sammelbox.controller.settings;
+package org.sammelbox.controller.managers;
 
 import java.util.Locale;
 

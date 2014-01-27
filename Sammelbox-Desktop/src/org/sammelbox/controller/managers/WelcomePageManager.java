@@ -31,7 +31,6 @@ import java.util.Map;
 import org.sammelbox.controller.filesystem.xml.XmlStorageWrapper;
 import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
-import org.sammelbox.controller.settings.SettingsManager;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 import org.sammelbox.model.database.operations.DatabaseOperations;
 import org.slf4j.Logger;
