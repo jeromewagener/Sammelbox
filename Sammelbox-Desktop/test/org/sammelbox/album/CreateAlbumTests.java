@@ -20,6 +20,7 @@ package org.sammelbox.album;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +31,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.sammelbox.TestExecuter;
+import org.sammelbox.controller.filesystem.FileSystemLocations;
 import org.sammelbox.controller.managers.ConnectionManager;
 import org.sammelbox.model.album.AlbumItemResultSet;
 import org.sammelbox.model.album.FieldType;
@@ -167,14 +169,40 @@ public class CreateAlbumTests {
 		try {
 			DatabaseOperations.createNewAlbum(albumName, columns, true);
 		} catch (DatabaseWrapperOperationException e) {
-			fail("Creation of album"+ albumName + "failed");
+			fail("Creation of album " + albumName + " failed");
 		}
 
 		try {
 			AlbumItemResultSet resultSet = DatabaseOperations.executeSQLQuery("SELECT * FROM " + DatabaseStringUtilities.generateTableName(albumName));		
 			Assert.assertTrue(resultSet != null && resultSet.getAlbumName().equals(albumName));
 		} catch (DatabaseWrapperOperationException e) {
-			fail("Creation of album"+ albumName + "failed");
+			fail("Creation of album " + albumName + " failed");
 		}	
+	}
+	
+	@Test
+	public void testFolderCreationForNonPictureAlbums() {		
+		final String albumName = "Books";
+		List<MetaItemField> columns = new ArrayList<MetaItemField>();
+
+		try {
+			DatabaseOperations.createNewAlbum(albumName, columns, false);
+		} catch (DatabaseWrapperOperationException e) {
+			fail("Creation of album " + albumName + " failed");
+		}
+
+		try {
+			AlbumItemResultSet resultSet = DatabaseOperations.executeSQLQuery("SELECT * FROM " + DatabaseStringUtilities.generateTableName(albumName));		
+			Assert.assertTrue(resultSet != null && resultSet.getAlbumName().equals(albumName));
+		} catch (DatabaseWrapperOperationException e) {
+			fail("Creation of album " + albumName + " failed");
+		}	
+		
+		File bookPictureDirectory = new File(FileSystemLocations.DEFAULT_SAMMELBOX_TEST_HOME + File.separatorChar + 
+				FileSystemLocations.ALBUM_PICTURES_DIR_NAME + File.separatorChar + albumName );
+		
+		if (!bookPictureDirectory.exists()) {
+			fail("Creation of album picture dir for " + albumName + " failed");
+		}
 	}
 }

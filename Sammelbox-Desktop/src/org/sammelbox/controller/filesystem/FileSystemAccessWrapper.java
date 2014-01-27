@@ -159,7 +159,7 @@ public final class FileSystemAccessWrapper {
 			for (String albumName : DatabaseOperations.getListOfAllAlbums()) {
 				File albumDirectory = new File(getFilePathForAlbum(albumName));
 
-				if (DatabaseOperations.isPictureAlbum(albumName) && !albumDirectory.exists() && !albumDirectory.mkdir()) {
+				if (!albumDirectory.exists() && !albumDirectory.mkdir()) {
 					LOGGER.error("Cannot create album directory although it seems that it does not exist");
 					return false;
 				}
