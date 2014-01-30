@@ -148,10 +148,13 @@ public final class DatabaseIntegrityManager {
 		} catch (IOException e) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE,e);
 		}
-	
+
+		final String backupToSQLcommand = String.format(
+				BACKUP_TO + "%s", tempDir.getPath() + File.separatorChar + FileSystemLocations.DATABASE_TO_RESTORE_NAME);
+		
 		// backup database to file
 		try (Statement statement = ConnectionManager.getConnection().createStatement()){				
-			statement.executeUpdate(BACKUP_TO  + "'" + tempDir.getPath() + File.separatorChar + FileSystemLocations.DATABASE_TO_RESTORE_NAME + "'");
+			 statement.executeUpdate(backupToSQLcommand);
 		} catch (SQLException e) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE,e);
 		}
@@ -172,8 +175,10 @@ public final class DatabaseIntegrityManager {
 		FileSystemAccessWrapper.clearHomeDirectory();
 		FileSystemAccessWrapper.unzipFileToFolder(filePath, FileSystemLocations.getActiveHomeDir());
 	
+		final String restoreToSQLCommand = String.format(RESTORE_FROM + "%s", FileSystemLocations.getDatabaseRestoreFile());
+		
 		try (Statement statement = ConnectionManager.getConnection().createStatement()) {			
-			statement.executeUpdate(RESTORE_FROM + " '" + FileSystemLocations.getDatabaseRestoreFile() + "'");
+			statement.executeUpdate(restoreToSQLCommand);
 			try {
 				DatabaseIntegrityManager.lastChangeTimeStampInMillis = DatabaseIntegrityManager.extractTimeStamp(new File(filePath));
 			} catch (DatabaseWrapperOperationException e) {
