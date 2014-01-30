@@ -1,5 +1,5 @@
 Source: sammelbox
-Section: main
+Section: java
 Priority: extra
 Maintainer: Jérôme Wagener <jerome@jeromewagener.com>
 Build-Depends: debhelper (>= 8.0.0)
@@ -10,18 +10,19 @@ Vcs-Browser: https://github.com/jeromewagener/Sammelbox.git
 Package: sammelbox
 Architecture:VAR_ARCH
 Depends: ${shlibs:Depends}, ${misc:Depends}, ${java:Depends}, libwebkitgtk-dev
-Description: A free and open-source collection manager
+Description: Collection managagement made easy
  Sammelbox is a free and open-source collection manager,
  with a strong focus on simplicity and customization. It provides support for
  fully customizable collections, powerful query functionalites as well as
  synchronization capabilities with Android enabled devices.
- Please have a look at Sammelbox.org for a full feature list and documentation. 
  In a nutshell, the key features include:
- * Free and Open-Source (GPLv3 licensed)
- * Simple, fast and powerful collection management
- * Support for fully customized collections based on a variety of different field types
- * Based on a standardized database which can be used even without Sammelbox
- * Search & filter using the power of native SQL queries, but with an easy to use front-end
- * Synchronization with mobile devices
- * Import & export of your collections
- * Platform independent through the use of Java
+  * Free and Open-Source (GPLv3 licensed)
+  * Simple, fast and powerful collection management
+  * Support for fully customized collections based on a variety of different 
+    field types
+  * Based on a standardized database which can be used even without Sammelbox
+  * Search & filter using the power of native SQL queries, but with an easy 
+    to use front-end
+  * Synchronization with mobile devices
+  * Import & export of your collections
+  * Platform independent through the use of Java
