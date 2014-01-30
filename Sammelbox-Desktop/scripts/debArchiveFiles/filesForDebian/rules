@@ -1,12 +1,13 @@
 #!/usr/bin/make -f
 
-icon = $(CURDIR)/sammelbox-icon.png
-script = $(CURDIR)/sammelbox.sh
 launcher = $(CURDIR)/sammelbox.desktop
+icon = $(CURDIR)/sammelbox.svg
+script = $(CURDIR)/sammelbox.sh
 jar = $(CURDIR)/sammelbox.jar
 
-DEST1 = $(CURDIR)/debian/sammelbox/usr/share/sammelbox
-DEST2 = $(CURDIR)/debian/sammelbox/usr/share/applications
+USR_SHARE_SAMMELBOX = $(CURDIR)/debian/sammelbox/usr/share/sammelbox
+USR_SHARE_APPLICATIONS = $(CURDIR)/debian/sammelbox/usr/share/applications
+USR_SHARE_ICONS = $(CURDIR)/debian/sammelbox/usr/share/icons/hicolor/scalables/apps
 
 build: build-stamp
 
@@ -26,13 +27,15 @@ install: build clean $(icon) $(script) $(launcher) $(jar)
 	dh_prep
 	dh_installdirs
 
-	mkdir -m 755 -p $(DEST1)
-	mkdir -m 755 -p $(DEST2)
+	mkdir -m 755 -p $(USR_SHARE_SAMMELBOX)
+	mkdir -m 755 -p $(USR_SHARE_APPLICATIONS)
+	mkdir -m 755 -p $(USR_SHARE_ICONS)
 
-	install -m 666 $(icon) $(DEST1)
-	install -m 666 $(jar) $(DEST1)
-	install -m 777 $(script) $(DEST1)
-	install -m 777 $(launcher) $(DEST2)
+	install -m 666 $(icon) $(USR_SHARE_SAMMELBOX)
+	install -m 666 $(icon) $(USR_SHARE_ICONS)
+	install -m 666 $(jar) $(USR_SHARE_SAMMELBOX)
+	install -m 777 $(script) $(USR_SHARE_SAMMELBOX)
+	install -m 777 $(launcher) $(USR_SHARE_APPLICATIONS)
 
 binary-indep: build install
 	dh_testdir

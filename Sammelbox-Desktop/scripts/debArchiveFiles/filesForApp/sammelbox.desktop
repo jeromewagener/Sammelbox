@@ -4,5 +4,6 @@ Terminal=false
 Exec=/usr/share/sammelbox/sammelbox.sh
 Name=Sammelbox
 Comment=Sammelbox - A free and open-source collection manager
-Icon=/usr/share/sammelbox/sammelbox-icon.png
+Icon=/usr/share/sammelbox/sammelbox.svg
 Categories=Application,Accessories
+Name[en_US]=sammelbox
