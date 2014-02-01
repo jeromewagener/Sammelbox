@@ -52,7 +52,8 @@ public final class ToolbarCompositeListener {
 		};
 	}
 	
-	static MouseListener getAddNewAlbumButtonListener(final Button addNewAlbumButton, final Image addNewAlbumActiveIcon) {
+	static MouseListener getAddNewAlbumButtonListener(final Button addNewAlbumButton, final Button addAlbumItemButton, final Button toggleViewButton, 
+			final Button advancedSearchButton, final Image detailedViewIcon, final Image addNewAlbumActiveIcon) {
 		return new MouseListener() {
 			@Override
 			public void mouseUp(MouseEvent mouseEvent) {
@@ -60,6 +61,10 @@ public final class ToolbarCompositeListener {
 					ApplicationUI.changeRightCompositeTo(PanelType.ADD_ALBUM, CreateAlbumSidepane.build(ApplicationUI.getThreePanelComposite()));
 					StatusBarComposite.getInstance(ApplicationUI.getShell()).writeStatus(Translator.get(DictKeys.STATUSBAR_ADD_ALBUM_OPENED));
 
+					addAlbumItemButton.setEnabled(false);
+					toggleViewButton.setEnabled(false);
+					advancedSearchButton.setEnabled(false);
+					
 					ApplicationUI.getToolbarComposite().disableActiveButtons();
 					addNewAlbumButton.setImage(addNewAlbumActiveIcon);
 					ApplicationUI.setCurrentRightPanelType(PanelType.ADD_ALBUM);

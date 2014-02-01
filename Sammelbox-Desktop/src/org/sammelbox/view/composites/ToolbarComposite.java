@@ -158,7 +158,7 @@ public class ToolbarComposite extends Composite implements EventObserver {
 				homeButton, addAlbumItemButton, toggleViewButton, advancedSearchButton, detailedViewIcon, homeActiveIcon));
 
 		addNewAlbumButton.addMouseListener(ToolbarCompositeListener.getAddNewAlbumButtonListener(
-				addNewAlbumButton, addNewAlbumActiveIcon));
+				addNewAlbumButton, addAlbumItemButton, toggleViewButton, advancedSearchButton, detailedViewIcon, addNewAlbumActiveIcon));
 
 		addAlbumItemButton.addMouseListener(ToolbarCompositeListener.getAddAlbumItemButtonListener(
 				addAlbumItemButton, addAlbumItemActiveIcon));

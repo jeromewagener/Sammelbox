@@ -118,7 +118,7 @@ public final class CreateAlbumSidepane {
 		// fieldtype label and combo-box to enter the type of the field
 		Label fieldTypeLabel = new Label(innerCompositeForFieldname, SWT.NONE);
 		fieldTypeLabel.setText(Translator.get(DictKeys.LABEL_FIELD_TYPE));
-		final Combo fieldTypeCombo = new Combo(innerCompositeForFieldname, SWT.DROP_DOWN + SWT.READ_ONLY);
+		final Combo fieldTypeCombo = new Combo(innerCompositeForFieldname, SWT.DROP_DOWN | SWT.READ_ONLY);
 		fieldTypeCombo.setItems(FieldType.getTranslatedFieldTypes());	    
 		fieldTypeCombo.setLayoutData(new GridData(GridData.FILL_BOTH));
 		fieldTypeCombo.setText(fieldTypeCombo.getItem(0).toString());
