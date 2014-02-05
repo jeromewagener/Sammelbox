@@ -27,13 +27,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
-import org.sammelbox.controller.GuiController;
 import org.sammelbox.controller.filesystem.FileSystemAccessWrapper;
 import org.sammelbox.controller.filters.ItemFieldFilter;
-import org.sammelbox.controller.filters.MetaItemFieldFilter;
 import org.sammelbox.controller.managers.ConnectionManager;
 import org.sammelbox.controller.managers.DatabaseIntegrityManager;
-import org.sammelbox.model.GuiState;
 import org.sammelbox.model.album.AlbumItem;
 import org.sammelbox.model.album.AlbumItemPicture;
 import org.sammelbox.model.album.FieldType;
