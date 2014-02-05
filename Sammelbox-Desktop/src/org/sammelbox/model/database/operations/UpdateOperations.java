@@ -27,9 +27,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
+import org.sammelbox.controller.GuiController;
 import org.sammelbox.controller.filesystem.FileSystemAccessWrapper;
+import org.sammelbox.controller.filters.ItemFieldFilter;
+import org.sammelbox.controller.filters.MetaItemFieldFilter;
 import org.sammelbox.controller.managers.ConnectionManager;
 import org.sammelbox.controller.managers.DatabaseIntegrityManager;
+import org.sammelbox.model.GuiState;
 import org.sammelbox.model.album.AlbumItem;
 import org.sammelbox.model.album.AlbumItemPicture;
 import org.sammelbox.model.album.FieldType;
@@ -526,6 +530,12 @@ public final class UpdateOperations {
 	}
 	
 	static void updateAlbumItem(AlbumItem albumItem) throws DatabaseWrapperOperationException {
+		
+		// Updating items with no fields results in query with no arguments in the SET part of the query
+		if (ItemFieldFilter.getValidItemFields(albumItem.getFields()).isEmpty()) {
+			return;
+		}
+		
 		// Check if the item contains a albumName
 		if (albumItem.getAlbumName().isEmpty()) {
 			LOGGER.error("Album item {} has no albumName", albumItem);

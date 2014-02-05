@@ -16,7 +16,7 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ** ----------------------------------------------------------------- */
 
-package org.sammelbox.controller;
+package org.sammelbox.controller.filters;
 
 import java.util.ArrayList;
 import java.util.Arrays;
