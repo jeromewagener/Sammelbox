@@ -62,8 +62,7 @@ public final class DetailedItemCreator {
 		addImageAndDetailContainer(albumItem, htmlDataColumnContent, htmlPictureColumnContent, albumItemTableRowHtml, htmlPreviewPicturesContent, true, hasEvenCountingInList);
 	}
 	
-	static long createDetailContainer(AlbumItem albumItem, StringBuilder htmlDataColumnContent)
-	{
+	static long createDetailContainer(AlbumItem albumItem, StringBuilder htmlDataColumnContent) {
 		long id = -1;
 		
 		for (ItemField fieldItem : albumItem.getFields()) {			

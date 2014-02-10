@@ -80,7 +80,7 @@ public final class GalleryViewCreator {
 					                         " onMouseOver=\"parent.location.href=&quot;" + UIConstants.SHOW_DETAILS + id + "&quot;\" " +
 					                         " onClick=\"parent.location.href=&quot;" + UIConstants.SHOW_UPDATE_ENTRY_COMPOSITE + id + "&quot;\">");
 			galleryItemHtmlBuilder.append("<img alt=\"\" src=\"" + picturePath + "\">");
-			galleryItemHtmlBuilder.append("<label> " + htmlDataColumnContent + " </label>");
+			galleryItemHtmlBuilder.append("<label> " + htmlDataColumnContent.toString() + " </label>");
 			galleryItemHtmlBuilder.append("</div>");
 		}
 

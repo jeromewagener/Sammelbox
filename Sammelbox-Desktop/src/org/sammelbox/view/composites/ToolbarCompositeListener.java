@@ -57,6 +57,9 @@ public final class ToolbarCompositeListener {
 		return new MouseListener() {
 			@Override
 			public void mouseUp(MouseEvent mouseEvent) {
+				
+				BrowserFacade.clearAlterationList();
+				
 				if (ApplicationUI.getCurrentRightPanelType() != PanelType.ADD_ALBUM) {
 					ApplicationUI.changeRightCompositeTo(PanelType.ADD_ALBUM, CreateAlbumSidepane.build(ApplicationUI.getThreePanelComposite()));
 					StatusBarComposite.getInstance(ApplicationUI.getShell()).writeStatus(Translator.get(DictKeys.STATUSBAR_ADD_ALBUM_OPENED));
