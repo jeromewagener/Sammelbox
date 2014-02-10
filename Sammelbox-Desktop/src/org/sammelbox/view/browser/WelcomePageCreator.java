@@ -22,7 +22,6 @@ import org.sammelbox.controller.filesystem.FileSystemLocations;
 import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.controller.managers.AlbumManager;
-import org.sammelbox.controller.managers.BuildInformationManager;
 import org.sammelbox.controller.managers.WelcomePageManager;
 import org.sammelbox.view.ApplicationUI;
 import org.sammelbox.view.UIConstants;
@@ -33,18 +32,7 @@ public final class WelcomePageCreator {
 	private WelcomePageCreator() {
 	}
 	
-	static void loadWelcomePage() {
-		String browserIframe;		
-		if (BrowserUtils.isProjectWebsiteReachable()) {
-			browserIframe = 
-					" <iframe style=\"border:none; width:100%; height:30px; overflow:hidden;\"" +
-					"         scrolling=\"no\"" +
-					"         src=\"http://www.sammelbox.org/current.php?current=" + BuildInformationManager.instance().getPublicVersionString() +
-					                                                   "&language=" + Translator.getUsedLanguage() + "\"></iframe> ";
-		} else {
-			browserIframe = "";
-		}
-		
+	static void loadWelcomePage() {		
 		ApplicationUI.getAlbumItemBrowser().setText(
 				"<!DOCTYPE HTML>" +
 				"<html>" +
@@ -55,7 +43,6 @@ public final class WelcomePageCreator {
 				"    <script src=\"" + UIConstants.EFFECTS_JS + "\"></script>" +
 				"  </head>" +
 				"  <body>" +
-				"	 <div>" + browserIframe + "</div>" +
 				"    <div style=\"width:100%;\">" +
 				"      <div style=\"float:left; margin:25px;\">" +
 				"        <img width=\"450px\" src=\" " + FileSystemLocations.getLogoPNG() + " \">" +
