@@ -43,6 +43,7 @@ public final class GalleryViewCreator {
 	
 	static void showOverviewAlbum(Browser browser) {
 		StringBuilder galleryItemHtmlBuilder = new StringBuilder();
+		StringBuilder htmlDataColumnContent = new StringBuilder();
 		
 		for (AlbumItem albumItem : AlbumItemStore.getAlbumItems(AlbumItemStore.getStopIndex())) {
 			String picturePath = "";
@@ -71,11 +72,15 @@ public final class GalleryViewCreator {
 				picturePath = pictures.get(0).getThumbnailPicturePath();
 			}
 			
+			htmlDataColumnContent.delete(0, htmlDataColumnContent.length());
+			DetailedItemCreator.createDetailContainer(albumItem, htmlDataColumnContent);
+			
 			galleryItemHtmlBuilder.append("<div id=\"imageId" + id + "\" " +
-					                         " class=\"pictureContainer\" " +
+					                         " class=\"pictureContainer tooltip\" " +
 					                         " onMouseOver=\"parent.location.href=&quot;" + UIConstants.SHOW_DETAILS + id + "&quot;\" " +
 					                         " onClick=\"parent.location.href=&quot;" + UIConstants.SHOW_UPDATE_ENTRY_COMPOSITE + id + "&quot;\">");
 			galleryItemHtmlBuilder.append("<img alt=\"\" src=\"" + picturePath + "\">");
+			galleryItemHtmlBuilder.append("<label> " + htmlDataColumnContent + " </label>");
 			galleryItemHtmlBuilder.append("</div>");
 		}
 

@@ -52,20 +52,19 @@ public final class DetailedItemCreator {
 		StringBuilder htmlDataColumnContent = new StringBuilder();
 		StringBuilder htmlPictureColumnContent = new StringBuilder();
 		StringBuilder albumItemTableRowHtml = new StringBuilder();
-		addImageAndDetailContainer(albumItem, htmlDataColumnContent, htmlPictureColumnContent, albumItemTableRowHtml, hasButtonsAndLinks);
+		StringBuilder htmlPreviewPicturesContent = new StringBuilder();
+		addImageAndDetailContainer(albumItem, htmlDataColumnContent, htmlPictureColumnContent, albumItemTableRowHtml, htmlPreviewPicturesContent, hasButtonsAndLinks);
 
 		return albumItemTableRowHtml.toString();
 	}
 
-	static void addImageAndDetailContainer(AlbumItem albumItem, StringBuilder htmlDataColumnContent, StringBuilder htmlPictureColumnContent, StringBuilder albumItemTableRowHtml) {
-		addImageAndDetailContainer(albumItem, htmlDataColumnContent, htmlPictureColumnContent, albumItemTableRowHtml, true);
+	static void addImageAndDetailContainer(AlbumItem albumItem, StringBuilder htmlDataColumnContent, StringBuilder htmlPictureColumnContent, StringBuilder albumItemTableRowHtml, StringBuilder htmlPreviewPicturesContent, boolean hasEvenCountingInList) {
+		addImageAndDetailContainer(albumItem, htmlDataColumnContent, htmlPictureColumnContent, albumItemTableRowHtml, htmlPreviewPicturesContent, true, hasEvenCountingInList);
 	}
 	
-	static void addImageAndDetailContainer(AlbumItem albumItem, StringBuilder htmlDataColumnContent, StringBuilder htmlPictureColumnContent, 
-			StringBuilder albumItems, boolean hasButtonsAndLinks) {
-		
-		// the id of the current album item
-		long id = -1;	
+	static long createDetailContainer(AlbumItem albumItem, StringBuilder htmlDataColumnContent)
+	{
+		long id = -1;
 		
 		for (ItemField fieldItem : albumItem.getFields()) {			
 			if (fieldItem.getType().equals(FieldType.UUID)) {
@@ -105,14 +104,27 @@ public final class DetailedItemCreator {
 				htmlDataColumnContent.append(getUrlNameAndLocationLine(fieldItem.getName(), ((String) fieldItem.getValue())));
 			}
 		}
-				
+		
+		return id;
+	}
+	
+	static void addImageAndDetailContainer(AlbumItem albumItem, StringBuilder htmlDataColumnContent, StringBuilder htmlPictureColumnContent, 
+			StringBuilder albumItems, StringBuilder htmlPreviewPicturesContent, boolean hasButtonsAndLinks, boolean hasEvenCountingInList) {
+		
+		// the id of the current album item
+		long id = -1;
+		String oddOrEven = null;
+		
+		id = createDetailContainer(albumItem, htmlDataColumnContent);
+		
 		try {
 			List<AlbumItemPicture> pictures = albumItem.getPictures();
 			if (DatabaseOperations.isPictureAlbum(ApplicationUI.getSelectedAlbum()) || !pictures.isEmpty()) {
 				
 				htmlPictureColumnContent.append(			
-					"<div class=\"mainPictureWrapper\">" + getMainPictureHtml(id, pictures, hasButtonsAndLinks) + "</div>" +
-		            "<div>" + getAlternativePicturesHtml(id, pictures, hasButtonsAndLinks) + "</div>");
+					"<div class=\"mainPictureWrapper\">" + getMainPictureHtml(id, pictures, hasButtonsAndLinks) + "</div>"); 
+				htmlPreviewPicturesContent.append(	
+		            "<div class=\"altPictureWrapper\">" + getAlternativePicturesHtml(id, pictures, hasButtonsAndLinks) + "</div>");
 			}
 		} catch (DatabaseWrapperOperationException ex) {
 			LOGGER.error("An issue regarding the album item picture occured", ex);
@@ -122,14 +134,25 @@ public final class DetailedItemCreator {
 			htmlDataColumnContent.append(getUpdateRemoveButtonsForm(id));
 		}
 		
+		if (hasEvenCountingInList) {
+			oddOrEven = "evenBackGround";
+		}
+		else
+		{
+			oddOrEven = "oddBackGround";
+		}
+		
 		albumItems.append(		
-			"<div id=\"albumId" + id + "\" class=\"albumItem\">" +
+			"<div id=\"albumId" + id + "\" class=\"albumItem " + oddOrEven + " \">" +
 			  "<div class=\"albumItemPictures\">" +
 					htmlPictureColumnContent +
 			  "</div>" +
 			  "<div class=\"details\">" +
 			  		htmlDataColumnContent +
 			  "</div>" +
+			  "<div class=\"altPictureWrapper\">" +
+			  		htmlPreviewPicturesContent +
+			  "</div>" +	
 			"</div>");
 	}
 	

@@ -41,13 +41,17 @@ public final class DetailedViewCreator {
 		StringBuilder albumItemDetailDivContainers = new StringBuilder();
 		StringBuilder htmlDataColumnContent = new StringBuilder();
 		StringBuilder htmlPictureColumnContent = new StringBuilder();
+		StringBuilder htmlPreviewPicturesContent = new StringBuilder();
+
 
 		// Add all available album items
+		boolean hasEvenCountingInList = false;
 		for (AlbumItem albumItem : AlbumItemStore.getAlbumItems(AlbumItemStore.getStopIndex())) {
 			htmlDataColumnContent.delete(0, htmlDataColumnContent.length());
 			htmlPictureColumnContent.delete(0, htmlPictureColumnContent.length());
-
-			DetailedItemCreator.addImageAndDetailContainer(albumItem, htmlDataColumnContent, htmlPictureColumnContent, albumItemDetailDivContainers);
+			htmlPreviewPicturesContent.delete(0, htmlPreviewPicturesContent.length());
+			DetailedItemCreator.addImageAndDetailContainer(albumItem, htmlDataColumnContent, htmlPictureColumnContent, albumItemDetailDivContainers, htmlPreviewPicturesContent, hasEvenCountingInList);
+			hasEvenCountingInList = !hasEvenCountingInList;
 		}
 
 		// If no album items have been found
