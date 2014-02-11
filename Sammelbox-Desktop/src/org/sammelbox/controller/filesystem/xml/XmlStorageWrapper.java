@@ -69,6 +69,7 @@ public final class XmlStorageWrapper {
 		xmlOutput.append("\t<dateFormat>" + applicationSettings.getDateFormat() + "</dateFormat>\n");
 		xmlOutput.append("\t<detailedViewIsDefault>" + applicationSettings.isDetailedViewDefault() + "</detailedViewIsDefault>\n");
 		xmlOutput.append("\t<showDebugMenu>" + applicationSettings.showDebugMenu() + "</showDebugMenu>\n");
+		xmlOutput.append("\t<isFullSynchronizationEnabled>" + applicationSettings.isFullSynchronizationEnabled() + "</isFullSynchronizationEnabled>\n");
 		xmlOutput.append("</settings>\n");
 		
 		FileSystemAccessWrapper.writeToFile(xmlOutput.toString(), FileSystemLocations.getSettingsXML());
@@ -177,6 +178,7 @@ public final class XmlStorageWrapper {
 					applicationSettings.setDateFormat(getValue("dateFormat", element));
 					applicationSettings.setDetailedViewIsDefault(Boolean.valueOf(getValue("detailedViewIsDefault", element)));
 					applicationSettings.setShowDebugMenu(Boolean.valueOf(getValue("showDebugMenu", element)));
+					applicationSettings.setFullSynchronizationEnabled(Boolean.valueOf(getValue("isFullSynchronizationEnabled", element)));
 				} catch (RuntimeException exception) {
 					LOGGER.error("Could not properly load settings file. File will be recreated");
 					SettingsManager.storeToSettingsFile();
