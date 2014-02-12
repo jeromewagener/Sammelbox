@@ -108,6 +108,17 @@ public final class SettingsSidepane {
 			dateFormatSelectionCombo.setText(EUROPEAN_DOT);
 		}
 		
+		Label fullSynchronization = new Label(innerComposite, SWT.NONE);
+		fullSynchronization.setText(Translator.toBeTranslated("Full Synchronization:"));
+		
+		final Combo fullSynchronizationCombo = new Combo(innerComposite, SWT.READ_ONLY);
+		fullSynchronizationCombo.setItems(new String[] { Translator.toBeTranslated("Yes"), Translator.toBeTranslated("No") });
+		if (SettingsManager.getSettings().isFullSynchronizationEnabled()) {
+			fullSynchronizationCombo.setText(Translator.toBeTranslated("Yes"));
+		} else {
+			fullSynchronizationCombo.setText(Translator.toBeTranslated("No"));
+		}
+		
 		Label seperator = new Label(settingsComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
 		GridData gridDataForSeperator = new GridData(GridData.FILL_BOTH);
 		gridDataForSeperator.heightHint = DEFAULT_COMPOSITE_HEIGHT_IN_PIXELS;
@@ -124,6 +135,7 @@ public final class SettingsSidepane {
 				appSettings.setUserDefinedLanguage(Language.valueOf(languageCombo.getItem(languageCombo.getSelectionIndex())));
 				appSettings.setDetailedViewIsDefault(viewSelectionCombo.getSelectionIndex() == 0);
 				appSettings.setDateFormat(DATE_EXAMPLES_TO_FORMATS.get(dateFormatSelectionCombo.getItem(dateFormatSelectionCombo.getSelectionIndex())));
+				appSettings.setFullSynchronizationEnabled(fullSynchronizationCombo.getItem(fullSynchronizationCombo.getSelectionIndex()).equals(Translator.toBeTranslated("Yes")));
 				SettingsManager.setApplicationSettings(appSettings);
 				
 				Translator.setLanguageManually(Language.valueOf(languageCombo.getItem(languageCombo.getSelectionIndex())));

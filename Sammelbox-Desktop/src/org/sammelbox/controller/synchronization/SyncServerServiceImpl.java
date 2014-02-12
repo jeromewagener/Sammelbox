@@ -25,10 +25,12 @@ import java.security.NoSuchAlgorithmException;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.eclipse.swt.widgets.Display;
 import org.sammelbox.controller.filesystem.FileSystemAccessWrapper;
 import org.sammelbox.controller.filesystem.FileSystemLocations;
 import org.sammelbox.controller.i18n.Translator;
+import org.sammelbox.controller.managers.SettingsManager;
 import org.sammelbox.view.ApplicationUI;
 import org.sammelbox.view.browser.BrowserFacade;
 import org.sammelbox.view.various.SynchronizeCompositeHelper;
@@ -85,6 +87,12 @@ public class SyncServerServiceImpl implements SyncServerService {
 			FileSystemAccessWrapper.copyDirectory(
 					new File(FileSystemLocations.getThumbnailsDir()), 
 					new File(SYNC_DIRECTORY_PATH + FileSystemLocations.THUMBNAILS_DIR_NAME));
+			
+			if (SettingsManager.getSettings().isFullSynchronizationEnabled()) {
+				FileSystemAccessWrapper.copyDirectory(
+						new File(FileSystemLocations.getAlbumPicturesDir()), 
+						new File(SYNC_DIRECTORY_PATH + FileSystemLocations.ALBUM_PICTURES_DIR_NAME));
+			}
 			
 			FileSystemAccessWrapper.copyDirectory(
 					new File(FileSystemLocations.getAppDataDir()), 

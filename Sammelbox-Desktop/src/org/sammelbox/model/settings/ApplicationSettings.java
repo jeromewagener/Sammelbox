@@ -7,6 +7,7 @@ public class ApplicationSettings {
 	private String dateFormat = "dd/MM/yyyy";
 	private boolean detailedViewIsDefault = true;
 	private boolean showDebugMenu = false;
+	private boolean isFullSynchronizationEnabled = true;
 	
 	public ApplicationSettings() {}
 	
@@ -40,5 +41,13 @@ public class ApplicationSettings {
 
 	public void setShowDebugMenu(boolean showDebugMenu) {
 		this.showDebugMenu = showDebugMenu;
+	}
+
+	public void setFullSynchronizationEnabled(boolean isFullSynchronizationEnabled) {
+		this.isFullSynchronizationEnabled = isFullSynchronizationEnabled; 
+	}
+	
+	public boolean isFullSynchronizationEnabled() {
+		return isFullSynchronizationEnabled;
 	}
 }
