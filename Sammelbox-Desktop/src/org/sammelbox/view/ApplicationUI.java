@@ -276,7 +276,7 @@ public final class ApplicationUI implements EventObserver {
 		newCenterComposite.setLayoutData(layoutData);
 
 		centerComposite = newCenterComposite;
-		centerComposite.moveAbove(rightComposite);
+		centerComposite.moveBelow(leftComposite);
 		centerComposite.getParent().layout();
 	}
 

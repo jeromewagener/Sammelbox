@@ -23,6 +23,7 @@ import java.util.List;
 import org.eclipse.swt.browser.Browser;
 import org.sammelbox.controller.GuiController;
 import org.sammelbox.controller.filesystem.FileSystemLocations;
+import org.sammelbox.controller.filters.ItemFieldFilter;
 import org.sammelbox.model.album.AlbumItem;
 import org.sammelbox.model.album.AlbumItemPicture;
 import org.sammelbox.model.album.AlbumItemStore;
@@ -76,10 +77,20 @@ public final class GalleryViewCreator {
 			DetailedItemCreator.createDetailContainer(albumItem, htmlDataColumnContent);
 			
 			galleryItemHtmlBuilder.append("<div id=\"imageId" + id + "\" " +
-					                         " class=\"pictureContainer tooltip\" " +
-					                         " onMouseOver=\"parent.location.href=&quot;" + UIConstants.SHOW_DETAILS + id + "&quot;\" " +
+					                         " class=\"pictureContainer");
+			
+			if (ItemFieldFilter.getValidItemFields(albumItem.getFields()).isEmpty()) {
+				galleryItemHtmlBuilder.append("\" ");
+			}
+			else {
+				galleryItemHtmlBuilder.append(" tooltip\" ");
+			}
+					                         
+			galleryItemHtmlBuilder.append(" onMouseOver=\"parent.location.href=&quot;" + UIConstants.SHOW_DETAILS + id + "&quot;\" " +
 					                         " onClick=\"parent.location.href=&quot;" + UIConstants.SHOW_UPDATE_ENTRY_COMPOSITE + id + "&quot;\">");
-			galleryItemHtmlBuilder.append("<img alt=\"\" src=\"" + picturePath + "\">");
+			
+			galleryItemHtmlBuilder.append("<img class=\"pictureWrapper\" alt=\"\" src=\"" + picturePath + "\">" );
+			
 			galleryItemHtmlBuilder.append("<label> " + htmlDataColumnContent.toString() + " </label>");
 			galleryItemHtmlBuilder.append("</div>");
 		}

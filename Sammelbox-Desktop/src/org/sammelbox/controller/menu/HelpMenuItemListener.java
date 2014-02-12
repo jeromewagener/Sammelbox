@@ -17,6 +17,7 @@ import org.sammelbox.controller.managers.BuildInformationManager;
 import org.sammelbox.view.ApplicationUI;
 import org.sammelbox.view.browser.BrowserFacade;
 import org.sammelbox.view.browser.BrowserUtils;
+import org.sammelbox.view.composites.SpreadsheetComposite;
 import org.sammelbox.view.sidepanes.EmptySidepane;
 import org.sammelbox.view.various.ComponentFactory;
 import org.sammelbox.view.various.PanelType;
@@ -125,6 +126,16 @@ public final class HelpMenuItemListener {
 						Translator.get(DictKeys.DIALOG_TITLE_REPORT_ISSUES), 
 						Translator.get(DictKeys.DIALOG_CONTENT_REPORT_ISSUES),
 						SWT.ICON_INFORMATION).open();
+			}
+		};
+	}
+
+	public static SelectionListener getOpenSpreadsheetListener() {
+		
+		return new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				ApplicationUI.changeCenterCompositeTo(SpreadsheetComposite.build(ApplicationUI.getThreePanelComposite()));
 			}
 		};
 	}

@@ -25,7 +25,11 @@ public final class GalleryItemCreator {
 				     "class=\"pictureContainer\" " +
 				     "onMouseOver=\"parent.location.href=&quot;" + UIConstants.SHOW_DETAILS  + albumItem.getItemID() + "&quot;\" " +
 				     "onClick=\"parent.location.href=&quot;" + UIConstants.SHOW_UPDATE_ENTRY_COMPOSITE  + albumItem.getItemID() + "&quot;\">" +
-		           "<img src=\"" + getThumbnailForFirstPicture(albumItem) + "\">" +
+				     
+				     "<div class=\"pictureWrapper\">" + 
+				     	"<img src=\"" + getThumbnailForFirstPicture(albumItem) + "\">" +
+				     "</div>"+
+				     	
                 "</div>");
 	}
 }

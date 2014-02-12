@@ -36,8 +36,12 @@ p {
 
 	padding: 5px;
 
-	border: 3px solid white;
+	border: 3px solid #fffAF0;
 	border-radius: 15px 15px 15px 15px;
+}
+
+.pictureWrapper{
+	box-shadow: 7px 7px 7px #888888;
 }
 
 .oddBackGround {
@@ -69,7 +73,6 @@ p {
    margin-top:10px;
    padding: 15px;
    float:left;
-   border-radius: 10px 10px 10px 10px;
 }
 
 .albumItemPictures {
@@ -82,16 +85,18 @@ p {
 .mainPictureWrapper {
    width:200px;
    height:200px;
+   background-image: http://fc03.deviantart.net/fs70/f/2011/175/a/3/grunge_stipes_by_miketennis-d3ju9qu.png;
 }
 
 .mainPicture {
    max-width:200px;
    max-height:200px;
+   box-shadow: 7px 7px 7px #888888;
 }
 
 .thumbnailWrapper {
    display:inline;
-   width:40px;
+   /*width:40px;*/
 }
 
 .thumbnailPicture {
@@ -102,7 +107,6 @@ p {
 }
 
 .altPictureWrapper{
-	margin-top: 100px;
 }
 
 .details {
@@ -110,9 +114,9 @@ p {
    padding:10px;
    padding-left:15px;
    overflow:hidden;
-   border: 2px solid black;
+   border: 2px solid #696969;
    background-color:#e4e4e4; /** TODO Create another css file where this is retrieved dynamically */
-   border-radius: 10px 10px 10px 10px;
+   border-radius: 5px 5px 5px 5px;
 }
 
 .buttonWrapper {
@@ -160,9 +164,7 @@ p {
 	border:2px solid #FF9900; 
 	background:#fffAF0;
 } 
-/*.callout {z-index:20;position:absolute;top:30px;border:0;left:-12px;} 
-*/
-/*CSS3 extras*/ 
+
 .tooltip label { 
 	border-radius:4px; 
 	box-shadow: 5px 5px 8px #CCC; 
