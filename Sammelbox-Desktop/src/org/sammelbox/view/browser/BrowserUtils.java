@@ -118,7 +118,7 @@ public final class BrowserUtils {
 		} else if (SammelView.GALLERY_VIEW.equals(currentView)) {
 			GalleryViewCreator.showOverviewAlbum(browser);
 		} else if (SammelView.SPREADSHEET_VIEW.equals(currentView)) {
-			// TODO link spreadsheet view here
+			SpreadsheetViewCreator.showSpreadsheetAlbum(browser);
 		}
 	}
 	

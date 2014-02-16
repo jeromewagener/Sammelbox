@@ -31,7 +31,7 @@ public final class SpreadsheetViewCreator {
 	private SpreadsheetViewCreator() {
 	}
 	
-	public static void showDetailedAlbum(Browser browser) {
+	public static void showSpreadsheetAlbum(Browser browser) {
 		// Exit if no album is selected
 		if (!ApplicationUI.isAlbumSelectedAndShowMessageIfNot()) {
 			return;
@@ -45,21 +45,21 @@ public final class SpreadsheetViewCreator {
 		StringBuilder htmlSpreadsheetFooter = new StringBuilder();
 
 		// Create the header of the spreadsheet
-		if(AlbumItemStore.getAlbumItems(AlbumItemStore.getStopIndex()).size() > 0) {
-			SpreadsheetItemCreator.createSpreadsheetHeader(htmlSpreadsheetHeader, AlbumItemStore.getAlbumItems(AlbumItemStore.getStopIndex()).get(0));
+		if(AlbumItemStore.getAlbumItems().size() > 0) {
+			SpreadsheetItemCreator.createSpreadsheetHeader(htmlSpreadsheetHeader, AlbumItemStore.getAlbumItems().get(0));
 		}
 		
 		// Add all available album items
 		boolean hasEvenCountingInList = false;
-		for (AlbumItem albumItem : AlbumItemStore.getAlbumItems(AlbumItemStore.getStopIndex())) {
+		for (AlbumItem albumItem : AlbumItemStore.getAlbumItems()) {
 			htmlSpreadsheetRow.delete(0, htmlSpreadsheetRow.length());
 			SpreadsheetItemCreator.createNextDataRow(albumItem, htmlSpreadsheetData, htmlSpreadsheetRow, hasEvenCountingInList);
 			hasEvenCountingInList = !hasEvenCountingInList;
 		}
 
 		// Create the footer of the spreadsheet
-		if(AlbumItemStore.getAlbumItems(AlbumItemStore.getStopIndex()).size() > 0) {
-			SpreadsheetItemCreator.createSpreadsheetFooter(htmlSpreadsheetFooter, AlbumItemStore.getAlbumItems(AlbumItemStore.getStopIndex()).get(0));
+		if(AlbumItemStore.getAlbumItems().size() > 0) {
+			SpreadsheetItemCreator.createSpreadsheetFooter(htmlSpreadsheetFooter, AlbumItemStore.getAlbumItems().get(0));
 		}
 		
 		// If no album items have been found
