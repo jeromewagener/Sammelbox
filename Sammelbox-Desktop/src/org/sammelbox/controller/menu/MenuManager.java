@@ -157,11 +157,7 @@ public final class MenuManager {
 			MenuItem showBrowserInfo = new MenuItem(debugSubMenu, SWT.NONE);
 			showBrowserInfo.setText("Show Browser Info");
 			showBrowserInfo.addSelectionListener(HelpMenuItemListener.getShowBrowserInfoListener());
-			
-			MenuItem openSpreadsheet = new MenuItem(debugSubMenu, SWT.NONE);
-			openSpreadsheet.setText("Open Spreadsheet");
-			openSpreadsheet.addSelectionListener(HelpMenuItemListener.getOpenSpreadsheetListener());
-			
+						
 			new MenuItem(helpMenu, SWT.SEPARATOR);
 		}
 		

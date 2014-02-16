@@ -37,6 +37,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Display;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 import org.sammelbox.model.database.operations.DatabaseOperations;
 import org.slf4j.Logger;
@@ -559,5 +561,10 @@ public final class FileSystemAccessWrapper {
 		}
 		
 		return true;
+	}
+	
+	public static Image getImageFromResource(String resourcePath) {
+		InputStream istream = FileSystemAccessWrapper.class.getClassLoader().getResourceAsStream(resourcePath);
+		return new Image(Display.getCurrent(), istream);
 	}
 }

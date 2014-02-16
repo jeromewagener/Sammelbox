@@ -48,20 +48,6 @@
 		return getDocumentHeight() - (getYScrollPosition() + getWindowHeight())
 	}
 
-
-
-	/*** Dynamic Table Modification ***/
-
-	function triggerAlbumExpansionIfNecessary() {
-		if (getScrollPixels() < 200) {	
-			parent.location.href="show:///addAdditionalAlbumItems";
-		}
-	}
-
-	window.onscroll = function() { 
-		triggerAlbumExpansionIfNecessary();
-	}
-
    /** Add resize listener */
 
    window.onresize = function() {

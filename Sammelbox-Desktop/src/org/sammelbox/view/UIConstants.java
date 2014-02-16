@@ -57,7 +57,6 @@ public final class UIConstants {
 	public static final String SHOW_BIG_PICTURE = "show:///bigPicture=";
 	public static final String SHOW_LAST_PAGE = "show:///lastPage";
 	public static final String SHOW_DETAILS = "show:///details=";
-	public static final String ADD_ADDITIONAL_ALBUM_ITEMS = "show:///addAdditionalAlbumItems";
 	public static final String RELOAD_AND_SHOW_ALBUM_VIEW = "show:///reloadAndShowAlbumView=";
 	public static final String BROWSER_RESIZED = "show:///browserResized";
 	public static final String SHOW_URL = "show:///url=";

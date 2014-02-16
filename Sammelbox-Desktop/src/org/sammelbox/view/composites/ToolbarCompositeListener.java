@@ -4,7 +4,6 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Button;
-import org.sammelbox.controller.GuiController;
 import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.model.GuiState;
@@ -22,8 +21,8 @@ public final class ToolbarCompositeListener {
 		// not needed
 	}
 	
-	static MouseListener getHomeButtonListener(final Button homeButton, final Button addAlbumItemButton, final Button toggleViewButton, 
-			final Button advancedSearchButton, final Image detailedViewIcon, final Image homeActiveIcon) {
+	static MouseListener getHomeButtonListener(final Button homeButton, final Button addAlbumItemButton, 
+			final ChangeViewButton changeViewButton, final Button advancedSearchButton, final Image homeActiveIcon) {
 		return new MouseListener() {
 			@Override
 			public void mouseUp(MouseEvent mouseEvent) {
@@ -34,13 +33,11 @@ public final class ToolbarCompositeListener {
 				ApplicationUI.getToolbarComposite().setLastSelectedPanelType(PanelType.EMPTY);
 
 				addAlbumItemButton.setEnabled(false);
-				toggleViewButton.setEnabled(false);
 				advancedSearchButton.setEnabled(false);
+				changeViewButton.setEnabled(false);
 				
 				homeButton.setImage(homeActiveIcon);
-				toggleViewButton.setImage(detailedViewIcon);
-				
-				toggleViewButton.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_TOGGLE_TO_GALLERY));
+
 				ApplicationUI.setSelectedAlbum(GuiState.NO_ALBUM_SELECTED);
 			}
 
@@ -52,8 +49,8 @@ public final class ToolbarCompositeListener {
 		};
 	}
 	
-	static MouseListener getAddNewAlbumButtonListener(final Button addNewAlbumButton, final Button addAlbumItemButton, final Button toggleViewButton, 
-			final Button advancedSearchButton, final Image detailedViewIcon, final Image addNewAlbumActiveIcon) {
+	static MouseListener getAddNewAlbumButtonListener(final Button addNewAlbumButton, final Button addAlbumItemButton, 
+			final Button advancedSearchButton, final Image addNewAlbumActiveIcon) {
 		return new MouseListener() {
 			@Override
 			public void mouseUp(MouseEvent mouseEvent) {
@@ -65,7 +62,6 @@ public final class ToolbarCompositeListener {
 					StatusBarComposite.getInstance(ApplicationUI.getShell()).writeStatus(Translator.get(DictKeys.STATUSBAR_ADD_ALBUM_OPENED));
 
 					addAlbumItemButton.setEnabled(false);
-					toggleViewButton.setEnabled(false);
 					advancedSearchButton.setEnabled(false);
 					
 					ApplicationUI.getToolbarComposite().disableActiveButtons();
@@ -121,32 +117,7 @@ public final class ToolbarCompositeListener {
 			public void mouseDoubleClick(MouseEvent mouseEvent) {}
 		};
 	}
-	
-	static MouseListener getToggleButtonListener(final Button toggleViewButton, final Image detailedViewIcon, final Image pictureViewIcon) {
-		return new MouseListener() {
-			@Override
-			public void mouseUp(MouseEvent mouseEvent) {
-				if (GuiController.getGuiState().isDetailsView()) {
-					toggleViewButton.setImage(detailedViewIcon);
-					toggleViewButton.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_TOGGLE_TO_DETAILS));
-					GuiController.getGuiState().setViewDetailed(false);
-				} else {
-					toggleViewButton.setImage(pictureViewIcon);
-					toggleViewButton.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_TOGGLE_TO_GALLERY));
-					GuiController.getGuiState().setViewDetailed(true);
-				}
-				
-				BrowserFacade.showAlbum();
-			}
-
-			@Override
-			public void mouseDown(MouseEvent mouseEvent) {}
-
-			@Override
-			public void mouseDoubleClick(MouseEvent mouseEvent) {}
-		};
-	}
-	
+		
 	static MouseListener getAdvancedSearchButtonListener(final Button advancedSearchButton, final Image advancedSearchActiveIcon) {
 		return new MouseListener() {
 			@Override

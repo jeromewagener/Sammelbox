@@ -46,7 +46,7 @@ public final class DetailedViewCreator {
 
 		// Add all available album items
 		boolean hasEvenCountingInList = false;
-		for (AlbumItem albumItem : AlbumItemStore.getAlbumItems(AlbumItemStore.getStopIndex())) {
+		for (AlbumItem albumItem : AlbumItemStore.getAlbumItems()) {
 			htmlDataColumnContent.delete(0, htmlDataColumnContent.length());
 			htmlPictureColumnContent.delete(0, htmlPictureColumnContent.length());
 			htmlPreviewPicturesContent.delete(0, htmlPreviewPicturesContent.length());
