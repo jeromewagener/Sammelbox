@@ -174,11 +174,6 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 
 			// Do not change the page
 			event.doit = false;
-		} else if (event.location.equals(UIConstants.ADD_ADDITIONAL_ALBUM_ITEMS)) {
-			BrowserFacade.addAdditionalAlbumItems();
-
-			// Do not change the page
-			event.doit = false;
 		} else if (event.location.startsWith(UIConstants.RELOAD_AND_SHOW_ALBUM_VIEW)) {
 			String albumItemId = event.location.substring(UIConstants.RELOAD_AND_SHOW_ALBUM_VIEW.length());
 			

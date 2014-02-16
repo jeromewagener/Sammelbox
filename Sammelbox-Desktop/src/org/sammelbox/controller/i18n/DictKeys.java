@@ -158,6 +158,10 @@ public final class DictKeys {
 	public static final String DIALOG_SELECT_IMAGES = "org.sammelbox.filedialog.format.SELECT_IMAGES";
 	
 	/*   Buttons   */
+	public static final String BUTTON_CHANGE_VIEW = "org.sammelbox.button.caption.CHANGE_VIEW";
+	public static final String BUTTON_DETAILED_VIEW = "org.sammelbox.button.caption.DETAILED_VIEW";
+	public static final String BUTTON_GALLERY_VIEW = "org.sammelbox.button.caption.GALLERY_VIEW";
+	public static final String BUTTON_SPREADSHEET_VIEW = "org.sammelbox.button.caption.SPREADSHEET_VIEW";
 	public static final String BUTTON_TOGGLE = "collector.button.caption.TOGGLE";
 	public static final String BUTTON_TOOLTIP_TOGGLE_TO_GALLERY = "collector.button.tooltip.TOGGLE_TO_GALLERY";
 	public static final String BUTTON_TOOLTIP_TOGGLE_TO_DETAILS = "collector.button.tooltip.TOGGLE_TO_DETAILS";

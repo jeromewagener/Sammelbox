@@ -46,7 +46,7 @@ public final class GalleryViewCreator {
 		StringBuilder galleryItemHtmlBuilder = new StringBuilder();
 		StringBuilder htmlDataColumnContent = new StringBuilder();
 		
-		for (AlbumItem albumItem : AlbumItemStore.getAlbumItems(AlbumItemStore.getStopIndex())) {
+		for (AlbumItem albumItem : AlbumItemStore.getAlbumItems()) {
 			String picturePath = "";
 			long id = 0;
 

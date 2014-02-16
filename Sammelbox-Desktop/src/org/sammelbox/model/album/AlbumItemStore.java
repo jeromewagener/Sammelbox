@@ -36,22 +36,14 @@ public final class AlbumItemStore {
 	private static final int MULTIPLIER_FOR_RANDOM_DECIMAL = 100;
 	private static final int MAX_RANDOM_INT = 100;
 	private static final String SAMPLE = "Sample";
-	private static final int DEFAULT_STOP_INDEX_INCREASE_AMOUNT = 30;
-	// TODO Temporarily disable the dynamic addition by loading all available album items immediately
-	// Reevaluate this sometime in the future..
-	private static final int DEFAULT_STOP_INDEX = Integer.MAX_VALUE;
 	
 	private static List<AlbumItem> albumItems = new ArrayList<AlbumItem>();
-	private static int stopIndex = DEFAULT_STOP_INDEX;
-	private static int previousStopIndex = DEFAULT_STOP_INDEX;
 	
 	private AlbumItemStore() {
 	}
 	
 	public static void reinitializeStore(AlbumItemResultSet albumItemResultSet) throws DatabaseWrapperOperationException {
 		albumItems.clear();
-		stopIndex = DEFAULT_STOP_INDEX;
-		previousStopIndex = DEFAULT_STOP_INDEX;
 		
 		while (albumItemResultSet.moveToNext()) {
 			List<ItemField> itemFields = new ArrayList<ItemField>();
@@ -75,47 +67,8 @@ public final class AlbumItemStore {
 		return albumItems;
 	}
 	
-	public static List<AlbumItem> getAlbumItemsInRange(int startIndex, int stopIndex) {
-		List<AlbumItem> resultList = new ArrayList<AlbumItem>();
-		
-		for (int i=startIndex; i<=stopIndex; i++) {
-			resultList.add(albumItems.get(i));
-		}
-		
-		return resultList;
-	}
-	
-	public static List<AlbumItem> getAlbumItems(int stopIndex) {
-		return getAlbumItemsInRange(0, stopIndex);
-	}
-	
-	public static int getPreviousStopIndex() {
-		if (previousStopIndex >= albumItems.size() - 1) {
-			return albumItems.size() - 1;
-		}
-		
-		return previousStopIndex;
-	}
-	
-	public static int getStopIndex() {
-		if (stopIndex >= albumItems.size() - 1) {
-			return albumItems.size() - 1;
-		}
-		
-		return stopIndex;
-	}
-
-	public static void increaseStopIndex() {
-		previousStopIndex = stopIndex;		
-		stopIndex += DEFAULT_STOP_INDEX_INCREASE_AMOUNT;
-		
-		if (stopIndex > albumItems.size() - 1) {
-			stopIndex = albumItems.size() - 1;
-		}
-	}
-
-	public static boolean isStopIndexAtEnd() {
-		return stopIndex >= albumItems.size() - 1;
+	public static List<AlbumItem> getAlbumItems() {
+		return albumItems;
 	}
 
 	public static AlbumItem getAlbumItem(long albumItemId) {

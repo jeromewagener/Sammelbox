@@ -19,7 +19,7 @@
 package org.sammelbox.model;
 
 import org.eclipse.swt.widgets.Composite;
-import org.sammelbox.controller.managers.SettingsManager;
+import org.sammelbox.view.SammelView;
 import org.sammelbox.view.various.PanelType;
 
 public class GuiState {
@@ -34,8 +34,9 @@ public class GuiState {
 	private String selectedSavedSearch = null;
 	/** The quick search terms string that is currently displayed */
 	private String quickSearchTerms = null;
-	/** True if detailed view is selected, false if gallery view is selected */
-	private boolean isViewDetailed = SettingsManager.getSettings().isDetailedViewDefault();
+	/** The currently selected view */
+	private SammelView sammelView = SammelView.DETAILED_VIEW; 
+	// TODO adapt SettingsManager.getSettings().isDetailedViewDefault();
 	
 	/** The panel type of the right sidepane */
 	private PanelType currentRightSidepaneType = PanelType.EMPTY;
@@ -51,11 +52,11 @@ public class GuiState {
 	public GuiState() {
 	}
 	
-	public GuiState(String selectedAlbum, String selectedView, String quickSearchTerms, boolean isViewDetailed) {
+	public GuiState(String selectedAlbum, String selectedView, String quickSearchTerms, SammelView sammelView) {
 		this.selectedAlbum = selectedAlbum;
 		this.selectedSavedSearch = selectedView;
 		this.quickSearchTerms = quickSearchTerms;
-		this.isViewDetailed = isViewDetailed;
+		this.sammelView = sammelView;
 	}
 	
 	public String getSelectedAlbum() {
@@ -97,12 +98,12 @@ public class GuiState {
 		this.quickSearchTerms = quickSearchTerms;
 	}
 
-	public boolean isDetailsView() {
-		return isViewDetailed;
+	public SammelView getSammelView() {
+		return sammelView;
 	}
 
-	public void setViewDetailed(boolean isViewDetailed) {
-		this.isViewDetailed = isViewDetailed;
+	public void setSammelView(SammelView sammelView) {
+		this.sammelView = sammelView;
 	}
 
 	public PanelType getCurrentSidepaneType() {

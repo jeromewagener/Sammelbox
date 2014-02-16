@@ -14,8 +14,11 @@
    height="1052.3622047"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.4 r9939"
-   sodipodi:docname="graphics.inkscape.svg">
+   inkscape:version="0.48.3.1 r9886"
+   sodipodi:docname="graphics.inkscape.svg"
+   inkscape:export-filename="/home/luxem/Sammelbox/Sammelbox-Desktop/res/graphics/changeview.png"
+   inkscape:export-xdpi="94.426231"
+   inkscape:export-ydpi="94.426231">
   <defs
      id="defs4">
     <marker
@@ -2051,6 +2054,27 @@
        id="linearGradient4570-9"
        xlink:href="#linearGradient4746-6-7-6-8-0-3-6"
        inkscape:collect="always" />
+    <linearGradient
+       y2="155.93361"
+       x2="274.07144"
+       y1="155.93361"
+       x1="52.357143"
+       gradientTransform="matrix(0.07165137,0,0,0.07165137,517.40607,333.31868)"
+       gradientUnits="userSpaceOnUse"
+       id="linearGradient4728-1"
+       xlink:href="#linearGradient4746-6-7-6-8-0-6"
+       inkscape:collect="always" />
+    <linearGradient
+       id="linearGradient4746-6-7-6-8-0-6">
+      <stop
+         style="stop-color:#000000;stop-opacity:1;"
+         offset="0"
+         id="stop4748-0-8-0-0-1-0" />
+      <stop
+         style="stop-color:#000000;stop-opacity:0.33076924;"
+         offset="1"
+         id="stop4750-3-3-1-4-0-5" />
+    </linearGradient>
   </defs>
   <sodipodi:namedview
      id="base"
@@ -2059,17 +2083,17 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="16"
-     inkscape:cx="156.74641"
-     inkscape:cy="657.92873"
+     inkscape:zoom="8"
+     inkscape:cx="661.77828"
+     inkscape:cy="680.27905"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1295"
-     inkscape:window-height="715"
-     inkscape:window-x="69"
+     inkscape:window-width="1861"
+     inkscape:window-height="1056"
+     inkscape:window-x="59"
      inkscape:window-y="24"
-     inkscape:window-maximized="0"
+     inkscape:window-maximized="1"
      inkscape:snap-global="false"
      showguides="true"
      inkscape:guide-bbox="true">
@@ -2873,17 +2897,17 @@
        sodipodi:ry="14.760854"
        d="m 602.10143,382.11334 a 14.760854,14.760854 0 1 1 -29.52171,0 14.760854,14.760854 0 1 1 29.52171,0 z"
        transform="translate(55.419486,-48.171647)"
-       inkscape:export-filename="/home/luxem/Desktop/help.png"
-       inkscape:export-xdpi="295.08197"
-       inkscape:export-ydpi="295.08197" />
+       inkscape:export-filename="/home/luxem/Sammelbox/Sammelbox-Desktop/res/graphics/help-active.png"
+       inkscape:export-xdpi="94.329582"
+       inkscape:export-ydpi="94.329582" />
     <path
-       style="font-size:26.29957581000000033px;font-style:normal;font-weight:bold;line-height:746.00000380999995286%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.01499998999999996;stroke-miterlimit:0;stroke-opacity:1;stroke-dasharray:none;font-family:Sans;-inkscape-font-specification:Sans Bold"
-       d="m 645.04774,337.95933 c -1.54527,0 -3.09054,0 -4.63581,0 -0.0527,-1.11477 0.10234,-2.3022 0.87342,-3.16906 0.90481,-1.21976 2.26619,-2.00998 3.13335,-3.25695 0.68642,-0.89852 0.58923,-2.43731 -0.51868,-2.95477 -1.42007,-0.63465 -3.04241,-0.12215 -4.39383,0.45393 -0.55104,0.10463 -1.47017,1.00868 -1.75247,0.82003 0,-1.29574 0,-2.59149 0,-3.88723 2.78618,-0.9975 5.93156,-1.52973 8.7874,-0.49995 1.53391,0.53831 2.73325,1.94028 2.89202,3.57692 0.25507,1.58888 -0.21918,3.26964 -1.34496,4.43457 -0.88275,1.10671 -2.24295,1.80266 -2.88875,3.09562 -0.19238,0.4393 -0.14588,0.92107 -0.15169,1.38689 z m -4.63581,1.90055 c 1.54527,0 3.09054,0 4.63581,0 0,1.52387 0,3.04774 0,4.57161 -1.54527,0 -3.09054,0 -4.63581,0 0,-1.52387 0,-3.04774 0,-4.57161 z"
+       style="font-size:26.29957581000000033px;font-style:normal;font-weight:bold;line-height:746.00000380999995286%;letter-spacing:0px;word-spacing:0px;fill:#999999;fill-opacity:1;stroke:#000000;stroke-width:1.50000000000000000;stroke-miterlimit:0;stroke-opacity:1;stroke-dasharray:none;font-family:Sans;-inkscape-font-specification:Sans Bold"
+       d="m 644.54774,337.95933 c -1.54527,0 -3.09054,0 -4.63581,0 -0.0527,-1.11477 0.10234,-2.3022 0.87342,-3.16906 0.90481,-1.21976 2.26619,-2.00998 3.13335,-3.25695 0.68642,-0.89852 0.58923,-2.43731 -0.51868,-2.95477 -1.42007,-0.63465 -3.04241,-0.12215 -4.39383,0.45393 -0.55104,0.10463 -1.47017,1.00868 -1.75247,0.82003 0,-1.29574 0,-2.59149 0,-3.88723 2.78618,-0.9975 5.93156,-1.52973 8.7874,-0.49995 1.53391,0.53831 2.73325,1.94028 2.89202,3.57692 0.25507,1.58888 -0.21918,3.26964 -1.34496,4.43457 -0.88275,1.10671 -2.24295,1.80266 -2.88875,3.09562 -0.19238,0.4393 -0.14588,0.92107 -0.15169,1.38689 z m -4.63581,1.90055 c 1.54527,0 3.09054,0 4.63581,0 0,1.52387 0,3.04774 0,4.57161 -1.54527,0 -3.09054,0 -4.63581,0 0,-1.52387 0,-3.04774 0,-4.57161 z"
        id="text5810"
        inkscape:connector-curvature="0"
-       inkscape:export-filename="/home/luxem/Desktop/help.png"
-       inkscape:export-xdpi="295.08197"
-       inkscape:export-ydpi="295.08197" />
+       inkscape:export-filename="/home/luxem/Sammelbox/Sammelbox-Desktop/res/graphics/help-active.png"
+       inkscape:export-xdpi="94.329582"
+       inkscape:export-ydpi="94.329582" />
     <text
        xml:space="preserve"
        style="font-size:72px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:746.00000381%;letter-spacing:-6.00000048px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Purisa;-inkscape-font-specification:Purisa"
@@ -4733,15 +4757,15 @@
        sodipodi:ry="14.760854"
        d="m 602.10143,382.11334 a 14.760854,14.760854 0 1 1 -29.52171,0 14.760854,14.760854 0 1 1 29.52171,0 z"
        transform="translate(56.55829,0.3716819)"
-       inkscape:export-filename="/home/luxem/git/sammelbox/collector-desktop/res/graphics/help.png"
+       inkscape:export-filename="/home/luxem/Sammelbox/Sammelbox-Desktop/res/graphics/help.png"
        inkscape:export-xdpi="94.426231"
        inkscape:export-ydpi="94.426231" />
     <path
-       style="font-size:26.29957581px;font-style:normal;font-weight:bold;line-height:746.00000381%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.01499999;stroke-miterlimit:0;stroke-opacity:1;stroke-dasharray:none;font-family:Sans;-inkscape-font-specification:Sans Bold"
-       d="m 646.18654,386.50266 c -1.54527,0 -3.09054,0 -4.63581,0 -0.0527,-1.11477 0.10234,-2.3022 0.87342,-3.16906 0.90481,-1.21976 2.26619,-2.00998 3.13335,-3.25695 0.68642,-0.89852 0.58923,-2.43731 -0.51868,-2.95477 -1.42007,-0.63465 -3.04241,-0.12215 -4.39383,0.45393 -0.55104,0.10463 -1.47017,1.00868 -1.75247,0.82003 0,-1.29574 0,-2.59149 0,-3.88723 2.78618,-0.9975 5.93156,-1.52973 8.7874,-0.49995 1.53391,0.53831 2.73325,1.94028 2.89202,3.57692 0.25507,1.58888 -0.21918,3.26964 -1.34496,4.43457 -0.88275,1.10671 -2.24295,1.80266 -2.88875,3.09562 -0.19238,0.4393 -0.14588,0.92107 -0.15169,1.38689 z m -4.63581,1.90055 c 1.54527,0 3.09054,0 4.63581,0 0,1.52387 0,3.04774 0,4.57161 -1.54527,0 -3.09054,0 -4.63581,0 0,-1.52387 0,-3.04774 0,-4.57161 z"
+       style="font-size:26.29957581000000033px;font-style:normal;font-weight:bold;line-height:746.00000380999995286%;letter-spacing:0px;word-spacing:0px;fill:#999999;fill-opacity:1;stroke:#000000;stroke-width:1.50000000000000000;stroke-miterlimit:0;stroke-opacity:1;stroke-dasharray:none;font-family:Sans;-inkscape-font-specification:Sans Bold"
+       d="m 645.68654,386.50266 c -1.54527,0 -3.09054,0 -4.63581,0 -0.0527,-1.11477 0.10234,-2.3022 0.87342,-3.16906 0.90481,-1.21976 2.26619,-2.00998 3.13335,-3.25695 0.68642,-0.89852 0.58923,-2.43731 -0.51868,-2.95477 -1.42007,-0.63465 -3.04241,-0.12215 -4.39383,0.45393 -0.55104,0.10463 -1.47017,1.00868 -1.75247,0.82003 0,-1.29574 0,-2.59149 0,-3.88723 2.78618,-0.9975 5.93156,-1.52973 8.7874,-0.49995 1.53391,0.53831 2.73325,1.94028 2.89202,3.57692 0.25507,1.58888 -0.21918,3.26964 -1.34496,4.43457 -0.88275,1.10671 -2.24295,1.80266 -2.88875,3.09562 -0.19238,0.4393 -0.14588,0.92107 -0.15169,1.38689 z m -4.63581,1.90055 c 1.54527,0 3.09054,0 4.63581,0 0,1.52387 0,3.04774 0,4.57161 -1.54527,0 -3.09054,0 -4.63581,0 0,-1.52387 0,-3.04774 0,-4.57161 z"
        id="text5810-2"
        inkscape:connector-curvature="0"
-       inkscape:export-filename="/home/luxem/git/sammelbox/collector-desktop/res/graphics/help.png"
+       inkscape:export-filename="/home/luxem/Sammelbox/Sammelbox-Desktop/res/graphics/help.png"
        inkscape:export-xdpi="94.426231"
        inkscape:export-ydpi="94.426231" />
     <path
@@ -5314,5 +5338,39 @@
        inkscape:export-filename="/home/luxem/GitHub/Sammelbox-Android/Sammelbox-Android/res/drawable-mdpi/remove.png"
        inkscape:export-xdpi="86"
        inkscape:export-ydpi="86" />
+    <path
+       sodipodi:type="arc"
+       style="fill:#deaa87;fill-opacity:1;stroke:#000000;stroke-opacity:1"
+       id="path4923-9-9-7"
+       sodipodi:cx="587.34058"
+       sodipodi:cy="382.11334"
+       sodipodi:rx="14.760854"
+       sodipodi:ry="14.760854"
+       d="m 602.10143,382.11334 a 14.760854,14.760854 0 1 1 -29.52171,0 14.760854,14.760854 0 1 1 29.52171,0 z"
+       transform="translate(96.306681,0.4759521)"
+       inkscape:export-filename="/home/luxem/Sammelbox/Sammelbox-Desktop/res/graphics/changeview.png"
+       inkscape:export-xdpi="94.426231"
+       inkscape:export-ydpi="94.426231" />
+    <path
+       sodipodi:type="star"
+       style="fill:#88aa00;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="path4513"
+       sodipodi:sides="5"
+       sodipodi:cx="713.11719"
+       sodipodi:cy="385.56049"
+       sodipodi:r1="10.062306"
+       sodipodi:r2="5.0311527"
+       sodipodi:arg1="1.2490458"
+       sodipodi:arg2="1.8773643"
+       inkscape:flatsided="false"
+       inkscape:rounded="0"
+       inkscape:randomized="0"
+       d="m 716.29917,395.10643 -4.70033,-4.74937 -6.5771,1.17953 3.06444,-5.93791 -3.15423,-5.8907 6.59425,1.07954 4.62768,-4.82018 1.01103,6.6051 6.01429,2.91166 -5.96939,3.00264 z"
+       inkscape:transform-center-x="0.65968964"
+       inkscape:transform-center-y="-0.31159145"
+       transform="matrix(0.86764484,-0.49718451,0.49718451,0.86764484,-126.83167,402.57653)"
+       inkscape:export-filename="/home/luxem/Sammelbox/Sammelbox-Desktop/res/graphics/changeview.png"
+       inkscape:export-xdpi="94.426231"
+       inkscape:export-ydpi="94.426231" />
   </g>
 </svg>

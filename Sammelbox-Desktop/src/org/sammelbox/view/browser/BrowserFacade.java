@@ -42,7 +42,6 @@ public final class BrowserFacade {
 	public static void setFutureJumpAnchor(String futureJumpAnchor) { BrowserUtils.setFutureJumpAnchor(futureJumpAnchor); }
 	public static String getFutureJumpAnchor() { return BrowserUtils.getFutureJumpAnchor(); }
 	public static void returnFromImageViewer() { BrowserUtils.returnFromImageViewer(); }
-	public static void addAdditionalAlbumItems() { BrowserUtils.addAdditionalAlbumItems(); }
 	public static void showResultSet(AlbumItemResultSet resultSet) { BrowserUtils.showResultSet(ApplicationUI.getAlbumItemBrowser(), resultSet); }
 	public static void showCreateNewAlbumPage(AlbumItem albumItem) { FeedbackCreator.showCreateNewAlbumPage(ApplicationUI.getAlbumItemBrowser(), albumItem); }
 	public static void showCreateAlterAlbumPage(AlbumItem albumItem) { FeedbackCreator.showCreateAlterAlbumPage(ApplicationUI.getAlbumItemBrowser(), albumItem); }

@@ -28,12 +28,12 @@ import org.eclipse.swt.widgets.Display;
 import org.sammelbox.controller.GuiController;
 import org.sammelbox.controller.filesystem.FileSystemAccessWrapper;
 import org.sammelbox.controller.filesystem.FileSystemLocations;
-import org.sammelbox.model.album.AlbumItem;
 import org.sammelbox.model.album.AlbumItemResultSet;
 import org.sammelbox.model.album.AlbumItemStore;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 import org.sammelbox.model.database.operations.DatabaseOperations;
 import org.sammelbox.view.ApplicationUI;
+import org.sammelbox.view.SammelView;
 import org.sammelbox.view.UIConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -111,10 +111,14 @@ public final class BrowserUtils {
 	}
 
 	static void showAlbum(Browser browser) {
-		if (GuiController.getGuiState().isDetailsView()) {
+		SammelView currentView = GuiController.getGuiState().getSammelView();
+		
+		if (SammelView.DETAILED_VIEW.equals(currentView)) {
 			DetailedViewCreator.showDetailedAlbum(browser);
-		} else {
+		} else if (SammelView.GALLERY_VIEW.equals(currentView)) {
 			GalleryViewCreator.showOverviewAlbum(browser);
+		} else if (SammelView.SPREADSHEET_VIEW.equals(currentView)) {
+			// TODO link spreadsheet view here
 		}
 	}
 	
@@ -172,53 +176,6 @@ public final class BrowserUtils {
 		escapedString = escapedString.replace(">", "&gt;");
 
 		return escapedString;
-	}
-	
-	static void addAdditionalAlbumItems() {
-		if (GuiController.getGuiState().isDetailsView()) {
-			if (!AlbumItemStore.isStopIndexAtEnd()) {
-				StringBuilder rows = new StringBuilder();
-
-				AlbumItemStore.increaseStopIndex();
-				for (AlbumItem albumItem : (AlbumItemStore.getAlbumItemsInRange(
-						AlbumItemStore.getPreviousStopIndex() + 1, AlbumItemStore.getStopIndex())))
-				{
-					rows.append(DetailedItemCreator.getImageAndDetailContainer(albumItem));
-				}
-
-
-				String javascript = "var table = document.getElementById('albumItems'); " +
-									"var tbody = table.tBodies[0]; " +
-									"var temp = tbody.ownerDocument.createElement('div'); " +
-									"temp.innerHTML = '<table>' + tbody.innerHTML + '" + rows + "</table>'; " +
-									"tbody.parentNode.replaceChild(temp.firstChild.firstChild, tbody); ";
-
-				
-				// In JavaScript (as in Java), a backslash will escape the following character. 
-				// However, Windows uses the backslash also as the file separator character. For this reason 
-				// we have to escape possible backslashes by using the backslash character itself
-				ApplicationUI.getAlbumItemBrowser().execute(javascript.replace("\\", "\\\\"));
-			}
-		} else {
-			if (!AlbumItemStore.isStopIndexAtEnd()) {
-				StringBuilder divs = new StringBuilder();
-
-				AlbumItemStore.increaseStopIndex();
-				for (AlbumItem albumItem : (AlbumItemStore.getAlbumItemsInRange(
-						AlbumItemStore.getPreviousStopIndex() + 1, AlbumItemStore.getStopIndex())))
-				{					
-					divs.append(GalleryItemCreator.getImageContainer(albumItem));
-				}
-
-				String javascript = "var div = document.getElementById('albumItems'); " +
-									"div.innerHTML = div.innerHTML + '" + divs + "';";
- 
-				// In JavaScript (as in Java), a backslash will escape the following character. 
-				// However, Windows uses the backslash also as the file separator character. For this reason 
-				// we have to escape possible backslashes by using the backslash character itself
-				ApplicationUI.getAlbumItemBrowser().execute(javascript.replace("\\", "\\\\"));
-			}
-		}
 	}
 
 	static void setLastPageAsHtml(String lastShownContentAsHtml) {
