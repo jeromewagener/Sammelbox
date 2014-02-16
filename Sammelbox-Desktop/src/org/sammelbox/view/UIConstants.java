@@ -45,9 +45,11 @@ public final class UIConstants {
 	public static final String NO_ANCHOR_DEFINED = "";
 	
 	// ------------------ Browser Constants ------------------
-	public static final String STYLE_CSS = "file://" + FileSystemLocations.getStyleCSS();
-	public static final String EFFECTS_JS = "file://" + FileSystemLocations.getAppDataDir() + File.separatorChar + "effects.js";
-	public static final String META_PARAMS = "http-equiv=\"X-UA-Compatible\" content=\"IE=edge\" charset=\"utf-8\"";
+	public static final String STYLE_CSS               = "file://" + FileSystemLocations.getStyleCSS();
+	public static final String STYLE_CSS_SPREADSHEET   = "file://" + FileSystemLocations.getStyleCSSSpreadsheet();
+	public static final String EFFECTS_JS              = "file://" + FileSystemLocations.getAppDataDir() + File.separatorChar + "effects.js";
+	public static final String SPREADSHEETSCRIPTS_JS   = "file://" + FileSystemLocations.getAppDataDir() + File.separatorChar + "spreadsheet-scripts.js";
+	public static final String META_PARAMS             = "http-equiv=\"X-UA-Compatible\" content=\"IE=edge\" charset=\"utf-8\"";
 	
 	// ------------------ Browser Listener Constants ------------------
 	public static final String SHOW_UPDATE_ENTRY_COMPOSITE = "show:///updateComposite=";

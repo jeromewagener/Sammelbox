@@ -120,6 +120,8 @@ public final class FileSystemAccessWrapper {
 		isSuccess &= extractResourceToFile("graphics/logo-small.png", FileSystemLocations.getLogoSmallPNG());
 		isSuccess &= extractResourceToFile("javascript/effects.js", FileSystemLocations.getEffectsJS());
 		isSuccess &= extractResourceToFile("stylesheets/style.css", FileSystemLocations.getStyleCSS());
+		isSuccess &= extractResourceToFile("stylesheets/spreadsheet-style.css", FileSystemLocations.getStyleCSSSpreadsheet());
+		isSuccess &= extractResourceToFile("javascript/spreadsheet-scripts.js", FileSystemLocations.getSpreadsheetScripts());
 		
 		return isSuccess;
 	}

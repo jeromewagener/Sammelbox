@@ -69,5 +69,7 @@ public final class FileSystemLocations {
 	public static String getSettingsXML()			{ return getAppDataDir() + File.separatorChar + "settings.xml"; }
 	public static String getLockFile() 			{ return getAppDataDir() + File.separatorChar + ".lock"; }
 	public static String getEffectsJS() 			{ return getAppDataDir() + File.separatorChar + "effects.js"; }
+	public static String getSpreadsheetScripts()	{ return getAppDataDir() + File.separatorChar + "spreadsheet-scripts.js"; }
 	public static String getStyleCSS() 			{ return getAppDataDir() + File.separatorChar + "style.css"; }
+	public static String getStyleCSSSpreadsheet() { return getAppDataDir() + File.separatorChar + "style-spreadsheet.css"; }
 }

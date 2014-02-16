@@ -42,12 +42,12 @@ public final class WelcomePageCreator {
 				"    <link rel=stylesheet href=\"" + UIConstants.STYLE_CSS + "\" />" +
 				"    <script src=\"" + UIConstants.EFFECTS_JS + "\"></script>" +
 				"  </head>" +
-				"  <body>" +
+				"  <body style=\"width:100%;\">" +
 				"    <div style=\"width:100%;\">" +
 				"      <div style=\"float:left; margin:25px;\">" +
 				"        <img width=\"450px\" src=\" " + FileSystemLocations.getLogoPNG() + " \">" +
 				"      </div>" +
-		        "      <div style=\"float:left; margin:25px; padding:10px; background-color:#" + BrowserUtils.getBackgroundColorOfWidgetInHex() + "\">" +
+		        "      <div style=\"float:left; margin-top:25px; padding:10px; background-color:#;" + BrowserUtils.getBackgroundColorOfWidgetInHex() + "\">" +
 					     generateAlbumInformation() +
 					     generateFavorites() +
 			    "      </div>" +
