@@ -344,8 +344,11 @@ public final class SavedSearchManager {
 	public static void updateAlbumNameIfNecessary(String oldAlbumName, String newAlbumName) {
 		List<SavedSearch> savedSearches = albumNamesToSavedSearches.get(oldAlbumName);
 		
-		for (SavedSearch savedSearch : savedSearches) {
-			savedSearch.album = newAlbumName;			
+		// the list of saved searches can be null if the album has recently been deleted
+		if (savedSearches != null) {
+			for (SavedSearch savedSearch : savedSearches) {
+				savedSearch.album = newAlbumName;			
+			}
 		}
 		
 		storeSavedSearches();

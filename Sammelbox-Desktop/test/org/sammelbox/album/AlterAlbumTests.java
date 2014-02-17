@@ -41,6 +41,7 @@ import org.sammelbox.model.album.FieldType;
 import org.sammelbox.model.album.MetaItemField;
 import org.sammelbox.model.database.DatabaseStringUtilities;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
+import org.sammelbox.model.database.operations.DatabaseConstants;
 import org.sammelbox.model.database.operations.DatabaseOperations;
 import org.sammelbox.utilities.TestQueries;
 
@@ -499,6 +500,61 @@ public class AlterAlbumTests {
 			
 		} catch (Exception e) {
 			fail(e.getMessage());
+		}
+	}
+	
+	@Test
+	public void testInserationOfScoreInExistingAlbum() {
+		try {
+			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
+			
+			DatabaseOperations.getListOfAllAlbums().contains("Music CDs");
+			DatabaseOperations.renameAlbum("Music CDs", "My-Music-CDs");
+				
+			TestQueries.isDatabaseTablePresent("my_music_cds");
+			TestQueries.isDatabaseTablePresent("my_music_cds" + DatabaseConstants.PICTURE_TABLE_SUFFIX);
+			TestQueries.isDatabaseTablePresent("my_music_cds" + DatabaseConstants.TYPE_INFO_SUFFIX);
+			
+			DatabaseOperations.getListOfAllAlbums().contains("My-Music-CDs");
+		} catch (DatabaseWrapperOperationException e) {
+			fail("Alteration of album failed");
+		}
+	}
+	
+	@Test
+	public void testModificationAndMasterTableUpdating() {
+		try {
+			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
+			
+			// rename
+			MetaItemField oldMetaItemField = new MetaItemField("Artist", FieldType.TEXT);
+			MetaItemField newMetaItemField = new MetaItemField("Artists", FieldType.TEXT);
+			DatabaseOperations.renameAlbumItemField("Music CDs", oldMetaItemField, newMetaItemField);
+			
+			List<String> albumsFromMasterTable = DatabaseOperations.getListOfAllAlbums();
+			assertTrue("There should be three albums", albumsFromMasterTable.size() == 3);
+			assertTrue("Contains Music CDs", albumsFromMasterTable.contains("Music CDs"));
+			assertTrue("Contains DVDs", albumsFromMasterTable.contains("DVDs"));
+			assertTrue("Contains Books", albumsFromMasterTable.contains("Books"));
+			
+			// reorder
+			DatabaseOperations.reorderAlbumItemField(
+					"Music CDs", newMetaItemField, new MetaItemField(DatabaseConstants.ID_COLUMN_NAME, FieldType.ID));
+			albumsFromMasterTable = DatabaseOperations.getListOfAllAlbums();
+			assertTrue("There should be three albums", albumsFromMasterTable.size() == 3);
+			assertTrue("Contains Music CDs", albumsFromMasterTable.contains("Music CDs"));
+			assertTrue("Contains DVDs", albumsFromMasterTable.contains("DVDs"));
+			assertTrue("Contains Books", albumsFromMasterTable.contains("Books"));
+			
+			// delete
+			DatabaseOperations.removeAlbumItemField("Music CDs", newMetaItemField);
+			albumsFromMasterTable = DatabaseOperations.getListOfAllAlbums();
+			assertTrue("There should be three albums", albumsFromMasterTable.size() == 3);
+			assertTrue("Contains Music CDs", albumsFromMasterTable.contains("Music CDs"));
+			assertTrue("Contains DVDs", albumsFromMasterTable.contains("DVDs"));
+			assertTrue("Contains Books", albumsFromMasterTable.contains("Books"));
+		} catch (DatabaseWrapperOperationException e) {
+			fail("Alteration of album failed");
 		}
 	}
 }

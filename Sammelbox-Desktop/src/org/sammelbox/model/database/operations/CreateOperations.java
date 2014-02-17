@@ -82,7 +82,8 @@ public final class CreateOperations {
 	 * @throws DatabaseWrapperOperationException 
 	 * @param albumHasPictures true indicates that this album may contain pictures and the related flag in the master table should be set  
 	 */
-	static void createNewAlbumTable(List<MetaItemField> fields, String albumName, String tableName, boolean albumHasPictures) throws DatabaseWrapperOperationException {
+	static void createNewAlbumTable(List<MetaItemField> fields, String albumName, String tableName, boolean albumHasPictures) 
+											throws DatabaseWrapperOperationException {
 		String typeInfoTableName = "";
 		String createTempTableSQL = "";
 		List<MetaItemField> columns =  new ArrayList<MetaItemField>(fields);
@@ -145,7 +146,7 @@ public final class CreateOperations {
 		// Save the type informations in a separate table
 		createTypeInfoTable(typeInfoTableName, columns, temporary);
 		
-		// Add the album back to the album master table
+		// Add the album to the album master table
 		UpdateOperations.addNewAlbumToAlbumMasterTable(albumName, albumHasPictures);
 		
 		try (Statement statement = ConnectionManager.getConnection().createStatement()) {

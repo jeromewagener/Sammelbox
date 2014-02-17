@@ -26,27 +26,27 @@ public final class DatabaseStringUtilities {
 	
 	/** Creates a database safe album table name for a given album name. The according suffix is used! */
 	public static String generateTableName(String albumName) {
-		return (albumName.toLowerCase()).replace(" ", "_");
+		return (albumName.toLowerCase()).replace(" ", "_").replace("-", "_");
 	}
 	
 	/** Creates a database safe picture table name for a given album name The according suffix is used! */
 	public static String generatePictureTableName(String albumName) {
-		return (albumName.toLowerCase()).replace(" ", "_") + DatabaseConstants.PICTURE_TABLE_SUFFIX;
+		return (albumName.toLowerCase()).replace(" ", "_").replace("-", "_") + DatabaseConstants.PICTURE_TABLE_SUFFIX;
 	}
 	
 	/** Creates a database type info table name for a given album name The according suffix is used! */
 	public static String generateTypeInfoTableName(String albumName) {
-		return (albumName.toLowerCase()).replace(" ", "_") + DatabaseConstants.TYPE_INFO_SUFFIX;
+		return (albumName.toLowerCase()).replace(" ", "_").replace("-", "_") + DatabaseConstants.TYPE_INFO_SUFFIX;
 	}
 	
 	/** Creates a database safe index table name for a given album name The according suffix is used! */
 	public static String generateIndexTableName(String albumName) {
-		return (albumName.toLowerCase()).replace(" ", "_") + DatabaseConstants.INDEX_NAME_SUFFIX;
+		return (albumName.toLowerCase()).replace(" ", "_").replace("-", "_") + DatabaseConstants.INDEX_NAME_SUFFIX;
 	}
 	
 	/** Creates a database safe temporary table name for a given album name The according suffix is used! */
 	public static String generateTempTableName(String albumName) {
-		return (albumName.toLowerCase()).replace(" ", "_") + DatabaseConstants.TEMP_TABLE_SUFFIX;
+		return (albumName.toLowerCase()).replace(" ", "_").replace("-", "_") + DatabaseConstants.TEMP_TABLE_SUFFIX;
 	}
 	
 	/**

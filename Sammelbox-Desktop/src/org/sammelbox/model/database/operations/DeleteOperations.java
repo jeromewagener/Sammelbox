@@ -125,10 +125,8 @@ public final class DeleteOperations {
 	static void removeAlbum(String albumName) throws DatabaseWrapperOperationException {
 		String savepointName = DatabaseIntegrityManager.createSavepoint();
 		try {	
-			String typeInfoTableName = DatabaseStringUtilities.generateTypeInfoTableName(albumName);
-			
 			dropTable(DatabaseStringUtilities.generateTableName(albumName));
-			dropTable(typeInfoTableName);
+			dropTable(DatabaseStringUtilities.generateTypeInfoTableName(albumName));
 			
 			UpdateOperations.removeAlbumFromAlbumMasterTable(albumName); 
 			

@@ -38,6 +38,7 @@ import org.sammelbox.model.album.FieldType;
 import org.sammelbox.model.album.MetaItemField;
 import org.sammelbox.model.database.DatabaseStringUtilities;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
+import org.sammelbox.model.database.operations.DatabaseConstants;
 import org.sammelbox.model.database.operations.DatabaseOperations;
 import org.sammelbox.utilities.TestQueries;
 
@@ -203,6 +204,35 @@ public class CreateAlbumTests {
 		
 		if (!bookPictureDirectory.exists()) {
 			fail("Creation of album picture dir for " + albumName + " failed");
+		}
+	}
+	
+	@Test
+	public void testAlbumWithScoreCreation() {
+		final String albumName = "My-Books";
+		List<MetaItemField> columns = new ArrayList<MetaItemField>();
+		columns.add(new MetaItemField("Book-Title", FieldType.TEXT));
+		columns.add(new MetaItemField("Book-Author", FieldType.TEXT));
+
+		try {
+			DatabaseOperations.createNewAlbum(albumName, columns, false);
+		} catch (DatabaseWrapperOperationException e) {
+			fail("Creation of album " + albumName + " failed");
+		}
+
+		try {
+			AlbumItemResultSet resultSet = DatabaseOperations.executeSQLQuery("SELECT * FROM " + DatabaseStringUtilities.generateTableName(albumName));		
+			Assert.assertTrue(resultSet != null && resultSet.getAlbumName().equals(albumName));
+		} catch (DatabaseWrapperOperationException e) {
+			fail("Creation of album " + albumName + " failed");
+		}
+		
+		try {
+			TestQueries.isDatabaseTablePresent("my_books");
+			TestQueries.isDatabaseTablePresent("my_books" + DatabaseConstants.PICTURE_TABLE_SUFFIX);
+			TestQueries.isDatabaseTablePresent("my_books" + DatabaseConstants.TYPE_INFO_SUFFIX);
+		} catch (DatabaseWrapperOperationException e) {
+			fail("Creation of album " + albumName + " failed");
 		}
 	}
 }
