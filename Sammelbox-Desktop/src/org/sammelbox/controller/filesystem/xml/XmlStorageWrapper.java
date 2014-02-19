@@ -34,11 +34,12 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.sammelbox.controller.filesystem.FileSystemAccessWrapper;
 import org.sammelbox.controller.filesystem.FileSystemLocations;
 import org.sammelbox.controller.i18n.Language;
-import org.sammelbox.controller.managers.SettingsManager;
 import org.sammelbox.controller.managers.SavedSearchManager.SavedSearch;
+import org.sammelbox.controller.managers.SettingsManager;
 import org.sammelbox.model.database.QueryComponent;
 import org.sammelbox.model.database.QueryOperator;
 import org.sammelbox.model.settings.ApplicationSettings;
+import org.sammelbox.view.SammelView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -67,7 +68,7 @@ public final class XmlStorageWrapper {
 		xmlOutput.append("<settings>\n");
 		xmlOutput.append("\t<userDefinedLanguage>" + applicationSettings.getUserDefinedLanguage().toString() + "</userDefinedLanguage>\n");
 		xmlOutput.append("\t<dateFormat>" + applicationSettings.getDateFormat() + "</dateFormat>\n");
-		xmlOutput.append("\t<detailedViewIsDefault>" + applicationSettings.isDetailedViewDefault() + "</detailedViewIsDefault>\n");
+		xmlOutput.append("\t<defaultView>" + applicationSettings.getDefaultView() + "</defaultView>\n");
 		xmlOutput.append("\t<showDebugMenu>" + applicationSettings.showDebugMenu() + "</showDebugMenu>\n");
 		xmlOutput.append("\t<isFullSynchronizationEnabled>" + applicationSettings.isFullSynchronizationEnabled() + "</isFullSynchronizationEnabled>\n");
 		xmlOutput.append("</settings>\n");
@@ -176,7 +177,7 @@ public final class XmlStorageWrapper {
 				try {
 					applicationSettings.setUserDefinedLanguage(Language.valueOf(getValue("userDefinedLanguage", element)));
 					applicationSettings.setDateFormat(getValue("dateFormat", element));
-					applicationSettings.setDetailedViewIsDefault(Boolean.valueOf(getValue("detailedViewIsDefault", element)));
+					applicationSettings.setDefaultView(SammelView.valueOf(getValue("defaultView", element)));
 					applicationSettings.setShowDebugMenu(Boolean.valueOf(getValue("showDebugMenu", element)));
 					applicationSettings.setFullSynchronizationEnabled(Boolean.valueOf(getValue("isFullSynchronizationEnabled", element)));
 				} catch (RuntimeException exception) {

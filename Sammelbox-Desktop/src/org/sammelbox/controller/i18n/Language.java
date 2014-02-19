@@ -18,10 +18,16 @@
 
 package org.sammelbox.controller.i18n;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public enum Language {
+	// if you add a language, please add the language to valuesWithoutUnknown()
 	UNKNOWN,
 	ENGLISH,
 	DEUTSCH;
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(Language.class);
 	
 	public static String getDictionaryBundle(Language language) {
 		switch (language) {
@@ -49,16 +55,32 @@ public enum Language {
 		}
 	}
 	
-	public static String[] allLanguages() {
-		String[] allLanguages = new String[values().length - 1];
-		
-		int i=0;
-		for (Language language : values()) {
-			if (language != UNKNOWN) {
-				allLanguages[i++] = language.toString();
-			}
-		}
-		
-		return allLanguages;
+	public static Language[] valuesWithoutUnknown() {
+		return new Language[] {
+				Language.ENGLISH,
+				Language.DEUTSCH
+		};
 	}
+	
+    public static String getTranslation(Language language) {
+    	if (ENGLISH.equals(language)) {
+    		return Translator.toBeTranslated("English");
+    	} else if (DEUTSCH.equals(language)) {
+    		return Translator.toBeTranslated("Deutsch");
+    	}
+    	
+    	LOGGER.error("A translation for an unknown language was requested");
+    	return "";
+    }
+    
+    public static Language byTranslation(String language) {
+    	if ((Translator.toBeTranslated("English").equals(language))) {
+    		return ENGLISH;
+    	} else if ((Translator.toBeTranslated("Deutsch").equals(language))) {
+    		return DEUTSCH;
+    	}
+    	
+    	LOGGER.error("A language for an unknown translation was requested");
+    	return null;
+    }
 }

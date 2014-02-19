@@ -19,6 +19,7 @@
 package org.sammelbox.model;
 
 import org.eclipse.swt.widgets.Composite;
+import org.sammelbox.controller.managers.SettingsManager;
 import org.sammelbox.view.SammelView;
 import org.sammelbox.view.various.PanelType;
 
@@ -35,8 +36,7 @@ public class GuiState {
 	/** The quick search terms string that is currently displayed */
 	private String quickSearchTerms = null;
 	/** The currently selected view */
-	private SammelView sammelView = SammelView.DETAILED_VIEW; 
-	// TODO adapt SettingsManager.getSettings().isDetailedViewDefault();
+	private SammelView sammelView = SettingsManager.getSettings().getDefaultView();
 	
 	/** The panel type of the right sidepane */
 	private PanelType currentRightSidepaneType = PanelType.EMPTY;

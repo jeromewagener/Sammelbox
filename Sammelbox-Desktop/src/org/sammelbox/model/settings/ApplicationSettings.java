@@ -1,11 +1,12 @@
 package org.sammelbox.model.settings;
 
 import org.sammelbox.controller.i18n.Language;
+import org.sammelbox.view.SammelView;
 
 public class ApplicationSettings {
 	private Language userDefinedLanguage = Language.UNKNOWN;
 	private String dateFormat = "dd/MM/yyyy";
-	private boolean detailedViewIsDefault = true;
+	private SammelView defaultView = SammelView.DETAILED_VIEW;
 	private boolean showDebugMenu = false;
 	private boolean isFullSynchronizationEnabled = true;
 	
@@ -27,12 +28,12 @@ public class ApplicationSettings {
 		this.dateFormat = dateFormat;
 	}
 
-	public boolean isDetailedViewDefault() {
-		return detailedViewIsDefault;
+	public SammelView getDefaultView() {
+		return defaultView;
 	}
 
-	public void setDetailedViewIsDefault(boolean detailedViewIsDefault) {
-		this.detailedViewIsDefault = detailedViewIsDefault;
+	public void setDefaultView(SammelView defaultView) {
+		this.defaultView = defaultView;
 	}
 
 	public boolean showDebugMenu() {
