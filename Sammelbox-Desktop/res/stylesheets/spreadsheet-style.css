@@ -1,17 +1,69 @@
 body
 {
-	background-color: white;	
+	background-color: white;
+}
+
+.unselectable
+{
+	 -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 table
 {
-border-collapse:collapse;
-//border-color: grey;
-
+	border-collapse:collapse;
+	border-color: grey;
 } 
 
-tr
+.tableWrapper
 {
+	width: 5000px;
+	overflow:scroll;	
+}
+
+.normal
+{
+	/* Do not delete. This is a place-holder class. */
+}
+
+.normalCheckbox
+{
+	width: auto;	
+}
+
+.dragMe
+{
+	width: 20px;
+	height: 20px;
+	float: right;
+}
+
+.hideByMe
+{
+	width: 20px;
+	height: 20px;
+	float: right;
+}
+
+.label
+{
+	white-space:nowrap;
+}
+
+.hidden
+{
+	display: none;	
+}
+
+th
+{
+	border-style: solid;	
+	border-color: grey; 
+	border-width: 1px;
 }
 
 td
@@ -21,13 +73,31 @@ td
 	vertical-align: middle; 
 	text-align: center;
 	border-width: 1px;
-	white-space:nowrap
+	white-space:nowrap;
+	overflow: hidden;
 }
 
 input
 {
 	border: none;
 	background-color: transparent;
+	width: 100%;
+}
+
+.headerTable
+{
+	width: 100%;
+}
+
+.smallTd
+{
+	width: 20px;	
+	border-width: 0px;
+}
+
+.labelTd
+{
+	border-width: 0px;
 }
 
 .oddBackGround
@@ -75,4 +145,40 @@ input
 	border-width: 1px;
 	width: 180px;	
 	text-align: center;
+}
+
+.tooltip
+{
+	outline:none; 
+} 
+
+.tooltip:hover
+{
+	text-decoration:none;
+} 
+
+.tooltip label
+{ 
+	z-index:10;
+	display:none; 
+	padding:14px 20px; 
+	margin-top:30px; 
+	margin-left:0px; 
+	line-height:16px; 
+	text-align: left;
+} 
+
+.tooltip:hover label
+{ 
+	display:inline; 
+	position:absolute; 
+	color:#111; 
+	border:2px solid #FF9900; 
+	background:#fffAF0;
+} 
+
+.tooltip label
+{ 
+	border-radius:4px; 
+	box-shadow: 5px 5px 8px #CCC; 
 }

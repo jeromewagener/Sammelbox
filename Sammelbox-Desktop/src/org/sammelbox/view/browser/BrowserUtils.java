@@ -35,6 +35,7 @@ import org.sammelbox.model.database.operations.DatabaseOperations;
 import org.sammelbox.view.ApplicationUI;
 import org.sammelbox.view.SammelView;
 import org.sammelbox.view.UIConstants;
+import org.sammelbox.view.browser.spreadsheet.SpreadsheetViewCreator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -164,7 +165,7 @@ public final class BrowserUtils {
 		return defaultSystemFont;
 	}
 	
-	static String escapeHtmlString(String htmlString) {
+	public static String escapeHtmlString(String htmlString) {
 		if (htmlString == null) {
 			return "";
 		}		
@@ -178,7 +179,7 @@ public final class BrowserUtils {
 		return escapedString;
 	}
 
-	static void setLastPageAsHtml(String lastShownContentAsHtml) {
+	public static void setLastPageAsHtml(String lastShownContentAsHtml) {
 		BrowserUtils.lastPageAsHtml = lastShownContentAsHtml;
 	}
 	

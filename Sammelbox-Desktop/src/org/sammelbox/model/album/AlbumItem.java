@@ -30,7 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class AlbumItem {
-	public static final Long ITEM_ID_UNDEFINED = Long.MIN_VALUE;
+	public static final Long ITEM_ID_UNDEFINED = -1L;
 	private static final Logger LOGGER = LoggerFactory.getLogger(AlbumItem.class);
 	
 	private long itemId = ITEM_ID_UNDEFINED;
@@ -360,6 +360,33 @@ public class AlbumItem {
 			return albumItemPictures.get(0);
 		} else {
 			return null;
+		}
+	}
+	
+	public void initializeWithDefaultValuesUsingMetaItems(List<MetaItemField> metaItemFields) {
+		itemFields.clear();
+		itemFields.add(new ItemField(DatabaseConstants.ID_COLUMN_NAME, FieldType.ID, ITEM_ID_UNDEFINED));
+		
+		for (MetaItemField metaItemField : metaItemFields) {
+			if (metaItemField.getType().equals(FieldType.DATE)) {
+				itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), null));
+			} else if (metaItemField.getType().equals(FieldType.DECIMAL)) {
+				itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), 0.0));
+			} else if (metaItemField.getType().equals(FieldType.INTEGER)) {
+				itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), 0));
+			} else if (metaItemField.getType().equals(FieldType.OPTION)) {
+				itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), OptionType.UNKNOWN));
+			} else if (metaItemField.getType().equals(FieldType.STAR_RATING)) {
+				itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), StarRating.ZERO_STARS));
+			} else if (metaItemField.getType().equals(FieldType.TEXT)) {
+				itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), ""));
+			} else if (metaItemField.getType().equals(FieldType.TIME)) {
+				itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), null));
+			} else if (metaItemField.getType().equals(FieldType.URL)) {
+				itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), ""));
+			} else if (metaItemField.getType().equals(FieldType.UUID)) {
+				itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), null));
+			}
 		}
 	}
 }
