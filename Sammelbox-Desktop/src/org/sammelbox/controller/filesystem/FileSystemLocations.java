@@ -61,8 +61,12 @@ public final class FileSystemLocations {
 	public static String getThreeStarsPNG() 		{ return getAppDataGraphicsDir() + File.separatorChar + "threestars.png"; }
 	public static String getFourStarsPNG() 		{ return getAppDataGraphicsDir() + File.separatorChar + "fourstars.png"; }
 	public static String getFiveStarsPNG() 		{ return getAppDataGraphicsDir() + File.separatorChar + "fivestars.png"; }
+	public static String getMinimizeArrowPNG() 	{ return getAppDataGraphicsDir() + File.separatorChar + "minimize-arrow.png"; }
+	public static String getMaximizeArrowPNG() 	{ return getAppDataGraphicsDir() + File.separatorChar + "maximize-arrow.png"; }
+	public static String getResizeSpreadsheetPNG(){ return getAppDataGraphicsDir() + File.separatorChar + "resize-spreadsheet.png"; }
 	public static String getLogoPNG() 				{ return getAppDataDir() + File.separatorChar + "logo.png"; }
 	public static String getLogoSmallPNG() 		{ return getAppDataDir() + File.separatorChar + "logo-small.png"; }
+	
 	public static String getWelcomeXML() 			{ return getAppDataDir() + File.separatorChar + "welcome.xml"; }
 	public static String getSavedSearchesXML() 	{ return getAppDataDir() + File.separatorChar + "saved-searches.xml"; }
 	public static String getAlbumsXML() 			{ return getAppDataDir() + File.separatorChar + "albums.xml"; }

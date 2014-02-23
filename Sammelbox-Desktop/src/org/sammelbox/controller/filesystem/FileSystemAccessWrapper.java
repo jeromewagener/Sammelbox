@@ -124,6 +124,9 @@ public final class FileSystemAccessWrapper {
 		isSuccess &= extractResourceToFile("stylesheets/style.css", FileSystemLocations.getStyleCSS());
 		isSuccess &= extractResourceToFile("stylesheets/spreadsheet-style.css", FileSystemLocations.getStyleCSSSpreadsheet());
 		isSuccess &= extractResourceToFile("javascript/spreadsheet-scripts.js", FileSystemLocations.getSpreadsheetScripts());
+		isSuccess &= extractResourceToFile("graphics/minimize-arrow.png", FileSystemLocations.getMinimizeArrowPNG());
+		isSuccess &= extractResourceToFile("graphics/maximize-arrow.png", FileSystemLocations.getMaximizeArrowPNG());
+		isSuccess &= extractResourceToFile("graphics/resize-spreadsheet.png", FileSystemLocations.getResizeSpreadsheetPNG());
 		
 		return isSuccess;
 	}
