@@ -178,7 +178,7 @@ public final class SpreadsheetItemCreator {
 	private static String getValueLine(String value, long id, long columnIndex) {
 		return "<td id=\"value:" + columnIndex + ":" + id + "\" class=\"field\"> " +
 					"<div id=\"hideThisContainer:"  + columnIndex + ":" + id + "\" class=\"normal\">"+
-					    "<input id=\"input:" + columnIndex + ":" + id + "\" type=\"text\" value=\"" + value + "\" onChange=\"markAsDirty('"+id+"');\">" +
+					    "<input id=\"input:" + columnIndex + ":" + id + "\" type=\"text\" value=\"" + value + "\" onChange=\"markAsDirty('" + id + "', '" + columnIndex + "');\">" +
 					"</div>" +
 				"</td>";
 	}
@@ -200,7 +200,7 @@ public final class SpreadsheetItemCreator {
 		
 		return "<td>" +
 					"<div id=\"hideThisContainer:"  + columnIndex + ":" + id + "\" class=\"normal\">" +
-						"<select id=\"select:" + id + ":" + columnIndex + "\" onChange=\"markAsDirty('"+id+"');\">" +
+						"<select id=\"input:" + columnIndex + ":" + id + "\" onChange=\"markAsDirty('" + id + "', '" + columnIndex + "');\">" +
 							"<option value=\"" + OptionType.YES + "\" " + selectedYes + ">" + Translator.get(DictKeys.BROWSER_YES) + "</option>" +
 							"<option value=\"" + OptionType.NO + "\" " + selectedNo + ">" + Translator.get(DictKeys.BROWSER_NO) + "</option>" +
 							"<option value=\"" + OptionType.UNKNOWN + "\" " + selectedUnknown + ">" + Translator.get(DictKeys.BROWSER_UNKNOWN) + "</option>" +
@@ -253,7 +253,7 @@ public final class SpreadsheetItemCreator {
 		
 		return 	"<td>" +
 					"<div id=\"hideThisContainer:"  + columnIndex + ":" + id + "\" class=\"normal\">" +
-						"<select id=\"select:" + id + ":" + columnIndex + "\" onChange=\"markAsDirty('"+id+"');\">" +
+						"<select id=\"input:" + columnIndex + ":" + id + "\" onChange=\"markAsDirty('" + id + "', '" + columnIndex + "');\">" +
 							"<option value=\"" + StarRating.ZERO_STARS + "\" " + zeroSelected + ">" + zeroStar + "</option>" +
 							"<option value=\"" + StarRating.ONE_STAR + "\" " + oneSelected + ">" + oneStar + "</option>" +
 							"<option value=\"" + StarRating.TWO_STARS + "\" " + twoSelected + ">" + twoStar + "</option>" +

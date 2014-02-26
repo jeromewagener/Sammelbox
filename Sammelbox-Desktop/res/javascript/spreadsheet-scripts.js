@@ -22,6 +22,11 @@ var idDragStarted;
 var dragging = false;
 var minColWidth = 170;
 
+var addUpdateDeleteMappingObjects = [];
+
+var updateTheseObjects = [];
+var deleteTheseObjects = [];
+
 function startDrag(id, event) {
 	idDragStarted = id;
 	mouseDownX = event.clientX;
@@ -106,17 +111,65 @@ function markAsDelete(id) {
 		removeClass(row, 'delete');
 		decreaseDeleteCount();
 	}
+	
+	if (contains(deleteTheseObjects, id)) {
+		remove(deleteTheseObjects, id);	
+	} else {
+		deleteTheseObjects.push(id);
+	}	
 }
 
-function markAsDirty(id) {	
+function markAsDirty(id, columnIndex) {	
 	var row = document.getElementById('row:' + id);	
+	var nextFreeId = document.getElementById('nextFreeId').innerHTML;
 	
-	if (id < 0) {
+	if (id == nextFreeId) {
 		newItem(id);
 	} else {	
 		if (!hasClass(row, 'dirty')) {
 			addClass(row, 'dirty');
 			increaseModifyCount();
+		}
+	}
+	
+	for(index = 0; index < updateTheseObjects.length; ++index) {
+		if (updateTheseObjects[index][0] == id) {
+			remove(updateTheseObjects, updateTheseObjects[index]);	
+		}
+	}
+	
+	var changeObject = [];
+	changeObject.push(id);
+	
+	for(index = 0; index < tableColId.length; ++index) {
+		elem = document.getElementById('input:' + tableColId[index] + ":" + id);
+		changeObject.push(elem.value);
+	}
+	
+	updateTheseObjects.push(changeObject);
+	
+	alert(columnIndex);	
+	
+	var colNumber = tableColId.indexOf(columnIndex);
+	var colType = tableColType[colNumber];
+	
+	alert(colType);
+		
+}
+
+function contains(a, obj) {
+	for (var i = 0; i < a.length; i++) {
+		if (a[i] === obj) {
+			return true;
+		}
+ 	}
+	return false;
+}
+
+function remove(arr, item) {
+	for(var i = arr.length; i--;) {
+		if(arr[i] == item) {
+			arr.splice(i, 1);
 		}
 	}
 }
@@ -129,6 +182,16 @@ function newItem(id) {
 		removeClass(row, 'empty');
 		addClass(row, 'new');
 	}
+	
+	var changeObject = [];
+	changeObject.push(id);
+	
+	for(index = 0; index < tableColId.length; ++index) {
+		elem = document.getElementById('input:' + tableColId[index] + ":" + id);
+		changeObject.push(elem.value);
+	}
+	
+	updateTheseObjects.push(changeObject);
 }
  
 function cloneRow(id) {
@@ -140,6 +203,8 @@ function cloneRow(id) {
 	clone.id = 'row:' + (id - 1);
 
 	tableRowId.push(id - 1);
+	
+	document.getElementById('nextFreeId').innerHTML = id - 1;
 
 	str = clone.innerHTML;
 	clone.innerHTML = str.replaceAll(id, newId, true);
@@ -162,6 +227,40 @@ function decreaseDeleteCount() {
 
 function increaseModifyCount() {
 	document.getElementById('modifyCount').innerHTML = parseInt(document.getElementById('modifyCount').innerHTML) + 1
+}
+
+/*   This function removes updates/the creations for Items that are going to be deleted 
+ *   For removed creations, also the delete request is discarded.
+ */
+function removeUnnecessaryUpdatesAndDeletes() {
+	var i = 0;
+	var j = 0;
+	
+	while (i <= deleteTheseObjects.length) {
+		while (j < updateTheseObjects.length) {
+			if (deleteTheseObjects[i] == updateTheseObjects[j][0]) {
+				remove(updateTheseObjects, updateTheseObjects[j]);
+				j = 0;
+			} else {
+				j++;
+			}
+		}
+		j = 0;
+		i++;
+	}	
+}
+
+function checkAndSend() {
+	if (confirm("Press OK to continue the update of your database. \nThese updates are non reversible!!!\n" +
+		"\n Additions     : " + document.getElementById('addCount').innerHTML + 
+		"\n Modifications : " + document.getElementById('modifyCount').innerHTML + 
+		"\n Deletions     : " + document.getElementById('deleteCount').innerHTML + 
+		"\n\nPress Cancel to abort!")) {
+		removeUnnecessaryUpdatesAndDeletes();	
+		theJavaFunction(updateTheseObjects, deleteTheseObjects);
+	} else {
+		alert("Update canceled!");
+	}
 }
 
 /* The functions for adding, removing and checking of classes have been copied from this source.

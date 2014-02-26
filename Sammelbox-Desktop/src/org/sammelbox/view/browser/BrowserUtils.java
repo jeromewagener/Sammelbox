@@ -24,6 +24,7 @@ import java.util.Map;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.browser.BrowserFunction;
 import org.eclipse.swt.widgets.Display;
 import org.sammelbox.controller.GuiController;
 import org.sammelbox.controller.filesystem.FileSystemAccessWrapper;
@@ -35,6 +36,7 @@ import org.sammelbox.model.database.operations.DatabaseOperations;
 import org.sammelbox.view.ApplicationUI;
 import org.sammelbox.view.SammelView;
 import org.sammelbox.view.UIConstants;
+import org.sammelbox.view.browser.spreadsheet.SpreadsheetUpdateFunction;
 import org.sammelbox.view.browser.spreadsheet.SpreadsheetViewCreator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -112,6 +114,7 @@ public final class BrowserUtils {
 	}
 
 	static void showAlbum(Browser browser) {
+		final BrowserFunction function = new SpreadsheetUpdateFunction(browser, "theJavaFunction");
 		SammelView currentView = GuiController.getGuiState().getSammelView();
 		
 		if (SammelView.DETAILED_VIEW.equals(currentView)) {

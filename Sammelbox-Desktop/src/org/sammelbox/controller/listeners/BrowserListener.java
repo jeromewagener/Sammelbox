@@ -216,11 +216,24 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 			
 			// Do not change the page
 			event.doit = false;
+		} else if (event.location.startsWith(UIConstants.UPDATE_SPREADSHEET)) {
+			String url = event.location.substring(UIConstants.UPDATE_SPREADSHEET.length());
+			
+			//System.out.println(" >>> " + ApplicationUI.getAlbumItemBrowser().getText());
+			
+			// TODO after applying changes -> do a refresh of the spreadsheetView
+			//BrowserFacade.showAlbum();
+			
+			// Do not change the page
+			//event.doit = false;	
+			event.doit = false;
 		}
 	}
 
 	@Override
-	public void changed(ProgressEvent event) {}
+	public void changed(ProgressEvent event) {
+		System.out.println(" >!> " + ApplicationUI.getAlbumItemBrowser().getText());
+	}
 
 	@Override
 	/** As soon as a page is completely loaded, it is possible to jump to a previously defined anchor */
@@ -230,6 +243,9 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 		if (!anchor.equals(UIConstants.NO_ANCHOR_DEFINED)) {
 			BrowserFacade.jumpToAnchor(BrowserFacade.getFutureJumpAnchor());
 		}
+		ApplicationUI.getAlbumItemBrowser().execute("");
+		System.out.println(" >$> " + ApplicationUI.getAlbumItemBrowser().getText());
+
 	}
 
 	@Override

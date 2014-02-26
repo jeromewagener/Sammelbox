@@ -60,4 +60,5 @@ public final class UIConstants {
 	public static final String RELOAD_AND_SHOW_ALBUM_VIEW = "show:///reloadAndShowAlbumView=";
 	public static final String BROWSER_RESIZED = "show:///browserResized";
 	public static final String SHOW_URL = "show:///url=";
+	public static final String UPDATE_SPREADSHEET = "update:///spreadsheet";
 }
