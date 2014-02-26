@@ -54,8 +54,13 @@ public final class SpreadsheetItemCreator {
 
 		long columnIndex = 0;
 		for(ItemField itemField : ItemFieldFilter.getValidItemFields(albumItem.getFields())) {
-			
-			columnIndex = metaItemToColumnIndexMap.get(new MetaItemField(itemField.getName(), itemField.getType()));
+			for (MetaItemField metaItemField : metaItemToColumnIndexMap.keySet()) {
+				if (metaItemField.getName().equals(itemField.getName())
+						&& metaItemField.getType().equals(itemField.getType())) {
+					columnIndex = metaItemToColumnIndexMap.get(metaItemField);
+					break;
+				}
+			}
 			
 			htmlSpreadsheetHeader.append(
 			"<th id=\"col:" + columnIndex + "\"  width=\"170\">" + 
@@ -107,26 +112,33 @@ public final class SpreadsheetItemCreator {
 		long id = -1;
 		htmlSpreadsheetRow.delete(0, htmlSpreadsheetRow.length());
 						
-		for (ItemField fieldItem : ItemFieldFilterPlusID.getValidItemFields(albumItem.getFields())) {		
-			long columnIndex = metaItemToColumnIndexMap.get(new MetaItemField(fieldItem.getName(), fieldItem.getType()));
-			
-			if (fieldItem.getType().equals(FieldType.UUID)) {
-				// schema or content version UUID --> ignore 
-			} else if (fieldItem.getType().equals(FieldType.ID)) {
-				if (fieldItem.getName().equals(DatabaseConstants.ID_COLUMN_NAME)) {
-					// do not show, but store id
-					id = fieldItem.getValue();
+		for (ItemField itemField : ItemFieldFilterPlusID.getValidItemFields(albumItem.getFields())) {		
+			long columnIndex = 0;
+			for (MetaItemField metaItemField : metaItemToColumnIndexMap.keySet()) {
+				if (metaItemField.getName().equals(itemField.getName())
+						&& metaItemField.getType().equals(itemField.getType())) {
+					columnIndex = metaItemToColumnIndexMap.get(metaItemField);
+					break;
 				}
-			} else if (fieldItem.getType().equals(FieldType.OPTION)) {
-				if (fieldItem.getValue() == OptionType.YES) {
+			}
+			
+			if (itemField.getType().equals(FieldType.UUID)) {
+				// schema or content version UUID --> ignore 
+			} else if (itemField.getType().equals(FieldType.ID)) {
+				if (itemField.getName().equals(DatabaseConstants.ID_COLUMN_NAME)) {
+					// do not show, but store id
+					id = itemField.getValue();
+				}
+			} else if (itemField.getType().equals(FieldType.OPTION)) {
+				if (itemField.getValue() == OptionType.YES) {
 					htmlSpreadsheetRow.append(getYesNoUnknownComboBox(Translator.get(DictKeys.BROWSER_YES), OptionType.YES, id, columnIndex));
-				} else if (fieldItem.getValue() == OptionType.NO) {
+				} else if (itemField.getValue() == OptionType.NO) {
 					htmlSpreadsheetRow.append(getYesNoUnknownComboBox(Translator.get(DictKeys.BROWSER_NO), OptionType.NO, id, columnIndex));
-				} else if (fieldItem.getValue() == OptionType.UNKNOWN) {
+				} else if (itemField.getValue() == OptionType.UNKNOWN) {
 					htmlSpreadsheetRow.append(getYesNoUnknownComboBox(Translator.get(DictKeys.BROWSER_UNKNOWN), OptionType.UNKNOWN, id, columnIndex));
 				}	
-			} else if (fieldItem.getType().equals(FieldType.DATE)) {
-				java.sql.Date sqlDate = fieldItem.getValue();
+			} else if (itemField.getType().equals(FieldType.DATE)) {
+				java.sql.Date sqlDate = itemField.getValue();
 				if (sqlDate != null) {
 					java.util.Date utilDate = new java.util.Date(sqlDate.getTime());
 					SimpleDateFormat dateFormater = new SimpleDateFormat(SettingsManager.getSettings().getDateFormat());
@@ -134,17 +146,17 @@ public final class SpreadsheetItemCreator {
 				} else {
 					htmlSpreadsheetRow.append(getValueLine("", id, columnIndex));
 				}	
-			} else if (fieldItem.getType().equals(FieldType.TEXT)) {
-				htmlSpreadsheetRow.append(getValueLine(BrowserUtils.escapeHtmlString((String) fieldItem.getValue()), id, columnIndex));
-			} else if (fieldItem.getType().equals(FieldType.INTEGER)) {
-				htmlSpreadsheetRow.append(getValueLine(((Integer) fieldItem.getValue()).toString(), id, columnIndex));
-			} else if (fieldItem.getType().equals(FieldType.DECIMAL)) {
-				htmlSpreadsheetRow.append(getValueLine(((Double) fieldItem.getValue()).toString(), id, columnIndex));
-			} else if (fieldItem.getType().equals(FieldType.STAR_RATING)) {
-				htmlSpreadsheetRow.append(getStarsAsComboBoxes(((StarRating) fieldItem.getValue()), id, columnIndex));
+			} else if (itemField.getType().equals(FieldType.TEXT)) {
+				htmlSpreadsheetRow.append(getValueLine(BrowserUtils.escapeHtmlString((String) itemField.getValue()), id, columnIndex));
+			} else if (itemField.getType().equals(FieldType.INTEGER)) {
+				htmlSpreadsheetRow.append(getValueLine(((Integer) itemField.getValue()).toString(), id, columnIndex));
+			} else if (itemField.getType().equals(FieldType.DECIMAL)) {
+				htmlSpreadsheetRow.append(getValueLine(((Double) itemField.getValue()).toString(), id, columnIndex));
+			} else if (itemField.getType().equals(FieldType.STAR_RATING)) {
+				htmlSpreadsheetRow.append(getStarsAsComboBoxes(((StarRating) itemField.getValue()), id, columnIndex));
 				//TODO remove or use - htmlSpreadsheetRow.append(getStars(((StarRating) fieldItem.getValue())));
-			} else if (fieldItem.getType().equals(FieldType.URL)) {
-				htmlSpreadsheetRow.append(getValueLine(((String) fieldItem.getValue()), id, columnIndex));	
+			} else if (itemField.getType().equals(FieldType.URL)) {
+				htmlSpreadsheetRow.append(getValueLine(((String) itemField.getValue()), id, columnIndex));	
 			}
 			
 			columnIndex++;

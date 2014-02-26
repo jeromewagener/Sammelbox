@@ -5,20 +5,16 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
-import org.sammelbox.controller.filesystem.exporting.CSVExporter;
-import org.sammelbox.controller.filesystem.exporting.HTMLExporter;
 import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
-import org.sammelbox.controller.managers.SavedSearchManager;
 import org.sammelbox.controller.managers.DatabaseIntegrityManager;
-import org.sammelbox.model.album.AlbumItemStore;
+import org.sammelbox.controller.managers.SavedSearchManager;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 import org.sammelbox.view.ApplicationUI;
 import org.sammelbox.view.browser.BrowserFacade;
 import org.sammelbox.view.sidepanes.EmptySidepane;
-import org.sammelbox.view.sidepanes.ImportSidepane;
+import org.sammelbox.view.sidepanes.SynchronizeSidepane;
 import org.sammelbox.view.various.PanelType;
-import org.sammelbox.view.various.TextInputDialog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,66 +23,6 @@ public final class SammelboxMenuItemListener {
 	
 	private SammelboxMenuItemListener() {
 		// not needed
-	}
-	
-	static SelectionAdapter getImportAlbumItemsListener() {
-		return new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent evt) {
-				BrowserFacade.showImportPage();
-				ApplicationUI.changeRightCompositeTo(PanelType.IMPORT, ImportSidepane.build(ApplicationUI.getThreePanelComposite(), false));
-			}
-		};
-	}
-	
-	static SelectionAdapter getAppendAlbumItemsListener() {
-		return new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent evt) {
-				// TODO showAppendPage() similar to showImportPage
-				ApplicationUI.changeRightCompositeTo(PanelType.IMPORT, ImportSidepane.build(ApplicationUI.getThreePanelComposite(), true));
-			}
-		};
-	}
-	
-	static SelectionAdapter getExportAlbumItemsListener() {
-		return new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent evt) {
-				if (ApplicationUI.isAlbumSelectedAndShowMessageIfNot()) {
-					FileDialog saveFileDialog = new FileDialog(ApplicationUI.getShell(), SWT.SAVE);
-					saveFileDialog.setText(Translator.get(DictKeys.DIALOG_EXPORT_VISIBLE_ITEMS));
-					saveFileDialog.setFilterPath(System.getProperty("user.home"));
-					String[] filterExt = { "*.html", "*.csv"};
-					saveFileDialog.setFilterExtensions(filterExt);
-					String[] filterNames = { 
-							Translator.get(DictKeys.DIALOG_HTML_FOR_PRINT) , 
-							Translator.get(DictKeys.DIALOG_CSV_FOR_SPREADSHEET) };
-					saveFileDialog.setFilterNames(filterNames);
-	
-					String filepath = saveFileDialog.open();
-					if (filepath != null) {
-						if (filepath.endsWith(".csv")) {
-							// ask for separation character
-							TextInputDialog separationCharacterInput = new TextInputDialog(ApplicationUI.getShell());
-							String separationCharacter = separationCharacterInput.open(
-									Translator.get(DictKeys.DIALOG_TITLE_SELECT_SEPARATION_CHAR),
-									Translator.get(DictKeys.DIALOG_CONTENT_SELECT_SEPARATION_CHAR), 
-									CSVExporter.DEFAULT_SEPARATION_CHARACTER, 
-									Translator.get(DictKeys.DIALOG_BUTTON_SELECT_SEPARATION_CHAR));
-							
-							if (separationCharacter == null) {
-								separationCharacter = CSVExporter.DEFAULT_SEPARATION_CHARACTER;
-							}
-							
-							CSVExporter.exportAlbum(AlbumItemStore.getAllAlbumItems(), filepath, separationCharacter);
-						} else if (filepath.endsWith(".html")) {
-							HTMLExporter.exportAlbum(AlbumItemStore.getAllAlbumItems(), filepath);
-						}
-					}
-				}
-			}
-		};
 	}
 	
 	static SelectionAdapter getBackupListener() {
@@ -155,6 +91,16 @@ public final class SammelboxMenuItemListener {
 			@Override
 			public void widgetSelected(SelectionEvent event) {
 				ApplicationUI.getShell().close();
+			}
+		};
+	}
+
+	static SelectionAdapter getSynchronizeListener() {
+		return new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent event) {
+				ApplicationUI.changeRightCompositeTo(
+						PanelType.SYNCHRONIZATION, SynchronizeSidepane.build(ApplicationUI.getThreePanelComposite()));
 			}
 		};
 	}

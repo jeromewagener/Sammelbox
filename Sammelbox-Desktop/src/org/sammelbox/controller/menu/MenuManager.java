@@ -41,21 +41,21 @@ public final class MenuManager {
 		// Create all the menu items for the bar menu
 		MenuItem sammelboxItem = new MenuItem(menu, SWT.CASCADE);
 		MenuItem albumItem = new MenuItem(menu, SWT.CASCADE);
-		MenuItem synchronizeItem = new MenuItem(menu, SWT.CASCADE);
+		MenuItem importExport = new MenuItem(menu, SWT.CASCADE);
 		MenuItem settingsItem = new MenuItem(menu, SWT.CASCADE);
 		MenuItem helpItem = new MenuItem(menu, SWT.CASCADE);
 
 		// Set the text labels for each of the main menu items
 		sammelboxItem.setText(Translator.get(DictKeys.MENU_COLLECTOR));
 		albumItem.setText(Translator.get(DictKeys.MENU_ALBUM));
-		synchronizeItem.setText(Translator.get(DictKeys.MENU_SYNCHRONIZE));
+		importExport.setText(Translator.toBeTranslated("Import/Export"));
 		settingsItem.setText(Translator.get(DictKeys.MENU_SETTINGS));
 		helpItem.setText(Translator.get(DictKeys.MENU_HELP));
 
 		// Setup dropdown menus for the main menu items
 		createDropdownForSammelboxMenuItem(menu, sammelboxItem);
 		createDropdownForAlbumMenuItem(menu, albumItem);
-		createDropdownSynchronizeMenuItem(menu, synchronizeItem);
+		createDropdownForImportExportMenuItem(menu, importExport);
 		createDropdownSettingsMenuItem(menu, settingsItem);
 		createDropdownHelpItem(menu, helpItem);
 
@@ -63,23 +63,32 @@ public final class MenuManager {
 		ApplicationUI.getShell().setMenuBar(menu);
 	}
 	
+	private static void createDropdownForImportExportMenuItem(Menu menu, MenuItem albumItem) {
+		Menu sammelboxMenu = new Menu(menu);
+		albumItem.setMenu(sammelboxMenu);
+		
+		MenuItem importAlbumItemsMenuItem = new MenuItem(sammelboxMenu, SWT.NONE);
+		importAlbumItemsMenuItem.setText(Translator.get(DictKeys.MENU_CSV_IMPORT));
+		importAlbumItemsMenuItem.addSelectionListener(ImportExportMenuItemListener.getImportAlbumItemsListener());
+		
+		MenuItem appendAlbumItemsMenuItem = new MenuItem(sammelboxMenu, SWT.NONE);
+		appendAlbumItemsMenuItem.setText(Translator.toBeTranslated("Append data from CSV file"));
+		appendAlbumItemsMenuItem.addSelectionListener(ImportExportMenuItemListener.getAppendAlbumItemsListener());
+		
+		new MenuItem(sammelboxMenu, SWT.SEPARATOR);
+		
+		MenuItem exportAlbumMenuToHTMLItem = new MenuItem(sammelboxMenu, SWT.NONE);
+		exportAlbumMenuToHTMLItem.setText(Translator.toBeTranslated("Export album to HTML file"));
+		exportAlbumMenuToHTMLItem.addSelectionListener(ImportExportMenuItemListener.getExportAlbumItemsToHTMLListener());	
+		
+		MenuItem exportAlbumMenuToCSVItem = new MenuItem(sammelboxMenu, SWT.NONE);
+		exportAlbumMenuToCSVItem.setText(Translator.toBeTranslated("Export album to CSV file"));
+		exportAlbumMenuToCSVItem.addSelectionListener(ImportExportMenuItemListener.getExportAlbumItemsToCSVListener());
+	}
+
 	private static void createDropdownForSammelboxMenuItem(Menu menu, MenuItem sammelboxMenuItem) {
 		Menu sammelboxMenu = new Menu(menu);
 		sammelboxMenuItem.setMenu(sammelboxMenu);
-
-		MenuItem importAlbumItemsMenuItem = new MenuItem(sammelboxMenu, SWT.NONE);
-		importAlbumItemsMenuItem.setText(Translator.get(DictKeys.MENU_CSV_IMPORT));
-		importAlbumItemsMenuItem.addSelectionListener(SammelboxMenuItemListener.getImportAlbumItemsListener());
-		
-		MenuItem appendAlbumItemsMenuItem = new MenuItem(sammelboxMenu, SWT.NONE);
-		appendAlbumItemsMenuItem.setText(Translator.toBeTranslated("Append data from CSV"));
-		appendAlbumItemsMenuItem.addSelectionListener(SammelboxMenuItemListener.getAppendAlbumItemsListener());
-		
-		MenuItem exportAlbumMenuItem = new MenuItem(sammelboxMenu, SWT.NONE);
-		exportAlbumMenuItem.setText(Translator.get(DictKeys.MENU_EXPORT_SELECTED_ITEMS));
-		exportAlbumMenuItem.addSelectionListener(SammelboxMenuItemListener.getExportAlbumItemsListener());
-		
-		new MenuItem(sammelboxMenu, SWT.SEPARATOR);
 		
 		MenuItem backupMenuItem = new MenuItem(sammelboxMenu, SWT.NONE);
 		backupMenuItem.setText(Translator.get(DictKeys.MENU_BACKUP_ALBUMS_TO_FILE));
@@ -88,6 +97,12 @@ public final class MenuManager {
 		MenuItem restoreMenuItem = new MenuItem(sammelboxMenu, SWT.NONE);
 		restoreMenuItem.setText(Translator.get(DictKeys.MENU_RESTORE_ALBUM_FROM_FILE));
 		restoreMenuItem.addSelectionListener(SammelboxMenuItemListener.getRestoreListener());
+		
+		new MenuItem(sammelboxMenu, SWT.SEPARATOR);
+		
+		MenuItem synchronize = new MenuItem(sammelboxMenu, SWT.NONE);
+		synchronize.setText(Translator.get(DictKeys.MENU_SYNCHRONIZE));
+		synchronize.addSelectionListener(SammelboxMenuItemListener.getSynchronizeListener());
 		
 		new MenuItem(sammelboxMenu, SWT.SEPARATOR);
 		
@@ -120,15 +135,6 @@ public final class MenuManager {
 		deleteAlbumMenuItem.setText(Translator.get(DictKeys.MENU_DELETE_SELECTED_ALBUM));
 		deleteAlbumMenuItem.addSelectionListener(AlbumMenuItemListener.getDeleteAlbumListener());	
 
-	}
-
-	private static void createDropdownSynchronizeMenuItem(Menu menu, MenuItem synchronizeItem) {
-		Menu synchronizeMenu = new Menu(menu);
-		synchronizeItem.setMenu(synchronizeMenu);
-
-		MenuItem synchronize = new MenuItem(synchronizeMenu, SWT.NONE);
-		synchronize.setText(Translator.get(DictKeys.MENU_SYNCHRONIZE));
-		synchronize.addSelectionListener(SynchronizeMenuItemListener.getSynchronizeListener());
 	}
 
 	private static void createDropdownSettingsMenuItem(Menu menu, MenuItem settingsMenuItem) {

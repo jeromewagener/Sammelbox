@@ -99,7 +99,7 @@ public class MetaItemField {
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + (quickSearchable ? 
 				 RANDOM_INT_FOR_HASHING_IF_QUICKSEARCHABLE : RANDOM_INT_FOR_HASHING_IF_NON_QUICKSEARCHABLE);
-		result = prime * result + ((type == null) ? 0 : type.hashCode());
+		result = prime * result + ((type == null) ? 0 : type.toString().hashCode());
 		return result;
 	}
 
