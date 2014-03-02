@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class AlbumItem {
+	/** All IDs smaller or equal to ITEM_ID_UNDEFINED are considered undefined (and can be used as temporary IDs for new items). */
 	public static final Long ITEM_ID_UNDEFINED = -1L;
 	private static final Logger LOGGER = LoggerFactory.getLogger(AlbumItem.class);
 	
@@ -82,13 +83,24 @@ public class AlbumItem {
 		this.albumName = albumName;
 	}
 	
-	public long getItemID() {
+	public long getItemId() {
 		ItemField albumItemIdField = getField(DatabaseConstants.ID_COLUMN_NAME);
 		if (albumItemIdField == null) {
 			return AlbumItem.ITEM_ID_UNDEFINED;
 		}
 		
 		return albumItemIdField.getValue();
+	}
+	
+	public void setItemId(Long itemId) {
+		ItemField albumItemIdField = getField(DatabaseConstants.ID_COLUMN_NAME);
+		if (albumItemIdField == null) {
+			addField(DatabaseConstants.ID_COLUMN_NAME, FieldType.ID, itemId);
+		} else {
+			albumItemIdField.setValue(itemId);
+		}
+		
+		this.itemId = itemId;
 	}
 	
 	/**

@@ -73,7 +73,7 @@ public final class AlbumItemStore {
 
 	public static AlbumItem getAlbumItem(long albumItemId) {
 		for (AlbumItem albumItem : albumItems) {
-			if (albumItem.getItemID() == albumItemId) {
+			if (albumItem.getItemId() == albumItemId) {
 				return albumItem;
 			}
 		}

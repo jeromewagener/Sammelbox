@@ -24,7 +24,6 @@ import java.util.Map;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
-import org.eclipse.swt.browser.BrowserFunction;
 import org.eclipse.swt.widgets.Display;
 import org.sammelbox.controller.GuiController;
 import org.sammelbox.controller.filesystem.FileSystemAccessWrapper;
@@ -114,7 +113,7 @@ public final class BrowserUtils {
 	}
 
 	static void showAlbum(Browser browser) {
-		final BrowserFunction function = new SpreadsheetUpdateFunction(browser, "theJavaFunction");
+		new SpreadsheetUpdateFunction(browser, "spreadsheetUpdateFunction");
 		SammelView currentView = GuiController.getGuiState().getSammelView();
 		
 		if (SammelView.DETAILED_VIEW.equals(currentView)) {

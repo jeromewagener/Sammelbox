@@ -370,7 +370,7 @@ public final class CreateOperations {
 		String savepointName = DatabaseIntegrityManager.createSavepoint();
 	
 		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(sb.toString())){
-			long idOfAddedItem = albumItem.getItemID() != AlbumItem.ITEM_ID_UNDEFINED ? albumItem.getItemID() : -1;
+			long idOfAddedItem = albumItem.getItemId() != AlbumItem.ITEM_ID_UNDEFINED ? albumItem.getItemId() : -1;
 			
 			// Replace the wildcard character '?' by the real type values
 			int parameterIndex = 1;
@@ -391,7 +391,7 @@ public final class CreateOperations {
 			// Retrieves the generated key used in the new  album item
 			preparedStatement.executeUpdate();
 			
-			if (albumItem.getItemID() == AlbumItem.ITEM_ID_UNDEFINED ) {
+			if (albumItem.getItemId() == AlbumItem.ITEM_ID_UNDEFINED ) {
 				try(ResultSet generatedKeys = preparedStatement.getGeneratedKeys();) {
 					if (generatedKeys.next()) {
 						idOfAddedItem = generatedKeys.getLong(1);

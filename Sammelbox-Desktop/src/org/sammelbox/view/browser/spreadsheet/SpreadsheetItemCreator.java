@@ -101,11 +101,11 @@ public final class SpreadsheetItemCreator {
 		StringBuilder tmp = new StringBuilder();
 		createSpreadsheetRow(newAlbumItem, tmp, metaItemToColumnIndexMap);
 		
-		htmlSpreadsheetFooter.append("<tr id=\"row:" + newAlbumItem.getItemID() + "\" class=\"empty\">");
+		htmlSpreadsheetFooter.append("<tr id=\"row:" + newAlbumItem.getItemId() + "\" class=\"empty\">");
 		htmlSpreadsheetFooter.append(tmp);
 		htmlSpreadsheetFooter.append("</tr>");
 		
-		return newAlbumItem.getItemID();
+		return newAlbumItem.getItemId();
 	}
 	
 	static long createSpreadsheetRow(AlbumItem albumItem, StringBuilder htmlSpreadsheetRow, Map<MetaItemField, Integer> metaItemToColumnIndexMap) {
@@ -162,8 +162,21 @@ public final class SpreadsheetItemCreator {
 			columnIndex++;
 		}
 		
-		htmlSpreadsheetRow.append("<td><input type=\"checkbox\" id=\"delete:" + id + "\" value=\"" + id + "\" " +
-				                             "class=\"normalCheckbox\" onClick='markAsDelete(" + id + ");'>" +
+		htmlSpreadsheetRow.append("<td id=\"value:checkbox:" + id + "\"");
+		
+		if (id == AlbumItem.ITEM_ID_UNDEFINED) {
+			htmlSpreadsheetRow.append(" class=\"whiteBorderless\"");
+		}
+		
+		htmlSpreadsheetRow.append("><input type=\"checkbox\" id=\"delete:" + id + "\" value=\"" + id + "\" " +
+				                             "class=\"normalCheckbox");
+		
+		if (id == AlbumItem.ITEM_ID_UNDEFINED) {
+			htmlSpreadsheetRow.append(" hidden");
+		}
+		
+		htmlSpreadsheetRow.append("\" onClick='markAsDelete(" + id + ");'>" +
+				                 "<input id=\"corruptions:" + id +"\" class=\"hidden\" type=\"text\" value=\"0\">" + //
 				                 "</td>");
 
 		return id;
@@ -210,7 +223,7 @@ public final class SpreadsheetItemCreator {
 			LOGGER.error("Should not get here. This optiontype is not known...");
 		}
 		
-		return "<td>" +
+		return "<td id=\"value:" + columnIndex + ":" + id + "\" class=\"field\"> " +
 					"<div id=\"hideThisContainer:"  + columnIndex + ":" + id + "\" class=\"normal\">" +
 						"<select id=\"input:" + columnIndex + ":" + id + "\" onChange=\"markAsDirty('" + id + "', '" + columnIndex + "');\">" +
 							"<option value=\"" + OptionType.YES + "\" " + selectedYes + ">" + Translator.get(DictKeys.BROWSER_YES) + "</option>" +
@@ -263,7 +276,7 @@ public final class SpreadsheetItemCreator {
 		String fourStar = StarRating.FOUR_STARS.getIntegerValue() + " " + Translator.get(DictKeys.COMBOBOX_CONTENT_STARS);
 		String fiveStar = StarRating.FIVE_STARS.getIntegerValue() + " " + Translator.get(DictKeys.COMBOBOX_CONTENT_STARS);
 		
-		return 	"<td>" +
+		return "<td id=\"value:" + columnIndex + ":" + id + "\" class=\"field\"> " +
 					"<div id=\"hideThisContainer:"  + columnIndex + ":" + id + "\" class=\"normal\">" +
 						"<select id=\"input:" + columnIndex + ":" + id + "\" onChange=\"markAsDirty('" + id + "', '" + columnIndex + "');\">" +
 							"<option value=\"" + StarRating.ZERO_STARS + "\" " + zeroSelected + ">" + zeroStar + "</option>" +

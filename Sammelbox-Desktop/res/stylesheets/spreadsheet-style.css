@@ -49,6 +49,13 @@ table
 	float: right;
 }
 
+.whiteBorderless
+{
+	border-right-width: 0px;
+	border-bottom-width: 0px;
+	background-color: white;
+}
+
 .label
 {
 	white-space:nowrap;
@@ -135,6 +142,11 @@ input
 .empty
 {
 	background-color: lightgrey;	
+}
+
+.wrongInput
+{
+	background-color: lightpink;
 }
 
 .smallLabel

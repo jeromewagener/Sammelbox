@@ -48,7 +48,7 @@ public class AlbumItemPictureTests {
 			Map<Long, String> albumItemIdToPictureName = new HashMap<>();
 			
 			for (AlbumItem albumItem : DatabaseOperations.getAlbumItems(QueryBuilder.createSelectStarQuery("DVDs"))) {
-				albumItemIdToPictureName.put(albumItem.getItemID(), albumItem.getFirstPicture().getOriginalPictureName());
+				albumItemIdToPictureName.put(albumItem.getItemId(), albumItem.getFirstPicture().getOriginalPictureName());
 			}
 			
 			// remove the sixth item
@@ -66,7 +66,7 @@ public class AlbumItemPictureTests {
 				assertTrue("Every album item should still have a picture associated",
 						albumItem.getFirstPicture() != null);
 				assertTrue("The pictures should remain linked to the correct items", 
-						albumItem.getFirstPicture().getOriginalPictureName().equals(albumItemIdToPictureName.get(albumItem.getItemID())));
+						albumItem.getFirstPicture().getOriginalPictureName().equals(albumItemIdToPictureName.get(albumItem.getItemId())));
 			}
 			
 		} catch (DatabaseWrapperOperationException e) {
@@ -81,7 +81,7 @@ public class AlbumItemPictureTests {
 			Map<Long, String> albumItemIdToPictureName = new HashMap<>();
 			
 			for (AlbumItem albumItem : DatabaseOperations.getAlbumItems(QueryBuilder.createSelectStarQuery("DVDs"))) {
-				albumItemIdToPictureName.put(albumItem.getItemID(), albumItem.getFirstPicture().getOriginalPictureName());
+				albumItemIdToPictureName.put(albumItem.getItemId(), albumItem.getFirstPicture().getOriginalPictureName());
 			}
 			
 			// remove items
@@ -107,7 +107,7 @@ public class AlbumItemPictureTests {
 				assertTrue("Every album item should still have a picture associated",
 						albumItem.getFirstPicture() != null);
 				assertTrue("The pictures should remain linked to the correct items", 
-						albumItem.getFirstPicture().getOriginalPictureName().equals(albumItemIdToPictureName.get(albumItem.getItemID())));
+						albumItem.getFirstPicture().getOriginalPictureName().equals(albumItemIdToPictureName.get(albumItem.getItemId())));
 			}
 			
 		} catch (DatabaseWrapperOperationException e) {
@@ -122,7 +122,7 @@ public class AlbumItemPictureTests {
 			Map<Long, String> albumItemIdToPictureName = new HashMap<>();
 			
 			for (AlbumItem albumItem : DatabaseOperations.getAlbumItems(QueryBuilder.createSelectStarQuery("DVDs"))) {
-				albumItemIdToPictureName.put(albumItem.getItemID(), albumItem.getFirstPicture().getOriginalPictureName());
+				albumItemIdToPictureName.put(albumItem.getItemId(), albumItem.getFirstPicture().getOriginalPictureName());
 			}
 			
 			// remove items
@@ -141,7 +141,7 @@ public class AlbumItemPictureTests {
 				assertTrue("Every album item should still have a picture associated",
 						albumItem.getFirstPicture() != null);
 				assertTrue("The pictures should remain linked to the correct items", 
-						albumItem.getFirstPicture().getOriginalPictureName().equals(albumItemIdToPictureName.get(albumItem.getItemID())));
+						albumItem.getFirstPicture().getOriginalPictureName().equals(albumItemIdToPictureName.get(albumItem.getItemId())));
 			}
 			
 		} catch (DatabaseWrapperOperationException e) {

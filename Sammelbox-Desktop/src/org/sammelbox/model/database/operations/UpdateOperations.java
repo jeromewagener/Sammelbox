@@ -589,7 +589,7 @@ public final class UpdateOperations {
 			preparedStatement.executeUpdate();
 
 			// Get those physical picture files that are currently still referenced
-			List<AlbumItemPicture> picturesBeforeUpdate = QueryOperations.getAlbumItemPictures(albumItem.getAlbumName(), albumItem.getItemID());
+			List<AlbumItemPicture> picturesBeforeUpdate = QueryOperations.getAlbumItemPictures(albumItem.getAlbumName(), albumItem.getItemId());
 			
 			// Remove those physical pictures that are no longer needed. However, the table records will remain for the moment
 			for (AlbumItemPicture stillReferencedPicture : picturesBeforeUpdate) {
@@ -610,7 +610,7 @@ public final class UpdateOperations {
 			// Update picture table by first deleting all pictures for this album item, and then rewriting the references
 			DeleteOperations.removeAllPicturesForAlbumItemFromPictureTable(albumItem);
 			for (AlbumItemPicture albumItemPicture : albumItem.getPictures()) {				
-				albumItemPicture.setAlbumItemID(albumItem.getItemID());
+				albumItemPicture.setAlbumItemID(albumItem.getItemId());
 				CreateOperations.addAlbumItemPicture(albumItemPicture);
 			}
 			

@@ -21,10 +21,10 @@ public final class GalleryItemCreator {
 	
 	static void addImageContainer(AlbumItem albumItem, StringBuilder htmlBuilder) {
 		htmlBuilder.append(
-				"<div id=\"imageId" + albumItem.getItemID() + "\" " +
+				"<div id=\"imageId" + albumItem.getItemId() + "\" " +
 				     "class=\"pictureContainer\" " +
-				     "onMouseOver=\"parent.location.href=&quot;" + UIConstants.SHOW_DETAILS  + albumItem.getItemID() + "&quot;\" " +
-				     "onClick=\"parent.location.href=&quot;" + UIConstants.SHOW_UPDATE_ENTRY_COMPOSITE  + albumItem.getItemID() + "&quot;\">" +
+				     "onMouseOver=\"parent.location.href=&quot;" + UIConstants.SHOW_DETAILS  + albumItem.getItemId() + "&quot;\" " +
+				     "onClick=\"parent.location.href=&quot;" + UIConstants.SHOW_UPDATE_ENTRY_COMPOSITE  + albumItem.getItemId() + "&quot;\">" +
 				     
 				     "<div class=\"pictureWrapper\">" + 
 				     	"<img src=\"" + getThumbnailForFirstPicture(albumItem) + "\">" +

@@ -28,9 +28,11 @@ import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.model.album.AlbumItem;
 import org.sammelbox.model.album.AlbumItemStore;
+import org.sammelbox.model.album.FieldType;
 import org.sammelbox.model.album.ItemField;
 import org.sammelbox.model.album.MetaItemField;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
+import org.sammelbox.model.database.operations.DatabaseConstants;
 import org.sammelbox.model.database.operations.DatabaseOperations;
 import org.sammelbox.view.ApplicationUI;
 import org.sammelbox.view.UIConstants;
@@ -79,8 +81,11 @@ public final class SpreadsheetViewCreator {
 		StringBuilder htmlSpreadsheetData = new StringBuilder();
 		StringBuilder htmlSpreadsheetRow = new StringBuilder();
 		StringBuilder htmlSpreadsheetFooter = new StringBuilder();
-		StringBuilder javaScriptArrays = new StringBuilder();
-
+		StringBuilder javaScriptArrayTableRowId = new StringBuilder();
+		StringBuilder javaScriptArrayTableColId = new StringBuilder();
+		StringBuilder javaScriptArrayTableColType = new StringBuilder();
+		StringBuilder javaScriptArrayTableColName = new StringBuilder();
+		
 		// Create the header of the spreadsheet
 		if (AlbumItemStore.getAlbumItems().size() > 0) {
 			SpreadsheetItemCreator.createSpreadsheetHeader(
@@ -103,54 +108,6 @@ public final class SpreadsheetViewCreator {
 					htmlSpreadsheetFooter, AlbumItemStore.getAlbumItems().get(0), metaItemToColumnIndexMap);
 		}
 		
-		// Create the javascript array that is used to access every line in the table
-		javaScriptArrays.append("<script>");
-		javaScriptArrays.append(" var tableRowId=[");
-		
-		// Lists all the id's and puts them in an array for javascript usages.
-		for (AlbumItem albumItem : AlbumItemStore.getAlbumItems()) {
-			javaScriptArrays.append(albumItem.getItemID() + ",");
-		}
-		
-		javaScriptArrays.append(idForUncreatedItem + "]; ");
-		
-		// Now list all the id's of the columns in an array
-		javaScriptArrays.append(" var tableColId=[");
-		
-		// Lists all the id's and puts them in an array for javascript usages.
-		boolean firstRun = true;
-		
-		for (ItemField itemField : ItemFieldFilter.getValidItemFields(AlbumItemStore.getAlbumItems().get(0).getFields())) {
-			long columnIndex = metaItemToColumnIndexMap.get(new MetaItemField(itemField.getName(), itemField.getType()));
-			
-			if (firstRun) {
-				javaScriptArrays.append(columnIndex);
-				firstRun = false;
-			} else {
-				javaScriptArrays.append(", " + columnIndex);
-			}
-		}
-		
-		javaScriptArrays.append("]; ");
-		
-		// Now list all the types of the columns in an array
-		javaScriptArrays.append(" var tableColType=[");
-		firstRun = true;
-		
-		for (ItemField itemField : ItemFieldFilter.getValidItemFields(AlbumItemStore.getAlbumItems().get(0).getFields())) {
-			String columnType = itemField.getType().toString();
-			
-			if (firstRun) {
-				javaScriptArrays.append("'" + columnType + "'");
-				firstRun = false;
-			} else {
-				javaScriptArrays.append(", '" + columnType + "'");
-			}
-		}
-		
-		javaScriptArrays.append("]; ");
-		javaScriptArrays.append(" </script>");
-		
 		// If no album items have been found
 		if (htmlSpreadsheetData.length() == 0) {
 			htmlSpreadsheet.append(
@@ -161,6 +118,50 @@ public final class SpreadsheetViewCreator {
 	            "<p>" + Translator.get(DictKeys.BROWSER_NO_ITEMS_FOUND_EXPLANATION) + "</p>" +
 	          "</div></td></tr>"); 
 		} else {
+			// List all the rowIDs and put them in an array for javascript usages.
+			javaScriptArrayTableRowId.append(" var tableRowId=[");
+				
+			for (AlbumItem albumItem : AlbumItemStore.getAlbumItems()) {
+				javaScriptArrayTableRowId.append(albumItem.getItemId() + ",");
+			}
+			
+			// List all the columnIDs and put them in arrays for javascript usages.
+			javaScriptArrayTableColId.append(" var tableColId=[");
+			javaScriptArrayTableColType.append(" var tableColType=[");
+			javaScriptArrayTableColName.append(" var tableColName=[");
+			
+			javaScriptArrayTableColId.append("'1'");
+			javaScriptArrayTableColType.append("'" + FieldType.ID.toString() + "'");
+			javaScriptArrayTableColName.append("'" + DatabaseConstants.ID_COLUMN_NAME + "'");
+			
+			for (ItemField itemField : ItemFieldFilter.getValidItemFields(AlbumItemStore.getAlbumItems().get(0).getFields())) {
+				// TODO Refactor. This snippet is used multiple times (performance killer as discussed).
+				int columnIndex = 0; 
+				
+				for (MetaItemField metaItemField : metaItemToColumnIndexMap.keySet()) {
+					if (metaItemField.getName().equals(itemField.getName())
+						&& metaItemField.getType().equals(itemField.getType())) {
+						columnIndex = metaItemToColumnIndexMap.get(metaItemField);
+						break;
+					}
+				}
+				
+				String columnType = itemField.getType().toString();
+				String columnName = itemField.getName();
+	
+				javaScriptArrayTableColType.append(", '" + columnType + "'");
+				javaScriptArrayTableColName.append(", '" + columnName + "'");
+				
+				javaScriptArrayTableColId.append(", " + columnIndex);
+			}
+			
+			javaScriptArrayTableRowId.append(idForUncreatedItem);
+			
+			javaScriptArrayTableRowId.append("]; ");
+			javaScriptArrayTableColId.append("]; ");
+			javaScriptArrayTableColType.append("]; ");
+			javaScriptArrayTableColName.append("]; ");
+			
 			htmlSpreadsheet.append("<div id=\"nextFreeId\" class=\"hidden\">" + AlbumItem.ITEM_ID_UNDEFINED + "</div>");
 			htmlSpreadsheet.append("<div class=\"tableWrapper\">");
 			htmlSpreadsheet.append("<table id=\"spreadsheetTable\">");
@@ -170,7 +171,7 @@ public final class SpreadsheetViewCreator {
 			htmlSpreadsheet.append("</table>");
 			htmlSpreadsheet.append("</div>");
 			htmlSpreadsheet.append("</br>");
-			htmlSpreadsheet.append("<button type=\"button\" onclick=\"checkAndSend();\" >" + Translator.toBeTranslated("Änderungen Sichern") + "</button> ");
+			htmlSpreadsheet.append("<button id=\"checkAndSend\" type=\"button\" onclick=\"checkAndSend();\" >" + Translator.toBeTranslated("Änderungen Sichern") + "</button> ");
 			htmlSpreadsheet.append("</br></br>");
 			htmlSpreadsheet.append("<label>");
 			htmlSpreadsheet.append("<div id=\"showModify\" class=\"smallLabel dirty\">To be modified <span id=\"modifyCount\">0</span></div> ");
@@ -195,7 +196,12 @@ public final class SpreadsheetViewCreator {
 				    "<meta " + UIConstants.META_PARAMS + ">" + 
 				    "<link rel=\"stylesheet\" href=\"" + UIConstants.STYLE_CSS_SPREADSHEET + "\" />" +
 				    "<script src=\"" + UIConstants.SPREADSHEETSCRIPTS_JS + "\"></script>" +
-				    javaScriptArrays +
+				    "<script>" +
+						javaScriptArrayTableRowId +
+						javaScriptArrayTableColId +
+						javaScriptArrayTableColType +
+						javaScriptArrayTableColName +
+				    "</script>" +
 				  "</head>" +
 				  "<body id=\"body\" class=\"normal\">" +
 				    "<h2>" + collectionHeader + "</h2> <span id=\"info\"></span>" + 

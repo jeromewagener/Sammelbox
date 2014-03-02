@@ -171,7 +171,7 @@ public final class DeleteOperations {
 		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(
 				DatabaseStringUtilities.generatePictureTableName(albumItem.getAlbumName())));
 		sb.append(" WHERE ");
-		sb.append(DatabaseConstants.ALBUM_ITEM_ID_REFERENCE_IN_PICTURE_TABLE + " = " + albumItem.getItemID());
+		sb.append(DatabaseConstants.ALBUM_ITEM_ID_REFERENCE_IN_PICTURE_TABLE + " = " + albumItem.getItemId());
 				
 		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(sb.toString())) {						
 			preparedStatement.executeUpdate();
@@ -226,11 +226,11 @@ public final class DeleteOperations {
 		String savepointName = DatabaseIntegrityManager.createSavepoint();
 		
 		// retrieve a list of the physical files to be deleted
-		List<AlbumItemPicture> picturesToBeRemoved = QueryOperations.getAlbumItemPictures(albumItem.getAlbumName(), albumItem.getItemID());
+		List<AlbumItemPicture> picturesToBeRemoved = QueryOperations.getAlbumItemPictures(albumItem.getAlbumName(), albumItem.getItemId());
 		
 		// delete album item in table
 		String deleteAlbumItemString = "DELETE FROM " + DatabaseStringUtilities.encloseNameWithQuotes(
-				DatabaseStringUtilities.generateTableName(albumItem.getAlbumName())) + " WHERE id=" + albumItem.getItemID();
+				DatabaseStringUtilities.generateTableName(albumItem.getAlbumName())) + " WHERE id=" + albumItem.getItemId();
 		
 		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(deleteAlbumItemString)) {
 			preparedStatement.executeUpdate();
