@@ -18,7 +18,9 @@
 
 package org.sammelbox.view.browser;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,9 +38,10 @@ import org.sammelbox.view.ApplicationUI;
 import org.sammelbox.view.SammelView;
 import org.sammelbox.view.UIConstants;
 import org.sammelbox.view.browser.spreadsheet.SpreadsheetUpdateFunction;
-import org.sammelbox.view.browser.spreadsheet.SpreadsheetViewCreator;
+import org.sammelbox.view.browser.spreadsheet2.SpreadsheetViewCreator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.tidy.Tidy;
 
 public final class BrowserUtils {
 	public static final String PROJECT_WEBSITE = "http://www.sammelbox.org";
@@ -197,5 +200,17 @@ public final class BrowserUtils {
 	 */
 	public static String escapeBackslashesInFilePath(String filePath) {
 		return filePath.replaceAll("\\\\", "\\\\\\\\");	
+	}
+	
+	/** Convenience method if prettified HTML is needed. E.g. in order to simplify debugging generated HTML
+	 * often available as a single one liner. DONT prettify production HTML as it might slow down the browser */
+	public static String prettifyHTML(String htmlString) {
+		StringWriter stringWriter = new StringWriter();
+		
+		Tidy tidy = new Tidy();
+		tidy.setIndentContent(true);
+		tidy.parse(new ByteArrayInputStream(htmlString.getBytes()), stringWriter);
+		
+		return stringWriter.toString();
 	}
 }
