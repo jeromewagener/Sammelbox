@@ -62,7 +62,8 @@ public final class BrowserFacade {
 		BrowserUtils.fillAndLoadTemplate(ApplicationUI.getAlbumItemBrowser(), htmlTemplatFilename, templateContent); }
 		
 	public static void showAlbumDeletedPage(String deletedAlbum) { FeedbackCreator.showAlbumDeletedPage(deletedAlbum);	}
-	public static void showAlbumRestoredPage() { FeedbackCreator.showAlbumsRestoredPage(); }
+	public static void showRestoreInProgressPage() { FeedbackCreator.showRestoreInProgressPage(); }
+	public static void showBackupRestoredPage() { FeedbackCreator.showBackupRestoredPage(); }
 	public static void showBackupInProgressPage() { FeedbackCreator.showBackupInProgressPage(); }
 	public static void showBackupFinishedPage() { FeedbackCreator.showBackupFinishedPage(); }
 	public static void showSynchronizePage(String messageToShow) { FeedbackCreator.showSynchronizationPage(messageToShow); }

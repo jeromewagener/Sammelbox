@@ -20,9 +20,9 @@ package org.sammelbox.controller.synchronization;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.SocketException;
 import java.security.NoSuchAlgorithmException;
-import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -241,6 +241,7 @@ public class SyncServerServiceImpl implements SyncServerService {
 			
 			SynchronizeCompositeHelper.disableSynchronizeStep(SynchronizeStep.FINISH);
 			executeSyncPageUpdateInUIThread(Translator.toBeTranslated("Synchronization finished. You can now use your albums on your mobile device!"));
+			
 		} else {
 			LOGGER.info("Received message in unknown format or faulty synchronization code");
 		}

@@ -66,7 +66,7 @@ public final class EventObservable {
 		SammelboxEvent event = sammelboxEvents.poll();
 		
 		for (EventObserver observer : observers) {
-			observer.update(event);
+			observer.reactToEvent(event);
 		}
 	}
 }

@@ -164,7 +164,11 @@ public final class FeedbackCreator {
 		showTemplate("default.html", Translator.get(DictKeys.BROWSER_ALBUM_DELETED_HEADER, deletedAlbum), Translator.get(DictKeys.BROWSER_ALBUM_DELETED));
 	}
 	
-	static void showAlbumsRestoredPage() {
+	public static void showRestoreInProgressPage() {
+		showTemplate("default.html", Translator.toBeTranslated("Restore in progress"), Translator.toBeTranslated("Albums are now being restored. This might take a while"));
+	}
+	
+	static void showBackupRestoredPage() {
 		showTemplate("default.html", Translator.get(DictKeys.BROWSER_ALBUMS_RESTORED_HEADER), Translator.get(DictKeys.BROWSER_ALBUM_DELETED));
 	}
 

@@ -171,7 +171,7 @@ public class ToolbarComposite extends Composite implements EventObserver {
 	}
 	
 	@Override
-	public void update(SammelboxEvent event) {
+	public void reactToEvent(SammelboxEvent event) {
 		if (event.equals(SammelboxEvent.RIGHT_SIDEPANE_CHANGED)) {
 			if (getLastSelectedPanelType() != ApplicationUI.getCurrentRightPanelType()) {
 				disableActiveButtons();
@@ -181,13 +181,22 @@ public class ToolbarComposite extends Composite implements EventObserver {
 			enableAlbumButtons(currentlySelectedAlbum);
 		} else if (event.equals(SammelboxEvent.ALBUM_LIST_UPDATED) && !GuiController.getGuiState().isAlbumSelected()) {				
 			setButtonsWhenNoAlbumIsSelected();
+		} else if (event.equals(SammelboxEvent.DISABLE_SAMMELBOX)) {
+			disableAllButtons();
+		} else if (event.equals(SammelboxEvent.ENABLE_SAMMELBOX)) {
+			enableAlbumButtons(GuiController.getGuiState().getSelectedAlbum());
 		}
 	}
 
-	public void enableAlbumButtons(String albumName) {
+	public void enableAlbumButtons(String albumName) {	
 		homeButton.setImage(homeIcon);
+		homeButton.setEnabled(true);
+		addNewAlbumButton.setEnabled(true);
 		addAlbumItemButton.setEnabled(true);
 		changeViewButton.setEnabled(true);
+		advancedSearchButton.setEnabled(true);
+		synchronizeButton.setEnabled(true);
+		helpButton.setEnabled(true);
 		
 		try {
 			if (DatabaseOperations.isPictureAlbum(albumName)) {
@@ -198,11 +207,19 @@ public class ToolbarComposite extends Composite implements EventObserver {
 		} catch (DatabaseWrapperOperationException ex) {
 			LOGGER.error("An error occured while checking whether "
 					+ "the following album contains pictures: '" + albumName + "'", ex);
-		} 
-
-		advancedSearchButton.setEnabled(true);
+		}
 	}
 
+	public void disableAllButtons() {
+		homeButton.setEnabled(false);
+		addNewAlbumButton.setEnabled(false);
+		addAlbumItemButton.setEnabled(false);
+		changeViewButton.setEnabled(false);
+		advancedSearchButton.setEnabled(false);
+		synchronizeButton.setEnabled(false);
+		helpButton.setEnabled(false);
+	}
+	
 	public PanelType getLastSelectedPanelType() {
 		return lastSelectedPanelType;
 	}

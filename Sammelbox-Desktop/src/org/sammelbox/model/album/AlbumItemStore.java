@@ -58,6 +58,10 @@ public final class AlbumItemStore {
 		}
 		
 		albumItemResultSet.close();
+	}
+	
+	public static void reinitializeStoreAndUpdateStatus(AlbumItemResultSet albumItemResultSet) throws DatabaseWrapperOperationException {
+		reinitializeStore(albumItemResultSet);
 		
 		StatusBarComposite.getInstance(ApplicationUI.getShell()).writeStatus(
 				Translator.get(DictKeys.STATUSBAR_NUMBER_OF_ITEMS, albumItems.size()), false);

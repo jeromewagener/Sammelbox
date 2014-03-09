@@ -46,9 +46,9 @@ import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.controller.listeners.BrowserListener;
 import org.sammelbox.controller.managers.AlbumManager;
+import org.sammelbox.controller.managers.DatabaseIntegrityManager;
 import org.sammelbox.controller.managers.SavedSearchManager;
 import org.sammelbox.controller.managers.SavedSearchManager.SavedSearch;
-import org.sammelbox.controller.managers.DatabaseIntegrityManager;
 import org.sammelbox.controller.menu.MenuManager;
 import org.sammelbox.model.GuiState;
 import org.sammelbox.model.database.QueryBuilder;
@@ -72,13 +72,13 @@ public final class ApplicationUI implements EventObserver {
 	private static final Display DISPLAY = new Display();
 	/** A reference to the main shell */
 	private static final Shell SHELL = new Shell(DISPLAY);
-	
-	/** A reference to the SWT list containing all available albums */
-	private static List albumList;
+		
 	/** A reference to the SWT Text representing the quickSearch field*/
-	private static Text quickSearchTextField;
-	/** A reference to the SWT list containing all available views */
-	private static List viewList;
+	private static Text quickSearch;
+	/** A reference to the SWT list containing all available albums */
+	private static List albums;
+	/** A reference to the SWT list containing all available saved searches */
+	private static List savedSearches;
 	
 	/** A reference to a composite being part of the general user interface */
 	private static Composite threePanelComposite = null, upperLeftSubComposite = null, lowerLeftSubComposite = null, 
@@ -218,7 +218,7 @@ public final class ApplicationUI implements EventObserver {
 		// Create the album manager
 		AlbumManager.initialize();
 		for (String albumName : AlbumManager.getAlbums()) {
-			albumList.add(albumName);
+			albums.add(albumName);
 		}
 		
 		// Create the saved searches manager
@@ -258,8 +258,8 @@ public final class ApplicationUI implements EventObserver {
 	}
 
 	public static void selectDefaultAndShowWelcomePage() {
-		if (albumList.getItemCount() > 0) {
-			albumList.setSelection(-1);
+		if (albums.getItemCount() > 0) {
+			albums.setSelection(-1);
 		}
 
 		BrowserFacade.loadWelcomePage();
@@ -366,11 +366,11 @@ public final class ApplicationUI implements EventObserver {
 	}
 
 	public static void setQuickSearchTextField(Text quickSearchTextField) {
-		ApplicationUI.quickSearchTextField = quickSearchTextField;
+		ApplicationUI.quickSearch = quickSearchTextField;
 	}
 	
 	public static Text getQuickSearchTextField() {
-		return ApplicationUI.quickSearchTextField;
+		return ApplicationUI.quickSearch;
 	}
 
 	/** Sets the currently selected/active album
@@ -381,18 +381,18 @@ public final class ApplicationUI implements EventObserver {
 		// Set the album name and verify that it is in the list
 		GuiController.getGuiState().setSelectedAlbum(albumName);
 		if (albumName== null || albumName.isEmpty()) {
-			ApplicationUI.albumList.deselectAll();
+			ApplicationUI.albums.deselectAll();
 			return true;
 		}
 		
 		// Reset view
 		GuiController.getGuiState().setSelectedView(GuiState.NO_VIEW_SELECTED);
 		
-		int albumListItemCount = ApplicationUI.albumList.getItemCount();
+		int albumListItemCount = ApplicationUI.albums.getItemCount();
 		boolean albumSelectionIsInSync = false;
 		for (int itemIndex = 0; itemIndex<albumListItemCount; itemIndex++) {
-			 if (ApplicationUI.albumList.getItem(itemIndex).equals(albumName) ) {
-				 ApplicationUI.albumList.setSelection(itemIndex);
+			 if (ApplicationUI.albums.getItem(itemIndex).equals(albumName) ) {
+				 ApplicationUI.albums.setSelection(itemIndex);
 				 albumSelectionIsInSync = true;
 				 break;
 			 }
@@ -432,19 +432,19 @@ public final class ApplicationUI implements EventObserver {
 	/** Sets the the list of albums
 	 * @param albumList the list of albums */ 
 	public static void setAlbumList(List albumList) {
-		ApplicationUI.albumList = albumList;
+		ApplicationUI.albums = albumList;
 	}
 
 	/** Sets the the list of views
-	 * @param albumList the list of albums */ 
-	public static void setSavedSearchesList(List viewList) {
-		ApplicationUI.viewList = viewList;
+	 * @param albums the list of albums */ 
+	public static void setSavedSearchesList(List savedSearches) {
+		ApplicationUI.savedSearches = savedSearches;
 	}
 
 	/** Returns the list of views 
 	 * @return the album list */
 	public static List getViewList() {
-		return viewList;
+		return savedSearches;
 	}
 
 	/** Sets the album item browser
@@ -484,32 +484,40 @@ public final class ApplicationUI implements EventObserver {
 	}
 	
 	@Override
-	public void update(SammelboxEvent event) {		
+	public void reactToEvent(SammelboxEvent event) {		
 		if (event.equals(SammelboxEvent.ALBUM_LIST_UPDATED)) {
-			albumList.removeAll();
+			albums.removeAll();
 			for (String album : AlbumManager.getAlbums()) {
-				albumList.add(album);
+				albums.add(album);
 			}
 		} else if (event.equals(SammelboxEvent.ALBUM_SELECTED)) {			
-			viewList.setItems(SavedSearchManager.getSavedSearchesNamesArray(GuiController.getGuiState().getSelectedAlbum()));
+			savedSearches.setItems(SavedSearchManager.getSavedSearchesNamesArray(GuiController.getGuiState().getSelectedAlbum()));
 			BrowserFacade.resetFutureJumpAnchor();
 		} else if (event.equals(SammelboxEvent.SAVED_SEARCH_SELECTED)) {
 			BrowserFacade.resetFutureJumpAnchor();
 		} else if (event.equals(SammelboxEvent.SAVED_SEARCHES_LIST_UPDATED)) {
-			viewList.removeAll();
+			savedSearches.removeAll();
 
 			for (SavedSearch albumView : SavedSearchManager.getSavedSearches(GuiController.getGuiState().getSelectedAlbum())) {
-				viewList.add(albumView.getName());				
+				savedSearches.add(albumView.getName());				
 			}
 			
-			if (!viewList.isEnabled() && viewList.getItemCount() != 0) {
-				viewList.setEnabled(true);
+			if (!savedSearches.isEnabled() && savedSearches.getItemCount() != 0) {
+				savedSearches.setEnabled(true);
 			}
 		} else if (event.equals(SammelboxEvent.NO_ALBUM_SELECTED)) {
 			ComponentFactory.showErrorDialog(
 					ApplicationUI.getShell(), 
 					Translator.get(DictKeys.DIALOG_TITLE_NO_ALBUM_SELECTED), 
 					Translator.get(DictKeys.DIALOG_CONTENT_NO_ALBUM_SELECTED));
+		} else if (event.equals(SammelboxEvent.DISABLE_SAMMELBOX)) {
+			quickSearch.setEnabled(false);
+			albums.setEnabled(false);
+			savedSearches.setEnabled(false);
+		} else if (event.equals(SammelboxEvent.ENABLE_SAMMELBOX)) {
+			quickSearch.setEnabled(true);
+			albums.setEnabled(true);
+			savedSearches.setEnabled(true);
 		}
 	}
 

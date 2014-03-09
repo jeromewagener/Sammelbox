@@ -22,7 +22,6 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -30,6 +29,8 @@ import java.util.UUID;
 
 import org.sammelbox.controller.filesystem.FileSystemAccessWrapper;
 import org.sammelbox.controller.filesystem.FileSystemLocations;
+import org.sammelbox.controller.filesystem.backup.BackupThread;
+import org.sammelbox.controller.filesystem.restore.RestoreThread;
 import org.sammelbox.model.database.DatabaseStringUtilities;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException.DBErrorState;
@@ -50,13 +51,7 @@ public final class DatabaseIntegrityManager {
 	private static long lastChangeTimeStampInMillis = -1;
 	private static final String SAVEPOINT = "SAVEPOINT ";
 	private static final String ROLLBACK_TO = "rollback to ";
-	private static final String BACKUP_TO = "backup to ";
-	private static final String RESTORE_FROM = "restore from "; 
-	private static final String REGEX_BEGIN_OF_LINE = "^";
-	private static final String REGEX_END_OF_LINE = "$";
-	private static final String REGEX_OR = "|";
-	private static final String LOCK_FILE_REGEX = REGEX_BEGIN_OF_LINE + "\\.lock" + REGEX_END_OF_LINE;	
-	private static final String DATABASE_FILE_REGEX = REGEX_BEGIN_OF_LINE + FileSystemLocations.DATABASE_NAME + REGEX_END_OF_LINE;
+
 	private DatabaseIntegrityManager() {
 		// not needed
 	}
@@ -126,82 +121,38 @@ public final class DatabaseIntegrityManager {
 		}
 	}
 	
-	/**
-	 * Backs the database entries along the properties and pictures up to the specified file.
-	 * @param filePath The path ending with the file name under which the backup will be stored.
-	 * @throws DatabaseWrapperOperationException 
-	 */
-	public static void backupToFile(String filePath) throws DatabaseWrapperOperationException {
-		// create temporary directory which includes backup files
-		String tempDirName = java.util.UUID.randomUUID().toString();
-		File tempDir = new File(System.getProperty("user.home") + File.separator, tempDirName);
-		if (!tempDir.exists() && !tempDir.mkdir()) {
-			LOGGER.error("Could not create temp directory");
-		}
-	
-		// backup home directory
-		File tempAppDataDir = new File(tempDir.getPath());
-		File sourceAppDataDir = new File(FileSystemLocations.getActiveHomeDir());
-		try {
-			String excludeRegex = LOCK_FILE_REGEX + REGEX_OR + DATABASE_FILE_REGEX; 
-			FileSystemAccessWrapper.copyDirectory(sourceAppDataDir, tempAppDataDir, excludeRegex);
-		} catch (IOException e) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE,e);
-		}
-
-		final String backupToSQLcommand = String.format(
-				BACKUP_TO + "%s", tempDir.getPath() + File.separatorChar + FileSystemLocations.DATABASE_TO_RESTORE_NAME);
+	/** Retrieves a thread able to backup the database entries along the properties and pictures to the specified file.
+	 * @param backupLocationPath The path ending with the file name under which the backup will be stored. */
+	public static BackupThread getBackupThread(String backupLocationPath) {
+		BackupThread backupThread = new BackupThread(backupLocationPath);
 		
-		// backup database to file
-		try (Statement statement = ConnectionManager.getConnection().createStatement()){				
-			 statement.executeUpdate(backupToSQLcommand);
-		} catch (SQLException e) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE,e);
-		}
-	
-		// zip the whole temp folder
-		FileSystemAccessWrapper.zipFolderToFile(tempDir.getPath(), filePath);
-	
-		// delete temp folder
-		FileSystemAccessWrapper.deleteDirectoryRecursively(tempDir);
+		return backupThread;
 	}
 	
-	/**
-	 * Restores the database entries along the properties and pictures from the specified backup file
-	 * @param filePath The path of the file ending with the file name from which the backup will be restored.
-	 * @throws DatabaseWrapperOperationException 
-	 */
-	public static void restoreFromFile(String filePath) throws DatabaseWrapperOperationException {
-		FileSystemAccessWrapper.clearHomeDirectory();
-		FileSystemAccessWrapper.unzipFileToFolder(filePath, FileSystemLocations.getActiveHomeDir());
+	/** Backs-up the database entries along the properties and pictures up to the specified file.
+	 * PLEASE NOTE: this method should not be used by the application itself as it will cause the UI to block. 
+	 * Instead, retrieve the corresponding thread!
+	 * @param backupLocationPath The path ending with the file name under which the backup will be stored. */
+	public static void backupToFile(String backupLocationPath) {
+		BackupThread backupThread = new BackupThread(backupLocationPath);
+		backupThread.backup();
+	}
 	
-		final String restoreToSQLCommand = String.format(RESTORE_FROM + "%s", FileSystemLocations.getDatabaseRestoreFile());
+	/** Retrieves a thread able to restore the database entries along the properties and pictures from the specified backup file
+	 * @param backupLocationPath The path of the file ending with the file name from which the backup will be restored. */
+	public static RestoreThread getRestoreThread(String backupLocationPath) {
+		RestoreThread restoreThread = new RestoreThread(backupLocationPath);
 		
-		try (Statement statement = ConnectionManager.getConnection().createStatement()) {			
-			statement.executeUpdate(restoreToSQLCommand);
-			try {
-				DatabaseIntegrityManager.lastChangeTimeStampInMillis = DatabaseIntegrityManager.extractTimeStamp(new File(filePath));
-			} catch (DatabaseWrapperOperationException e) {
-				DatabaseIntegrityManager.lastChangeTimeStampInMillis = System.currentTimeMillis();
-			}
-		} catch (SQLException e) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE,e);
-		}
+		return restoreThread;
+	}
 	
-		if (!FileSystemAccessWrapper.deleteDatabaseRestoreFile()) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE);
-		}
-	
-		if (!FileSystemAccessWrapper.updateSammelboxFileStructure()) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE);
-		}
-	
-		if (!FileSystemAccessWrapper.updateAlbumFileStructure(ConnectionManager.getConnection())) {
-			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE);
-		}
-		
-		// Update timestamp
-		DatabaseIntegrityManager.updateLastDatabaseChangeTimeStamp();
+	/** Restores the database entries along the properties and pictures from the specified backup file
+	 * PLEASE NOTE: this method should not be used by the application itself as it will cause the UI to block. 
+	 * Instead, retrieve the corresponding thread!
+	 * @param backupLocationPath The path of the file ending with the file name from which the backup will be restored.*/
+	public static void restoreFromFile(String backupLocationPath) {
+		RestoreThread restoreThread = new RestoreThread(backupLocationPath);
+		restoreThread.restore();
 	}
 	
 	/**
@@ -214,6 +165,10 @@ public final class DatabaseIntegrityManager {
 	
 	public static void updateLastDatabaseChangeTimeStamp() {
 		DatabaseIntegrityManager.lastChangeTimeStampInMillis = System.currentTimeMillis();
+	}
+	
+	public static void updateLastDatabaseChangeTimeStamp(long lastDatabaseChangeTimeStamp) {
+		DatabaseIntegrityManager.lastChangeTimeStampInMillis = lastDatabaseChangeTimeStamp;
 	}
 	
 	/**
@@ -242,7 +197,7 @@ public final class DatabaseIntegrityManager {
 	 * @return A long integer representing the last change of the database.
 	 * @throws DatabaseWrapperOperationException 
 	 */
-	 static long extractTimeStamp(File autoSaveFile) throws DatabaseWrapperOperationException {	
+	 public static long extractTimeStamp(File autoSaveFile) throws DatabaseWrapperOperationException {	
 		String fileName;
 		try {
 			fileName = autoSaveFile.getCanonicalFile().getName();

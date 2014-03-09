@@ -10,6 +10,8 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.FileDialog;
+import org.sammelbox.controller.events.EventObservable;
+import org.sammelbox.controller.events.SammelboxEvent;
 import org.sammelbox.controller.filesystem.FileSystemAccessWrapper;
 import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
@@ -33,7 +35,7 @@ public final class HelpMenuItemListener {
 	static SelectionAdapter getDumpHTMLListener() {
 		return new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent arg0) {				
+			public void widgetSelected(SelectionEvent selectionEvent) {				
 				FileDialog saveFileDialog = new FileDialog(ApplicationUI.getShell(), SWT.SAVE);
 				// Debugging -> no need to translate
 				saveFileDialog.setText("Dump HTML");
@@ -52,7 +54,7 @@ public final class HelpMenuItemListener {
 	static SelectionAdapter getHelpContentsListener() {
 		return new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent arg0) {
+			public void widgetSelected(SelectionEvent selectionEvent) {
 				// No default album is selected on help
 				ApplicationUI.refreshAlbumList();
 				BrowserFacade.showHelpPage();
@@ -64,7 +66,7 @@ public final class HelpMenuItemListener {
 	static SelectionAdapter getAboutListener() {
 		return new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent arg0) {
+			public void widgetSelected(SelectionEvent selectionEvent) {
 				// No default album is selected on help
 				ApplicationUI.refreshAlbumList();
 				Map<String, String> templateContent = BrowserFacade.getInitializedContentMap();
@@ -79,7 +81,7 @@ public final class HelpMenuItemListener {
 	public static SelectionListener getShowBrowserInfoListener() {
 		return new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent arg0) {
+			public void widgetSelected(SelectionEvent selectionEvent) {
 				ApplicationUI.refreshAlbumList();
 				BrowserFacade.loadHtmlFile("browserinfo.html");
 				ApplicationUI.changeRightCompositeTo(PanelType.HELP, EmptySidepane.build(ApplicationUI.getThreePanelComposite()));
@@ -90,7 +92,7 @@ public final class HelpMenuItemListener {
 	public static SelectionListener getCheckForUpdatesListener() {		
 		return new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent arg0) {
+			public void widgetSelected(SelectionEvent selectionEvent) {
 				try (Scanner versionScanner = new Scanner(new URL("http://www.sammelbox.org/current.php").openStream(), "UTF-8").useDelimiter("\\A")) {
 					String currentVersion = versionScanner.next();
 					
@@ -120,11 +122,20 @@ public final class HelpMenuItemListener {
 	public static SelectionListener getReportingIssuesListener() {
 		return new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent arg0) {
+			public void widgetSelected(SelectionEvent selectionEvent) {
 				ComponentFactory.getMessageBox(
 						Translator.get(DictKeys.DIALOG_TITLE_REPORT_ISSUES), 
 						Translator.get(DictKeys.DIALOG_CONTENT_REPORT_ISSUES),
 						SWT.ICON_INFORMATION).open();
+			}
+		};
+	}
+
+	public static SelectionListener getDisableSammelboxListener() {
+		return new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent selectionEvent) {
+				EventObservable.addEventToQueue(SammelboxEvent.DISABLE_SAMMELBOX);
 			}
 		};
 	}

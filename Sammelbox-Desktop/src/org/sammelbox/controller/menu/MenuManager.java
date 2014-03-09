@@ -22,21 +22,28 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
+import org.sammelbox.controller.events.EventObservable;
+import org.sammelbox.controller.events.EventObserver;
+import org.sammelbox.controller.events.SammelboxEvent;
 import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.controller.managers.SettingsManager;
 import org.sammelbox.view.ApplicationUI;
 
-public final class MenuManager {
+public final class MenuManager implements EventObserver {
+	private static Menu menu;
+	
 	private MenuManager() {
-		// not needed
+		EventObservable.registerObserver(this);
 	}
 	
 	/** This method creates and initializes the menu for the main user interface
 	 * @param shell the shell used to create the user interface */
-	public static void createAndInitializeMenuBar(Shell parentShell) {
+	public static Menu createAndInitializeMenuBar(Shell parentShell) {
+		new MenuManager();
+		
 		// Create the bar menu itself
-		Menu menu = new Menu(ApplicationUI.getShell(), SWT.BAR);
+		menu = new Menu(ApplicationUI.getShell(), SWT.BAR);
 
 		// Create all the menu items for the bar menu
 		MenuItem sammelboxItem = new MenuItem(menu, SWT.CASCADE);
@@ -61,6 +68,8 @@ public final class MenuManager {
 
 		// Attach the menu bar to the given shell
 		ApplicationUI.getShell().setMenuBar(menu);
+		
+		return menu;
 	}
 	
 	private static void createDropdownForImportExportMenuItem(Menu menu, MenuItem albumItem) {
@@ -164,6 +173,10 @@ public final class MenuManager {
 			showBrowserInfo.setText("Show Browser Info");
 			showBrowserInfo.addSelectionListener(HelpMenuItemListener.getShowBrowserInfoListener());
 						
+			MenuItem disableSammelbox = new MenuItem(debugSubMenu, SWT.NONE);
+			disableSammelbox.setText("Disable Sammelbox");
+			disableSammelbox.addSelectionListener(HelpMenuItemListener.getDisableSammelboxListener());
+			
 			new MenuItem(helpMenu, SWT.SEPARATOR);
 		}
 		
@@ -186,5 +199,14 @@ public final class MenuManager {
 		MenuItem aboutMenu = new MenuItem(helpMenu, SWT.NONE);
 		aboutMenu.setText(Translator.get(DictKeys.MENU_ABOUT));
 		aboutMenu.addSelectionListener(HelpMenuItemListener.getAboutListener());
+	}
+
+	@Override
+	public void reactToEvent(SammelboxEvent event) {
+		if (event.equals(SammelboxEvent.DISABLE_SAMMELBOX)) {
+			menu.setEnabled(false);
+		} else if (event.equals(SammelboxEvent.ENABLE_SAMMELBOX)) {
+			menu.setEnabled(true);
+		}
 	}
 }

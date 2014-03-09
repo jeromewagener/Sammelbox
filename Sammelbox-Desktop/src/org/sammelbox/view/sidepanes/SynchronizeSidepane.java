@@ -28,6 +28,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.sammelbox.controller.events.EventObservable;
+import org.sammelbox.controller.events.SammelboxEvent;
 import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.controller.synchronization.SyncServerService;
@@ -96,6 +98,8 @@ public final class SynchronizeSidepane {
 		startButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				EventObservable.addEventToQueue(SammelboxEvent.DISABLE_SAMMELBOX);
+				
 				establishConnectionLabel.setEnabled(true);
 				cancelButton.setEnabled(true);
 				startButton.setEnabled(false);
@@ -112,6 +116,8 @@ public final class SynchronizeSidepane {
 		cancelButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				EventObservable.addEventToQueue(SammelboxEvent.ENABLE_SAMMELBOX);
+				
 				syncServerService.stopBeaconingHashedSynchronizationCode();
 				syncServerService.stopCommunicationChannel();
 				syncServerService.stopFileTransferServer();

@@ -23,8 +23,6 @@ import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.List;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -41,7 +39,6 @@ import org.sammelbox.model.database.QueryBuilderException;
 import org.sammelbox.model.database.QueryComponent;
 import org.sammelbox.model.database.QueryOperator;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
-import org.sammelbox.view.ApplicationUI;
 
 public class SavedSearchesTests {
 	@BeforeClass
@@ -56,9 +53,6 @@ public class SavedSearchesTests {
 	@Before
 	public void setUp() {
 		TestExecuter.resetTestHome();
-		
-		// Although the list is wrongly assigned to the shell itself, this allows to test the view behavior
-		ApplicationUI.setSavedSearchesList(new List(ApplicationUI.getShell(), SWT.SINGLE | SWT.BORDER | SWT.V_SCROLL));
 	}
 
 	@After
@@ -112,49 +106,39 @@ public class SavedSearchesTests {
 	
 	@Test
 	public void testRemoveSavedSearch() {
-		try {
-			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
-			
-			SavedSearchManager.initialize();
-			
-			assertTrue("The first view should be: My favorite DVDs", 
-					SavedSearchManager.getSavedSearches("DVDs").get(0).getName().equals("My favorite DVDs"));
-			assertTrue("The second view should be: Unwatched", 
-					SavedSearchManager.getSavedSearches("DVDs").get(1).getName().equals("Unwatched"));
+		DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
+		
+		SavedSearchManager.initialize();
+		
+		assertTrue("The first view should be: My favorite DVDs", 
+				SavedSearchManager.getSavedSearches("DVDs").get(0).getName().equals("My favorite DVDs"));
+		assertTrue("The second view should be: Unwatched", 
+				SavedSearchManager.getSavedSearches("DVDs").get(1).getName().equals("Unwatched"));
 
 
-			SavedSearchManager.removeSavedSearch("DVDs", "My favorite DVDs");
-			
-			assertTrue("The first view should be: Unwatched", 
-					SavedSearchManager.getSavedSearches("DVDs").get(0).getName().equals("Unwatched"));
-			
-			SavedSearchManager.initialize();
-			
-			assertTrue("The first view should be: Unwatched", 
-					SavedSearchManager.getSavedSearches("DVDs").get(0).getName().equals("Unwatched"));
-			
-		} catch (DatabaseWrapperOperationException ex) {
-			fail(ex.getMessage());
-		}
+		SavedSearchManager.removeSavedSearch("DVDs", "My favorite DVDs");
+		
+		assertTrue("The first view should be: Unwatched", 
+				SavedSearchManager.getSavedSearches("DVDs").get(0).getName().equals("Unwatched"));
+		
+		SavedSearchManager.initialize();
+		
+		assertTrue("The first view should be: Unwatched", 
+				SavedSearchManager.getSavedSearches("DVDs").get(0).getName().equals("Unwatched"));
 	}
 	
 	@Test
 	public void testRemoveAllSavedSearchesFromDVDs() {
-		try {
-			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
-			
-			SavedSearchManager.initialize();
-						
-			assertTrue("There should be two views for the DVD album", 
-					SavedSearchManager.getSavedSearches("DVDs").size() == 2);
-			
-			SavedSearchManager.removeSavedSearchesFromAlbum("DVDs");
-			
-			assertTrue("There should no longer be views for the DVD album", 
-					SavedSearchManager.getSavedSearches("DVDs").isEmpty());
-			
-		} catch (DatabaseWrapperOperationException ex) {
-			fail(ex.getMessage());
-		}
+		DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
+		
+		SavedSearchManager.initialize();
+					
+		assertTrue("There should be two views for the DVD album", 
+				SavedSearchManager.getSavedSearches("DVDs").size() == 2);
+		
+		SavedSearchManager.removeSavedSearchesFromAlbum("DVDs");
+		
+		assertTrue("There should no longer be views for the DVD album", 
+				SavedSearchManager.getSavedSearches("DVDs").isEmpty());
 	}
 }

@@ -68,7 +68,7 @@ public final class BrowserUtils {
 
 	static void performBrowserQueryAndShow(Browser browser, String sqlQuery) {				
 		try {
-			AlbumItemStore.reinitializeStore(DatabaseOperations.executeSQLQuery(sqlQuery));
+			AlbumItemStore.reinitializeStoreAndUpdateStatus(DatabaseOperations.executeSQLQuery(sqlQuery));
 		} catch (DatabaseWrapperOperationException ex) {
 			LOGGER.error("An error occured while reinitializing the album item store using the following SQL query (" + sqlQuery + ")", ex);
 		}
@@ -77,7 +77,7 @@ public final class BrowserUtils {
 
 	static void showResultSet(Browser browser, AlbumItemResultSet albumItemResultSet) {
 		try {
-			AlbumItemStore.reinitializeStore(albumItemResultSet);
+			AlbumItemStore.reinitializeStoreAndUpdateStatus(albumItemResultSet);
 		} catch (DatabaseWrapperOperationException ex) {
 			LOGGER.error("Could not reinitialize album item store", ex);
 		}
