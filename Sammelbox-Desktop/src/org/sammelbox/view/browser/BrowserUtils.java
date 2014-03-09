@@ -38,7 +38,7 @@ import org.sammelbox.view.ApplicationUI;
 import org.sammelbox.view.SammelView;
 import org.sammelbox.view.UIConstants;
 import org.sammelbox.view.browser.spreadsheet.SpreadsheetUpdateFunction;
-import org.sammelbox.view.browser.spreadsheet2.SpreadsheetViewCreator;
+import org.sammelbox.view.browser.spreadsheet.SpreadsheetViewCreator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.tidy.Tidy;
