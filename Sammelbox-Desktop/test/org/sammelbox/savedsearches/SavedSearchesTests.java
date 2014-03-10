@@ -61,7 +61,7 @@ public class SavedSearchesTests {
 	}
 
 	@Test
-	public void addAnotherSavedSearchToDVDs() {
+	public void testAddAnotherSavedSearchToDVDs() {
 		try {
 			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
 			

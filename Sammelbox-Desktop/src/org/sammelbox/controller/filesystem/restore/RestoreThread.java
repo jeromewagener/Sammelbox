@@ -33,6 +33,19 @@ public class RestoreThread extends Thread {
 	
 	public void run() {
 		restore();
+		
+		Display.getDefault().asyncExec(new Runnable() {
+			@Override
+			public void run() {							
+				SavedSearchManager.initialize();
+				
+				// No default album is selected on restore
+				ApplicationUI.refreshAlbumList();
+				BrowserFacade.showBackupRestoredPage();
+				
+				EventObservable.addEventToQueue(SammelboxEvent.ENABLE_SAMMELBOX);
+			}
+		});
 	}
 	
 	public void restore() {
@@ -63,19 +76,6 @@ public class RestoreThread extends Thread {
 		
 		// Update timestamp
 		DatabaseIntegrityManager.updateLastDatabaseChangeTimeStamp();
-		
-		Display.getDefault().asyncExec(new Runnable() {
-			@Override
-			public void run() {							
-				SavedSearchManager.initialize();
-				
-				// No default album is selected on restore
-				ApplicationUI.refreshAlbumList();
-				BrowserFacade.showBackupRestoredPage();
-				
-				EventObservable.addEventToQueue(SammelboxEvent.ENABLE_SAMMELBOX);
-			}
-		});
 	}
 	
 	public String getErrorString() {

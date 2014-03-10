@@ -69,7 +69,7 @@ public final class ApplicationUI implements EventObserver {
 	private static final int NUMBER_OF_MAIN_PANEL_COMPOSITES = 3;
 	private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationUI.class);
 	/** A reference to the main display */
-	private static final Display DISPLAY = new Display();
+	private static final Display DISPLAY = Display.getDefault();
 	/** A reference to the main shell */
 	private static final Shell SHELL = new Shell(DISPLAY);
 		
@@ -91,7 +91,7 @@ public final class ApplicationUI implements EventObserver {
 	/** The panel type that is currently visible on the right of the main three panel composite */
 	private static PanelType currentRightPanelType = PanelType.EMPTY;
 	/** An instance in order to register as an observer to event observable */
-	private static ApplicationUI instance = null;
+	private static ApplicationUI instance = new ApplicationUI();
 	
 	/** Defines the panel size for the different panel types */
 	private static Map<PanelType, Integer> panelTypeToPixelSize = new HashMap<PanelType, Integer>() {
@@ -117,30 +117,26 @@ public final class ApplicationUI implements EventObserver {
 		EventObservable.unregisterObserver(instance);
 	}
 	
-	/** This method initializes the main user interface. This involves the creation of different sub-composites
-	 * @param shell the shell which should be initialized */
-	public static void initialize(final Shell shell) {
-		initialize(shell, true);
+	/** This method initializes the main user interface. This involves the creation of different sub-composites */
+	public static void initialize() {
+		initialize(true);
 	}
 		
 	/** This method initializes the main user interface. This involves the creation of different sub-composites
-	 * @param shell the shell which should be initialized
 	 * @param showShell true if the shell should be displayed, false otherwise (for testing purposes only) */
-	public static void initialize(final Shell shell, boolean showShell) {				
-		instance = new ApplicationUI();		
-		
+	public static void initialize(boolean showShell) {				
 		// set program icon
-		shell.setImage(new Image(shell.getDisplay(), FileSystemLocations.getLogoSmallPNG()));
+		SHELL.setImage(new Image(DISPLAY, FileSystemLocations.getLogoSmallPNG()));
 		
 		// setup the Layout for the shell
 		GridLayout shellGridLayout = new GridLayout(1, false);
 		shellGridLayout.marginHeight = 0;
 		shellGridLayout.marginWidth = 0;
-		shell.setMinimumSize(UIConstants.MIN_SHELL_WIDTH, UIConstants.MIN_SHELL_HEIGHT);
+		SHELL.setMinimumSize(UIConstants.MIN_SHELL_WIDTH, UIConstants.MIN_SHELL_HEIGHT);
 
 		// setup the Shell
-		shell.setText(Translator.get(DictKeys.TITLE_MAIN_WINDOW));				
-		shell.setLayout(shellGridLayout);
+		SHELL.setText(Translator.get(DictKeys.TITLE_MAIN_WINDOW));				
+		SHELL.setLayout(shellGridLayout);
 		
 		// define toolbar composite layout data
 		GridData gridDataForToolbarComposite = new GridData(GridData.FILL_BOTH);
@@ -177,13 +173,13 @@ public final class ApplicationUI implements EventObserver {
 		gridDataForStatusBarComposite.grabExcessVerticalSpace = false;
 
 		// Setup composites using layout definitions from before
-		toolbarComposite = new ToolbarComposite(shell);
+		toolbarComposite = new ToolbarComposite(SHELL);
 		GridLayout toolbarGridLayout = new GridLayout(1, false);
 		toolbarGridLayout.marginHeight = 0;
 		toolbarComposite.setLayout(toolbarGridLayout);
 		toolbarComposite.setLayoutData(gridDataForToolbarComposite);
 		
-		threePanelComposite = new Composite(shell, SWT.NONE);
+		threePanelComposite = new Composite(SHELL, SWT.NONE);
 		threePanelComposite.setLayout(mainGridLayout);
 		threePanelComposite.setLayoutData(gridDataForThreePanelComposite);
 
@@ -202,18 +198,18 @@ public final class ApplicationUI implements EventObserver {
 		rightComposite.setLayout(new GridLayout(1, false));
 		rightComposite.setLayoutData(gridDataForRightComposite);
 
-		statusComposite = StatusBarComposite.getInstance(shell).getStatusbarComposite();
+		statusComposite = StatusBarComposite.getInstance(SHELL).getStatusbarComposite();
 		statusComposite.setLayout(new GridLayout(1, false));
 		statusComposite.setLayoutData(gridDataForStatusBarComposite);
 
 		// Create the menu bar
-		MenuManager.createAndInitializeMenuBar(shell);
+		MenuManager.createAndInitializeMenuBar(SHELL);
 
 		// center the shell to primary screen
 		Rectangle primaryScreenClientArea = getPrimaryScreenClientArea();
 		int xCoordinateForShell = primaryScreenClientArea.width / 2 - UIConstants.MIN_SHELL_WIDTH / 2;
 		int yCoordinateForShell = primaryScreenClientArea.height / 2 - UIConstants.MIN_SHELL_HEIGHT / 2;
-		shell.setLocation(xCoordinateForShell, yCoordinateForShell);
+		SHELL.setLocation(xCoordinateForShell, yCoordinateForShell);
 
 		// Create the album manager
 		AlbumManager.initialize();
@@ -225,19 +221,19 @@ public final class ApplicationUI implements EventObserver {
 		SavedSearchManager.initialize();
 		
 		// SWT display management
-		shell.pack();
+		SHELL.pack();
 
 		Rectangle displayClientArea = DISPLAY.getPrimaryMonitor().getClientArea();
 		if (maximizeShellOnStartUp(displayClientArea.width, displayClientArea.height)){
-			shell.setMaximized(true);
+			SHELL.setMaximized(true);
 		}
 		
 		if (showShell) {
-			shell.open();
+			SHELL.open();
 	
 			selectDefaultAndShowWelcomePage();		
 	
-			while (!shell.isDisposed()) {
+			while (!SHELL.isDisposed()) {
 				if (!DISPLAY.readAndDispatch()) {
 					DISPLAY.sleep();
 				}

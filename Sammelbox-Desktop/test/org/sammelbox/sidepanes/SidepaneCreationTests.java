@@ -18,16 +18,32 @@
 
 package org.sammelbox.sidepanes;
 
+import static org.junit.Assert.assertTrue;
+
+import org.eclipse.swt.widgets.Composite;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.sammelbox.TestExecuter;
+import org.sammelbox.controller.listeners.BrowserListener;
 import org.sammelbox.controller.managers.DatabaseIntegrityManager;
+import org.sammelbox.view.ApplicationUI;
+import org.sammelbox.view.composites.BrowserComposite;
+import org.sammelbox.view.sidepanes.AddAlbumItemSidepane;
+import org.sammelbox.view.sidepanes.AdvancedSearchSidepane;
+import org.sammelbox.view.sidepanes.AlterAlbumSidepane;
+import org.sammelbox.view.sidepanes.CreateAlbumSidepane;
+import org.sammelbox.view.sidepanes.EmptySidepane;
+import org.sammelbox.view.sidepanes.ImportSidepane;
+import org.sammelbox.view.sidepanes.QuickControlSidepane;
+import org.sammelbox.view.sidepanes.SettingsSidepane;
+import org.sammelbox.view.sidepanes.SynchronizeSidepane;
+import org.sammelbox.view.sidepanes.UpdateAlbumItemSidepane;
 
 public class SidepaneCreationTests {
-	//TODO private static final String NOT_INITIALIZED_ASSERT_MESSAGE = "The sidepane should have been properly initialized";
+	private static final String NOT_INITIALIZED_ASSERT_MESSAGE = "The sidepane should have been properly initialized";
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {}
@@ -40,7 +56,6 @@ public class SidepaneCreationTests {
 	@Before
 	public void setUp() { 
 		TestExecuter.resetTestHome();
-		DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
 	}
 
 	@After
@@ -48,11 +63,11 @@ public class SidepaneCreationTests {
 
 	@Test
 	public void testAddAlbumItemSidepaneCreation() {
-		/* TODO why does this test suddenly cause problems
+		DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
 		Composite sidepane = null;
 		
 		// Initialize Application UI without showing the shell
-		ApplicationUI.initialize(ApplicationUI.getShell(), false);
+		ApplicationUI.initialize(false);
 		
 		// Create browser composite which is used by several sidepanes
 		BrowserComposite.buildAndStore(ApplicationUI.getShell(), new BrowserListener(ApplicationUI.getShell()));
@@ -90,7 +105,6 @@ public class SidepaneCreationTests {
 		
 		sidepane = UpdateAlbumItemSidepane.build(ApplicationUI.getShell(), "DVDs", 1);
 		assertTrue(NOT_INITIALIZED_ASSERT_MESSAGE, sidepane != null);
-	}*/
 	}
 }
 

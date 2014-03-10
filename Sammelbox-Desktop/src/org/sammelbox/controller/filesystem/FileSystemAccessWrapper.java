@@ -225,7 +225,7 @@ public final class FileSystemAccessWrapper {
 		}
 	}
 
-	public static void copyFile(File sourceLocation , File targetLocation) throws IOException {
+	public static void copyFile(File sourceLocation, File targetLocation) throws IOException {
 		try (InputStream in = new FileInputStream(sourceLocation);
 			 OutputStream out = new FileOutputStream(targetLocation);)
 		{

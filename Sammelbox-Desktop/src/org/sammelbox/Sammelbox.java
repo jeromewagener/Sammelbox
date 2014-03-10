@@ -88,7 +88,7 @@ public final class Sammelbox {
 				setupConnectionAndFilesystem();
 
 				// create the shell and show the user interface. This blocks until the shell is closed
-				ApplicationUI.initialize(ApplicationUI.getShell());
+				ApplicationUI.initialize();
 
 				// close the database connection if the the shell is closed
 				ConnectionManager.closeConnection();
