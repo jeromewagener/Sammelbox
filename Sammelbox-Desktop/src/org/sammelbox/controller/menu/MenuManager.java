@@ -55,7 +55,7 @@ public final class MenuManager implements EventObserver {
 		// Set the text labels for each of the main menu items
 		sammelboxItem.setText(Translator.get(DictKeys.MENU_COLLECTOR));
 		albumItem.setText(Translator.get(DictKeys.MENU_ALBUM));
-		importExport.setText(Translator.toBeTranslated("Import/Export"));
+		importExport.setText(Translator.get(DictKeys.MENU_IMPORT_EXPORT));
 		settingsItem.setText(Translator.get(DictKeys.MENU_SETTINGS));
 		helpItem.setText(Translator.get(DictKeys.MENU_HELP));
 
@@ -81,17 +81,17 @@ public final class MenuManager implements EventObserver {
 		importAlbumItemsMenuItem.addSelectionListener(ImportExportMenuItemListener.getImportAlbumItemsListener());
 		
 		MenuItem appendAlbumItemsMenuItem = new MenuItem(sammelboxMenu, SWT.NONE);
-		appendAlbumItemsMenuItem.setText(Translator.toBeTranslated("Append data from CSV file"));
+		appendAlbumItemsMenuItem.setText(Translator.get(DictKeys.MENU_CSV_APPEND));
 		appendAlbumItemsMenuItem.addSelectionListener(ImportExportMenuItemListener.getAppendAlbumItemsListener());
 		
 		new MenuItem(sammelboxMenu, SWT.SEPARATOR);
 		
 		MenuItem exportAlbumMenuToHTMLItem = new MenuItem(sammelboxMenu, SWT.NONE);
-		exportAlbumMenuToHTMLItem.setText(Translator.toBeTranslated("Export album to HTML file"));
+		exportAlbumMenuToHTMLItem.setText(Translator.get(DictKeys.MENU_HTML_EXPORT));
 		exportAlbumMenuToHTMLItem.addSelectionListener(ImportExportMenuItemListener.getExportAlbumItemsToHTMLListener());	
 		
 		MenuItem exportAlbumMenuToCSVItem = new MenuItem(sammelboxMenu, SWT.NONE);
-		exportAlbumMenuToCSVItem.setText(Translator.toBeTranslated("Export album to CSV file"));
+		exportAlbumMenuToCSVItem.setText(Translator.get(DictKeys.MENU_CSV_EXPORT));
 		exportAlbumMenuToCSVItem.addSelectionListener(ImportExportMenuItemListener.getExportAlbumItemsToCSVListener());
 	}
 
@@ -143,7 +143,6 @@ public final class MenuManager implements EventObserver {
 		MenuItem deleteAlbumMenuItem = new MenuItem(albumMenu, SWT.NONE);
 		deleteAlbumMenuItem.setText(Translator.get(DictKeys.MENU_DELETE_SELECTED_ALBUM));
 		deleteAlbumMenuItem.addSelectionListener(AlbumMenuItemListener.getDeleteAlbumListener());	
-
 	}
 
 	private static void createDropdownSettingsMenuItem(Menu menu, MenuItem settingsMenuItem) {

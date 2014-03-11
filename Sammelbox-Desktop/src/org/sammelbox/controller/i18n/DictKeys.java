@@ -65,9 +65,13 @@ public final class DictKeys {
 	public static final String MENU_ADVANCED_SEARCH = "collector.menu.ADVANCED_SEARCH";
 	public static final String MENU_COLLECTOR = "collector.menu.COLLECTOR";
 	public static final String MENU_SETTINGS = "collector.menu.SETTINGS";
-	public static final String MENU_CSV_IMPORT = "org.sammelbox.menu.CSV_IMPORT";
 	public static final String MENU_REPORTING_ISSUES = "org.sammelbox.menu.REPORTING_ISSUES";
 	public static final String MENU_CHECK_FOR_UPDATES = "org.sammelbox.menu.CHECK_FOR_UPDATES";
+	public static final String MENU_IMPORT_EXPORT = "org.sammelbox.menu.IMPORT_EXPORT";
+	public static final String MENU_CSV_IMPORT = "org.sammelbox.menu.CSV_IMPORT";
+	public static final String MENU_CSV_APPEND = "org.sammelbox.menu.CSV_APPEND";
+	public static final String MENU_CSV_EXPORT = "org.sammelbox.menu.CSV_EXPORT";
+	public static final String MENU_HTML_EXPORT = "org.sammelbox.menu.HTML_EXPORT";
 	
 	/*   Dropdown Menu   */
 	public static final String DROPDOWN_REMOVE = "collector.dropdown.menu.REMOVE";
@@ -201,6 +205,7 @@ public final class DictKeys {
 	public static final String BUTTON_SELECT_CSV_FILE = "org.sammelbox.button.SELECT_CSV_FILE";
 	public static final String BUTTON_SIMULATE = "org.sammelbox.button.SIMULATE";
 	public static final String BUTTON_IMPORT = "org.sammelbox.button.IMPORT";
+	public static final String BUTTON_TOOLTIP_CHANGE_VIEW = "org.sammelbox.tooltip.CHANGE_VIEW";
 	
 	/*   Labels   */
 	public static final String LABEL_ADD_ENTRY = "collector.label.caption.ADD_ENTRY";
@@ -248,6 +253,8 @@ public final class DictKeys {
 	
 	/*   Combo Box   */
 	public static final String COMBOBOX_CONTENT_STARS = "org.sammelbox.combobox.content.STARS";
+	public static final String COMBOBOX_CONTENT_YES = "org.sammelbox.combobox.content.YES";
+	public static final String COMBOBOX_CONTENT_NO = "org.sammelbox.combobox.content.NO";
 	
 	/*   Browser   */
 	public static final String BROWSER_UPDATE = "collector.browser.text.UPDATE";

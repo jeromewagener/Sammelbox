@@ -93,6 +93,15 @@ public final class Translator {
 	/**
 	 * Retrieve the translation for the specified key. The translation depends on the selected language
 	 * @param key the generic key for the internationalized string
+	 * @return a language dependent string which matches the given key
+	 * */
+	public static String get(String key) {
+		return get(key, new Object[] {});
+	}
+	
+	/**
+	 * Retrieve the translation for the specified key. The translation depends on the selected language
+	 * @param key the generic key for the internationalized string
 	 * @param parameters an arbitrary number of arguments passed to the translation string
 	 * @return a language dependent string which matches the given key
 	 * */

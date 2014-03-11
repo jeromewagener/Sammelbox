@@ -27,7 +27,7 @@ public class ChangeViewButton {
 		changeViewButton = new Button(parentComposite, style);
 		
 		changeViewButton.setText(Translator.get(DictKeys.BUTTON_CHANGE_VIEW));
-		changeViewButton.setToolTipText(Translator.toBeTranslated("Change between the details, gallery and spreadsheet view"));
+		changeViewButton.setToolTipText(Translator.get(DictKeys.BUTTON_TOOLTIP_CHANGE_VIEW));
 		changeViewButton.setMenu(createChangeViewButtonMenu(parentComposite.getShell()));
 		changeViewButton.setImage(FileSystemAccessWrapper.getImageFromResource("graphics/changeview.png"));
 		

@@ -125,11 +125,11 @@ public final class SettingsSidepane {
 		fullSynchronization.setText(Translator.toBeTranslated("Full Synchronization:"));
 		
 		final Combo fullSynchronizationCombo = new Combo(innerComposite, SWT.READ_ONLY|SWT.BORDER|SWT.H_SCROLL);
-		fullSynchronizationCombo.setItems(new String[] { Translator.toBeTranslated("Yes"), Translator.toBeTranslated("No") });
+		fullSynchronizationCombo.setItems(new String[] { Translator.get(DictKeys.COMBOBOX_CONTENT_YES), Translator.get(DictKeys.COMBOBOX_CONTENT_NO) });
 		if (SettingsManager.getSettings().isFullSynchronizationEnabled()) {
-			fullSynchronizationCombo.setText(Translator.toBeTranslated("Yes"));
+			fullSynchronizationCombo.setText(Translator.get(DictKeys.COMBOBOX_CONTENT_YES));
 		} else {
-			fullSynchronizationCombo.setText(Translator.toBeTranslated("No"));
+			fullSynchronizationCombo.setText(Translator.get(DictKeys.COMBOBOX_CONTENT_NO));
 		}
 		fullSynchronizationCombo.setLayoutData(gridData);
 		
@@ -149,7 +149,7 @@ public final class SettingsSidepane {
 				appSettings.setUserDefinedLanguage(Language.byTranslation(languageCombo.getItem(languageCombo.getSelectionIndex())));
 				appSettings.setDefaultView(SammelView.byTranslation(viewSelectionCombo.getItem(viewSelectionCombo.getSelectionIndex())));
 				appSettings.setDateFormat(DATE_EXAMPLES_TO_FORMATS.get(dateFormatSelectionCombo.getItem(dateFormatSelectionCombo.getSelectionIndex())));
-				appSettings.setFullSynchronizationEnabled(fullSynchronizationCombo.getItem(fullSynchronizationCombo.getSelectionIndex()).equals(Translator.toBeTranslated("Yes")));
+				appSettings.setFullSynchronizationEnabled(fullSynchronizationCombo.getItem(fullSynchronizationCombo.getSelectionIndex()).equals(Translator.get(DictKeys.COMBOBOX_CONTENT_YES)));
 				SettingsManager.setApplicationSettings(appSettings);
 				
 				Translator.setLanguageManually(Language.byTranslation(languageCombo.getItem(languageCombo.getSelectionIndex())));

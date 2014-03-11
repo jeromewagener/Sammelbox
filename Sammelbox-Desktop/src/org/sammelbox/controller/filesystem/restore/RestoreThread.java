@@ -67,15 +67,25 @@ public class RestoreThread extends Thread {
 			done = true;
 		}
 	
-		if (!FileSystemAccessWrapper.deleteDatabaseRestoreFile() && !FileSystemAccessWrapper.updateSammelboxFileStructure()
-				&& !FileSystemAccessWrapper.updateAlbumFileStructure(ConnectionManager.getConnection())) {
-			LOGGER.error("An issue occurred while cleaning up the restore");
+		if (!FileSystemAccessWrapper.deleteDatabaseRestoreFile()) {
+			LOGGER.error("An issue occurred while updating the album file structure");
 			errorString = Translator.toBeTranslated("An issue occurred while cleaning up the restore");
-			done = true;
+		}
+			
+		if (!FileSystemAccessWrapper.updateSammelboxFileStructure()) {
+			LOGGER.error("An issue occurred while updating the album file structure");
+			errorString = Translator.toBeTranslated("An issue occurred while cleaning up the restore");
+		}
+		
+		if (!FileSystemAccessWrapper.updateAlbumFileStructure(ConnectionManager.getConnection())) {
+			LOGGER.error("An issue occurred while updating the album file structure");
+			errorString = Translator.toBeTranslated("An issue occurred while cleaning up the restore");
 		}
 		
 		// Update timestamp
 		DatabaseIntegrityManager.updateLastDatabaseChangeTimeStamp();
+		
+		done = true;
 	}
 	
 	public String getErrorString() {
