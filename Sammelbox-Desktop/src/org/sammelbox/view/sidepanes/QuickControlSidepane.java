@@ -349,7 +349,7 @@ public final class QuickControlSidepane {
 		final MenuItem viewListPopupMenuItemSeparator1 = new MenuItem(popupMenuForSavedSearchList, SWT.SEPARATOR);
 
 		final MenuItem editSavedSearch = new MenuItem(popupMenuForSavedSearchList, SWT.NONE);
-		editSavedSearch.setText(Translator.toBeTranslated("Edit saved search"));
+		editSavedSearch.setText(Translator.get(DictKeys.DROPDOWN_EDIT_SAVED_SEARCH));
 		editSavedSearch.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (savedSearchesList.getSelectionIndex() >= 0) {

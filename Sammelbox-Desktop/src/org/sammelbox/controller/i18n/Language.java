@@ -64,9 +64,9 @@ public enum Language {
 	
     public static String getTranslation(Language language) {
     	if (ENGLISH.equals(language)) {
-    		return Translator.toBeTranslated("English");
+    		return Translator.get(DictKeys.ENGLISH);
     	} else if (DEUTSCH.equals(language)) {
-    		return Translator.toBeTranslated("Deutsch");
+    		return Translator.get(DictKeys.GERMAN);
     	}
     	
     	LOGGER.error("A translation for an unknown language was requested");
@@ -74,9 +74,9 @@ public enum Language {
     }
     
     public static Language byTranslation(String language) {
-    	if ((Translator.toBeTranslated("English").equals(language))) {
+    	if ((Translator.get(DictKeys.ENGLISH).equals(language))) {
     		return ENGLISH;
-    	} else if ((Translator.toBeTranslated("Deutsch").equals(language))) {
+    	} else if ((Translator.get(DictKeys.GERMAN).equals(language))) {
     		return DEUTSCH;
     	}
     	

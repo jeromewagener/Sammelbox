@@ -169,9 +169,7 @@ public final class QueryBuilder {
 			
 		for (int i=0; i<queryComponents.size(); i++) {	
 			if (fieldNameToFieldTypeMap.get(queryComponents.get(i).getFieldName()) == null) {
-				throw new QueryBuilderException(Translator.toBeTranslated(
-						"The following field seems to cause problems: " + queryComponents.get(i).getFieldName() + " " +
-						"Is this a renamed or deleted field? If yes, please adapt the search using the edit functionality."));
+				throw new QueryBuilderException(Translator.get(DictKeys.ERROR_FIELD_CAUSES_PROBLEMS, queryComponents.get(i).getFieldName()));
 			}
 			
 			if (fieldNameToFieldTypeMap.get(queryComponents.get(i).getFieldName()).equals(FieldType.OPTION) ||

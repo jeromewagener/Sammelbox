@@ -122,7 +122,7 @@ public final class SettingsSidepane {
 		dateFormatSelection.setLayoutData(gridData);
 		
 		Label fullSynchronization = new Label(innerComposite, SWT.NONE);
-		fullSynchronization.setText(Translator.toBeTranslated("Full Synchronization:"));
+		fullSynchronization.setText(Translator.get(DictKeys.LABEL_FULL_SYNC));
 		
 		final Combo fullSynchronizationCombo = new Combo(innerComposite, SWT.READ_ONLY|SWT.BORDER|SWT.H_SCROLL);
 		fullSynchronizationCombo.setItems(new String[] { Translator.get(DictKeys.COMBOBOX_CONTENT_YES), Translator.get(DictKeys.COMBOBOX_CONTENT_NO) });

@@ -45,6 +45,8 @@ public final class DictKeys {
 	
 	/* Special Translation Keys */
 	public static final String TO_BE_TRANSLATED = "collector.special.TO_BE_TRANSLATED";
+	public static final String ENGLISH = "org.sammelbox.special.ENGLISH";
+	public static final String GERMAN = "org.sammelbox.special.GERMAN";
 	
 	/*   Windows   */
 	public static final String TITLE_MAIN_WINDOW = "collector.window.title.MAIN_WINDOW";
@@ -81,6 +83,7 @@ public final class DictKeys {
 	public static final String DROPDOWN_MOVE_ONE_UP = "collector.dropdown.menu.MOVE_ONE_UP";
 	public static final String DROPDOWN_MOVE_ONE_DOWN = "collector.dropdown.menu.MOVE_ONE_DOWN";
 	public static final String DROPDOWN_MOVE_TO_BOTTOM = "collector.dropdown.menu.MOVE_TO_BOTTOM";
+	public static final String DROPDOWN_EDIT_SAVED_SEARCH = "org.sammelbox.dropdown.menu.EDIT_SAVED_SEARCH";
 	public static final String DROPDOWN_ADD_ANOTHER_SAVED_SEARCH = "collector.dropdown.menu.ADD_ANOTHER_SAVED_SEARCH";
 	public static final String DROPDOWN_CREATE_NEW_ALBUM = "collector.dropdown.menu.CREATE_NEW_ALBUM";
 	public static final String DROPDOWN_ALTER_ALBUM = "collector.dropdown.menu.ALTER_ALBUM";
@@ -225,6 +228,7 @@ public final class DictKeys {
 	public static final String LABEL_SEARCH_OPERATOR = "collector.label.caption.SEARCH_OPERATOR";
 	public static final String LABEL_FIELD_TO_SEARCH = "collector.label.caption.FIELD_TO_SEARCH";
 	public static final String LABEL_ADVANCED_SEARCH = "collector.label.caption.ADVANCED_SEARCH"; 
+	public static final String LABEL_EDIT_SAVED_SEARCH = "org.sammelbox.label.caption.EDIT_SAVED_SEARCH";
 	public static final String LABEL_QUICKSEARCH = "collector.label.caption.QUICKSEARCH";
 	public static final String LABEL_ALBUM_LIST = "collector.label.caption.ALBUM_LIST";
 	public static final String LABEL_SAVED_SEARCHES = "collector.label.caption.SAVED_SEARCHES";
@@ -237,6 +241,7 @@ public final class DictKeys {
 	public static final String LABEL_AUTOSAVE_DATABASE = "collector.label.caption.AUTOSAVE_DATABASE";
 	public static final String LABEL_LOADING = "collector.label.caption.LOADING";
 	public static final String LABEL_CSV_IMPORT = "org.sammelbox.label.caption.CSV_IMPORT";
+	public static final String LABEL_CSV_APPEND = "org.sammelbox.label.caption.CSV_APPEND";
 	public static final String LABEL_DEFAULT_VIEW = "org.sammelbox.label.caption.DEFAULT_VIEW";
 	public static final String LABEL_DETAILS_VIEW = "org.sammelbox.label.caption.DETAILS_VIEW";
 	public static final String LABEL_GALLERY_VIEW = "org.sammelbox.label.caption.GALLERY_VIEW";
@@ -246,6 +251,8 @@ public final class DictKeys {
 	public static final String LABEL_IMPORT_IMG_FROM_COLUMN = "org.sammelbox.label.caption.IMPORT_IMG_FROM_COLUMN";
 	public static final String LABEL_IMG_COLUM_NAME = "org.sammelbox.label.caption.IMG_COLUM_NAME";
 	public static final String LABEL_IMG_SEPARATOR = "org.sammelbox.label.caption.IMG_SEPARATOR";
+	public static final String LABEL_SELECT_ALBUM = "org.sammelbox.label.caption.SELECT_ALBUM";
+	public static final String LABEL_FULL_SYNC = "org.sammelbox.label.caption.FULL_SYNC";
 	
 	/*   Textbox   */
 	public static final String TEXT_MY_NEW_ALBUM = "collector.textbox.content.MY_NEW_ALBUM";
@@ -322,4 +329,8 @@ public final class DictKeys {
 	public static final String TABLE_COLUMN_FIELD_TYPE = "collector.table.colum.caption.FIELD_TYPE";
 	public static final String TABLE_COLUMN_OPERATOR = "collector.table.colum.caption.OPERATOR";
 	public static final String TABLE_COLUMN_VALUE = "collector.table.colum.caption.VALUE";
+	
+	/*   Error Messages  */
+	public static final String ERROR_AN_ERROR_OCCURRED = "org.sammelbox.error.AN_ERROR_OCCURRED";
+	public static final String ERROR_FIELD_CAUSES_PROBLEMS = "org.sammelbox.error.FIELD_CAUSES_PROBLEMS";
 }

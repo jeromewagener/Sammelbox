@@ -1,5 +1,6 @@
 package org.sammelbox.view;
 
+import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,11 +14,11 @@ public enum SammelView {
 	
     public static String getTranslation(SammelView sammelView) {
     	if (DETAILED_VIEW.equals(sammelView)) {
-    		return Translator.toBeTranslated("Detailed View");
+    		return Translator.get(DictKeys.BUTTON_DETAILED_VIEW);
     	} else if (GALLERY_VIEW.equals(sammelView)) {
-    		return Translator.toBeTranslated("Gallery View");
+    		return Translator.get(DictKeys.BUTTON_GALLERY_VIEW);
     	} else if (SPREADSHEET_VIEW.equals(sammelView)) {
-    		return Translator.toBeTranslated("Spreadsheet View");
+    		return Translator.get(DictKeys.BUTTON_SPREADSHEET_VIEW);
     	}
     	
     	LOGGER.error("A translation for an unknown view was requested");
@@ -25,11 +26,11 @@ public enum SammelView {
     }
     
     public static SammelView byTranslation(String sammelView) {
-    	if ((Translator.toBeTranslated("Detailed View").equals(sammelView))) {
+    	if ((Translator.get(DictKeys.BUTTON_DETAILED_VIEW).equals(sammelView))) {
     		return DETAILED_VIEW;
-    	} else if ((Translator.toBeTranslated("Gallery View").equals(sammelView))) {
+    	} else if ((Translator.get(DictKeys.BUTTON_GALLERY_VIEW).equals(sammelView))) {
     		return GALLERY_VIEW;
-    	} else if ((Translator.toBeTranslated("Spreadsheet View").equals(sammelView))) {
+    	} else if ((Translator.get(DictKeys.BUTTON_SPREADSHEET_VIEW).equals(sammelView))) {
     		return SPREADSHEET_VIEW;
     	}
     	

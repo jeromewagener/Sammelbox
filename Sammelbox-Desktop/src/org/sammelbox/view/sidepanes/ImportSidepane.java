@@ -53,7 +53,7 @@ public final class ImportSidepane {
 		
 		// label header
 		if (appendCSVEntries) {
-			ComponentFactory.getPanelHeaderComposite(importComposite, Translator.toBeTranslated("Appending CSV Data"));
+			ComponentFactory.getPanelHeaderComposite(importComposite, Translator.get(DictKeys.LABEL_CSV_APPEND));
 		} else {
 			ComponentFactory.getPanelHeaderComposite(importComposite, Translator.get(DictKeys.LABEL_CSV_IMPORT));
 		}
@@ -97,7 +97,7 @@ public final class ImportSidepane {
 				
     	// album selection when appending 
 		final Label selectAlbumNameLabel = new Label(innerComposite, SWT.NONE);
-		selectAlbumNameLabel.setText(Translator.toBeTranslated("Select the album:"));
+		selectAlbumNameLabel.setText(Translator.get(DictKeys.LABEL_SELECT_ALBUM));
     	
 		// album name combo-box
 		final Combo albumNameCombo = new Combo(innerComposite, SWT.BORDER);

@@ -85,7 +85,7 @@ public final class AdvancedSearchSidepane {
 		advancedSearchComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		if (savedSearch != null) {
-			ComponentFactory.getPanelHeaderComposite(advancedSearchComposite, Translator.toBeTranslated("Edit Saved Search"));
+			ComponentFactory.getPanelHeaderComposite(advancedSearchComposite, Translator.get(DictKeys.LABEL_EDIT_SAVED_SEARCH));
 		} else {
 			ComponentFactory.getPanelHeaderComposite(advancedSearchComposite, Translator.get(DictKeys.LABEL_ADVANCED_SEARCH));
 		}
@@ -310,7 +310,7 @@ public final class AdvancedSearchSidepane {
 						QueryBuilder.buildQueryAndExecute(queryComponents, connectByAnd, album);
 					}
 				} catch (QueryBuilderException queryBuilderException) {
-					ComponentFactory.getMessageBox(Translator.toBeTranslated("An error occurred"), queryBuilderException.getMessage(), SWT.ICON_ERROR);
+					ComponentFactory.getMessageBox(Translator.get(DictKeys.ERROR_AN_ERROR_OCCURRED), queryBuilderException.getMessage(), SWT.ICON_ERROR);
 					LOGGER.error("An error occurred while executing the saved search: ", queryBuilderException);
 				}
 			}

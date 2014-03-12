@@ -27,6 +27,7 @@ import org.eclipse.swt.SWT;
 import org.sammelbox.controller.events.EventObservable;
 import org.sammelbox.controller.events.SammelboxEvent;
 import org.sammelbox.controller.filesystem.xml.XmlStorageWrapper;
+import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.model.database.QueryBuilder;
 import org.sammelbox.model.database.QueryBuilderException;
@@ -247,7 +248,7 @@ public final class SavedSearchManager {
 								savedSearch.getOrderByField(), savedSearch.isOrderAscending());
 					}
 				} catch (QueryBuilderException queryBuilderException) {
-					ComponentFactory.getMessageBox(Translator.toBeTranslated("An error occurred"), queryBuilderException.getMessage(), SWT.ICON_ERROR);
+					ComponentFactory.getMessageBox(Translator.get(DictKeys.ERROR_AN_ERROR_OCCURRED), queryBuilderException.getMessage(), SWT.ICON_ERROR);
 					LOGGER.error("An error occurred while executing the saved search: ", queryBuilderException);
 				}
 			}
