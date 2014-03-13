@@ -38,6 +38,8 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
@@ -51,6 +53,8 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Widget;
 import org.sammelbox.controller.GuiController;
+import org.sammelbox.controller.events.EventObservable;
+import org.sammelbox.controller.events.SammelboxEvent;
 import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.model.album.AlbumItemPicture;
@@ -64,6 +68,8 @@ public class ImageDropAndManagementComposite extends Composite implements DropTa
 	private static final int MAX_HEIGHT_OR_WIDTH_IN_PIXELS = 100;
 	private static final int IMAGE_LIST_HEIGHT_IN_PIXELS = 130;
 	private static final int NUMBER_OF_IMAGE_LIST_COLUMNS = 4;
+	
+	private Label dropTextLabel;
 	
 	/** A list of images pointing to copies of the original files, located within the corresponding album folder */
 	private LinkedList<AlbumItemPicture> pictures = new LinkedList<AlbumItemPicture>();
@@ -97,7 +103,7 @@ public class ImageDropAndManagementComposite extends Composite implements DropTa
 		this.setLayout(new GridLayout(1, false));
 		this.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
-		Label dropTextLabel = new Label(this, SWT.BORDER | SWT.CENTER | SWT.VERTICAL);
+		dropTextLabel = new Label(this, SWT.BORDER | SWT.CENTER | SWT.VERTICAL);
 		dropTextLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		dropTextLabel.setText(Translator.get(DictKeys.LABEL_DROP_IMAGE_HERE));
 		dropTextLabel.addMouseListener(new MouseListener() {
@@ -292,37 +298,16 @@ public class ImageDropAndManagementComposite extends Composite implements DropTa
 	}
 
 	@Override
-	public void drop(DropTargetEvent event) {
+	public void drop(DropTargetEvent event) {				
 		if (!ApplicationUI.isAlbumSelectedAndShowMessageIfNot()) {
 			return;
 		}
 		
 		if (event.data instanceof String[]) {
-			String[] filenames = (String[]) event.data;
-			if (filenames.length > 0) {
-				for (String filename : filenames) {
-					boolean processFile = false;
-					for (String allowedExtension : ALLOWED_EXTENSIONS) {
-						if (filename.toLowerCase().endsWith(allowedExtension)) {
-							processFile = true;
-							break;
-						}
-					}
-					
-					if (processFile) {
-						AlbumItemPicture picture = ImageManipulator.adaptAndStoreImageForCollector(
-								new File(filename), GuiController.getGuiState().getSelectedAlbum());
-						if (picture == null) {
-							showDroppedUnsupportedFileMessageBox(filename);
-						} else {
-							pictures.add(picture);
-						}
-					} else {
-						showDroppedUnsupportedFileMessageBox(filename);
-					}
-				}
-				refreshImageComposite();
-			}
+			String[] fileNames = (String[]) event.data;
+			
+			ImageProcessingThread imageProcessingThread = new ImageProcessingThread(fileNames);
+			imageProcessingThread.start();
 		}
 	}
 
@@ -352,5 +337,91 @@ public class ImageDropAndManagementComposite extends Composite implements DropTa
 						image.getBounds().width, image.getBounds().height, 0, 0, width, height);
 		gc.dispose();
 		return scaled;
+	}
+	
+	private class ImageProcessingThread extends Thread {
+		private final String[] fileNames;
+		private final Font originalFont;
+		private final Font boldFont;
+		
+		public ImageProcessingThread(String[] fileNames) {
+			this.fileNames = fileNames;
+			
+			FontData fontData = dropTextLabel.getFont().getFontData()[0];
+			originalFont = dropTextLabel.getFont();
+			boldFont = new Font(ApplicationUI.getShell().getDisplay(), new FontData(fontData.getName(), fontData.getHeight(), SWT.BOLD));
+		}
+		
+		@Override
+		public void run() {
+			ApplicationUI.getShell().getDisplay().asyncExec(new Runnable() {
+				@Override
+				public void run() {
+					EventObservable.addEventToQueue(SammelboxEvent.DISABLE_SAMMELBOX);
+				}
+			});
+					
+			if (fileNames.length > 0) {
+				for (int i = 0; i < fileNames.length; i++) {
+					final int current = i + 1;
+					ApplicationUI.getShell().getDisplay().asyncExec(new Runnable() {
+						@Override
+						public void run() {
+							dropTextLabel.setText(Translator.toBeTranslated("Processing image " + (current) + " of " + fileNames.length));
+							dropTextLabel.setFont(boldFont);
+						}
+					});
+					
+					final String fileName = fileNames[i];
+
+					boolean processFile = false;
+					for (String allowedExtension : ALLOWED_EXTENSIONS) {
+						if (fileName.toLowerCase().endsWith(allowedExtension)) {
+							processFile = true;
+							break;
+						}
+					}
+					
+					if (processFile) {
+						AlbumItemPicture picture = ImageManipulator.adaptAndStoreImageForCollector(
+								new File(fileName), GuiController.getGuiState().getSelectedAlbum());
+						if (picture == null) {
+							ApplicationUI.getShell().getDisplay().asyncExec(new Runnable() {
+								@Override
+								public void run() {
+									showDroppedUnsupportedFileMessageBox(fileName);
+								}
+							});
+						} else {
+							pictures.add(picture);
+						}
+					} else {
+						ApplicationUI.getShell().getDisplay().asyncExec(new Runnable() {
+							@Override
+							public void run() {
+								showDroppedUnsupportedFileMessageBox(fileName);
+							}
+						});
+					}
+				}
+				
+				ApplicationUI.getShell().getDisplay().asyncExec(new Runnable() {
+					@Override
+					public void run() {
+						refreshImageComposite();
+					}
+				});
+			}
+			
+			ApplicationUI.getShell().getDisplay().asyncExec(new Runnable() {
+				@Override
+				public void run() {
+					dropTextLabel.setText(Translator.get(DictKeys.LABEL_DROP_IMAGE_HERE));
+					dropTextLabel.setFont(originalFont);
+					
+					EventObservable.addEventToQueue(SammelboxEvent.ENABLE_SAMMELBOX);
+				}
+			});
+		}
 	}
 }
