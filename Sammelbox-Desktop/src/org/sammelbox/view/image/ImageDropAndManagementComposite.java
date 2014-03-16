@@ -125,16 +125,14 @@ public class ImageDropAndManagementComposite extends Composite implements DropTa
 				if (firstFile != null) {
 					String selectionFolder = new File(firstFile).getParent();
 					String[] filenames = openFileDialog.getFileNames();
-					for (String filename : filenames) {
-						AlbumItemPicture picture = ImageManipulator.adaptAndStoreImageForCollector(
-								new File(selectionFolder + File.separatorChar + filename), GuiController.getGuiState().getSelectedAlbum());
-						if (picture == null) {
-							showDroppedUnsupportedFileMessageBox(filename);
-						} else {
-							pictures.add(picture);
-						}
+					String[] filepaths = new String[filenames.length];
+
+					for (int i=0; i<filenames.length; i++) {
+						filepaths[i] = selectionFolder + File.separatorChar + filenames[i];
 					}
-					refreshImageComposite();
+					
+					ImageProcessingThread imageProcessingThread = new ImageProcessingThread(filepaths);
+					imageProcessingThread.start();
 				}
 			}
 			
@@ -304,9 +302,9 @@ public class ImageDropAndManagementComposite extends Composite implements DropTa
 		}
 		
 		if (event.data instanceof String[]) {
-			String[] fileNames = (String[]) event.data;
+			String[] filepaths = (String[]) event.data;
 			
-			ImageProcessingThread imageProcessingThread = new ImageProcessingThread(fileNames);
+			ImageProcessingThread imageProcessingThread = new ImageProcessingThread(filepaths);
 			imageProcessingThread.start();
 		}
 	}
@@ -340,12 +338,12 @@ public class ImageDropAndManagementComposite extends Composite implements DropTa
 	}
 	
 	private class ImageProcessingThread extends Thread {
-		private final String[] fileNames;
+		private final String[] filepaths;
 		private final Font originalFont;
 		private final Font boldFont;
 		
-		public ImageProcessingThread(String[] fileNames) {
-			this.fileNames = fileNames;
+		public ImageProcessingThread(String[] filepaths) {
+			this.filepaths = filepaths;
 			
 			FontData fontData = dropTextLabel.getFont().getFontData()[0];
 			originalFont = dropTextLabel.getFont();
@@ -361,18 +359,18 @@ public class ImageDropAndManagementComposite extends Composite implements DropTa
 				}
 			});
 					
-			if (fileNames.length > 0) {
-				for (int i = 0; i < fileNames.length; i++) {
+			if (filepaths.length > 0) {
+				for (int i = 0; i < filepaths.length; i++) {
 					final int current = i + 1;
 					ApplicationUI.getShell().getDisplay().asyncExec(new Runnable() {
 						@Override
 						public void run() {
-							dropTextLabel.setText(Translator.toBeTranslated("Processing image " + (current) + " of " + fileNames.length));
+							dropTextLabel.setText(Translator.toBeTranslated("Processing image " + (current) + " of " + filepaths.length));
 							dropTextLabel.setFont(boldFont);
 						}
 					});
 					
-					final String fileName = fileNames[i];
+					final String fileName = filepaths[i];
 
 					boolean processFile = false;
 					for (String allowedExtension : ALLOWED_EXTENSIONS) {

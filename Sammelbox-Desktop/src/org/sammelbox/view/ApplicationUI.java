@@ -31,7 +31,9 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Monitor;
@@ -486,11 +488,14 @@ public final class ApplicationUI implements EventObserver {
 			for (String album : AlbumManager.getAlbums()) {
 				albums.add(album);
 			}
+		
 		} else if (event.equals(SammelboxEvent.ALBUM_SELECTED)) {			
 			savedSearches.setItems(SavedSearchManager.getSavedSearchesNamesArray(GuiController.getGuiState().getSelectedAlbum()));
 			BrowserFacade.resetFutureJumpAnchor();
+		
 		} else if (event.equals(SammelboxEvent.SAVED_SEARCH_SELECTED)) {
 			BrowserFacade.resetFutureJumpAnchor();
+		
 		} else if (event.equals(SammelboxEvent.SAVED_SEARCHES_LIST_UPDATED)) {
 			savedSearches.removeAll();
 
@@ -501,22 +506,45 @@ public final class ApplicationUI implements EventObserver {
 			if (!savedSearches.isEnabled() && savedSearches.getItemCount() != 0) {
 				savedSearches.setEnabled(true);
 			}
+		
 		} else if (event.equals(SammelboxEvent.NO_ALBUM_SELECTED)) {
 			ComponentFactory.showErrorDialog(
 					ApplicationUI.getShell(), 
 					Translator.get(DictKeys.DIALOG_TITLE_NO_ALBUM_SELECTED), 
 					Translator.get(DictKeys.DIALOG_CONTENT_NO_ALBUM_SELECTED));
+		
 		} else if (event.equals(SammelboxEvent.DISABLE_SAMMELBOX)) {
 			quickSearch.setEnabled(false);
 			albums.setEnabled(false);
 			savedSearches.setEnabled(false);
+			
+			if (currentRightPanelType.equals(PanelType.ADD_ENTRY) || currentRightPanelType.equals(PanelType.UPDATE_ENTRY)) {
+				setEnabledOnCompositeControls(rightComposite, false);		
+			}
+
 		} else if (event.equals(SammelboxEvent.ENABLE_SAMMELBOX)) {
 			quickSearch.setEnabled(true);
 			albums.setEnabled(true);
 			savedSearches.setEnabled(true);
+			
+			if (currentRightPanelType.equals(PanelType.ADD_ENTRY) || currentRightPanelType.equals(PanelType.UPDATE_ENTRY)) {
+				setEnabledOnCompositeControls(rightComposite, true);		
+			}
 		}
 	}
 
+	/** This method recursively traverses the composite (which can have sub composites etc.. ) and sets the enable state
+	 * of real controls. (i.e. labels are not affected). Since this method is computationally expensive, use it WISELY! */
+	private void setEnabledOnCompositeControls(Composite composite, boolean enabled) {
+		for (Control control : composite.getChildren()) {
+			if (control instanceof Composite) {
+				setEnabledOnCompositeControls((Composite) control, enabled);
+			} else if (!(control instanceof Label)) {
+				control.setEnabled(enabled);
+			}
+		}
+	}
+	
 	public static boolean isAlbumSelectedAndShowMessageIfNot() {
 		if (!GuiController.getGuiState().isAlbumSelected()) {
 			EventObservable.addEventToQueue(SammelboxEvent.NO_ALBUM_SELECTED);
