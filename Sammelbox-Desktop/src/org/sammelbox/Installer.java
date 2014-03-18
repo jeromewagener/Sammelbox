@@ -2,16 +2,21 @@ package org.sammelbox;
 
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.sammelbox.controller.filesystem.FileSystemAccessWrapper;
+import org.sammelbox.controller.i18n.DictKeys;
+import org.sammelbox.controller.i18n.Language;
 import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.controller.managers.BuildInformationManager;
 import org.sammelbox.view.various.ScreenUtils;
@@ -24,16 +29,22 @@ public class Installer {
 	private static final int DEFAULT_MARGIN = 10;
 	private static final int DEFAULT_TOP_MARGIN = 20;
 	
+	private static Shell shell;
+	private static Label welcomeLabelLine1;
+	private static Label welcomeLabelLine2;
+	private static Label installDirDescription;
+	private static Label collectionDataDirDescription;
+	private static Label changeLanguageDescription;
+	private static Button cancelButton;
+	private static Button installButton;
+	
 	public static void main(String[] args) throws ClassNotFoundException {
 		Display display = new Display ();
-		Shell shell = new Shell(display);
+		shell = new Shell(display);
 		shell.setSize(INSTALLER_WIDTH, INSTALLER_HEIGHT);
 		shell.setLocation(
 				(new Double((ScreenUtils.getPrimaryScreenClientArea(display).width / 2.0) - (INSTALLER_WIDTH / 2.0))).intValue(),
 				(new Double((ScreenUtils.getPrimaryScreenClientArea(display).height / 2.0) - (INSTALLER_HEIGHT / 2.0))).intValue());
-		shell.setText(Translator.toBeTranslated(
-				BuildInformationManager.instance().getApplicationName() + " " + 
-				BuildInformationManager.instance().getVersion() + " Installer"));
 		
 		RowLayout rowLayout = new RowLayout(SWT.HORIZONTAL);
 		rowLayout.marginWidth = DEFAULT_MARGIN;
@@ -48,12 +59,8 @@ public class Installer {
 		Label spacer = new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL);
 		spacer.setLayoutData(new RowData(SEPARATOR_WIDTH, SEPARATOR_HEIGHT));
 		
-		Label welcomeLabelLine1 = new Label(shell, SWT.NONE);
-		Label welcomeLabelLine2 = new Label(shell, SWT.NONE);
-		welcomeLabelLine1.setText(Translator.toBeTranslated(
-				"Welcome to the Sammelbox installer. This installer allows to customize Sammelbox."));
-		welcomeLabelLine2.setText(Translator.toBeTranslated(
-				"Just click \"INSTALL\" in case you feel comfortable with the default settings. Have fun!"));
+		welcomeLabelLine1 = new Label(shell, SWT.NONE);
+		welcomeLabelLine2 = new Label(shell, SWT.NONE);
 		
 		Label spacer2 = new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL);
 		spacer2.setLayoutData(new RowData(SEPARATOR_WIDTH, SEPARATOR_HEIGHT));
@@ -64,39 +71,70 @@ public class Installer {
 		Composite composite = new Composite(shell, SWT.NONE);
 		composite.setLayout(gridLayout);
 		
-		Label installDirDescription = new Label(composite, SWT.NULL);
-		installDirDescription.setText(Translator.toBeTranslated("Installation Directory: "));
+		installDirDescription = new Label(composite, SWT.NULL);
 		Label installDir = new Label(composite, SWT.BORDER);
 		installDir.setText("/home/test/programs/Sammelbox");
 		Button changeInstallDirButton = new Button(composite, SWT.PUSH);
 		changeInstallDirButton.setText("...");
 		
-		Label collectionDataDirDescription = new Label(composite, SWT.NULL);
-		collectionDataDirDescription.setText(Translator.toBeTranslated("Storage Directory: "));
+		collectionDataDirDescription = new Label(composite, SWT.NULL);
 		Label collectionDataDir = new Label(composite, SWT.BORDER);
 		collectionDataDir.setText("/home/test/Sammelbox");
 		Button changeDataDirButton = new Button(composite, SWT.PUSH);
 		changeDataDirButton.setText("...");
 		
+		changeLanguageDescription = new Label(composite, SWT.NULL);
+		final Combo changeLanguageCombo = new Combo(composite, SWT.READ_ONLY);
+		String[] languages = new String[Language.valuesWithoutUnknown().length];
+		for (int i=0; i<Language.valuesWithoutUnknown().length; i++) {
+			languages[i] = Language.getTranslation(Language.valuesWithoutUnknown()[i]);
+		}
+		changeLanguageCombo.setItems(languages);
+		changeLanguageCombo.setText(Language.getTranslation(Translator.getUsedLanguage()));
+				
 		Label spacer3 = new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL);
 		spacer3.setLayoutData(new RowData(SEPARATOR_WIDTH, SEPARATOR_HEIGHT));
+	    
+		cancelButton = new Button(shell, SWT.PUSH);
+		cancelButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent selectionEvent) {
+				shell.close();
+			}
+		});
+		cancelButton.setAlignment(SWT.RIGHT);
 		
-		Button cancelButton = new Button(shell, SWT.PUSH);
-		cancelButton.setText(Translator.toBeTranslated("Cancel"));
-		cancelButton.setFocus();
-		
-		Button installButton = new Button(shell, SWT.PUSH);
-		installButton.setText(Translator.toBeTranslated("Install Now"));
+		installButton = new Button(shell, SWT.PUSH);
 		installButton.setFocus();
+		installButton.setAlignment(SWT.RIGHT);
+		
+		Translator.setLanguageFromSettingsOrSystem();
+		initLabels();
+		changeLanguageCombo.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent selectionEvent) {
+				//Translator.setLanguageManually(Language.byTranslation(changeLanguageCombo.getItem(changeLanguageCombo.getSelectionIndex())));
+				//initLabels();
+			}
+		});
 		
 		shell.open ();
-		
 		while (!shell.isDisposed ()) {
 			if (!display.readAndDispatch ()) {
 				display.sleep ();
 			}
 		}
-		
 		display.dispose ();
+	}
+	
+	private static void initLabels() {
+		shell.setText(Translator.get(DictKeys.INSTALLER_WINDOW_TITLE, BuildInformationManager.instance().getApplicationName(), BuildInformationManager.instance().getVersion()));
+		welcomeLabelLine1.setText(Translator.get(DictKeys.INSTALLER_INFO_LINE_1));
+		welcomeLabelLine2.setText(Translator.get(DictKeys.INSTALLER_INFO_LINE_2));
+		installDirDescription.setText(Translator.get(DictKeys.INSTALLER_INSTALL_DIR));			
+		collectionDataDirDescription.setText(Translator.get(DictKeys.INSTALLER_STORAGE_DIR));
+		changeLanguageDescription.setText(Translator.get(DictKeys.INSTALLER_LANGUAGE));
+		cancelButton.setText(Translator.get(DictKeys.INSTALLER_CANCEL));
+		installButton.setText(Translator.get(DictKeys.INSTALLER_INSTALL));
 	}
 }
