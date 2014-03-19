@@ -66,7 +66,7 @@ public class Installer {
 		spacer2.setLayoutData(new RowData(SEPARATOR_WIDTH, SEPARATOR_HEIGHT));
 		
 		GridLayout gridLayout = new GridLayout();
-		gridLayout.numColumns = 3;
+		gridLayout.numColumns = 4;
 		
 		Composite composite = new Composite(shell, SWT.NONE);
 		composite.setLayout(gridLayout);
@@ -76,12 +76,17 @@ public class Installer {
 		installDir.setText("/home/test/programs/Sammelbox");
 		Button changeInstallDirButton = new Button(composite, SWT.PUSH);
 		changeInstallDirButton.setText("...");
+		Image infoIcon = FileSystemAccessWrapper.getImageFromResource("graphics/info.png");
+		Label installInfoLabel = new Label(composite, SWT.NONE);
+		installInfoLabel.setImage(infoIcon); 
 		
 		collectionDataDirDescription = new Label(composite, SWT.NULL);
 		Label collectionDataDir = new Label(composite, SWT.BORDER);
 		collectionDataDir.setText("/home/test/Sammelbox");
 		Button changeDataDirButton = new Button(composite, SWT.PUSH);
 		changeDataDirButton.setText("...");
+		Label storageInfoLabel = new Label(composite, SWT.NONE);
+		storageInfoLabel.setImage(infoIcon); 
 		
 		changeLanguageDescription = new Label(composite, SWT.NULL);
 		final Combo changeLanguageCombo = new Combo(composite, SWT.READ_ONLY);
@@ -91,7 +96,10 @@ public class Installer {
 		}
 		changeLanguageCombo.setItems(languages);
 		changeLanguageCombo.setText(Language.getTranslation(Translator.getUsedLanguage()));
-				
+		new Label(composite, SWT.NONE);
+		Label changeLanguageInfoLabel = new Label(composite, SWT.NONE);
+		changeLanguageInfoLabel.setImage(infoIcon); 	
+		
 		Label spacer3 = new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL);
 		spacer3.setLayoutData(new RowData(SEPARATOR_WIDTH, SEPARATOR_HEIGHT));
 	    
