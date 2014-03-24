@@ -334,14 +334,16 @@ public final class DictKeys {
 	public static final String ERROR_AN_ERROR_OCCURRED = "org.sammelbox.error.AN_ERROR_OCCURRED";
 	public static final String ERROR_FIELD_CAUSES_PROBLEMS = "org.sammelbox.error.FIELD_CAUSES_PROBLEMS";
 	
-	/*   Installer  */
-	public static final String INSTALLER_WINDOW_TITLE = "org.sammelbox.installer.window.title";
-	public static final String INSTALLER_INFO_LINE_1 = "org.sammelbox.installer.label.info.line.1";
-	public static final String INSTALLER_INFO_LINE_2 = "org.sammelbox.installer.label.info.line.2";
-	public static final String INSTALLER_INSTALL_DIR = "org.sammelbox.installer.label.install.dir";
-	public static final String INSTALLER_STORAGE_DIR = "org.sammelbox.installer.label.storage.dir";
-	public static final String INSTALLER_LANGUAGE = "org.sammelbox.installer.label.language";
-	public static final String INSTALLER_CANCEL = "org.sammelbox.installer.button.cancel";
-	public static final String INSTALLER_INSTALL = "org.sammelbox.installer.button.install";
+	/*   Configurator / Installer  */
+	public static final String CONFIGURATOR_WINDOW_TITLE = "org.sammelbox.installer.window.title";
+	public static final String CONFIGURATOR_INFO_LINE_1 = "org.sammelbox.installer.label.info.line.1";
+	public static final String CONFIGURATOR_INSTALL_DIR = "org.sammelbox.installer.label.install.dir";
+	public static final String CONFIGURATOR_INFO_LINE_2 = "org.sammelbox.installer.label.info.line.2";
+	public static final String CONFIGURATOR_CREATE_DESKTOP_SHORTCUT = "org.sammelbox.installer.label.create.desktop.shortcut";
+	public static final String CONFIGURATOR_STORAGE_DIR = "org.sammelbox.installer.label.storage.dir";
+	public static final String CONFIGURATOR_LANGUAGE = "org.sammelbox.installer.label.language";
+	public static final String CONFIGURATOR_DATE_FORMAT = "org.sammelbox.installer.label.date.format";
+	public static final String CONFIGURATOR_CANCEL = "org.sammelbox.installer.button.cancel";
+	public static final String CONFIGURATOR_START_SAMMELBOX = "org.sammelbox.installer.button.install";
 	
 }

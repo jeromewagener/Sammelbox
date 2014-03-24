@@ -18,6 +18,7 @@
 
 package org.sammelbox;
 
+import java.io.File;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
 
@@ -66,13 +67,22 @@ public final class Sammelbox {
 		}
 	}
 	
-	/** The main method initializes the database (using the constructor) and establishes the user interface */
-	public static void main(String[] args) throws ClassNotFoundException {
+	/** Initializes and launches Sammelbox */
+	static void launch() {
+		// check whether Sammelbox home is installed to a non default configuration
+		if (new File(FileSystemLocations.HOME_REDIRECTION_FILE).exists()) {
+			FileSystemLocations.setActiveHomeDir(FileSystemAccessWrapper.readFileAsString(FileSystemLocations.HOME_REDIRECTION_FILE));
+		} else {
+			FileSystemLocations.setActiveHomeDir(FileSystemLocations.DEFAULT_SAMMELBOX_HOME);
+		}
+		
+		// create or update version file
+		FileSystemAccessWrapper.writeToFile(BuildInformationManager.instance().getVersion(), FileSystemLocations.getVersionFilePath());
+		
 		LOGGER.info("Sammelbox (build: " + BuildInformationManager.instance().getVersion() + 
 				" build on " + BuildInformationManager.instance().getBuildTimeStamp() + ") started");
 		try {
 			// Ensure that the folder structure including the lock file exists before locking
-			FileSystemLocations.setActiveHomeDir(FileSystemLocations.DEFAULT_SAMMELBOX_HOME);
 			FileSystemAccessWrapper.updateSammelboxFileStructure();
 
 			// Load available files
@@ -106,5 +116,31 @@ public final class Sammelbox {
 		} finally {
 			LOGGER.info("Sammelbox stopped");
 		}
+	}
+	
+	/** The main method initializes the database (using the constructor) and establishes the user interface */
+	public static void main(String[] args) {
+		if (new File(FileSystemLocations.HOME_REDIRECTION_FILE).exists()) {
+			FileSystemLocations.setActiveHomeDir(FileSystemAccessWrapper.readFileAsString(FileSystemLocations.HOME_REDIRECTION_FILE));
+		} else {
+			FileSystemLocations.setActiveHomeDir(FileSystemLocations.DEFAULT_SAMMELBOX_HOME);
+		}
+		
+		if (!new File(FileSystemLocations.getVersionFilePath()).exists()) {
+			// if Sammelbox has never been started before, the home directory 
+			// should not yet exist and we will open the configurator
+			Configurator.launch();
+		} else if (new File(FileSystemLocations.getVersionFilePath()).exists() && isNewerVersion()) {
+			// update sammelbox
+			Configurator.launch();
+		} else {
+			// otherwise, we just start Sammelbox
+			Sammelbox.launch();
+		}
+	}
+
+	private static boolean isNewerVersion() {
+		// TODO read version file and check whether the executable is newer than the one used before
+		return false; 
 	}
 }

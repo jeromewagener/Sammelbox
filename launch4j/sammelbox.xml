@@ -1,0 +1,22 @@
+<launch4jConfig>
+  <dontWrapJar>false</dontWrapJar>
+  <headerType>gui</headerType>
+  <jar>../Sammelbox-Desktop/release/Sammelbox-xxx.jar</jar>
+  <outfile>../Sammelbox-Desktop/release/Sammelbox-xxx.exe</outfile>
+  <errTitle>You need Java installed to run Sammelbox</errTitle>
+  <cmdLine></cmdLine>
+  <chdir></chdir>
+  <priority>normal</priority>
+  <downloadUrl>http://java.com/download</downloadUrl>
+  <supportUrl>www.sammelbox.org/help</supportUrl>
+  <stayAlive>false</stayAlive>
+  <manifest></manifest>
+  <icon>sammelbox.ico</icon>
+  <jre>
+    <path></path>
+    <bundledJre64Bit>false</bundledJre64Bit>
+    <minVersion>1.7.0</minVersion>
+    <maxVersion></maxVersion>
+    <jdkPreference>preferJre</jdkPreference>
+  </jre>
+</launch4jConfig>

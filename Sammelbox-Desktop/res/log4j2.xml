@@ -4,7 +4,7 @@
 		<Console name="Console" target="SYSTEM_OUT">
 		 	<PatternLayout charset="UTF-8" pattern="%d{MM-dd-yyyy @ HH:mm:ss} [%t] %-5level %logger - %msg%n"/>
 		</Console>
-		<File name="logfile" fileName="${sys:user.home}/.sammelbox/app-data/sammelbox.log">
+		<File name="logfile" fileName="${sys:user.home}/My-Sammelbox/app-data/sammelbox.log">
 			<PatternLayout charset="UTF-8" pattern="%d{MM-dd-yyyy @ HH:mm:ss} [%t] %-5level %logger - %msg%n"/>
 		</File>
 	</appenders>	

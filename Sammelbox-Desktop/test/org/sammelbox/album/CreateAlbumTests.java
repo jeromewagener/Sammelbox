@@ -199,7 +199,7 @@ public class CreateAlbumTests {
 			fail("Creation of album " + albumName + " failed");
 		}	
 		
-		File bookPictureDirectory = new File(FileSystemLocations.DEFAULT_SAMMELBOX_TEST_HOME + File.separatorChar + 
+		File bookPictureDirectory = new File(FileSystemLocations.getActiveHomeDir() + File.separatorChar + 
 				FileSystemLocations.ALBUM_PICTURES_DIR_NAME + File.separatorChar + albumName );
 		
 		if (!bookPictureDirectory.exists()) {

@@ -81,6 +81,7 @@ public final class FileSystemAccessWrapper {
 		dirsCreatedWithoutError &= dirsCreatedWithoutError && createDirectoryAndLogError(FileSystemLocations.getAppDataDir());
 		dirsCreatedWithoutError &= dirsCreatedWithoutError && createDirectoryAndLogError(FileSystemLocations.getAppDataGraphicsDir());
 		dirsCreatedWithoutError &= dirsCreatedWithoutError && createDirectoryAndLogError(FileSystemLocations.getBackupDir());
+		dirsCreatedWithoutError &= dirsCreatedWithoutError && createDirectoryAndLogError(FileSystemLocations.getCssJsDir());
 		
 		if (!dirsCreatedWithoutError || !extractAllResources() || !createLockFile()) {
 			return false;

@@ -40,12 +40,12 @@ import org.sammelbox.view.SammelView;
 import org.sammelbox.view.various.ComponentFactory;
 
 public final class SettingsSidepane {
-	private static final String EUROPEAN_DOT = "16.01.1988";
-	private static final String EUROPEAN_SLASH = "16/01/1988";
-	private static final String AMERICAN_DOT = "01.16.1988";
-	private static final String AMERICAN_SLASH = "01/16/1988";
+	public static final String EUROPEAN_DOT = "16.01.1988";
+	public static final String EUROPEAN_SLASH = "16/01/1988";
+	public static final String AMERICAN_DOT = "01.16.1988";
+	public static final String AMERICAN_SLASH = "01/16/1988";
 	
-	private static final Map<String, String> DATE_EXAMPLES_TO_FORMATS;
+	public static final Map<String, String> DATE_EXAMPLES_TO_FORMATS;
     static {
         Map<String, String> myDateExamplesToFormats = new HashMap<String, String>();
         myDateExamplesToFormats.put(EUROPEAN_DOT, "dd.MM.yyyy");
@@ -106,7 +106,7 @@ public final class SettingsSidepane {
 		dateFormatSelection.setText(Translator.get(DictKeys.LABEL_DATE_FORMAT));
 		
 		final Combo dateFormatSelectionCombo = new Combo(innerComposite, SWT.READ_ONLY|SWT.BORDER|SWT.H_SCROLL);
-		dateFormatSelectionCombo.setItems(new String[] { EUROPEAN_DOT, EUROPEAN_SLASH, AMERICAN_DOT, AMERICAN_SLASH});
+		dateFormatSelectionCombo.setItems(new String[] { EUROPEAN_DOT, EUROPEAN_SLASH, AMERICAN_DOT, AMERICAN_SLASH });
 				
 		String definedDateFormat = SettingsManager.getSettings().getDateFormat();
 		for (String key : DATE_EXAMPLES_TO_FORMATS.keySet()) {

@@ -14,7 +14,7 @@
    height="1052.3622047"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.4 r9939"
+   inkscape:version="0.48.3.1 r9886"
    sodipodi:docname="graphics.inkscape.svg"
    inkscape:export-filename="/home/luxem/Sammelbox/Sammelbox-Desktop/res/graphics/changeview.png"
    inkscape:export-xdpi="94.426231"
@@ -2083,17 +2083,17 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="8.0000001"
-     inkscape:cx="184.64461"
-     inkscape:cy="667.14152"
+     inkscape:zoom="0.50000001"
+     inkscape:cx="294.79242"
+     inkscape:cy="335.12358"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1307"
-     inkscape:window-height="744"
-     inkscape:window-x="59"
-     inkscape:window-y="24"
-     inkscape:window-maximized="1"
+     inkscape:window-width="945"
+     inkscape:window-height="685"
+     inkscape:window-x="820"
+     inkscape:window-y="146"
+     inkscape:window-maximized="0"
      inkscape:snap-global="false"
      showguides="true"
      inkscape:guide-bbox="true">
@@ -3109,9 +3109,9 @@
     <g
        id="g2139"
        transform="matrix(-2.2655394,-0.0253151,-0.02361842,1.3402784,286.62648,793.52248)"
-       inkscape:export-filename="/home/luxem/Dropbox/Collector-Webpage/images/header.png"
-       inkscape:export-xdpi="46.406799"
-       inkscape:export-ydpi="46.406799"
+       inkscape:export-filename="/home/luxem/Sammelbox/Sammelbox-Desktop/res/graphics/installer.png"
+       inkscape:export-xdpi="81.28112"
+       inkscape:export-ydpi="81.28112"
        style="stroke:#000000;stroke-width:0.61837268;stroke-miterlimit:2.5;stroke-opacity:1;stroke-dasharray:none">
       <path
          inkscape:connector-curvature="0"
@@ -3140,9 +3140,9 @@
     <g
        id="g2871"
        transform="matrix(-2.1946825,-0.02452337,-0.02981395,1.6918567,302.44876,798.43128)"
-       inkscape:export-filename="/home/luxem/Dropbox/Collector-Webpage/images/header.png"
-       inkscape:export-xdpi="46.406799"
-       inkscape:export-ydpi="46.406799"
+       inkscape:export-filename="/home/luxem/Sammelbox/Sammelbox-Desktop/res/graphics/installer.png"
+       inkscape:export-xdpi="81.28112"
+       inkscape:export-ydpi="81.28112"
        style="stroke:#000000;stroke-width:0.55919844;stroke-miterlimit:2.5;stroke-opacity:1;stroke-dasharray:none">
       <path
          inkscape:connector-curvature="0"
@@ -3172,9 +3172,9 @@
     <g
        id="g2881"
        transform="matrix(-2.238691,-0.02501511,-0.02845267,1.6146077,327.11976,815.06384)"
-       inkscape:export-filename="/home/luxem/Dropbox/Collector-Webpage/images/header.png"
-       inkscape:export-xdpi="46.406799"
-       inkscape:export-ydpi="46.406799"
+       inkscape:export-filename="/home/luxem/Sammelbox/Sammelbox-Desktop/res/graphics/installer.png"
+       inkscape:export-xdpi="81.28112"
+       inkscape:export-ydpi="81.28112"
        style="stroke:#000000;stroke-width:0.56676495;stroke-miterlimit:2.5;stroke-opacity:1;stroke-dasharray:none">
       <path
          d="m 45.634215,10.666667 62.769225,8.205128 0,69.743591 -62.454722,-2.461539 z"
@@ -3206,52 +3206,52 @@
        d="m 95.151353,928.1986 0.85961,-0.18237 0.14163,-11.39073 c 0.0778,-6.26495 0.41362,-24.13188 0.7462,-39.7044 l 0.63716,-28.72404 -2.66209,-0.21725 c -3.3709,-0.2751 -6.86755,-1.58505 -8.65023,-3.0893 -0.76572,-0.64614 -1.47031,-1.176 -1.56575,-1.17751 -0.0955,-10e-5 -0.38014,16.61228 -0.63258,36.91956 l -0.45901,36.92235 5.11394,5.35997 c 2.81268,2.94799 5.22588,5.38384 5.36271,5.41301 0.13682,0.0292 0.63559,-0.029 1.10842,-0.12927 z"
        id="path4235"
        inkscape:connector-curvature="0"
-       inkscape:export-filename="/home/luxem/Dropbox/Collector-Webpage/images/header.png"
-       inkscape:export-xdpi="46"
-       inkscape:export-ydpi="46"
+       inkscape:export-filename="/home/luxem/Sammelbox/Sammelbox-Desktop/res/graphics/installer.png"
+       inkscape:export-xdpi="81.28112"
+       inkscape:export-ydpi="81.28112"
        sodipodi:nodetypes="cccscsscscsccc" />
     <path
        style="fill:#483737;fill-opacity:1;stroke:#000000;stroke-width:1.02023113;stroke-miterlimit:2.5;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
        d="m 52.995783,854.55816 0.44308,-33.89278 -1.88612,-0.0289 c -3.22299,-0.0492 -6.33267,-1.14613 -10.35463,-3.65255 -0.1559,-0.0972 -0.45754,13.14103 -0.67031,29.41823 l -0.38683,29.59484 6.0141,6.22397 c 3.30781,3.4232 6.10047,6.22529 6.20595,6.22692 0.10559,0.002 0.39112,-15.24883 0.63478,-33.88986 z"
        id="path4233"
        inkscape:connector-curvature="0"
-       inkscape:export-filename="/home/luxem/Dropbox/Collector-Webpage/images/header.png"
-       inkscape:export-xdpi="46"
-       inkscape:export-ydpi="46" />
+       inkscape:export-filename="/home/luxem/Sammelbox/Sammelbox-Desktop/res/graphics/installer.png"
+       inkscape:export-xdpi="81.28112"
+       inkscape:export-ydpi="81.28112" />
     <path
        style="fill:#1a1a1a"
        d="m 26.890463,867.60026 c -1.42561,-0.0184 -4.18429,6.23677 -13.18225,23.25599 L 2.3631327,914.7567 11.112153,927.04977 c 5.08972,7.15149 10.34494,13.78503 10.85376,15.35121 0.5088,1.56613 0.83691,7.8816 0.72907,14.03435 l -0.1959,11.1868 28.53245,32.82467 28.53246,32.8248 82.260617,-11.6197 -1.7e-4,0 c 45.24335,-6.3908 82.44236,-11.8109 82.66448,-12.0448 0.22218,-0.2338 0.85794,-7.0761 1.41289,-15.2051 0.93709,-13.72685 1.17657,-14.81576 3.36093,-15.28186 1.29354,-0.27601 9.90336,-1.29239 19.13296,-2.25849 9.22956,-0.96615 16.89107,-1.87243 17.02554,-2.01398 0.13448,-0.14158 -11.30064,-23.89669 -17.13862,-35.76166 -6.31744,-12.83938 -10.83254,-26.7183 -19.35656,-38.33382 -2.87975,-3.92417 -10.5138,-10.28744 -10.5138,-10.28744 l -0.49492,11.52965 -74.83406,7.21246 -77.076547,7.91763 -42.05055,-37.12423 c -13.74691,-12.13645 -5.66933,-2.51377 -5.36792,-3.81705 0.35262,-1.52473 0.23239,-4.36303 0.20372,-8.66406 m 14.87212,130.94755 -26.88563,-31.61562 -0.76568,-9.49104 0.52381,-9.71559 2.14716,2.55479 c 1.43016,1.70165 8.4698,11.34484 15.88775,21.25327 l 12.43147,14.43766 8.6033,-16.76257 c 5.45757,-10.63342 9.59659,-25.79176 12.10102,-32.45478 l 4.55345,-12.11462 2.75875,10.38211 c 9.78376,36.81959 16.396277,60.63544 17.064007,61.45827 1.36891,1.68688 103.95563,-10.46765 138.09138,-16.36115 l 4.24025,-0.73205 -1.82366,14.60596 -1.39444,13.04926 -77.98137,11.1818 c -43.43781,6.2286 -79.851267,10.8318 -81.182537,10.8939 -1.77333,0.082 -7.75058,-7.8938 -28.36897,-30.5696 z m 47.929967,-17.33181 c -2.391547,-6.85753 -7.359997,-22.85399 -11.301107,-35.45929 -3.9411,-12.60533 -7.63216,-22.76363 -8.20235,-22.57401 -0.57018,0.18963 -6.54411,12.84951 -13.2754,28.13312 -6.73128,15.28363 -12.36877,27.92527 -12.52776,28.09264 -0.39633,0.41717 -46.4844803,-60.34424 -48.0542503,-63.21812 -1.0721,-1.96276 -1.34874,-5.00912 8.4263103,-23.81512 6.3105,-12.14068 12.22456,-21.67284 11.59594,-22.26875 -5.7e-4,0.0222 10.75314,9.1997 23.46051,20.9225 33.88791,31.26234 30.69955,28.78047 36.5111,28.42088 2.7674,-0.17129 36.504747,-3.40881 74.971927,-7.19459 -0.15039,-0.14035 84.00474,-7.38495 84.00474,-7.38495 l 16.23833,33.04342 c 9.12271,18.56381 16.21519,34.05279 15.9672,34.31381 -0.54117,0.56964 -71.02142,9.25802 -121.77874,15.01689 -18.83034,2.13644 -32.52452,4.10073 -34.37214,4.33768 -1.84767,0.23695 -9.79019,1.93829 -12.0314,1.67255 l -5.66884,-0.67214 z"
        id="path3131-2"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cscsssccccccssscaaccccsscscccsscsscssscccssssssscsscssccssssscss"
-       inkscape:export-filename="/home/luxem/Dropbox/Collector-Webpage/images/header.png"
-       inkscape:export-xdpi="46.406799"
-       inkscape:export-ydpi="46.406799" />
+       inkscape:export-filename="/home/luxem/Sammelbox/Sammelbox-Desktop/res/graphics/installer.png"
+       inkscape:export-xdpi="81.28112"
+       inkscape:export-ydpi="81.28112" />
     <path
        style="fill:#c8c4b7;stroke:#000000;stroke-width:1.11921859;stroke-miterlimit:2.5;stroke-opacity:1;stroke-dasharray:none"
        d="m 94.128853,1027.3589 c 28.594887,-3.7537 146.454327,-20.3167 146.792097,-20.629 0.0389,-0.036 0.31407,-2.2577 0.61132,-4.9371 0.29723,-2.67935 1.00284,-8.69146 1.56808,-13.36023 0.56523,-4.66876 0.95831,-8.55428 0.87353,-8.63451 -0.0848,-0.0802 -3.63061,0.40897 -7.87963,1.08706 -29.33874,4.68183 -99.0554,13.30821 -122.32212,15.1355 -3.58885,0.28187 -7.50862,0.59331 -8.71062,0.69212 -1.45891,0.1199 -2.3959,0.0113 -2.81868,-0.32624 -0.9878,-0.7891 -2.907107,-7.47021 -14.249227,-49.60176 -3.09022,-11.479 -5.71072,-20.87171 -5.82332,-20.87273 -0.28963,-0.002 -4.94419,12.74277 -8.02063,21.96252 -3.81316,11.42754 -6.21365,17.15421 -11.72415,27.96919 -2.71838,5.33513 -5.07847,9.83628 -5.2447,10.00256 -0.53497,0.5352 -12.75879,-14.19776 -21.54958,-25.97299 -4.69619,-6.29056 -8.71382,-11.61541 -8.92807,-11.83302 -0.43686,-0.44364 -0.43182,15.37218 0.006,17.83862 0.20602,1.16156 2.8069,4.38045 13.53585,16.75238 13.36004,15.40588 27.2094,31.04143 36.09456,40.74983 l 4.79317,5.2373 1.84599,-0.019 c 1.01529,-0.011 6.03297,-0.5687 11.15037,-1.2405 z"
        id="path3151-8"
        inkscape:connector-curvature="0"
-       inkscape:export-filename="/home/luxem/Dropbox/Collector-Webpage/images/header.png"
-       inkscape:export-xdpi="46.406799"
-       inkscape:export-ydpi="46.406799" />
+       inkscape:export-filename="/home/luxem/Sammelbox/Sammelbox-Desktop/res/graphics/installer.png"
+       inkscape:export-xdpi="81.28112"
+       inkscape:export-ydpi="81.28112" />
     <path
        style="fill:#cccccc;stroke:#cccccc;stroke-width:0.39261439;stroke-opacity:1"
        d="m 117.01148,992.35765 c 9.9623,-1.70098 19.02418,-2.84143 81.35396,-10.23852 37.92526,-4.50083 65.21871,-7.87929 76.30291,-9.44501 2.34147,-0.3308 4.26135,-0.78697 4.26634,-1.01383 0.0139,-0.61737 -31.11003,-66.45648 -31.81919,-67.31035 -0.0327,-0.0394 -36.10444,3.40334 -80.15934,7.65058 -44.05489,4.24725 -81.286447,7.77849 -81.266077,7.70711 0,0 -3.95848,-2.13606 -22.40993,-19.09529 -11.3796,-10.45926 -33.15983,-29.27712 -34.67024,-30.51028 -0.57136,-0.46647 -0.70163,1.63267 -6.40285,12.33691 -10.34859,19.42981 -14.0136103,27.50235 -14.1580603,31.1842 -0.0655,1.66933 0.19597,2.11788 5.2571303,9.01996 7.26306,9.90484 22.36791,29.8678 32.7047,43.22333 9.63957,12.45472 10.07335,12.99445 10.2744,12.78457 0.0795,-0.0831 2.43413,-5.30626 5.23227,-11.60701 8.17783,-18.41465 16.48408,-36.65622 18.51147,-40.65349 1.58295,-3.12093 1.96164,-3.62029 2.39792,-3.1619 1.05926,1.11305 3.86786,9.29916 12.29945,35.8488 3.15111,9.92236 6.901327,21.43003 8.333777,25.57256 2.9245,8.45745 2.29413,7.74355 7.22947,8.18766 1.66678,0.15002 4.01379,-0.0178 6.72189,-0.48 z"
        id="path3153-2"
        inkscape:connector-curvature="0"
-       inkscape:export-filename="/home/luxem/Dropbox/Collector-Webpage/images/header.png"
-       inkscape:export-xdpi="46.406799"
-       inkscape:export-ydpi="46.406799"
+       inkscape:export-filename="/home/luxem/Sammelbox/Sammelbox-Desktop/res/graphics/installer.png"
+       inkscape:export-xdpi="81.28112"
+       inkscape:export-ydpi="81.28112"
        sodipodi:nodetypes="cssscscssscsscssssssc" />
     <path
        style="fill:#483e37;fill-opacity:1;stroke:#000000;stroke-width:0.38632393;stroke-miterlimit:2.5;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
        d="m 90.026523,814.26773 c 24.863727,-1.81681 46.081377,-3.24167 47.150257,-3.16636 1.0689,0.0755 2.24739,0.27657 2.61884,0.44736 0.54859,0.25223 0.67887,0.12289 0.69372,-0.68918 0.0158,-0.87551 -0.13852,-0.99942 -1.24664,-0.99712 -0.6957,9.7e-4 -23.25333,1.53428 -50.128047,3.40636 -41.00606,2.85643 -48.77774,3.03902 -47.90753,3.44237 0.57033,0.26431 1.87485,1.09794 2.56078,1.08064 0.68598,-0.0161 21.39489,-1.70731 46.25862,-3.52407 z"
        id="path4231"
        inkscape:connector-curvature="0"
-       inkscape:export-filename="/home/luxem/Dropbox/Collector-Webpage/images/header.png"
-       inkscape:export-xdpi="46"
-       inkscape:export-ydpi="46"
+       inkscape:export-filename="/home/luxem/Sammelbox/Sammelbox-Desktop/res/graphics/installer.png"
+       inkscape:export-xdpi="81.28112"
+       inkscape:export-ydpi="81.28112"
        sodipodi:nodetypes="scsccsccs" />
     <text
        xml:space="preserve"
@@ -3260,9 +3260,9 @@
        y="922.28326"
        id="text3179-9-6-1"
        sodipodi:linespacing="746%"
-       inkscape:export-filename="/home/luxem/Dropbox/Collector-Webpage/images/header.png"
-       inkscape:export-xdpi="46.406799"
-       inkscape:export-ydpi="46.406799"><tspan
+       inkscape:export-filename="/home/luxem/Sammelbox/Sammelbox-Desktop/res/graphics/installer.png"
+       inkscape:export-xdpi="81.28112"
+       inkscape:export-ydpi="81.28112"><tspan
          sodipodi:role="line"
          id="tspan3181-2-8-1"
          x="295.73285"
@@ -3281,9 +3281,9 @@
        y="960.60608"
        id="text3185-6-4-4"
        sodipodi:linespacing="746%"
-       inkscape:export-filename="/home/luxem/Dropbox/Collector-Webpage/images/header.png"
-       inkscape:export-xdpi="46.406799"
-       inkscape:export-ydpi="46.406799"><tspan
+       inkscape:export-filename="/home/luxem/Sammelbox/Sammelbox-Desktop/res/graphics/installer.png"
+       inkscape:export-xdpi="81.28112"
+       inkscape:export-ydpi="81.28112"><tspan
          sodipodi:role="line"
          id="tspan3187-5-3-7"
          x="303.23602"
@@ -3297,9 +3297,9 @@
        id="text3362-0-0"
        sodipodi:linespacing="125%"
        transform="scale(0.95428188,1.0479084)"
-       inkscape:export-xdpi="46.406799"
-       inkscape:export-ydpi="46.406799"
-       inkscape:export-filename="/home/luxem/Dropbox/Collector-Webpage/images/header.png"><tspan
+       inkscape:export-xdpi="81.28112"
+       inkscape:export-ydpi="81.28112"
+       inkscape:export-filename="/home/luxem/Sammelbox/Sammelbox-Desktop/res/graphics/installer.png"><tspan
          sodipodi:role="line"
          id="tspan3364-3-4"
          x="621.74823"
