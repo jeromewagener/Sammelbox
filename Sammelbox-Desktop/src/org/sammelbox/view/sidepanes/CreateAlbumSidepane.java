@@ -309,7 +309,7 @@ public final class CreateAlbumSidepane {
 					LOGGER.error("A database error occured while checking whether '" + albumName + "' is available as album name", ex);
 				}
 
-				if (!FileSystemAccessWrapper.isSAlbumNameFileSystemCompliant(albumName)) {
+				if (!FileSystemAccessWrapper.isAlbumNameFileSystemCompliant(albumName)) {
 					ComponentFactory.getMessageBox(
 							Translator.get(DictKeys.DIALOG_TITLE_ALBUM_NAME_INVALID),
 							Translator.get(DictKeys.DIALOG_CONTENT_ALBUM_NAME_INVALID),

@@ -200,7 +200,7 @@ public final class AlterAlbumSidepane {
 					LOGGER.error("Couldn't rename the album", ex);
 				} 
 
-				if (!FileSystemAccessWrapper.isSAlbumNameFileSystemCompliant(newAlbumName)) {
+				if (!FileSystemAccessWrapper.isAlbumNameFileSystemCompliant(newAlbumName)) {
 							
 					ComponentFactory.getMessageBox(Translator.get(DictKeys.DIALOG_TITLE_ALBUM_NAME_INVALID), Translator.get(DictKeys.DIALOG_CONTENT_ALBUM_NAME_INVALID), SWT.ICON_WARNING).open();
 					return;

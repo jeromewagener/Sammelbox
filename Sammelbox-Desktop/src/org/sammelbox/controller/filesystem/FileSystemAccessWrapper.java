@@ -552,8 +552,8 @@ public final class FileSystemAccessWrapper {
 	
 	/** This method tests whether the given album name could be used to create a picture folder having the same name 
 	 * @return if the albumName can be used to create a picture folder, false otherwise*/
-	public static boolean isSAlbumNameFileSystemCompliant(String albumName) {
-		if (!albumName.matches(ALBUM_NAME_REGEX)) {
+	public static boolean isAlbumNameFileSystemCompliant(String albumName) {
+		if (!albumName.trim().matches(ALBUM_NAME_REGEX)) {
 			return false;
 		}
 		
