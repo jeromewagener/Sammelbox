@@ -50,7 +50,7 @@ public final class DetailedViewCreator {
 			htmlDataColumnContent.delete(0, htmlDataColumnContent.length());
 			htmlPictureColumnContent.delete(0, htmlPictureColumnContent.length());
 			htmlPreviewPicturesContent.delete(0, htmlPreviewPicturesContent.length());
-			DetailedItemCreator.addImageAndDetailContainer(albumItem, htmlDataColumnContent, htmlPictureColumnContent, albumItemDetailDivContainers, htmlPreviewPicturesContent, hasEvenCountingInList);
+			DetailedItemCreator.addImageAndDetailContainer(albumItem, htmlDataColumnContent, htmlPictureColumnContent, albumItemDetailDivContainers, htmlPreviewPicturesContent, true, hasEvenCountingInList);
 			hasEvenCountingInList = !hasEvenCountingInList;
 		}
 

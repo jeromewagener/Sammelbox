@@ -45,15 +45,15 @@ public final class DetailedItemCreator {
 	}
 	
 	static String getImageAndDetailContainer(AlbumItem albumItem) {
-		return getImageAndDetailContainer(albumItem, true);
+		return getImageAndDetailContainer(albumItem, true, false);
 	}
 	
-	static String getImageAndDetailContainer(AlbumItem albumItem, boolean hasButtonsAndLinks) {
+	static String getImageAndDetailContainer(AlbumItem albumItem, boolean hasButtonsAndLinks, boolean hasEvenCountingInList) {
 		StringBuilder htmlDataColumnContent = new StringBuilder();
 		StringBuilder htmlPictureColumnContent = new StringBuilder();
 		StringBuilder albumItemTableRowHtml = new StringBuilder();
 		StringBuilder htmlPreviewPicturesContent = new StringBuilder();
-		addImageAndDetailContainer(albumItem, htmlDataColumnContent, htmlPictureColumnContent, albumItemTableRowHtml, htmlPreviewPicturesContent, hasButtonsAndLinks);
+		addImageAndDetailContainer(albumItem, htmlDataColumnContent, htmlPictureColumnContent, albumItemTableRowHtml, htmlPreviewPicturesContent, hasButtonsAndLinks, hasEvenCountingInList);
 
 		return albumItemTableRowHtml.toString();
 	}
