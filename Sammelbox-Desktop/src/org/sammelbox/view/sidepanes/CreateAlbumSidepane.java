@@ -239,7 +239,7 @@ public final class CreateAlbumSidepane {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (fieldNameText.getText().isEmpty()) {				
+				if (fieldNameText.getText().trim().isEmpty()) {				
 					ComponentFactory.getMessageBox(
 							Translator.get(DictKeys.DIALOG_TITLE_FIELD_MUST_HAVE_NAME),
 							Translator.get(DictKeys.DIALOG_CONTENT_FIELD_MUST_HAVE_NAME),
