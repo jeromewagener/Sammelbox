@@ -365,7 +365,7 @@ public class ImageDropAndManagementComposite extends Composite implements DropTa
 					ApplicationUI.getShell().getDisplay().asyncExec(new Runnable() {
 						@Override
 						public void run() {
-							dropTextLabel.setText(Translator.toBeTranslated("Processing image " + (current) + " of " + filepaths.length));
+							dropTextLabel.setText(Translator.get(DictKeys.LABEL_PROCESSING_IMG_X_OF_Y, current, filepaths.length));
 							dropTextLabel.setFont(boldFont);
 						}
 					});

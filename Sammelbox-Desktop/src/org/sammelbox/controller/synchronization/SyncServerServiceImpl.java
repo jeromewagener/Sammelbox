@@ -29,6 +29,7 @@ import java.util.List;
 import org.eclipse.swt.widgets.Display;
 import org.sammelbox.controller.filesystem.FileSystemAccessWrapper;
 import org.sammelbox.controller.filesystem.FileSystemLocations;
+import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.controller.managers.SettingsManager;
 import org.sammelbox.view.ApplicationUI;
@@ -217,7 +218,7 @@ public class SyncServerServiceImpl implements SyncServerService {
 			
 			SynchronizeCompositeHelper.disableSynchronizeStep(SynchronizeStep.ESTABLISH_CONNECTION);
 			SynchronizeCompositeHelper.enabledSynchronizeStep(SynchronizeStep.TRANSFER_DATA);
-			executeSyncPageWithProgressbarUpdateInUIThread(Translator.toBeTranslated("Data transfer in progress. This might take some time. <b>Please Wait</b>"));
+			executeSyncPageWithProgressbarUpdateInUIThread(Translator.get(DictKeys.BROWSER_SYNCRONIZATION_IN_PROGRESS));
 			
 			while (!fileTransferServer.isDone()) {
 				try {
@@ -235,12 +236,12 @@ public class SyncServerServiceImpl implements SyncServerService {
 			
 			SynchronizeCompositeHelper.disableSynchronizeStep(SynchronizeStep.TRANSFER_DATA);
 			SynchronizeCompositeHelper.enabledSynchronizeStep(SynchronizeStep.FINISH);
-			executeSyncPageUpdateInUIThread(Translator.toBeTranslated("Terminating Synchronization"));
+			executeSyncPageUpdateInUIThread(Translator.get(DictKeys.BROWSER_SYNCRONIZATION_FINISHING));
 					
 			communicationManager.sendMessageToAllConnectedPeers("sammelbox-desktop:transfer-finished");
 			
 			SynchronizeCompositeHelper.disableSynchronizeStep(SynchronizeStep.FINISH);
-			executeSyncPageUpdateInUIThread(Translator.toBeTranslated("Synchronization finished. You can now use your albums on your mobile device!"));
+			executeSyncPageUpdateInUIThread(Translator.get(DictKeys.BROWSER_SYNCRONIZATION_FINISHED));
 			
 		} else {
 			LOGGER.info("Received message in unknown format or faulty synchronization code");

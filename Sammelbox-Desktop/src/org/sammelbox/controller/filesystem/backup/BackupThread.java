@@ -10,6 +10,7 @@ import org.sammelbox.controller.events.EventObservable;
 import org.sammelbox.controller.events.SammelboxEvent;
 import org.sammelbox.controller.filesystem.FileSystemAccessWrapper;
 import org.sammelbox.controller.filesystem.FileSystemLocations;
+import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.controller.managers.ConnectionManager;
 import org.sammelbox.view.browser.BrowserFacade;
@@ -53,7 +54,7 @@ public class BackupThread extends Thread {
 			FileSystemAccessWrapper.copyDirectory(sourceAppDataDir, tempAppDataDir, excludeRegex);
 		} catch (IOException e) {
 			LOGGER.error("An error occurred while creating the backup", e);
-			errorString = Translator.toBeTranslated("An error occured while creating the backup. Sorry! (" + e.getMessage() + ")");
+			errorString = Translator.get(DictKeys.ERROR_BACKUP_CREATION_FAILED, e.getMessage());
 			done = true;
 		}
 
@@ -65,7 +66,7 @@ public class BackupThread extends Thread {
 			 statement.executeUpdate(backupToSQLcommand);
 		} catch (SQLException e) {
 			LOGGER.error("An error occurred while creating the backup", e);
-			errorString = Translator.toBeTranslated("An error occured while creating the backup. Sorry! (" + e.getMessage() + ")");
+			errorString = Translator.get(DictKeys.ERROR_BACKUP_CREATION_FAILED, e.getMessage());
 			done = true;
 		}
 	

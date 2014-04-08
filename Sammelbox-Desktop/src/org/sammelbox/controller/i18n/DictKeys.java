@@ -114,7 +114,6 @@ public final class DictKeys {
 	public static final String DIALOG_CONTENT_ALBUM_CREATE_ERROR = "collector.dialog.content.ALBUM_CREATE_ERROR";
 	public static final String DIALOG_TITLE_ALBUM_NAME_INVALID = "collector.dialog.title.ALBUM_NAME_INVALID";
 	public static final String DIALOG_CONTENT_ALBUM_NAME_INVALID = "collector.dialog.content.ALBUM_NAME_INVALID";
-	// TODO replace view name in translation files
 	public static final String DIALOG_TITLE_SAVED_SEARCH_NAME_ALREADY_USED = "collector.dialog.title.VIEW_NAME_ALREADY_USED"; 
 	public static final String DIALOG_CONTENT_SAVED_SEARCH_NAME_ALREADY_USED = "collector.dialog.content.VIEW_NAME_ALREADY_USED";
 	public static final String DIALOG_TITLE_ENTER_SAVED_SEARCH_NAME = "collector.dialog.title.ENTER_VIEW_NAME";
@@ -253,6 +252,7 @@ public final class DictKeys {
 	public static final String LABEL_IMG_SEPARATOR = "org.sammelbox.label.caption.IMG_SEPARATOR";
 	public static final String LABEL_SELECT_ALBUM = "org.sammelbox.label.caption.SELECT_ALBUM";
 	public static final String LABEL_FULL_SYNC = "org.sammelbox.label.caption.FULL_SYNC";
+	public static final String LABEL_PROCESSING_IMG_X_OF_Y = "org.sammelbox.label.caption.PROCESSING_IMG_X_OF_Y";
 	
 	/*   Textbox   */
 	public static final String TEXT_MY_NEW_ALBUM = "collector.textbox.content.MY_NEW_ALBUM";
@@ -308,6 +308,9 @@ public final class DictKeys {
 	public static final String BROWSER_SYNCRONIZATION_HEADER = "collector.browser.text.SYNCRONIZATION_HEADER";
 	public static final String BROWSER_SYNCRONIZATION_PRESS_START = "collector.browser.text.SYNCRONIZATION_PRESS_START";
 	public static final String BROWSER_SYNCRONIZATION_ENTER_CODE = "collector.browser.text.SYNCRONIZATION_ENTER_CODE";
+	public static final String BROWSER_SYNCRONIZATION_IN_PROGRESS = "org.sammelbox.browser.SYNCHRONIZATION_IN_PROGRESS";
+	public static final String BROWSER_SYNCRONIZATION_FINISHING = "org.sammelbox.browser.SYNCRONIZATION_FINISHING";
+	public static final String BROWSER_SYNCRONIZATION_FINISHED ="org.sammelbox.browser.SYNCRONIZATION_FINISHED";
 	public static final String BROWSER_BACKUP_IN_PROGESS = "org.sammelbox.browser.text.BACKUP_IN_PROGESS";
 	public static final String BROWSER_BACKUP_IN_PROGESS_DETAIL = "org.sammelbox.browser.text.BACKUP_IN_PROGESS_DETAIL";
 	public static final String BROWSER_BACKUP_FINISHED = "org.sammelbox.browser.text.BACKUP_FINISHED";
@@ -333,6 +336,9 @@ public final class DictKeys {
 	/*   Error Messages  */
 	public static final String ERROR_AN_ERROR_OCCURRED = "org.sammelbox.error.AN_ERROR_OCCURRED";
 	public static final String ERROR_FIELD_CAUSES_PROBLEMS = "org.sammelbox.error.FIELD_CAUSES_PROBLEMS";
+	public static final String ERROR_BACKUP_CREATION_FAILED = "org.sammelbox.error.BACKUP_CREATION_FAILED";
+	public static final String ERROR_RESTORE_FAILED = "org.sammelbox.error.RESTORE_FAILED";
+	public static final String ERROR_RESTORE_CLEANUP_FAILED = "org.sammelbox.error.RESTORE_CLEANUP_FAILED";
 	
 	/*   Configurator / Installer  */
 	public static final String CONFIGURATOR_WINDOW_TITLE = "org.sammelbox.installer.window.title";

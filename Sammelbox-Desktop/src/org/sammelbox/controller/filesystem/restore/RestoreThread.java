@@ -9,6 +9,7 @@ import org.sammelbox.controller.events.EventObservable;
 import org.sammelbox.controller.events.SammelboxEvent;
 import org.sammelbox.controller.filesystem.FileSystemAccessWrapper;
 import org.sammelbox.controller.filesystem.FileSystemLocations;
+import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.controller.managers.ConnectionManager;
 import org.sammelbox.controller.managers.DatabaseIntegrityManager;
@@ -63,23 +64,23 @@ public class RestoreThread extends Thread {
 			}
 		} catch (SQLException e) {
 			LOGGER.error("A error occurred while restoring the backup", e);
-			errorString = Translator.toBeTranslated("An error occured while restoring the backup. Sorry! (" + e.getMessage() + ")");
+			errorString = Translator.get(DictKeys.ERROR_RESTORE_FAILED, e.getMessage());
 			done = true;
 		}
 	
 		if (!FileSystemAccessWrapper.deleteDatabaseRestoreFile()) {
 			LOGGER.error("An issue occurred while updating the album file structure");
-			errorString = Translator.toBeTranslated("An issue occurred while cleaning up the restore");
+			errorString = Translator.get(DictKeys.ERROR_RESTORE_CLEANUP_FAILED);
 		}
 			
 		if (!FileSystemAccessWrapper.updateSammelboxFileStructure()) {
 			LOGGER.error("An issue occurred while updating the album file structure");
-			errorString = Translator.toBeTranslated("An issue occurred while cleaning up the restore");
+			errorString = Translator.get(DictKeys.ERROR_RESTORE_CLEANUP_FAILED);
 		}
 		
 		if (!FileSystemAccessWrapper.updateAlbumFileStructure(ConnectionManager.getConnection())) {
 			LOGGER.error("An issue occurred while updating the album file structure");
-			errorString = Translator.toBeTranslated("An issue occurred while cleaning up the restore");
+			errorString = Translator.get(DictKeys.ERROR_RESTORE_CLEANUP_FAILED);
 		}
 		
 		// Update timestamp
