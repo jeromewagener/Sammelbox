@@ -330,9 +330,8 @@ public final class AlterAlbumSidepane {
 						AlterAlbumSidepane.updateAlterAlbumPage(yesButtonForIncludingImages, albumFieldNamesAndTypesTable);
 						
 						if (SavedSearchManager.hasAlbumSavedSearches(albumName)) {
-							ComponentFactory.getMessageBox(Translator.toBeTranslated("Warning!"),
-									Translator.toBeTranslated("Please note that saved searches that reference this field will no longer work. "
-										+ "You will need to adapt these searches accordingly."), SWT.ICON_INFORMATION).open();
+							ComponentFactory.getMessageBox(Translator.get(DictKeys.WARNING), 
+									Translator.get(DictKeys.WARNING_SAVED_SEARCHES_MIGHT_BE_BROKEN), SWT.ICON_INFORMATION).open();
 						}
 					} catch (DatabaseWrapperOperationException ex) {
 						LOGGER.error("An error occured while renaming the album field", ex);
@@ -361,9 +360,8 @@ public final class AlterAlbumSidepane {
 							AlterAlbumSidepane.updateAlterAlbumPage(yesButtonForIncludingImages, albumFieldNamesAndTypesTable);
 							
 							if (SavedSearchManager.hasAlbumSavedSearches(albumName)) {
-								ComponentFactory.getMessageBox(Translator.toBeTranslated("Warning!"),
-										Translator.toBeTranslated("Please note that saved searches that reference this field will no longer work. "
-											+ "You will need to adapt these searches accordingly."), SWT.ICON_INFORMATION).open();
+								ComponentFactory.getMessageBox(Translator.get(DictKeys.WARNING), 
+										Translator.get(DictKeys.WARNING_SAVED_SEARCHES_MIGHT_BE_BROKEN), SWT.ICON_INFORMATION).open();
 							}
 						} catch (DatabaseWrapperOperationException ex) {
 							LOGGER.error("An error occured while trying to delete an album item from the " + albumName + " album", ex);

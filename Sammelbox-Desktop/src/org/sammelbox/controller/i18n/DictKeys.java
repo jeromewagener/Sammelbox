@@ -303,6 +303,8 @@ public final class DictKeys {
 	public static final String BROWSER_ALBUMFIELD_MOVED_UP = "collector.browser.text.ALBUMFIELD_MOVED_UP";	
 	public static final String BROWSER_ALBUM_DELETED_HEADER = "collector.browser.text.ALBUM_DELETED_HEADER";
 	public static final String BROWSER_ALBUM_DELETED = "collector.browser.text.ALBUM_DELETED";
+	public static final String BROWSER_RESTORE_IN_PROGRESS_HEADER = "org.sammelbox.browser.text.RESTORE_IN_PROGRESS_HEADER";
+	public static final String BROWSER_RESTORE_IN_PROGRESS = "org.sammelbox.browser.text.RESTORE_IN_PROGRESS";
 	public static final String BROWSER_ALBUMS_RESTORED_HEADER = "collector.browser.text.ALBUMS_RESTORED_HEADER";
 	public static final String BROWSER_ALBUMS_RESTORED = "collector.browser.text.ALBUMS_RESTORED";
 	public static final String BROWSER_SYNCRONIZATION_HEADER = "collector.browser.text.SYNCRONIZATION_HEADER";
@@ -315,6 +317,8 @@ public final class DictKeys {
 	public static final String BROWSER_BACKUP_IN_PROGESS_DETAIL = "org.sammelbox.browser.text.BACKUP_IN_PROGESS_DETAIL";
 	public static final String BROWSER_BACKUP_FINISHED = "org.sammelbox.browser.text.BACKUP_FINISHED";
 	public static final String BROWSER_BACKUP_FINISHED_DETAIL = "org.sammelbox.browser.text.BACKUP_FINISHED_DETAIL";
+	public static final String BROWSER_LICENSE_HEADER = "org.sammelbox.browser.text.LICENSE_HEADER";
+	public static final String BROWSER_LICENSE = "org.sammelbox.browser.text.LICENSE";
 	
 	/*   Status Bar   */
 	public static final String STATUSBAR_PROGRAM_STARTED = "collector.statusbar.PROGRAM_STARTED";
@@ -332,6 +336,10 @@ public final class DictKeys {
 	public static final String TABLE_COLUMN_FIELD_TYPE = "collector.table.colum.caption.FIELD_TYPE";
 	public static final String TABLE_COLUMN_OPERATOR = "collector.table.colum.caption.OPERATOR";
 	public static final String TABLE_COLUMN_VALUE = "collector.table.colum.caption.VALUE";
+	
+	/*   Warnings   */
+	public static final String WARNING = "org.sammelbox.warning";
+	public static final String WARNING_SAVED_SEARCHES_MIGHT_BE_BROKEN = "org.sammelbox.warning.SAVED_SEARCHES_MIGHT_BE_BROKEN";
 	
 	/*   Error Messages  */
 	public static final String ERROR_AN_ERROR_OCCURRED = "org.sammelbox.error.AN_ERROR_OCCURRED";
@@ -351,5 +359,4 @@ public final class DictKeys {
 	public static final String CONFIGURATOR_DATE_FORMAT = "org.sammelbox.installer.label.date.format";
 	public static final String CONFIGURATOR_CANCEL = "org.sammelbox.installer.button.cancel";
 	public static final String CONFIGURATOR_START_SAMMELBOX = "org.sammelbox.installer.button.install";
-	
 }

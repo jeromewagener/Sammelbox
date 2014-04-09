@@ -70,8 +70,8 @@ public final class HelpMenuItemListener {
 				// No default album is selected on help
 				ApplicationUI.refreshAlbumList();
 				Map<String, String> templateContent = BrowserFacade.getInitializedContentMap();
-				templateContent.put("HEADER", Translator.toBeTranslated("License"));
-				templateContent.put("MESSAGE", Translator.toBeTranslated("Sammelbox: Collection Manager</b> A free and open-source collection manager for Windows & Linux</b>Copyright (C) 2011 Jerome Wagener & Paul Bicheler"));
+				templateContent.put("HEADER", Translator.get(DictKeys.BROWSER_LICENSE_HEADER));
+				templateContent.put("MESSAGE", Translator.get(DictKeys.BROWSER_LICENSE));
 				BrowserFacade.fillAndLoadTemplate("about.html", templateContent);
 				ApplicationUI.changeRightCompositeTo(PanelType.HELP, EmptySidepane.build(ApplicationUI.getThreePanelComposite()));
 			}

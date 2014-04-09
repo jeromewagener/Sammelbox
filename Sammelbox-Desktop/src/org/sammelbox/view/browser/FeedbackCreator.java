@@ -165,7 +165,7 @@ public final class FeedbackCreator {
 	}
 	
 	public static void showRestoreInProgressPage() {
-		showTemplate("default.html", Translator.toBeTranslated("Restore in progress"), Translator.toBeTranslated("Albums are now being restored. This might take a while"));
+		showTemplate("default.html", Translator.get(DictKeys.BROWSER_RESTORE_IN_PROGRESS_HEADER), Translator.get(DictKeys.BROWSER_RESTORE_IN_PROGRESS));
 	}
 	
 	static void showBackupRestoredPage() {
