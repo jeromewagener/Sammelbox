@@ -19,6 +19,7 @@ import org.sammelbox.controller.managers.BuildInformationManager;
 import org.sammelbox.view.ApplicationUI;
 import org.sammelbox.view.browser.BrowserFacade;
 import org.sammelbox.view.browser.BrowserUtils;
+import org.sammelbox.view.composites.TableComposite;
 import org.sammelbox.view.sidepanes.EmptySidepane;
 import org.sammelbox.view.various.ComponentFactory;
 import org.sammelbox.view.various.PanelType;
@@ -131,11 +132,11 @@ public final class HelpMenuItemListener {
 		};
 	}
 
-	public static SelectionListener getDisableSammelboxListener() {
+	public static SelectionListener getTestFunctionListener() {
 		return new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent selectionEvent) {
-				EventObservable.addEventToQueue(SammelboxEvent.DISABLE_SAMMELBOX);
+				ApplicationUI.changeCenterCompositeTo(TableComposite.build(ApplicationUI.getThreePanelComposite()));
 			}
 		};
 	}

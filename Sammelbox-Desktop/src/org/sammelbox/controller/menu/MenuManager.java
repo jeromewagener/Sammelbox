@@ -173,8 +173,8 @@ public final class MenuManager implements EventObserver {
 			showBrowserInfo.addSelectionListener(HelpMenuItemListener.getShowBrowserInfoListener());
 						
 			MenuItem disableSammelbox = new MenuItem(debugSubMenu, SWT.NONE);
-			disableSammelbox.setText("Disable Sammelbox");
-			disableSammelbox.addSelectionListener(HelpMenuItemListener.getDisableSammelboxListener());
+			disableSammelbox.setText("Call Test Function");
+			disableSammelbox.addSelectionListener(HelpMenuItemListener.getTestFunctionListener());
 			
 			new MenuItem(helpMenu, SWT.SEPARATOR);
 		}
