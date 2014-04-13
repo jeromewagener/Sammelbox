@@ -6,6 +6,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
@@ -21,17 +22,14 @@ public class TableComposite {
 	private static final String ID_TABLE_DATA_KEY = "ID";
 	private static final int CHECKBOX_COLUMN_WIDTH_PIXELS = 25;
 	private static final int COLUMN_WIDTH_PIXELS = 125;
-	private static final int NUNBER_OF_BUTTON_COLUMNS = 3;
 
 	public static Composite build(Composite parentComposite) {
 		Composite tableComposite = new Composite(parentComposite, SWT.NONE);
 		GridLayout tableCompositeGridLayout = new GridLayout();
-		tableCompositeGridLayout.numColumns = NUNBER_OF_BUTTON_COLUMNS;
 		tableComposite.setLayout(tableCompositeGridLayout);
 
 		Table table = new Table(tableComposite, SWT.BORDER | SWT.CHECK);
 		GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
-		gridData.verticalSpan = NUNBER_OF_BUTTON_COLUMNS;
 		table.setLayoutData(gridData);
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
@@ -67,7 +65,7 @@ public class TableComposite {
 		}
 
 		Composite buttonComposite = new Composite(tableComposite, SWT.NONE);
-		buttonComposite.setLayout(new GridLayout(3, false));
+		buttonComposite.setLayout(new GridLayout(5, false));
 		
 		Button btnEdit = new Button(buttonComposite, SWT.PUSH);
 		btnEdit.setText(Translator.toBeTranslated("Edit Row"));
@@ -77,6 +75,16 @@ public class TableComposite {
 
 		Button btnDelete = new Button(buttonComposite, SWT.PUSH);
 		btnDelete.setText(Translator.toBeTranslated("Delete Row"));
+		
+		// min height griddata
+		GridData minSizeGridData = new GridData(GridData.FILL_BOTH);
+		minSizeGridData.widthHint = 10;
+		minSizeGridData.heightHint = 10;
+		// separator
+		new Label(buttonComposite, SWT.SEPARATOR | SWT.VERTICAL).setLayoutData(minSizeGridData);
+		
+		Button btnAddItems = new Button(buttonComposite, SWT.PUSH);
+		btnAddItems.setText(Translator.toBeTranslated("Add Items"));
 
 		return tableComposite;
 	}
