@@ -32,17 +32,17 @@ public final class BrowserFacade {
 	private BrowserFacade() {
 	}
 	
-	public static void showAlbum() { BrowserUtils.showAlbum(ApplicationUI.getAlbumItemBrowser()); }
+	public static void showAlbum() { BrowserUtils.showAlbum(); }
 	public static void loadWelcomePage() { WelcomePageCreator.loadWelcomePage(); }
 	public static String getAnchorForAlbumItemId(long anchorId) { return BrowserUtils.getAnchorForAlbumItemId(anchorId); }
 	public static void jumpToAnchor(String anchor) { BrowserUtils.jumpToAnchor(anchor); }
-	public static void performBrowserQueryAndShow(String sqlQuery) { BrowserUtils.performBrowserQueryAndShow(ApplicationUI.getAlbumItemBrowser(), sqlQuery); }
+	public static void performBrowserQueryAndShow(String sqlQuery) { BrowserUtils.performBrowserQueryAndShow(sqlQuery); }
 	public static void showImageViewer(String pathToPicture, long albumItemId) { PictureViewCreator.showPicture(albumItemId); }
 	public static void resetFutureJumpAnchor() {BrowserUtils.setFutureJumpAnchor(UIConstants.NO_ANCHOR_DEFINED);}
 	public static void setFutureJumpAnchor(String futureJumpAnchor) { BrowserUtils.setFutureJumpAnchor(futureJumpAnchor); }
 	public static String getFutureJumpAnchor() { return BrowserUtils.getFutureJumpAnchor(); }
 	public static void returnFromImageViewer() { BrowserUtils.returnFromImageViewer(); }
-	public static void showResultSet(AlbumItemResultSet resultSet) { BrowserUtils.showResultSet(ApplicationUI.getAlbumItemBrowser(), resultSet); }
+	public static void showResultSet(AlbumItemResultSet resultSet) { BrowserUtils.showResultSet(resultSet); }
 	public static void showCreateNewAlbumPage(AlbumItem albumItem) { FeedbackCreator.showCreateNewAlbumPage(ApplicationUI.getAlbumItemBrowser(), albumItem); }
 	public static void showCreateAlterAlbumPage(AlbumItem albumItem) { FeedbackCreator.showCreateAlterAlbumPage(ApplicationUI.getAlbumItemBrowser(), albumItem); }
 	public static void generateAlbumItemUpdatedPage(long albumItemId) { FeedbackCreator.generatAlbumItemUpdatedPage(albumItemId); }

@@ -559,4 +559,8 @@ public final class ApplicationUI implements EventObserver {
 	public static ToolbarComposite getToolbarComposite() {
 		return toolbarComposite;
 	}
+
+	public static BrowserListener getBrowserListener() {
+		return albumItemBrowserListener;
+	}
 }

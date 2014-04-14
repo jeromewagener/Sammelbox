@@ -37,8 +37,8 @@ import org.sammelbox.model.database.operations.DatabaseOperations;
 import org.sammelbox.view.ApplicationUI;
 import org.sammelbox.view.SammelView;
 import org.sammelbox.view.UIConstants;
-import org.sammelbox.view.browser.spreadsheet.SpreadsheetUpdateFunction;
-import org.sammelbox.view.browser.spreadsheet.SpreadsheetViewCreator;
+import org.sammelbox.view.composites.BrowserComposite;
+import org.sammelbox.view.composites.TableComposite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.tidy.Tidy;
@@ -66,22 +66,22 @@ public final class BrowserUtils {
 	 * to the album view, the last generated HTML output is saved  */
 	private static String lastPageAsHtml;
 
-	static void performBrowserQueryAndShow(Browser browser, String sqlQuery) {				
+	static void performBrowserQueryAndShow(String sqlQuery) {				
 		try {
 			AlbumItemStore.reinitializeStoreAndUpdateStatus(DatabaseOperations.executeSQLQuery(sqlQuery));
 		} catch (DatabaseWrapperOperationException ex) {
 			LOGGER.error("An error occured while reinitializing the album item store using the following SQL query (" + sqlQuery + ")", ex);
 		}
-		showAlbum(browser);
+		showAlbum();
 	}
 
-	static void showResultSet(Browser browser, AlbumItemResultSet albumItemResultSet) {
+	static void showResultSet(AlbumItemResultSet albumItemResultSet) {
 		try {
 			AlbumItemStore.reinitializeStoreAndUpdateStatus(albumItemResultSet);
 		} catch (DatabaseWrapperOperationException ex) {
 			LOGGER.error("Could not reinitialize album item store", ex);
 		}
-		showAlbum(browser);
+		showAlbum();
 	}
 
 	/** Use this method to set a "future-jump-anchor" to a specific item
@@ -115,16 +115,27 @@ public final class BrowserUtils {
 		}
 	}
 
-	static void showAlbum(Browser browser) {
-		new SpreadsheetUpdateFunction(browser, "spreadsheetUpdateFunction");
+	static void showAlbum() {
 		SammelView currentView = GuiController.getGuiState().getSammelView();
 		
 		if (SammelView.DETAILED_VIEW.equals(currentView)) {
-			DetailedViewCreator.showDetailedAlbum(browser);
+			if (ApplicationUI.getAlbumItemBrowser().isDisposed()) {
+				ApplicationUI.changeCenterCompositeTo(BrowserComposite.build(
+						ApplicationUI.getThreePanelComposite(), ApplicationUI.getBrowserListener()));
+			}
+			DetailedViewCreator.showDetailedAlbum(ApplicationUI.getAlbumItemBrowser());
+			
 		} else if (SammelView.GALLERY_VIEW.equals(currentView)) {
-			GalleryViewCreator.showOverviewAlbum(browser);
+			if (ApplicationUI.getAlbumItemBrowser().isDisposed()) {
+				ApplicationUI.changeCenterCompositeTo(BrowserComposite.build(
+						ApplicationUI.getThreePanelComposite(), ApplicationUI.getBrowserListener()));
+			}
+			GalleryViewCreator.showOverviewAlbum(ApplicationUI.getAlbumItemBrowser());
+			
 		} else if (SammelView.SPREADSHEET_VIEW.equals(currentView)) {
-			SpreadsheetViewCreator.showSpreadsheetAlbum(browser);
+			ApplicationUI.changeCenterCompositeTo(TableComposite.build(ApplicationUI.getThreePanelComposite()));
+			
+			// TODO new SpreadsheetUpdateFunction(browser, "spreadsheetUpdateFunction");
 		}
 	}
 	
