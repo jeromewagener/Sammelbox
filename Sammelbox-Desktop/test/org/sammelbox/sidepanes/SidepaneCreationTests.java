@@ -70,7 +70,9 @@ public class SidepaneCreationTests {
 		ApplicationUI.initialize(false);
 		
 		// Create browser composite which is used by several sidepanes
-		BrowserComposite.buildAndStore(ApplicationUI.getShell(), new BrowserListener(ApplicationUI.getShell()));
+		Composite browserComposite = 
+				BrowserComposite.build(ApplicationUI.getShell(), new BrowserListener(ApplicationUI.getShell()));
+		ApplicationUI.changeCenterCompositeTo(browserComposite);
 		
 		// Test sidepane creation
 		sidepane = AddAlbumItemSidepane.build(ApplicationUI.getShell(), "DVDs");

@@ -35,21 +35,26 @@ public final class BrowserComposite {
 	 * @param parentComposite the parent composite
 	 * @param browserListener a class of various listeners for the browser
 	 * @return a new browser composite */
-	public static Composite buildAndStore(Composite parentComposite, BrowserListener browserListener) {
+	public static Composite build(Composite parentComposite, BrowserListener browserListener) {
 		// setup SWT browser composite
 		Composite browserComposite = new Composite(parentComposite, SWT.NONE);
 		browserComposite.setLayout(new GridLayout());
 
 		// the browser itself
-		Browser browser = new Browser(browserComposite, SWT.NONE);
+		Browser browser;
+		if (ApplicationUI.getAlbumItemBrowser() == null || ApplicationUI.getAlbumItemBrowser().isDisposed()) {
+			browser = new Browser(browserComposite, SWT.NONE);
+			ApplicationUI.setAlbumItemBrowser(browser);
+		} else {
+			browser = ApplicationUI.getAlbumItemBrowser();
+		}
+			
 		browser.setDragDetect(false);
 
 		// setup layout data for the browser
 		GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		browser.setLayoutData(gridData);
 
-		// store browser reference in the main shell & register location listener with the browser
-		ApplicationUI.setAlbumItemBrowser(browser);
 		browser.addLocationListener(browserListener);
 		browser.addProgressListener(browserListener);
 		browser.addMenuDetectListener(browserListener);

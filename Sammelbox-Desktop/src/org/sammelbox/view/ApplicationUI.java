@@ -191,7 +191,7 @@ public final class ApplicationUI implements EventObserver {
 		lowerLeftSubComposite = EmptySidepane.build(leftComposite);		
 		lowerLeftSubComposite.setLayoutData(gridDataForLowerLeftComposite);
 		albumItemBrowserListener = new BrowserListener(threePanelComposite);
-		centerComposite = BrowserComposite.buildAndStore(threePanelComposite, albumItemBrowserListener);
+		centerComposite = BrowserComposite.build(threePanelComposite, albumItemBrowserListener);
 		centerComposite.setLayout(new GridLayout(1, false));
 		centerComposite.setLayoutData(gridDataForCenterComposite);
 		rightComposite = EmptySidepane.build(threePanelComposite);
@@ -374,9 +374,14 @@ public final class ApplicationUI implements EventObserver {
 	 * @return True if the album is selected internally and in the SWT Album list. If all albums were successfully deselected then true is also returned. 
 	 * False otherwise.*/
 	public static boolean setSelectedAlbum(String albumName) {
+		if (albumItemBrowser.isDisposed()) {
+			Composite browserComposite = BrowserComposite.build(threePanelComposite, albumItemBrowserListener);
+			changeCenterCompositeTo(browserComposite);
+		}
+		
 		// Set the album name and verify that it is in the list
 		GuiController.getGuiState().setSelectedAlbum(albumName);
-		if (albumName== null || albumName.isEmpty()) {
+		if (albumName == null || albumName.isEmpty()) {
 			ApplicationUI.albums.deselectAll();
 			return true;
 		}
