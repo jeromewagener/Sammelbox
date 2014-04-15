@@ -17,7 +17,7 @@ import org.sammelbox.controller.managers.BuildInformationManager;
 import org.sammelbox.view.ApplicationUI;
 import org.sammelbox.view.browser.BrowserFacade;
 import org.sammelbox.view.browser.BrowserUtils;
-import org.sammelbox.view.composites.TableComposite;
+import org.sammelbox.view.composites.SpreadsheetComposite;
 import org.sammelbox.view.sidepanes.EmptySidepane;
 import org.sammelbox.view.various.ComponentFactory;
 import org.sammelbox.view.various.PanelType;
@@ -134,7 +134,7 @@ public final class HelpMenuItemListener {
 		return new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent selectionEvent) {
-				ApplicationUI.changeCenterCompositeTo(TableComposite.build(ApplicationUI.getThreePanelComposite()));
+				ApplicationUI.changeCenterCompositeTo(SpreadsheetComposite.build(ApplicationUI.getThreePanelComposite()));
 			}
 		};
 	}

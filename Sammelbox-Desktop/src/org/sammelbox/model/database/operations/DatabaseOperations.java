@@ -379,10 +379,8 @@ public final class DatabaseOperations {
 	}
 	
 	/**
-	 * Permanently deletes the albumItem with the specified id from the database
-	 * @param albumName The name of the album to which the item belongs
-	 * @param albumItemId The id of the item to be deleted
-	 * @return true if the operation was successful, false otherwise
+	 * Permanently deletes the given albumItem from the database
+	 * @param albumItem The item to be deleted
 	 * @throws DatabaseWrapperOperationException 
 	 */
 	public static void deleteAlbumItem(AlbumItem albumItem) throws DatabaseWrapperOperationException {
