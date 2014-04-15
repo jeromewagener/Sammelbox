@@ -49,6 +49,10 @@ public enum StarRating {
 				StarRating.FIVE_STARS.getIntegerValue() + " " + Translator.get(DictKeys.COMBOBOX_CONTENT_STARS)};
 	}
 
+	public static String getTranslation(StarRating starRating) {
+		return starRating.getIntegerValue() + " " + Translator.get(DictKeys.COMBOBOX_CONTENT_STARS);
+	}
+	
 	public static Object getByIntegerValue(int integerValue) {
 		for (StarRating starRating : StarRating.values()) {
 			if (starRating.getIntegerValue() == integerValue) {

@@ -1,6 +1,8 @@
 package org.sammelbox.view.composites;
 
 
+import java.text.SimpleDateFormat;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -10,12 +12,16 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+import org.sammelbox.controller.filesystem.FileSystemLocations;
 import org.sammelbox.controller.filters.ItemFieldFilterPlusID;
 import org.sammelbox.controller.i18n.Translator;
+import org.sammelbox.controller.managers.SettingsManager;
 import org.sammelbox.model.album.AlbumItem;
 import org.sammelbox.model.album.AlbumItemStore;
 import org.sammelbox.model.album.FieldType;
 import org.sammelbox.model.album.ItemField;
+import org.sammelbox.model.album.OptionType;
+import org.sammelbox.model.album.StarRating;
 import org.sammelbox.model.database.operations.DatabaseConstants;
 
 public class TableComposite {
@@ -51,14 +57,31 @@ public class TableComposite {
 			TableItem tableItem = new TableItem(table, SWT.NONE);
 			String[] values = new String[albumItem.getFields().size()];
 
-			int i=0;
+			int fieldIndex = 0;
 			for (ItemField itemField : ItemFieldFilterPlusID.getValidItemFields(albumItem.getFields())) {
 				if (itemField.getName().equals(DatabaseConstants.ID_COLUMN_NAME)) {
 					tableItem.setData(ID_TABLE_DATA_KEY, itemField.getValue());
-					i++;
 				} else if (!itemField.getType().equals(FieldType.ID)) {
-					values[i++] = String.valueOf(itemField.getValue());
+					if (itemField.getType().equals(FieldType.OPTION)) {
+						values[fieldIndex] = OptionType.getTranslation((OptionType) itemField.getValue());
+					} else if (itemField.getType().equals(FieldType.STAR_RATING)) {
+						values[fieldIndex] = StarRating.getTranslation((StarRating) itemField.getValue());
+					} else {
+						values[fieldIndex] = String.valueOf(itemField.getValue());
+					}
+				}  else if (itemField.getType().equals(FieldType.DATE)) {
+					java.sql.Date sqlDate = itemField.getValue();
+					if (sqlDate != null) {
+						java.util.Date utilDate = new java.util.Date(sqlDate.getTime());
+		
+						SimpleDateFormat dateFormater = new SimpleDateFormat(SettingsManager.getSettings().getDateFormat());
+						values[fieldIndex] = dateFormater.format(utilDate);
+					} else {
+						values[fieldIndex] = "";
+					}
 				}
+				
+				fieldIndex++;
 			}
 						
 			tableItem.setText(values);
@@ -87,5 +110,23 @@ public class TableComposite {
 		btnAddItems.setText(Translator.toBeTranslated("Add Items"));
 
 		return tableComposite;
+	}
+	
+	// TODO decide to use or delete if not
+	@SuppressWarnings("unused")
+	private static String getStars(StarRating rating) {
+		if (rating.equals(StarRating.ONE_STAR)) {
+			return "<td class=\"field\"><img alt=\"\" height=\"20\" src=\"" + FileSystemLocations.getOneStarPNG() + "\"></td>";
+		} else if (rating.equals(StarRating.TWO_STARS)) {
+			return "<td class=\"field\"><img alt=\"\" height=\"20\" src=\"" + FileSystemLocations.getTwoStarsPNG() + "\"></td>";
+		} else if (rating.equals(StarRating.THREE_STARS)) {
+			return "<td class=\"field\"><img alt=\"\" height=\"20\" src=\"" + FileSystemLocations.getThreeStarsPNG() + "\"></td>";
+		} else if (rating.equals(StarRating.FOUR_STARS)) {
+			return "<td class=\"field\"><img alt=\"\" height=\"20\" src=\"" + FileSystemLocations.getFourStarsPNG() + "\"></td>";
+		} else if (rating.equals(StarRating.FIVE_STARS)) {
+			return "<td class=\"field\"><img alt=\"\" height=\"20\" src=\"" + FileSystemLocations.getFiveStarsPNG() + "\"></td>";
+		}
+		
+		return "<td class=\"field\"><img alt=\"\" height=\"20\" src=\"" + FileSystemLocations.getZeroStarsPNG() + "\"></td>";
 	}
 }

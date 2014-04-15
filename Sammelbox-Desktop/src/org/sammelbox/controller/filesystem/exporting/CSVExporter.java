@@ -23,8 +23,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
-import org.sammelbox.controller.i18n.DictKeys;
-import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.model.album.AlbumItem;
 import org.sammelbox.model.album.FieldType;
 import org.sammelbox.model.album.OptionType;
@@ -54,15 +52,7 @@ public final class CSVExporter {
 				} else {
 					if (albumItem.getField(i).getType().equals(FieldType.OPTION)) {
 						addHeaderIfFirstLine(firstLine, albumItem, headerBuilder, separationCharacter, i);
-
-						// TODO this should be in the OptionType
-						if (albumItem.getField(i).getValue() == OptionType.YES) {
-							dataBuilder.append(Translator.get(DictKeys.BROWSER_YES));
-						} else if (albumItem.getField(i).getValue() == OptionType.NO) {
-							dataBuilder.append(Translator.get(DictKeys.BROWSER_NO));
-						} else {
-							dataBuilder.append(Translator.get(DictKeys.BROWSER_UNKNOWN));
-						}
+						dataBuilder.append(OptionType.getTranslation((OptionType) albumItem.getField(i).getValue()));
 						
 						addSeparationCharacterIfRequired(albumItem, dataBuilder, separationCharacter, i);
 					} else if (albumItem.getField(i).getType().equals(FieldType.STAR_RATING)) {

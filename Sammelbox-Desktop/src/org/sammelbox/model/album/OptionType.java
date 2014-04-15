@@ -19,12 +19,17 @@
 package org.sammelbox.model.album;
 
 import org.sammelbox.controller.i18n.DictKeys;
+import org.sammelbox.controller.i18n.Translator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public enum OptionType {
 	YES,
 	NO,
 	UNKNOWN;
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(OptionType.class);
+	
 	/**
 	 * Retrieves the option type string value which is stored in the database, based on a given dictionary key
 	 * @param dictKey the dictionary key for which the string database value should be retrieved
@@ -42,5 +47,18 @@ public enum OptionType {
 		default:
 			return OptionType.UNKNOWN.toString();
 		}
-	} 
+	}
+	
+	public static String getTranslation(OptionType optionType) {
+		if (optionType.equals(OptionType.YES)) {
+			return Translator.get(DictKeys.BROWSER_YES);
+		} else if (optionType.equals(OptionType.NO)) {
+			return Translator.get(DictKeys.BROWSER_NO);
+		} else if (optionType.equals(OptionType.UNKNOWN)) {
+			return Translator.get(DictKeys.BROWSER_UNKNOWN);
+		} else {
+			LOGGER.error("This option type is unknown. You should never get to this point.");
+			return "";
+		}
+	}
 }
