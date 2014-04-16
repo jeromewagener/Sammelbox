@@ -28,36 +28,16 @@ import org.sammelbox.model.album.StarRating;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 import org.sammelbox.model.database.operations.DatabaseConstants;
 import org.sammelbox.model.database.operations.DatabaseOperations;
+import org.sammelbox.view.browser.BrowserFacade;
 
 public class SpreadsheetComposite {
 	private static final String ID_TABLE_DATA_KEY = "ID";
 	private static final int CHECKBOX_COLUMN_WIDTH_PIXELS = 25;
 	private static final int COLUMN_WIDTH_PIXELS = 125;
 
-	public static Composite build(Composite parentComposite) {
-		Composite tableComposite = new Composite(parentComposite, SWT.NONE);
-		GridLayout tableCompositeGridLayout = new GridLayout();
-		tableComposite.setLayout(tableCompositeGridLayout);
-
-		final Table table = new Table(tableComposite, SWT.BORDER | SWT.CHECK);
-		GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
-		table.setLayoutData(gridData);
-		table.setHeaderVisible(true);
-		table.setLinesVisible(true);
-		
-		for (ItemField itemField : ItemFieldFilterPlusID.getValidItemFields(
-				AlbumItemStore.getAlbumItems().get(0).getFields())) {
-			
-			TableColumn tableColumn = new TableColumn(table, SWT.LEFT);
-			
-			if (itemField.getName().equals(DatabaseConstants.ID_COLUMN_NAME)) {
-				tableColumn.setWidth(CHECKBOX_COLUMN_WIDTH_PIXELS);
-			} else if (!itemField.getType().equals(FieldType.ID)) {
-				tableColumn.setText(itemField.getName());
-				tableColumn.setWidth(COLUMN_WIDTH_PIXELS);
-			}
-		}
-
+	public static void initializeWithItemsFromAlbumItemStore(Table table) {
+		table.removeAll();
+				
 		for (AlbumItem albumItem : AlbumItemStore.getAlbumItems()) {
 			TableItem tableItem = new TableItem(table, SWT.NONE);
 			String[] values = new String[albumItem.getFields().size()];
@@ -91,6 +71,33 @@ public class SpreadsheetComposite {
 						
 			tableItem.setText(values);
 		}
+	}
+	
+	public static Composite build(Composite parentComposite) {
+		Composite tableComposite = new Composite(parentComposite, SWT.NONE);
+		GridLayout tableCompositeGridLayout = new GridLayout();
+		tableComposite.setLayout(tableCompositeGridLayout);
+
+		final Table table = new Table(tableComposite, SWT.BORDER | SWT.CHECK);
+		GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
+		table.setLayoutData(gridData);
+		table.setHeaderVisible(true);
+		table.setLinesVisible(true);
+		
+		for (ItemField itemField : ItemFieldFilterPlusID.getValidItemFields(
+				AlbumItemStore.getAlbumItems().get(0).getFields())) {
+			
+			TableColumn tableColumn = new TableColumn(table, SWT.LEFT);
+			
+			if (itemField.getName().equals(DatabaseConstants.ID_COLUMN_NAME)) {
+				tableColumn.setWidth(CHECKBOX_COLUMN_WIDTH_PIXELS);
+			} else if (!itemField.getType().equals(FieldType.ID)) {
+				tableColumn.setText(itemField.getName());
+				tableColumn.setWidth(COLUMN_WIDTH_PIXELS);
+			}
+		}
+		
+		initializeWithItemsFromAlbumItemStore(table);
 
 		Composite buttonComposite = new Composite(tableComposite, SWT.NONE);
 		buttonComposite.setLayout(new GridLayout(5, false));
@@ -109,12 +116,28 @@ public class SpreadsheetComposite {
 					}
 				}
 				
-				System.out.println(selectedItemIds);
+				//TODO System.out.println(selectedItemIds);
+				BrowserFacade.showEditableSpreadsheet();
 			}
 		});
 
 		Button btnCloneRow = new Button(buttonComposite, SWT.PUSH);
 		btnCloneRow.setText(Translator.toBeTranslated("Clone Row"));
+		btnCloneRow.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent selectionEvent) {
+				TableItem[] tableItems = table.getItems();
+				//List<Long> selectedItemIds = new ArrayList<Long>();
+								
+				for (TableItem tableItem : tableItems) {
+					if (tableItem.getChecked()) {
+						//AlbumItem clonedAlbumItem = AlbumItemStore.getAlbumItem((Long) tableItem.getData(ID_TABLE_DATA_KEY)).clone();
+					}
+				}
+				
+				initializeWithItemsFromAlbumItemStore(table);
+			}
+		});
 
 		Button btnDelete = new Button(buttonComposite, SWT.PUSH);
 		btnDelete.setText(Translator.toBeTranslated("Delete Row"));

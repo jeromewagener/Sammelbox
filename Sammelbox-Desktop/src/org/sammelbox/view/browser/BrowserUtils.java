@@ -37,6 +37,7 @@ import org.sammelbox.model.database.operations.DatabaseOperations;
 import org.sammelbox.view.ApplicationUI;
 import org.sammelbox.view.SammelView;
 import org.sammelbox.view.UIConstants;
+import org.sammelbox.view.browser.spreadsheet.SpreadsheetViewCreator;
 import org.sammelbox.view.composites.BrowserComposite;
 import org.sammelbox.view.composites.SpreadsheetComposite;
 import org.slf4j.Logger;
@@ -137,6 +138,15 @@ public final class BrowserUtils {
 			
 			// TODO new SpreadsheetUpdateFunction(browser, "spreadsheetUpdateFunction");
 		}
+	}
+	
+	static void showEditableSpreadsheet() {
+		if (ApplicationUI.getAlbumItemBrowser().isDisposed()) {
+			ApplicationUI.changeCenterCompositeTo(BrowserComposite.build(
+					ApplicationUI.getThreePanelComposite(), ApplicationUI.getBrowserListener()));
+		}
+		
+		SpreadsheetViewCreator.showSpreadsheetAlbum(ApplicationUI.getAlbumItemBrowser());
 	}
 	
 	static void loadHtmlPage(Browser browser, InputStream fileInputStream) {
