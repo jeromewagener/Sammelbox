@@ -176,6 +176,14 @@ public final class MenuManager implements EventObserver {
 			disableSammelbox.setText("Call Test Function");
 			disableSammelbox.addSelectionListener(HelpMenuItemListener.getTestFunctionListener());
 			
+			MenuItem editItemsSpreadsheet = new MenuItem(debugSubMenu, SWT.NONE);
+			editItemsSpreadsheet.setText("Edit Items Spreadsheet Function");
+			editItemsSpreadsheet.addSelectionListener(HelpMenuItemListener.getEditItemsSpreadsheetFunctionListener());
+			
+			MenuItem addItemsSpreadsheet = new MenuItem(debugSubMenu, SWT.NONE);
+			addItemsSpreadsheet.setText("Add Items Spreadsheet Function");
+			addItemsSpreadsheet.addSelectionListener(HelpMenuItemListener.getAddItemsSpreadsheetFunctionListener());
+			
 			new MenuItem(helpMenu, SWT.SEPARATOR);
 		}
 		

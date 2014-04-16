@@ -154,4 +154,31 @@ public final class AlbumItemStore {
 		
 		return albumItem;
 	}
+	
+	public static AlbumItem getEmptyAlbumItem(String albumName, List<MetaItemField> metaItemFields) {
+		List<ItemField> itemFields = new ArrayList<ItemField>();
+		
+			for (MetaItemField metaItemField : metaItemFields) {
+				if (metaItemField.getType().equals(FieldType.TEXT)) {
+					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), null, false));
+				} else if (metaItemField.getType().equals(FieldType.DATE)) {
+					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), null, false));
+				} else if (metaItemField.getType().equals(FieldType.INTEGER)) {
+					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), null, false));
+				} else if (metaItemField.getType().equals(FieldType.DECIMAL)) {
+					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), null, false));
+				} else if (metaItemField.getType().equals(FieldType.OPTION)) {
+					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), OptionType.UNKNOWN, false));
+				} else if (metaItemField.getType().equals(FieldType.STAR_RATING)) {
+					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), StarRating.ZERO_STARS, false));
+				} else if (metaItemField.getType().equals(FieldType.TIME)) {
+					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), null, false));
+				} else if (metaItemField.getType().equals(FieldType.URL)) {
+					itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), null, false));
+				}
+		}
+		
+		AlbumItem albumItem = new AlbumItem(albumName, itemFields);
+		return albumItem;
+	}
 }

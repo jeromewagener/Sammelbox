@@ -80,7 +80,6 @@ public final class SpreadsheetItemCreator {
 				"</table>" +
 			"</th>");
 		}
-		htmlSpreadsheetHeader.append("<th id=\"deleteLabel\">" + Translator.toBeTranslated("Delete") + "</th>");
 		htmlSpreadsheetHeader.append("</tr>");
 	}
 	
@@ -109,15 +108,15 @@ public final class SpreadsheetItemCreator {
 	}
 	
 	static long createSpreadsheetRow(AlbumItem albumItem, StringBuilder htmlSpreadsheetRow, Map<MetaItemField, Integer> metaItemToColumnIndexMap) {
-		long id = -1;
+		long row = -1;
 		htmlSpreadsheetRow.delete(0, htmlSpreadsheetRow.length());
 						
 		for (ItemField itemField : ItemFieldFilterPlusID.getValidItemFields(albumItem.getFields())) {		
-			long columnIndex = 0;
+			long col = 0;
 			for (MetaItemField metaItemField : metaItemToColumnIndexMap.keySet()) {
 				if (metaItemField.getName().equals(itemField.getName())
 						&& metaItemField.getType().equals(itemField.getType())) {
-					columnIndex = metaItemToColumnIndexMap.get(metaItemField);
+					col = metaItemToColumnIndexMap.get(metaItemField);
 					break;
 				}
 			}
@@ -127,59 +126,42 @@ public final class SpreadsheetItemCreator {
 			} else if (itemField.getType().equals(FieldType.ID)) {
 				if (itemField.getName().equals(DatabaseConstants.ID_COLUMN_NAME)) {
 					// do not show, but store id
-					id = itemField.getValue();
+					row = itemField.getValue();
 				}
 			} else if (itemField.getType().equals(FieldType.OPTION)) {
 				if (itemField.getValue() == OptionType.YES) {
-					htmlSpreadsheetRow.append(getYesNoUnknownComboBox(Translator.get(DictKeys.BROWSER_YES), OptionType.YES, id, columnIndex));
+					htmlSpreadsheetRow.append(getYesNoUnknownComboBox(Translator.get(DictKeys.BROWSER_YES), OptionType.YES, row, col));
 				} else if (itemField.getValue() == OptionType.NO) {
-					htmlSpreadsheetRow.append(getYesNoUnknownComboBox(Translator.get(DictKeys.BROWSER_NO), OptionType.NO, id, columnIndex));
+					htmlSpreadsheetRow.append(getYesNoUnknownComboBox(Translator.get(DictKeys.BROWSER_NO), OptionType.NO, row, col));
 				} else if (itemField.getValue() == OptionType.UNKNOWN) {
-					htmlSpreadsheetRow.append(getYesNoUnknownComboBox(Translator.get(DictKeys.BROWSER_UNKNOWN), OptionType.UNKNOWN, id, columnIndex));
+					htmlSpreadsheetRow.append(getYesNoUnknownComboBox(Translator.get(DictKeys.BROWSER_UNKNOWN), OptionType.UNKNOWN, row, col));
 				}	
 			} else if (itemField.getType().equals(FieldType.DATE)) {
 				java.sql.Date sqlDate = itemField.getValue();
 				if (sqlDate != null) {
 					java.util.Date utilDate = new java.util.Date(sqlDate.getTime());
 					SimpleDateFormat dateFormater = new SimpleDateFormat(SettingsManager.getSettings().getDateFormat());
-					htmlSpreadsheetRow.append(getValueLine(dateFormater.format(utilDate), id, columnIndex));
+					htmlSpreadsheetRow.append(getValueLine(dateFormater.format(utilDate), row, col));
 				} else {
-					htmlSpreadsheetRow.append(getValueLine("", id, columnIndex));
+					htmlSpreadsheetRow.append(getValueLine("", row, col));
 				}	
 			} else if (itemField.getType().equals(FieldType.TEXT)) {
-				htmlSpreadsheetRow.append(getValueLine(BrowserUtils.escapeHtmlString((String) itemField.getValue()), id, columnIndex));
+				htmlSpreadsheetRow.append(getValueLine(BrowserUtils.escapeHtmlString((String) itemField.getValue()), row, col));
 			} else if (itemField.getType().equals(FieldType.INTEGER)) {
-				htmlSpreadsheetRow.append(getValueLine(((Integer) itemField.getValue()).toString(), id, columnIndex));
+				htmlSpreadsheetRow.append(getValueLine(((Integer) itemField.getValue()).toString(), row, col));
 			} else if (itemField.getType().equals(FieldType.DECIMAL)) {
-				htmlSpreadsheetRow.append(getValueLine(((Double) itemField.getValue()).toString(), id, columnIndex));
+				htmlSpreadsheetRow.append(getValueLine(((Double) itemField.getValue()).toString(), row, col));
 			} else if (itemField.getType().equals(FieldType.STAR_RATING)) {
-				htmlSpreadsheetRow.append(getStarsAsComboBoxes(((StarRating) itemField.getValue()), id, columnIndex));
+				htmlSpreadsheetRow.append(getStarsAsComboBoxes(((StarRating) itemField.getValue()), row, col));
 				//TODO remove or use - htmlSpreadsheetRow.append(getStars(((StarRating) fieldItem.getValue())));
 			} else if (itemField.getType().equals(FieldType.URL)) {
-				htmlSpreadsheetRow.append(getValueLine(((String) itemField.getValue()), id, columnIndex));	
+				htmlSpreadsheetRow.append(getValueLine(((String) itemField.getValue()), row, col));	
 			}
 			
-			columnIndex++;
+			col++;
 		}
-		
-		htmlSpreadsheetRow.append("<td id=\"value:checkbox:" + id + "\"");
-		
-		if (id == AlbumItem.ITEM_ID_UNDEFINED) {
-			htmlSpreadsheetRow.append(" class=\"whiteBorderless\"");
-		}
-		
-		htmlSpreadsheetRow.append("><input type=\"checkbox\" id=\"delete:" + id + "\" value=\"" + id + "\" " +
-				                             "class=\"normalCheckbox");
-		
-		if (id == AlbumItem.ITEM_ID_UNDEFINED) {
-			htmlSpreadsheetRow.append(" hidden");
-		}
-		
-		htmlSpreadsheetRow.append("\" onClick='markAsDelete(" + id + ");'>" +
-				                 "<input id=\"corruptions:" + id +"\" class=\"hidden\" type=\"text\" value=\"0\">" + //
-				                 "</td>");
 
-		return id;
+		return row;
 	}
 	
 	public static void createNextDataRow(AlbumItem albumItem, StringBuilder htmlSpreadsheetData, StringBuilder htmlSpreadsheetRow, boolean hasEvenCountingInList, Map<MetaItemField, Integer> metaItemToColumnIndexMap) {

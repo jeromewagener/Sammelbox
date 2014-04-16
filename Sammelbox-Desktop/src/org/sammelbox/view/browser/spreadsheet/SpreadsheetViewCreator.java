@@ -18,7 +18,9 @@
 
 package org.sammelbox.view.browser.spreadsheet;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.swt.browser.Browser;
@@ -40,6 +42,8 @@ import org.sammelbox.view.browser.BrowserUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import sun.awt.SunHints.Value;
+
 public final class SpreadsheetViewCreator {	
 	private static final Logger LOGGER = LoggerFactory.getLogger(SpreadsheetViewCreator.class);
 
@@ -58,10 +62,22 @@ public final class SpreadsheetViewCreator {
 	    return inv;
 	}
 	
-	public static void showSpreadsheetAlbum(Browser browser) {
+	public static void showSpreadsheetAlbum(List<Long> selectedIds, Browser browser) {
 		// Exit if no album is selected
 		if (!ApplicationUI.isAlbumSelectedAndShowMessageIfNot()) {
 			return;
+		}
+		
+		Map<Integer, MetaItemField> indexToMetaItemFieldMap = null;
+		List<MetaItemField> metaItemFields = null;
+		
+		
+		try {
+			indexToMetaItemFieldMap = DatabaseOperations.getAlbumItemMetaMap(GuiController.getGuiState().getSelectedAlbum());
+			metaItemFields = new ArrayList<MetaItemField>(indexToMetaItemFieldMap.values());
+		} catch (DatabaseWrapperOperationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
 		Map<Integer, MetaItemField> columnIndexToMetaItemMap = null;
@@ -86,38 +102,29 @@ public final class SpreadsheetViewCreator {
 		StringBuilder javaScriptArrayTableColType = new StringBuilder();
 		StringBuilder javaScriptArrayTableColName = new StringBuilder();
 		
+		AlbumItem emptyAlbumItem = AlbumItemStore.getEmptyAlbumItem(GuiController.getGuiState().getSelectedAlbum(), metaItemFields);
+		
 		// Create the header of the spreadsheet
-		if (AlbumItemStore.getAlbumItems().size() > 0) {
 			SpreadsheetItemCreator.createSpreadsheetHeader(
-					htmlSpreadsheetHeader, AlbumItemStore.getAlbumItems().get(0), metaItemToColumnIndexMap);
-		}
+					htmlSpreadsheetHeader, emptyAlbumItem, metaItemToColumnIndexMap);
 		
 		// Add all available album items
 		boolean hasEvenCountingInList = false;
 		long idForUncreatedItem = -1;
 		
-		for (AlbumItem albumItem : AlbumItemStore.getAlbumItems()) {
+		for(Long id : selectedIds){
+			AlbumItem albumItem = AlbumItemStore.getAlbumItem(id);
+			
 			SpreadsheetItemCreator.createNextDataRow(
 					albumItem, htmlSpreadsheetData, htmlSpreadsheetRow, hasEvenCountingInList, metaItemToColumnIndexMap);
 			hasEvenCountingInList = !hasEvenCountingInList;
 		}
-
-		// Create the footer of the spreadsheet
-		if(AlbumItemStore.getAlbumItems().size() > 0) {
-			idForUncreatedItem = SpreadsheetItemCreator.createSpreadsheetFooter(
-					htmlSpreadsheetFooter, AlbumItemStore.getAlbumItems().get(0), metaItemToColumnIndexMap);
-		}
 		
-		// If no album items have been found
-		if (htmlSpreadsheetData.length() == 0) {
-			htmlSpreadsheet.append(
-	          "<tr><td><div>" + 
-	            "<h3>" + 
-	              Translator.get(DictKeys.BROWSER_NO_ITEMS_FOUND, GuiController.getGuiState().getSelectedAlbum()) + 
-	            "</h3>" + 
-	            "<p>" + Translator.get(DictKeys.BROWSER_NO_ITEMS_FOUND_EXPLANATION) + "</p>" +
-	          "</div></td></tr>"); 
-		} else {
+		// Create the footer of the spreadsheet
+			idForUncreatedItem = SpreadsheetItemCreator.createSpreadsheetFooter(
+					htmlSpreadsheetFooter, emptyAlbumItem, metaItemToColumnIndexMap);
+
+
 			// List all the rowIDs and put them in an array for javascript usages.
 			javaScriptArrayTableRowId.append(" var tableRowId=[");
 				
@@ -134,7 +141,7 @@ public final class SpreadsheetViewCreator {
 			javaScriptArrayTableColType.append("'" + FieldType.ID.toString() + "'");
 			javaScriptArrayTableColName.append("'" + DatabaseConstants.ID_COLUMN_NAME + "'");
 			
-			for (ItemField itemField : ItemFieldFilter.getValidItemFields(AlbumItemStore.getAlbumItems().get(0).getFields())) {
+			for (ItemField itemField : ItemFieldFilter.getValidItemFields(emptyAlbumItem.getFields())) {
 				// TODO Refactor. This snippet is used multiple times (performance killer as discussed).
 				int columnIndex = 0; 
 				
@@ -176,10 +183,9 @@ public final class SpreadsheetViewCreator {
 			htmlSpreadsheet.append("<label>");
 			htmlSpreadsheet.append("<div id=\"showModify\" class=\"smallLabel dirty\">To be modified <span id=\"modifyCount\">0</span></div> ");
 			htmlSpreadsheet.append("<div id=\"showAdd\" class=\"smallLabel new\">To be added <span id=\"addCount\">0</span></div> ");
-			htmlSpreadsheet.append("<div id=\"showDelete\" class=\"smallLabel delete\">To be deleted <span id=\"deleteCount\">0</span></div> ");
 			htmlSpreadsheet.append("<div id=\"rowCount\" class=\"hidden\">" + AlbumItemStore.getAlbumItems().size() + "</div> ");
 			htmlSpreadsheet.append("</label>");
-		}
+		
 		
 		// Build header using album name. Include view name if appropriated
 		String collectionHeader = GuiController.getGuiState().getSelectedAlbum();
