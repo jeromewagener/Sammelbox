@@ -37,8 +37,9 @@ import org.sammelbox.model.database.operations.DatabaseOperations;
 import org.sammelbox.view.ApplicationUI;
 import org.sammelbox.view.SammelView;
 import org.sammelbox.view.UIConstants;
+import org.sammelbox.view.browser.spreadsheet.SpreadsheetViewCreator;
 import org.sammelbox.view.composites.BrowserComposite;
-import org.sammelbox.view.composites.TableComposite;
+import org.sammelbox.view.composites.SpreadsheetComposite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.tidy.Tidy;
@@ -133,10 +134,19 @@ public final class BrowserUtils {
 			GalleryViewCreator.showOverviewAlbum(ApplicationUI.getAlbumItemBrowser());
 			
 		} else if (SammelView.SPREADSHEET_VIEW.equals(currentView)) {
-			ApplicationUI.changeCenterCompositeTo(TableComposite.build(ApplicationUI.getThreePanelComposite()));
+			ApplicationUI.changeCenterCompositeTo(SpreadsheetComposite.build(ApplicationUI.getThreePanelComposite()));
 			
 			// TODO new SpreadsheetUpdateFunction(browser, "spreadsheetUpdateFunction");
 		}
+	}
+	
+	static void showEditableSpreadsheet() {
+		if (ApplicationUI.getAlbumItemBrowser().isDisposed()) {
+			ApplicationUI.changeCenterCompositeTo(BrowserComposite.build(
+					ApplicationUI.getThreePanelComposite(), ApplicationUI.getBrowserListener()));
+		}
+		
+		SpreadsheetViewCreator.showSpreadsheetAlbum(ApplicationUI.getAlbumItemBrowser());
 	}
 	
 	static void loadHtmlPage(Browser browser, InputStream fileInputStream) {

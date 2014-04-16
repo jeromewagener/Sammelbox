@@ -70,6 +70,7 @@ public final class BrowserFacade {
 	public static void showSynchronizePageWithProgressBar(String messageToShow) { FeedbackCreator.showSynchronizationPageWithProgressBar(messageToShow); }
 	public static void showSettingsPage() { FeedbackCreator.showSettingsPage(); }
 	public static void showImportPage() { FeedbackCreator.showImportPage(); }
+	public static void showEditableSpreadsheet() { BrowserUtils.showEditableSpreadsheet(); }
 	public static void showHelpPage() {
 		String htmlHelpString = FileSystemAccessWrapper.readInputStreamIntoString(
 				ApplicationUI.getShell().getClass().getClassLoader().getResourceAsStream(Language.getHelpPage(Translator.getUsedLanguage())));
