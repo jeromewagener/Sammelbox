@@ -18,10 +18,12 @@
 
 package org.sammelbox.model.album;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
+import org.sammelbox.controller.filters.ItemFieldFilter;
 import org.sammelbox.model.database.DatabaseStringUtilities;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 import org.sammelbox.model.database.operations.DatabaseConstants;
@@ -400,5 +402,15 @@ public class AlbumItem {
 				itemFields.add(new ItemField(metaItemField.getName(), metaItemField.getType(), null));
 			}
 		}
+	}
+	
+	public AlbumItem clone() {
+		List<ItemField> clonedItemFields = new ArrayList<ItemField>();		
+		
+		for (ItemField itemField : ItemFieldFilter.getValidItemFields(this.itemFields)) {
+			clonedItemFields.add(new ItemField(itemField.getName(), itemField.getType(), itemField.getValue()));
+		}
+		
+		return new AlbumItem(albumName, clonedItemFields);
 	}
 }
