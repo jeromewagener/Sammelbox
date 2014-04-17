@@ -13,9 +13,11 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+import org.sammelbox.controller.GuiController;
 import org.sammelbox.controller.filters.ItemFieldFilterPlusID;
 import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.controller.managers.SettingsManager;
@@ -25,16 +27,22 @@ import org.sammelbox.model.album.FieldType;
 import org.sammelbox.model.album.ItemField;
 import org.sammelbox.model.album.OptionType;
 import org.sammelbox.model.album.StarRating;
+import org.sammelbox.model.database.QueryBuilder;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 import org.sammelbox.model.database.operations.DatabaseConstants;
 import org.sammelbox.model.database.operations.DatabaseOperations;
 import org.sammelbox.view.browser.BrowserFacade;
+import org.sammelbox.view.browser.BrowserUtils;
+import org.sammelbox.view.various.ComponentFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SpreadsheetComposite {
 	private static final String ID_TABLE_DATA_KEY = "ID";
 	private static final int CHECKBOX_COLUMN_WIDTH_PIXELS = 25;
 	private static final int COLUMN_WIDTH_PIXELS = 125;
-
+	private static final Logger LOGGER = LoggerFactory.getLogger(BrowserUtils.class);
+	
 	public static void initializeWithItemsFromAlbumItemStore(Table table) {
 		table.removeAll();
 				
@@ -116,7 +124,6 @@ public class SpreadsheetComposite {
 					}
 				}
 				
-				//TODO System.out.println(selectedItemIds);
 				BrowserFacade.showEditableSpreadsheet();
 			}
 		});
@@ -127,12 +134,47 @@ public class SpreadsheetComposite {
 			@Override
 			public void widgetSelected(SelectionEvent selectionEvent) {
 				TableItem[] tableItems = table.getItems();
-				//List<Long> selectedItemIds = new ArrayList<Long>();
-								
+				List<Long> selectedItemIds = new ArrayList<Long>();
+				
+				// search for selected table items
 				for (TableItem tableItem : tableItems) {
 					if (tableItem.getChecked()) {
-						//AlbumItem clonedAlbumItem = AlbumItemStore.getAlbumItem((Long) tableItem.getData(ID_TABLE_DATA_KEY)).clone();
+						selectedItemIds.add((Long) tableItem.getData(ID_TABLE_DATA_KEY));
 					}
+				}
+
+				// do you really want to clone these items
+				MessageBox messageBox = ComponentFactory.getMessageBox(
+						Translator.toBeTranslated("Clone selected items?"), 
+						Translator.toBeTranslated("Are you sure that you want to clone the selected items?"), 
+						SWT.ICON_WARNING | SWT.YES | SWT.NO);
+				
+				// if yes, clone them
+				if (messageBox.open() == SWT.YES) {
+					for (Long selectedId : selectedItemIds) {
+						AlbumItem clonedAlbumItem = AlbumItemStore.getAlbumItem(selectedId).clone();
+						try {
+							DatabaseOperations.addAlbumItem(clonedAlbumItem, true);
+						} catch (DatabaseWrapperOperationException e) {
+							LOGGER.error("An error occurred while cloning the album item", e);
+							ComponentFactory.getMessageBox(
+									Translator.toBeTranslated("An error occurred"),
+									Translator.toBeTranslated("An error occurred while cloneing the selected items."), 
+									SWT.ICON_ERROR | SWT.OK);
+						}
+					}
+				}
+				
+				// update album item store
+				try {
+					AlbumItemStore.reinitializeStore(DatabaseOperations.executeSQLQuery(
+							QueryBuilder.createSelectStarQuery(GuiController.getGuiState().getSelectedAlbum())));
+				} catch (DatabaseWrapperOperationException e) {
+					LOGGER.error("An error occurred while reinitializing the album item store", e);
+					ComponentFactory.getMessageBox(
+							Translator.toBeTranslated("An error occurred"),
+							Translator.toBeTranslated("An error occurred while refreshing the view. Please refresh manually!"), 
+							SWT.ICON_ERROR | SWT.OK);
 				}
 				
 				initializeWithItemsFromAlbumItemStore(table);
@@ -145,21 +187,49 @@ public class SpreadsheetComposite {
 			@Override
 			public void widgetSelected(SelectionEvent selectionEvent) {
 				TableItem[] tableItems = table.getItems();
+				List<Long> selectedItemIds = new ArrayList<Long>();
 				
-				//TODO add user check "Do you want to delete the selected items? (6 selected)"
-				
+				// search for selected table items
 				for (TableItem tableItem : tableItems) {
 					if (tableItem.getChecked()) {
+						selectedItemIds.add((Long) tableItem.getData(ID_TABLE_DATA_KEY));
+					}
+				}
+				
+				// do you really want to delete these items?
+				MessageBox messageBox = ComponentFactory.getMessageBox(
+						Translator.toBeTranslated("Delete selected items?"), 
+						Translator.toBeTranslated("Are you sure that you want to delete the selected items?"), 
+						SWT.ICON_WARNING | SWT.YES | SWT.NO);
+				
+				// if yes, delete selected items
+				if (messageBox.open() == SWT.YES) {
+					for (Long selectedId : selectedItemIds) {
 						try {
-							DatabaseOperations.deleteAlbumItem(AlbumItemStore.getAlbumItem(
-									(Long) tableItem.getData(ID_TABLE_DATA_KEY)));
-							tableItem.dispose();
+							DatabaseOperations.deleteAlbumItem(AlbumItemStore.getAlbumItem(selectedId));
 						} catch (DatabaseWrapperOperationException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+							LOGGER.error("An error occurred while deleting the album item", e);
+							ComponentFactory.getMessageBox(
+									Translator.toBeTranslated("An error occurred"),
+									Translator.toBeTranslated("An error occurred while deleting the selected items."), 
+									SWT.ICON_ERROR | SWT.OK);
 						}
 					}
 				}
+				
+				// update album item store
+				try {
+					AlbumItemStore.reinitializeStore(DatabaseOperations.executeSQLQuery(
+							QueryBuilder.createSelectStarQuery(GuiController.getGuiState().getSelectedAlbum())));
+				} catch (DatabaseWrapperOperationException e) {
+					LOGGER.error("An error occurred while reinitializing the album item store", e);
+					ComponentFactory.getMessageBox(
+							Translator.toBeTranslated("An error occurred"),
+							Translator.toBeTranslated("An error occurred while refreshing the view. Please refresh manually!"), 
+							SWT.ICON_ERROR | SWT.OK);
+				}
+				
+				initializeWithItemsFromAlbumItemStore(table);
 			}
 		});
 		
@@ -167,6 +237,7 @@ public class SpreadsheetComposite {
 		GridData minSizeGridData = new GridData(GridData.FILL_BOTH);
 		minSizeGridData.widthHint = 10;
 		minSizeGridData.heightHint = 10;
+		
 		// separator
 		new Label(buttonComposite, SWT.SEPARATOR | SWT.VERTICAL).setLayoutData(minSizeGridData);
 		
