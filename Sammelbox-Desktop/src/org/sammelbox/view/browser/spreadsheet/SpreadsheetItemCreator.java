@@ -51,7 +51,8 @@ public final class SpreadsheetItemCreator {
 
 	public static void createSpreadsheetHeader(StringBuilder htmlSpreadsheetHeader, AlbumItem albumItem, Map<MetaItemField, Integer> metaItemToColumnIndexMap) {
 		htmlSpreadsheetHeader.append("<tr class=\"header\">");
-
+		htmlSpreadsheetHeader.append("<th> Del. </th>");
+		
 		long columnIndex = 0;
 		for(ItemField itemField : ItemFieldFilter.getValidItemFields(albumItem.getFields())) {
 			for (MetaItemField metaItemField : metaItemToColumnIndexMap.keySet()) {
@@ -63,27 +64,45 @@ public final class SpreadsheetItemCreator {
 			}
 			
 			htmlSpreadsheetHeader.append(
-			"<th id=\"col:" + columnIndex + "\"  width=\"170\">" + 
-				"<table class=\"headerTable\">" +
-					"<tr>" +
-						"<td class=\"labelTd\">" + "<div id=\"label:" + columnIndex + "\" class=\"label\">" + itemField.getName() + "</div>" + "</td>" +
-						"<td class=\"smallTd\">" + 
-							"<div id=\"arrowRight:" + columnIndex + "\" class=\"hideByMe\" onClick=\"setHidden(" + columnIndex + ");\" style=\"background-image:url(" + FileSystemLocations.getMinimizeArrowPNG() + ")\"></div>" +
-							"<div id=\"arrowLeft:" + columnIndex + "\" class=\"hideByMe hidden tooltip\" onClick=\"setHidden(" + columnIndex + ");\" style=\"background-image:url(" + FileSystemLocations.getMaximizeArrowPNG() + ")\">" +
-								"<label> " + itemField.getName() + " </label>" +
-							"</div>" +
-						"</td>" +
-						"<td class=\"smallTd\">" + 
-							"<div id=\"dragMe:" + columnIndex + "\" class=\"dragMe\" onmousedown=\"startDrag(" + columnIndex + " ,event);\"  style=\"background-image:url(" + FileSystemLocations.getResizeSpreadsheetPNG() + ")\"></div>" + 
-						"</td>" +
-					"</tr>" +
-				"</table>" +
-			"</th>");
+				"<th id=\"col:" + columnIndex + "\" width=\"170\">" + 
+					"<table class=\"headerTable\">" +
+						"<tr>" +
+							"<td class=\"labelTd\">" + 
+						    	"<div id=\"label:" + columnIndex + "\" class=\"label\">" + itemField.getName() + "</div>" + 
+							"</td>" +
+						    	
+							"<td class=\"smallTd\">" + 
+								"<div id=\"arrowRight:" + columnIndex + "\" " +
+									 "class=\"hideByMe\" " +
+									 "onClick=\"setHidden(" + columnIndex + ");\" " +
+									 "style=\"background-image:url(" + FileSystemLocations.getMinimizeArrowPNG() + ")\">" +
+								"</div>" +
+								"<div id=\"arrowLeft:" + columnIndex + "\" " +
+									 "class=\"hideByMe hidden tooltip\" " +
+									 "onClick=\"setHidden(" + columnIndex + ");\" " +
+									 "style=\"background-image:url(" + FileSystemLocations.getMaximizeArrowPNG() + ")\">" +
+									 "<label> " + itemField.getName() + " </label>" +
+								"</div>" +
+							"</td>" +
+								
+							"<td class=\"smallTd\">" + 
+								"<div id=\"dragMe:" + columnIndex + "\" " +
+									 "class=\"dragMe\" " +
+									 "onmousedown=\"startDrag(" + columnIndex + " ,event);\"  " +
+									 "style=\"background-image:url(" + FileSystemLocations.getResizeSpreadsheetPNG() + ")\">" +
+								"</div>" + 
+							"</td>" +
+						"</tr>" +
+					"</table>" +
+				"</th>");
 		}
+		
 		htmlSpreadsheetHeader.append("</tr>");
 	}
 	
-	public static long createSpreadsheetFooter(StringBuilder htmlSpreadsheetFooter, AlbumItem albumItem, Map<MetaItemField, Integer> metaItemToColumnIndexMap) {
+	public static long createSpreadsheetFooter(StringBuilder htmlSpreadsheetFooter, AlbumItem albumItem, 
+												 Map<MetaItemField, Integer> metaItemToColumnIndexMap) {
+		
 		String albumName = GuiController.getGuiState().getSelectedAlbum();
 		AlbumItem newAlbumItem = null;
 		
@@ -97,11 +116,11 @@ public final class SpreadsheetItemCreator {
 		newAlbumItem = new AlbumItem(albumName);		
 		newAlbumItem.initializeWithDefaultValuesUsingMetaItems(metaItemFields);
 		
-		StringBuilder tmp = new StringBuilder();
-		createSpreadsheetRow(newAlbumItem, tmp, metaItemToColumnIndexMap);
+		StringBuilder footerRowBuilder = new StringBuilder();
+		createSpreadsheetRow(newAlbumItem, footerRowBuilder, metaItemToColumnIndexMap);
 		
 		htmlSpreadsheetFooter.append("<tr id=\"row:" + newAlbumItem.getItemId() + "\" class=\"empty\">");
-		htmlSpreadsheetFooter.append(tmp);
+		htmlSpreadsheetFooter.append(footerRowBuilder);
 		htmlSpreadsheetFooter.append("</tr>");
 		
 		return newAlbumItem.getItemId();
@@ -110,7 +129,9 @@ public final class SpreadsheetItemCreator {
 	static long createSpreadsheetRow(AlbumItem albumItem, StringBuilder htmlSpreadsheetRow, Map<MetaItemField, Integer> metaItemToColumnIndexMap) {
 		long row = -1;
 		htmlSpreadsheetRow.delete(0, htmlSpreadsheetRow.length());
-						
+				
+		htmlSpreadsheetRow.append("<td id=\"delete:" + albumItem.getField(FieldType.ID) + "" + "\" class=\"field\">X" + albumItem.getField(FieldType.ID) + "</td>");
+		
 		for (ItemField itemField : ItemFieldFilterPlusID.getValidItemFields(albumItem.getFields())) {		
 			long col = 0;
 			for (MetaItemField metaItemField : metaItemToColumnIndexMap.keySet()) {
@@ -247,7 +268,7 @@ public final class SpreadsheetItemCreator {
 			fourSelected = "selected";
 		} else if (rating.equals(StarRating.FIVE_STARS)) {
 			fiveSelected = "selected";
-		} else{
+		} else {
 			zeroSelected = "selected";
 		}
 		

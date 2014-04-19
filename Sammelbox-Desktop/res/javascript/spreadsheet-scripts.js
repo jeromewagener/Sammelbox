@@ -107,7 +107,7 @@ function setHidden(column) {
 	elem = document.getElementById('arrowLeft:' + column);				
 	invertHidden(elem);
 	
-	for(index = 0; index < tableRowId.length; ++index) {
+	for(var index = 0; index < tableRowId.length; index++) {
 		elem = document.getElementById('hideThisContainer:' + column + ":" + tableRowId[index]);	
 		invertHidden(elem);
 	}
@@ -215,7 +215,7 @@ function markAsDirty(id, columnIndex) {
 		}
 	}
 	
-	for(index = 0; index < updateTheseObjects.length; ++index) {
+	for(var index = 0; index < updateTheseObjects.length; index++) {
 		if (updateTheseObjects[index][0] == id) {
 			remove(updateTheseObjects, updateTheseObjects[index]);	
 		}
@@ -225,7 +225,7 @@ function markAsDirty(id, columnIndex) {
 	changeObject.push(id);
 	
 	/* Start from 1 because tableColId[0] = id which has no field in the spreadsheet */
-	for(index = 1; index < tableColId.length; ++index) {
+	for(index = 1; index < tableColId.length; index++) {
 		elem = document.getElementById('input:' + tableColId[index] + ":" + id);
 		changeObject.push(elem.value);
 	}
@@ -258,7 +258,7 @@ function incWrongCounter(id) {
 function enableDisableSendButoon() {
 	var total = 0;	
 	
-	for (index = 0; index < tableRowId.length; ++index) {
+	for(var index = 0; index < tableRowId.length; index++) {
 		total = total + parseInt(document.getElementById('corruptions:' + tableRowId[index]).value);	
 	}
 	
@@ -316,7 +316,7 @@ function newItem(id) {
 	var changeObject = [];
 	changeObject.push(id);
 	
-	for(index = 0; index < tableColId.length; ++index) {
+	for(var index = 1; index < tableColId.length; index++) {
 		elem = document.getElementById('input:' + tableColId[index] + ":" + id);
 		changeObject.push(elem.value);
 	}
@@ -348,21 +348,12 @@ function cloneRow(id) {
 	increaseRowCount();
 	
 	/* Start from 1 because tableColId[0] = id which has no field in the spreadsheet */
-	for(index = 1; index < tableColId.length; ++index) {
+	for(index = 1; index < tableColId.length; index++) {
 		elem = document.getElementById('value:' + tableColId[index] + ":" + newId);
 		if (hasClass(elem, 'wrongInput')) {
 			removeClass(elem, 'wrongInput');
 		}
-	}
-	
-	deleteCheckbox = document.getElementById('delete:' + id);
-	invertHidden(deleteCheckbox);
-
-	checkboxTd = document.getElementById('value:checkbox:' + id);	
-	if (hasClass(checkboxTd, 'whiteBorderless')) {
-		removeClass(checkboxTd, 'whiteBorderless');
-	}
-	
+	}	
 }
 
 /* Functions to increase/decrease the counters that are shown on the bottom of the Spreadsheet. */
@@ -408,34 +399,11 @@ function isDecimal (s) {
    return String(s).search (isDecimal_re) != -1
 }
 
-/*   This function removes updates/the creations for Items that are going to be deleted 
- *   For removed creations, also the delete request is discarded.
- */
-function removeUnnecessaryUpdatesAndDeletes() {
-	var i = 0;
-	var j = 0;
-
-	while (i <= deleteTheseObjects.length) {
-		while (j < updateTheseObjects.length) {
-			if (deleteTheseObjects[i] == updateTheseObjects[j][0]) {
-				remove(updateTheseObjects, updateTheseObjects[j]);
-				j = 0;
-			} else {
-				j++;
-			}
-		}
-		j = 0;
-		i++;
-	}
-}
-
 function checkAndSend() {
 	if (confirm("Press OK to continue the update of your database. \nThese updates are non reversible!!!\n" +
 		"\n Additions     : " + document.getElementById('addCount').innerHTML + 
 		"\n Modifications : " + document.getElementById('modifyCount').innerHTML + 
-		"\n Deletions     : " + document.getElementById('deleteCount').innerHTML + 
 		"\n\nPress Cancel to abort!")) {
-		removeUnnecessaryUpdatesAndDeletes();	
 		
 		spreadsheetUpdateFunction(tableColName, tableColType, updateTheseObjects, deleteTheseObjects);
 	} else {

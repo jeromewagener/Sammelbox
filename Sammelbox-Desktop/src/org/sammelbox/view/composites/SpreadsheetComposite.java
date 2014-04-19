@@ -31,8 +31,10 @@ import org.sammelbox.model.database.QueryBuilder;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 import org.sammelbox.model.database.operations.DatabaseConstants;
 import org.sammelbox.model.database.operations.DatabaseOperations;
+import org.sammelbox.view.ApplicationUI;
 import org.sammelbox.view.browser.BrowserFacade;
 import org.sammelbox.view.browser.BrowserUtils;
+import org.sammelbox.view.browser.spreadsheet.SpreadsheetUpdateFunction;
 import org.sammelbox.view.various.ComponentFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -124,7 +126,8 @@ public class SpreadsheetComposite {
 					}
 				}
 				
-				BrowserFacade.showEditableSpreadsheet();
+				BrowserFacade.showEditableSpreadsheet(selectedItemIds);
+				new SpreadsheetUpdateFunction(ApplicationUI.getAlbumItemBrowser(), "spreadsheetUpdateFunction");
 			}
 		});
 

@@ -22,6 +22,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.swt.SWT;
@@ -135,18 +136,16 @@ public final class BrowserUtils {
 			
 		} else if (SammelView.SPREADSHEET_VIEW.equals(currentView)) {
 			ApplicationUI.changeCenterCompositeTo(SpreadsheetComposite.build(ApplicationUI.getThreePanelComposite()));
-			
-			// TODO new SpreadsheetUpdateFunction(browser, "spreadsheetUpdateFunction");
 		}
 	}
 	
-	static void showEditableSpreadsheet() {
+	static void showEditableSpreadsheet(List<Long> selectedItemIds) {
 		if (ApplicationUI.getAlbumItemBrowser().isDisposed()) {
 			ApplicationUI.changeCenterCompositeTo(BrowserComposite.build(
 					ApplicationUI.getThreePanelComposite(), ApplicationUI.getBrowserListener()));
 		}
 		
-		SpreadsheetViewCreator.showSpreadsheetAlbum(ApplicationUI.getAlbumItemBrowser());
+		SpreadsheetViewCreator.showSpreadsheetAlbum(selectedItemIds, ApplicationUI.getAlbumItemBrowser());
 	}
 	
 	static void loadHtmlPage(Browser browser, InputStream fileInputStream) {
