@@ -225,7 +225,7 @@ public class SyncServerServiceImpl implements SyncServerService {
 					Thread.sleep(SYNC_FINISH_LOOP_TIME_SLEEP_IN_MILLISECONDS);
 					Display.getDefault().asyncExec(new Runnable() {
 					    public void run() {
-					    	ApplicationUI.getAlbumItemBrowser().execute("updateProgress('" + getFileTransferProgressPercentage() + "%')");
+					    	ApplicationUI.createOrRetrieveAlbumItemBrowser().execute("updateProgress('" + getFileTransferProgressPercentage() + "%')");
 					    }
 					});    	
 											

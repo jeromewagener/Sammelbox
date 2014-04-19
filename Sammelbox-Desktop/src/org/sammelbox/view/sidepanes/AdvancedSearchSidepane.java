@@ -101,8 +101,8 @@ public final class AdvancedSearchSidepane {
 		
 		try {
 			// Fill the comboBox
-			fieldToSearchCombo.setData("validMetaItemFields", MetaItemFieldFilter.getValidMetaItemFields(DatabaseOperations.getAlbumItemFieldNamesAndTypes(album)));
-			fieldToSearchCombo.setItems(MetaItemFieldFilter.getValidFieldNamesAsStringArray(DatabaseOperations.getAlbumItemFieldNamesAndTypes(album)));	
+			fieldToSearchCombo.setData("validMetaItemFields", MetaItemFieldFilter.getValidMetaItemFields(DatabaseOperations.getMetaItemFields(album)));
+			fieldToSearchCombo.setItems(MetaItemFieldFilter.getValidFieldNamesAsStringArray(DatabaseOperations.getMetaItemFields(album)));	
 		} catch (DatabaseWrapperOperationException ex) {
 			LOGGER.error("A database related error occured", ex);
 		}
@@ -268,8 +268,8 @@ public final class AdvancedSearchSidepane {
 				
 		try {
 			// Fill the comboBox
-			fieldToSortCombo.setData("validMetaItemFields", MetaItemFieldFilter.getValidMetaItemFields(DatabaseOperations.getAlbumItemFieldNamesAndTypes(album)));
-			fieldToSortCombo.setItems(MetaItemFieldFilter.getValidFieldNamesAsStringArray(DatabaseOperations.getAlbumItemFieldNamesAndTypes(album)));
+			fieldToSortCombo.setData("validMetaItemFields", MetaItemFieldFilter.getValidMetaItemFields(DatabaseOperations.getMetaItemFields(album)));
+			fieldToSortCombo.setItems(MetaItemFieldFilter.getValidFieldNamesAsStringArray(DatabaseOperations.getMetaItemFields(album)));
 		} catch (DatabaseWrapperOperationException ex) {
 			LOGGER.error("A database related error occured", ex);
 		}

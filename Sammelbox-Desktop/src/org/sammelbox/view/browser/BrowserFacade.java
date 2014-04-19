@@ -18,6 +18,7 @@
 
 package org.sammelbox.view.browser;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -28,6 +29,7 @@ import org.sammelbox.model.album.AlbumItem;
 import org.sammelbox.model.album.AlbumItemResultSet;
 import org.sammelbox.view.ApplicationUI;
 import org.sammelbox.view.UIConstants;
+import org.sammelbox.view.browser.spreadsheet.SpreadsheetUpdateFunction;
 
 public final class BrowserFacade {	
 	private BrowserFacade() {
@@ -44,8 +46,8 @@ public final class BrowserFacade {
 	public static String getFutureJumpAnchor() { return BrowserUtils.getFutureJumpAnchor(); }
 	public static void returnFromImageViewer() { BrowserUtils.returnFromImageViewer(); }
 	public static void showResultSet(AlbumItemResultSet resultSet) { BrowserUtils.showResultSet(resultSet); }
-	public static void showCreateNewAlbumPage(AlbumItem albumItem) { FeedbackCreator.showCreateNewAlbumPage(ApplicationUI.getAlbumItemBrowser(), albumItem); }
-	public static void showCreateAlterAlbumPage(AlbumItem albumItem) { FeedbackCreator.showCreateAlterAlbumPage(ApplicationUI.getAlbumItemBrowser(), albumItem); }
+	public static void showCreateNewAlbumPage(AlbumItem albumItem) { FeedbackCreator.showCreateNewAlbumPage(ApplicationUI.createOrRetrieveAlbumItemBrowser(), albumItem); }
+	public static void showCreateAlterAlbumPage(AlbumItem albumItem) { FeedbackCreator.showCreateAlterAlbumPage(ApplicationUI.createOrRetrieveAlbumItemBrowser(), albumItem); }
 	public static void generateAlbumItemUpdatedPage(long albumItemId) { FeedbackCreator.generatAlbumItemUpdatedPage(albumItemId); }
 	public static void generateAlbumItemAddedPage(long idOfNewAlbumItem) { FeedbackCreator.generateAlbumItemAddedPage(idOfNewAlbumItem); }
 	public static void addModificationToAlterationList(String modification) { FeedbackCreator.addModificationToAlterationList(modification); }
@@ -57,10 +59,12 @@ public final class BrowserFacade {
 		String htmlFileString = FileSystemAccessWrapper.readInputStreamIntoString(
 				ApplicationUI.getShell().getClass().getClassLoader().getResourceAsStream("html/" + htmlFileFromHtmlPackage));
 		
-		ApplicationUI.getAlbumItemBrowser().setText(htmlFileString);
+		ApplicationUI.createOrRetrieveAlbumItemBrowser().setText(htmlFileString);
 	}
+	
 	public static void fillAndLoadTemplate(String htmlTemplatFilename, Map<String, String> templateContent) { 
-		BrowserUtils.fillAndLoadTemplate(ApplicationUI.getAlbumItemBrowser(), htmlTemplatFilename, templateContent); }
+		BrowserUtils.fillAndLoadTemplate(ApplicationUI.createOrRetrieveAlbumItemBrowser(), htmlTemplatFilename, templateContent);
+	}
 		
 	public static void showAlbumDeletedPage(String deletedAlbum) { FeedbackCreator.showAlbumDeletedPage(deletedAlbum);	}
 	public static void showRestoreInProgressPage() { FeedbackCreator.showRestoreInProgressPage(); }
@@ -71,11 +75,20 @@ public final class BrowserFacade {
 	public static void showSynchronizePageWithProgressBar(String messageToShow) { FeedbackCreator.showSynchronizationPageWithProgressBar(messageToShow); }
 	public static void showSettingsPage() { FeedbackCreator.showSettingsPage(); }
 	public static void showImportPage() { FeedbackCreator.showImportPage(); }
-	public static void showEditableSpreadsheet(List<Long> selectedItemIds) { BrowserUtils.showEditableSpreadsheet(selectedItemIds); }
+	
+	public static void showAddItemsSpreadsheet() { 
+		showEditItemsSpreadsheet(new ArrayList<Long>());
+	}
+	
+	public static void showEditItemsSpreadsheet(List<Long> selectedItemIds) { 
+		BrowserUtils.showEditableSpreadsheet(selectedItemIds);
+		new SpreadsheetUpdateFunction(ApplicationUI.createOrRetrieveAlbumItemBrowser(), "spreadsheetUpdateFunction");
+	}
+	
 	public static void showHelpPage() {
 		String htmlHelpString = FileSystemAccessWrapper.readInputStreamIntoString(
 				ApplicationUI.getShell().getClass().getClassLoader().getResourceAsStream(Language.getHelpPage(Translator.getUsedLanguage())));
 		
-		ApplicationUI.getAlbumItemBrowser().setText(htmlHelpString);
+		ApplicationUI.createOrRetrieveAlbumItemBrowser().setText(htmlHelpString);
 	}
 }

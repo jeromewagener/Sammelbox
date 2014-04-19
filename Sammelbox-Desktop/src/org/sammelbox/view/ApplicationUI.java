@@ -191,7 +191,7 @@ public final class ApplicationUI implements EventObserver {
 		lowerLeftSubComposite = EmptySidepane.build(leftComposite);		
 		lowerLeftSubComposite.setLayoutData(gridDataForLowerLeftComposite);
 		albumItemBrowserListener = new BrowserListener(threePanelComposite);
-		centerComposite = BrowserComposite.build(threePanelComposite, albumItemBrowserListener);
+		centerComposite = new BrowserComposite(threePanelComposite, SWT.NONE, albumItemBrowserListener);
 		centerComposite.setLayout(new GridLayout(1, false));
 		centerComposite.setLayoutData(gridDataForCenterComposite);
 		rightComposite = EmptySidepane.build(threePanelComposite);
@@ -373,12 +373,7 @@ public final class ApplicationUI implements EventObserver {
 	 * @param albumName The name of the now selected/active album. If the albumName is null or empty then all albums are deselected.  
 	 * @return True if the album is selected internally and in the SWT Album list. If all albums were successfully deselected then true is also returned. 
 	 * False otherwise.*/
-	public static boolean setSelectedAlbum(String albumName) {
-		if (albumItemBrowser.isDisposed()) {
-			Composite browserComposite = BrowserComposite.build(threePanelComposite, albumItemBrowserListener);
-			changeCenterCompositeTo(browserComposite);
-		}
-		
+	public static boolean setSelectedAlbum(String albumName) {		
 		// Set the album name and verify that it is in the list
 		GuiController.getGuiState().setSelectedAlbum(albumName);
 		if (albumName == null || albumName.isEmpty()) {
@@ -454,9 +449,18 @@ public final class ApplicationUI implements EventObserver {
 		ApplicationUI.albumItemBrowser = browser;
 	}
 
-	/** Returns the album item browser
+	/** Creates or retrieves the album item browser
 	 * @return the album item browser */
-	public static Browser getAlbumItemBrowser() {
+	public static Browser createOrRetrieveAlbumItemBrowser() {
+		if (albumItemBrowser == null || albumItemBrowser.isDisposed()) {
+			BrowserComposite browserComposite = new BrowserComposite(
+					ApplicationUI.getThreePanelComposite(), SWT.NONE, ApplicationUI.getBrowserListener());
+			
+			albumItemBrowser = browserComposite.getBrowser();
+			
+			ApplicationUI.changeCenterCompositeTo(browserComposite);
+		}
+		
 		return albumItemBrowser;
 	}
 	

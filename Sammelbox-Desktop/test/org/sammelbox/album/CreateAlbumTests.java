@@ -87,7 +87,7 @@ public class CreateAlbumTests {
 		}
 		
 		try {
-			List<MetaItemField> albumMetaFields = DatabaseOperations.getAlbumItemFieldNamesAndTypes(albumName);
+			List<MetaItemField> albumMetaFields = DatabaseOperations.getMetaItemFields(albumName);
 			Assert.assertTrue(albumMetaFields.containsAll(columns));
 			
 			assertTrue("Picture table should always be present", 
@@ -120,7 +120,7 @@ public class CreateAlbumTests {
 		}
 		
 		try {
-			List<MetaItemField> albumMetaFields = DatabaseOperations.getAlbumItemFieldNamesAndTypes(albumName);
+			List<MetaItemField> albumMetaFields = DatabaseOperations.getMetaItemFields(albumName);
 			
 			boolean isTitleOk = false;
 			boolean isAuthorOk = false;

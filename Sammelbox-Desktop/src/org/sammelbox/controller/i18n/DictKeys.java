@@ -208,6 +208,10 @@ public final class DictKeys {
 	public static final String BUTTON_SIMULATE = "org.sammelbox.button.SIMULATE";
 	public static final String BUTTON_IMPORT = "org.sammelbox.button.IMPORT";
 	public static final String BUTTON_TOOLTIP_CHANGE_VIEW = "org.sammelbox.tooltip.CHANGE_VIEW";
+	public static final String BUTTON_EDIT_ROWS = "org.sammelbox.button.EDIT_ROWS";
+	public static final String BUTTON_CLONE_ROWS = "org.sammelbox.button.CLONE_ROWS";
+	public static final String BUTTON_DELETE_ROWS = "org.sammelbox.button.DELETE_ROWS";
+	public static final String BUTTON_ADD_ROWS = "org.sammelbox.button.ADD_ROWS";
 	
 	/*   Labels   */
 	public static final String LABEL_ADD_ENTRY = "collector.label.caption.ADD_ENTRY";

@@ -108,7 +108,7 @@ public final class SpreadsheetItemCreator {
 		
 		List<MetaItemField> metaItemFields = new ArrayList<MetaItemField>();
 		try {
-			metaItemFields = DatabaseOperations.getAlbumItemFieldNamesAndTypes(albumName);
+			metaItemFields = DatabaseOperations.getMetaItemFields(albumName);
 		} catch (DatabaseWrapperOperationException databaseWrapperOperationException) {
 			LOGGER.error("An error occurred while retrieving the meta item fields for " + albumName, databaseWrapperOperationException);
 		}

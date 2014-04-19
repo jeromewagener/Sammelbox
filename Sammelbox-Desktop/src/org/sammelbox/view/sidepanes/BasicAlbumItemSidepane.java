@@ -122,7 +122,7 @@ public final class BasicAlbumItemSidepane {
 			}	
 
 			// fetch the field names and types from the database
-			metaItemFields = DatabaseOperations.getAlbumItemFieldNamesAndTypes(album);
+			metaItemFields = DatabaseOperations.getMetaItemFields(album);
 			
 			// if the album contains pictures, show the picture composite
 			addPictureComposite = DatabaseOperations.isPictureAlbum(album);

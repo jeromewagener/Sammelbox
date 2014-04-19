@@ -20,6 +20,7 @@ package org.sammelbox.sidepanes;
 
 import static org.junit.Assert.assertTrue;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -70,8 +71,8 @@ public class SidepaneCreationTests {
 		ApplicationUI.initialize(false);
 		
 		// Create browser composite which is used by several sidepanes
-		Composite browserComposite = 
-				BrowserComposite.build(ApplicationUI.getShell(), new BrowserListener(ApplicationUI.getShell()));
+		Composite browserComposite = new BrowserComposite(
+				ApplicationUI.getShell(), SWT.NONE, new BrowserListener(ApplicationUI.getShell()));
 		ApplicationUI.changeCenterCompositeTo(browserComposite);
 		
 		// Test sidepane creation

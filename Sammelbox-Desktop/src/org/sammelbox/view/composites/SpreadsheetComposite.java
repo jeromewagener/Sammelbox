@@ -19,22 +19,23 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.sammelbox.controller.GuiController;
 import org.sammelbox.controller.filters.ItemFieldFilterPlusID;
+import org.sammelbox.controller.filters.MetaItemFieldFilterPlusID;
+import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.controller.managers.SettingsManager;
 import org.sammelbox.model.album.AlbumItem;
 import org.sammelbox.model.album.AlbumItemStore;
 import org.sammelbox.model.album.FieldType;
 import org.sammelbox.model.album.ItemField;
+import org.sammelbox.model.album.MetaItemField;
 import org.sammelbox.model.album.OptionType;
 import org.sammelbox.model.album.StarRating;
 import org.sammelbox.model.database.QueryBuilder;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 import org.sammelbox.model.database.operations.DatabaseConstants;
 import org.sammelbox.model.database.operations.DatabaseOperations;
-import org.sammelbox.view.ApplicationUI;
 import org.sammelbox.view.browser.BrowserFacade;
 import org.sammelbox.view.browser.BrowserUtils;
-import org.sammelbox.view.browser.spreadsheet.SpreadsheetUpdateFunction;
 import org.sammelbox.view.various.ComponentFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,18 +62,18 @@ public class SpreadsheetComposite {
 						values[fieldIndex] = OptionType.getTranslation((OptionType) itemField.getValue());
 					} else if (itemField.getType().equals(FieldType.STAR_RATING)) {
 						values[fieldIndex] = StarRating.getTranslation((StarRating) itemField.getValue());
+					} else if (itemField.getType().equals(FieldType.DATE)) {
+						java.sql.Date sqlDate = itemField.getValue();
+						if (sqlDate != null) {
+							java.util.Date utilDate = new java.util.Date(sqlDate.getTime());
+			
+							SimpleDateFormat dateFormater = new SimpleDateFormat(SettingsManager.getSettings().getDateFormat());
+							values[fieldIndex] = dateFormater.format(utilDate);
+						} else {
+							values[fieldIndex] = "";
+						}
 					} else {
 						values[fieldIndex] = String.valueOf(itemField.getValue());
-					}
-				}  else if (itemField.getType().equals(FieldType.DATE)) {
-					java.sql.Date sqlDate = itemField.getValue();
-					if (sqlDate != null) {
-						java.util.Date utilDate = new java.util.Date(sqlDate.getTime());
-		
-						SimpleDateFormat dateFormater = new SimpleDateFormat(SettingsManager.getSettings().getDateFormat());
-						values[fieldIndex] = dateFormater.format(utilDate);
-					} else {
-						values[fieldIndex] = "";
 					}
 				}
 				
@@ -81,6 +82,13 @@ public class SpreadsheetComposite {
 						
 			tableItem.setText(values);
 		}
+	}
+	
+	private static void showNoItemSelectedMessage() {
+		ComponentFactory.getMessageBox(
+				Translator.toBeTranslated("No item selected"),
+				Translator.toBeTranslated("You need to select at least one item to perform this action"),
+				SWT.OK | SWT.ICON_INFORMATION).open();
 	}
 	
 	public static Composite build(Composite parentComposite) {
@@ -94,17 +102,21 @@ public class SpreadsheetComposite {
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 		
-		for (ItemField itemField : ItemFieldFilterPlusID.getValidItemFields(
-				AlbumItemStore.getAlbumItems().get(0).getFields())) {
-			
+		List<MetaItemField> metaItemFields = new ArrayList<MetaItemField>();
+		try {
+			metaItemFields.addAll(DatabaseOperations.getMetaItemFields(GuiController.getGuiState().getSelectedAlbum()));
+		} catch (DatabaseWrapperOperationException dwoe) {
+			LOGGER.error("An error occurred while retrieving the meta item fields for the selected album.", dwoe);
+		}
+		
+		TableColumn checkboxColumn = new TableColumn(table, SWT.LEFT);
+		checkboxColumn.setWidth(CHECKBOX_COLUMN_WIDTH_PIXELS);
+		
+		for (MetaItemField metaItemField : MetaItemFieldFilterPlusID.getValidMetaItemFields(metaItemFields)) {
 			TableColumn tableColumn = new TableColumn(table, SWT.LEFT);
 			
-			if (itemField.getName().equals(DatabaseConstants.ID_COLUMN_NAME)) {
-				tableColumn.setWidth(CHECKBOX_COLUMN_WIDTH_PIXELS);
-			} else if (!itemField.getType().equals(FieldType.ID)) {
-				tableColumn.setText(itemField.getName());
-				tableColumn.setWidth(COLUMN_WIDTH_PIXELS);
-			}
+			tableColumn.setText(metaItemField.getName());
+			tableColumn.setWidth(COLUMN_WIDTH_PIXELS);
 		}
 		
 		initializeWithItemsFromAlbumItemStore(table);
@@ -113,7 +125,7 @@ public class SpreadsheetComposite {
 		buttonComposite.setLayout(new GridLayout(5, false));
 		
 		Button btnEdit = new Button(buttonComposite, SWT.PUSH);
-		btnEdit.setText(Translator.toBeTranslated("Edit Row"));
+		btnEdit.setText(Translator.get(DictKeys.BUTTON_EDIT_ROWS));
 		btnEdit.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent selectionEvent) {
@@ -126,13 +138,17 @@ public class SpreadsheetComposite {
 					}
 				}
 				
-				BrowserFacade.showEditableSpreadsheet(selectedItemIds);
-				new SpreadsheetUpdateFunction(ApplicationUI.getAlbumItemBrowser(), "spreadsheetUpdateFunction");
+				// abort if no items have been selected
+				if (selectedItemIds.isEmpty()) {
+					showNoItemSelectedMessage();
+				} else {				
+					BrowserFacade.showEditItemsSpreadsheet(selectedItemIds);
+				}
 			}
 		});
 
 		Button btnCloneRow = new Button(buttonComposite, SWT.PUSH);
-		btnCloneRow.setText(Translator.toBeTranslated("Clone Row"));
+		btnCloneRow.setText(Translator.get(DictKeys.BUTTON_CLONE_ROWS));
 		btnCloneRow.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent selectionEvent) {
@@ -146,6 +162,12 @@ public class SpreadsheetComposite {
 					}
 				}
 
+				// abort if no items have been selected
+				if (selectedItemIds.isEmpty()) {
+					showNoItemSelectedMessage();
+					return;
+				}
+				
 				// do you really want to clone these items
 				MessageBox messageBox = ComponentFactory.getMessageBox(
 						Translator.toBeTranslated("Clone selected items?"), 
@@ -185,7 +207,7 @@ public class SpreadsheetComposite {
 		});
 
 		Button btnDelete = new Button(buttonComposite, SWT.PUSH);
-		btnDelete.setText(Translator.toBeTranslated("Delete Row"));
+		btnDelete.setText(Translator.get(DictKeys.BUTTON_DELETE_ROWS));
 		btnDelete.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent selectionEvent) {
@@ -197,6 +219,12 @@ public class SpreadsheetComposite {
 					if (tableItem.getChecked()) {
 						selectedItemIds.add((Long) tableItem.getData(ID_TABLE_DATA_KEY));
 					}
+				}
+				
+				// abort if no items have been selected
+				if (selectedItemIds.isEmpty()) {
+					showNoItemSelectedMessage();
+					return;
 				}
 				
 				// do you really want to delete these items?
@@ -245,7 +273,13 @@ public class SpreadsheetComposite {
 		new Label(buttonComposite, SWT.SEPARATOR | SWT.VERTICAL).setLayoutData(minSizeGridData);
 		
 		Button btnAddItems = new Button(buttonComposite, SWT.PUSH);
-		btnAddItems.setText(Translator.toBeTranslated("Add Items"));
+		btnAddItems.setText(Translator.get(DictKeys.BUTTON_ADD_ROWS));
+		btnAddItems.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent selectionEvent) {
+				BrowserFacade.showAddItemsSpreadsheet();
+			}
+		});
 		
 		return tableComposite;
 	}

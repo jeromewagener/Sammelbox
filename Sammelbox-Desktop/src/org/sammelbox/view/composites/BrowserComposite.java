@@ -24,31 +24,17 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.sammelbox.controller.listeners.BrowserListener;
-import org.sammelbox.view.ApplicationUI;
 
-public final class BrowserComposite {
-	private BrowserComposite() {
-		// use build method instead
-	}
+public final class BrowserComposite extends Composite {
+	private Browser browser;
 	
-	/** Returns a browser composite which is used to render HTML. A reference is managed by the ApplicationUI
-	 * @param parentComposite the parent composite
-	 * @param browserListener a class of various listeners for the browser
-	 * @return a new browser composite */
-	public static Composite build(Composite parentComposite, BrowserListener browserListener) {
-		// setup SWT browser composite
-		Composite browserComposite = new Composite(parentComposite, SWT.NONE);
-		browserComposite.setLayout(new GridLayout());
+	public BrowserComposite(Composite parentComposite, int flags, BrowserListener browserListener) {
+		super(parentComposite, flags);
+
+		setLayout(new GridLayout());
 
 		// the browser itself
-		Browser browser;
-		if (ApplicationUI.getAlbumItemBrowser() == null || ApplicationUI.getAlbumItemBrowser().isDisposed()) {
-			browser = new Browser(browserComposite, SWT.NONE);
-			ApplicationUI.setAlbumItemBrowser(browser);
-		} else {
-			browser = ApplicationUI.getAlbumItemBrowser();
-		}
-			
+		browser = new Browser(this, SWT.NONE);
 		browser.setDragDetect(false);
 
 		// setup layout data for the browser
@@ -58,7 +44,9 @@ public final class BrowserComposite {
 		browser.addLocationListener(browserListener);
 		browser.addProgressListener(browserListener);
 		browser.addMenuDetectListener(browserListener);
-
-		return browserComposite;
+	}
+	
+	public Browser getBrowser() {
+		return browser;
 	}
 }

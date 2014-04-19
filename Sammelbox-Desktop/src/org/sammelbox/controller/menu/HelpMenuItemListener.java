@@ -2,7 +2,6 @@ package org.sammelbox.controller.menu;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -18,9 +17,6 @@ import org.sammelbox.controller.managers.BuildInformationManager;
 import org.sammelbox.view.ApplicationUI;
 import org.sammelbox.view.browser.BrowserFacade;
 import org.sammelbox.view.browser.BrowserUtils;
-import org.sammelbox.view.browser.spreadsheet.SpreadsheetUpdateFunction;
-import org.sammelbox.view.browser.spreadsheet.SpreadsheetViewCreator;
-import org.sammelbox.view.composites.BrowserComposite;
 import org.sammelbox.view.composites.SpreadsheetComposite;
 import org.sammelbox.view.sidepanes.EmptySidepane;
 import org.sammelbox.view.various.ComponentFactory;
@@ -139,36 +135,6 @@ public final class HelpMenuItemListener {
 			@Override
 			public void widgetSelected(SelectionEvent selectionEvent) {
 				ApplicationUI.changeCenterCompositeTo(SpreadsheetComposite.build(ApplicationUI.getThreePanelComposite()));
-			}
-		};
-	}
-
-	public static SelectionListener getEditItemsSpreadsheetFunctionListener() {
-		return new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent selectionEvent) {
-				if (ApplicationUI.getAlbumItemBrowser().isDisposed()) {
-					ApplicationUI.changeCenterCompositeTo(BrowserComposite.build(
-							ApplicationUI.getThreePanelComposite(), ApplicationUI.getBrowserListener()));
-				}
-				SpreadsheetViewCreator.showSpreadsheetAlbum((new ArrayList<Long>()), ApplicationUI.getAlbumItemBrowser());
-
-				new SpreadsheetUpdateFunction(ApplicationUI.getAlbumItemBrowser(), "spreadsheetUpdateFunction");
-			}
-		};
-	}
-
-	public static SelectionListener getAddItemsSpreadsheetFunctionListener() {
-		return new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent selectionEvent) {
-				if (ApplicationUI.getAlbumItemBrowser().isDisposed()) {
-					ApplicationUI.changeCenterCompositeTo(BrowserComposite.build(
-							ApplicationUI.getThreePanelComposite(), ApplicationUI.getBrowserListener()));
-				}
-				SpreadsheetViewCreator.showSpreadsheetAlbum((new ArrayList<Long>()), ApplicationUI.getAlbumItemBrowser());
-
-				new SpreadsheetUpdateFunction(ApplicationUI.getAlbumItemBrowser(), "spreadsheetUpdateFunction");
 			}
 		};
 	}

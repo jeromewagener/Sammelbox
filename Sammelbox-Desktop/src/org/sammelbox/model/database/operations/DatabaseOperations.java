@@ -239,7 +239,7 @@ public final class DatabaseOperations {
 	 * @param albumName The name of the album of which to retrieve the information.
 	 * @return The list of MetaItemFields. 
 	 */
-	public static List<MetaItemField> getAlbumItemFieldNamesAndTypes(String albumName) throws DatabaseWrapperOperationException {
+	public static List<MetaItemField> getMetaItemFields(String albumName) throws DatabaseWrapperOperationException {
 		return QueryOperations.getAlbumItemFieldNamesAndTypes(albumName);
 	}
 	

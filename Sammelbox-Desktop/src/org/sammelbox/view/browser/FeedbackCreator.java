@@ -47,7 +47,7 @@ public final class FeedbackCreator {
 			updatedAlbumItem = DatabaseOperations.getAlbumItem(ApplicationUI.getSelectedAlbum(), albumItemId);
 
 			if (updatedAlbumItem != null) {
-				ApplicationUI.getAlbumItemBrowser().setText(
+				ApplicationUI.createOrRetrieveAlbumItemBrowser().setText(
 						generateItemAddedOrUpdatedFeedbackConstruct(
 								albumItemId,
 								Translator.get(DictKeys.BROWSER_ITEM_UPDATED),
@@ -65,7 +65,7 @@ public final class FeedbackCreator {
 			addedAlbumItem = DatabaseOperations.getAlbumItem(ApplicationUI.getSelectedAlbum(), albumItemId);
 
 			if (addedAlbumItem != null) {
-				ApplicationUI.getAlbumItemBrowser().setText(
+				ApplicationUI.createOrRetrieveAlbumItemBrowser().setText(
 						generateItemAddedOrUpdatedFeedbackConstruct(
 								albumItemId,
 								Translator.get(DictKeys.BROWSER_ITEM_ADDED),
@@ -157,7 +157,7 @@ public final class FeedbackCreator {
 		contentMap.put("HEADER", header);
 		contentMap.put("MESSAGE", message);
 		
-		BrowserUtils.fillAndLoadTemplate(ApplicationUI.getAlbumItemBrowser(), templateFileName, contentMap);
+		BrowserUtils.fillAndLoadTemplate(ApplicationUI.createOrRetrieveAlbumItemBrowser(), templateFileName, contentMap);
 	}
 	
 	static void showAlbumDeletedPage(String deletedAlbum) {

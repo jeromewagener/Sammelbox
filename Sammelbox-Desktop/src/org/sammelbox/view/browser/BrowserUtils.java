@@ -39,7 +39,6 @@ import org.sammelbox.view.ApplicationUI;
 import org.sammelbox.view.SammelView;
 import org.sammelbox.view.UIConstants;
 import org.sammelbox.view.browser.spreadsheet.SpreadsheetViewCreator;
-import org.sammelbox.view.composites.BrowserComposite;
 import org.sammelbox.view.composites.SpreadsheetComposite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -107,13 +106,13 @@ public final class BrowserUtils {
 	static void jumpToAnchor(String anchor) {
 		if (!anchor.equals(UIConstants.NO_ANCHOR_DEFINED)) {
 			String javaScriptScrollToSnippet = "document.getElementById(\"" + anchor + "\").scrollIntoView(true)";
-			ApplicationUI.getAlbumItemBrowser().execute(javaScriptScrollToSnippet);
+			ApplicationUI.createOrRetrieveAlbumItemBrowser().execute(javaScriptScrollToSnippet);
 		}
 	}
 
 	static void returnFromImageViewer() {
 		if (lastPageAsHtml != null) {
-			ApplicationUI.getAlbumItemBrowser().setText(lastPageAsHtml);
+			ApplicationUI.createOrRetrieveAlbumItemBrowser().setText(lastPageAsHtml);
 		}
 	}
 
@@ -121,18 +120,10 @@ public final class BrowserUtils {
 		SammelView currentView = GuiController.getGuiState().getSammelView();
 		
 		if (SammelView.DETAILED_VIEW.equals(currentView)) {
-			if (ApplicationUI.getAlbumItemBrowser().isDisposed()) {
-				ApplicationUI.changeCenterCompositeTo(BrowserComposite.build(
-						ApplicationUI.getThreePanelComposite(), ApplicationUI.getBrowserListener()));
-			}
-			DetailedViewCreator.showDetailedAlbum(ApplicationUI.getAlbumItemBrowser());
+			DetailedViewCreator.showDetailedAlbum(ApplicationUI.createOrRetrieveAlbumItemBrowser());
 			
 		} else if (SammelView.GALLERY_VIEW.equals(currentView)) {
-			if (ApplicationUI.getAlbumItemBrowser().isDisposed()) {
-				ApplicationUI.changeCenterCompositeTo(BrowserComposite.build(
-						ApplicationUI.getThreePanelComposite(), ApplicationUI.getBrowserListener()));
-			}
-			GalleryViewCreator.showOverviewAlbum(ApplicationUI.getAlbumItemBrowser());
+			GalleryViewCreator.showOverviewAlbum(ApplicationUI.createOrRetrieveAlbumItemBrowser());
 			
 		} else if (SammelView.SPREADSHEET_VIEW.equals(currentView)) {
 			ApplicationUI.changeCenterCompositeTo(SpreadsheetComposite.build(ApplicationUI.getThreePanelComposite()));
@@ -140,12 +131,7 @@ public final class BrowserUtils {
 	}
 	
 	static void showEditableSpreadsheet(List<Long> selectedItemIds) {
-		if (ApplicationUI.getAlbumItemBrowser().isDisposed()) {
-			ApplicationUI.changeCenterCompositeTo(BrowserComposite.build(
-					ApplicationUI.getThreePanelComposite(), ApplicationUI.getBrowserListener()));
-		}
-		
-		SpreadsheetViewCreator.showSpreadsheetAlbum(selectedItemIds, ApplicationUI.getAlbumItemBrowser());
+		SpreadsheetViewCreator.showSpreadsheetAlbum(selectedItemIds, ApplicationUI.createOrRetrieveAlbumItemBrowser());
 	}
 	
 	static void loadHtmlPage(Browser browser, InputStream fileInputStream) {

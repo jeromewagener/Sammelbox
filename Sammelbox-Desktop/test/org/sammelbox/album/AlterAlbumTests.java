@@ -74,7 +74,7 @@ public class AlterAlbumTests {
 			long originalAlbumItemCount = DatabaseOperations.getNumberOfItemsInAlbum("Books");
 
 			DatabaseOperations.appendNewAlbumField("Books", metaItemField);
-			List<MetaItemField> metaDataItems = DatabaseOperations.getAlbumItemFieldNamesAndTypes("Books");
+			List<MetaItemField> metaDataItems = DatabaseOperations.getMetaItemFields("Books");
 
 			assertTrue("New publisher text column should be added at the end", 
 					metaDataItems.get(metaDataItems.size()-1).getName().equals("Publisher"));
@@ -95,7 +95,7 @@ public class AlterAlbumTests {
 			long originalAlbumItemCount = DatabaseOperations.getNumberOfItemsInAlbum("Books");
 
 			DatabaseOperations.appendNewAlbumField("Books", metaItemField);
-			List<MetaItemField> metaDataItems = DatabaseOperations.getAlbumItemFieldNamesAndTypes("Books");
+			List<MetaItemField> metaDataItems = DatabaseOperations.getMetaItemFields("Books");
 
 			assertTrue("New publisher text column should be added at the end", 
 					metaDataItems.get(metaDataItems.size()-1).getName().equals("Publisher"));
@@ -116,22 +116,22 @@ public class AlterAlbumTests {
 			MetaItemField metaItemField = new MetaItemField("Publisher", FieldType.TEXT, false);
 
 			DatabaseOperations.appendNewAlbumField("Books", metaItemField);
-			List<MetaItemField> metaDataItems = DatabaseOperations.getAlbumItemFieldNamesAndTypes("Books");
+			List<MetaItemField> metaDataItems = DatabaseOperations.getMetaItemFields("Books");
 			
 			assertTrue("New publisher text column should be added at the end", 
 					metaDataItems.get(metaDataItems.size()-1).getName().equals("Publisher"));
 
 			DatabaseOperations.reorderAlbumItemField("Books", metaDataItems.get(metaDataItems.size()-1), metaDataItems.get(metaDataItems.size()-3));
-			metaDataItems = DatabaseOperations.getAlbumItemFieldNamesAndTypes("Books");
+			metaDataItems = DatabaseOperations.getMetaItemFields("Books");
 			
 			DatabaseOperations.reorderAlbumItemField("Books", metaDataItems.get(metaDataItems.size()-2), metaDataItems.get(metaDataItems.size()-4));
-			metaDataItems = DatabaseOperations.getAlbumItemFieldNamesAndTypes("Books");
+			metaDataItems = DatabaseOperations.getMetaItemFields("Books");
 			
 			DatabaseOperations.reorderAlbumItemField("Books", metaDataItems.get(metaDataItems.size()-3), metaDataItems.get(metaDataItems.size()-5));
-			metaDataItems = DatabaseOperations.getAlbumItemFieldNamesAndTypes("Books");
+			metaDataItems = DatabaseOperations.getMetaItemFields("Books");
 			
 			DatabaseOperations.reorderAlbumItemField("Books", metaDataItems.get(metaDataItems.size()-4), metaDataItems.get(metaDataItems.size()-6));
-			metaDataItems = DatabaseOperations.getAlbumItemFieldNamesAndTypes("Books");
+			metaDataItems = DatabaseOperations.getMetaItemFields("Books");
 			
 			assertTrue("New publisher text column should be at the fourth position after reordering", 
 					metaDataItems.get(2).getName().equals("Publisher"));
@@ -148,7 +148,7 @@ public class AlterAlbumTests {
 		try {
 			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
 
-			List<MetaItemField> metaDataItems = DatabaseOperations.getAlbumItemFieldNamesAndTypes("DVDs");
+			List<MetaItemField> metaDataItems = DatabaseOperations.getMetaItemFields("DVDs");
 			long originalAlbumItemCount = DatabaseOperations.getNumberOfItemsInAlbum("DVDs");
 
 			assertTrue("Title text column should be at the beginning", 
@@ -156,19 +156,19 @@ public class AlterAlbumTests {
 
 			DatabaseOperations.reorderAlbumItemField("DVDs", metaDataItems.get(0), metaDataItems.get(1));
 
-			metaDataItems = DatabaseOperations.getAlbumItemFieldNamesAndTypes("DVDs");
+			metaDataItems = DatabaseOperations.getMetaItemFields("DVDs");
 			DatabaseOperations.reorderAlbumItemField("DVDs", metaDataItems.get(1), metaDataItems.get(2));
 
-			metaDataItems = DatabaseOperations.getAlbumItemFieldNamesAndTypes("DVDs");
+			metaDataItems = DatabaseOperations.getMetaItemFields("DVDs");
 			DatabaseOperations.reorderAlbumItemField("DVDs", metaDataItems.get(2), metaDataItems.get(3));
 
-			metaDataItems = DatabaseOperations.getAlbumItemFieldNamesAndTypes("DVDs");
+			metaDataItems = DatabaseOperations.getMetaItemFields("DVDs");
 			DatabaseOperations.reorderAlbumItemField("DVDs", metaDataItems.get(3), metaDataItems.get(4));
 
-			metaDataItems = DatabaseOperations.getAlbumItemFieldNamesAndTypes("DVDs");
+			metaDataItems = DatabaseOperations.getMetaItemFields("DVDs");
 			DatabaseOperations.reorderAlbumItemField("DVDs", metaDataItems.get(4), metaDataItems.get(5));
 
-			metaDataItems = DatabaseOperations.getAlbumItemFieldNamesAndTypes("DVDs");
+			metaDataItems = DatabaseOperations.getMetaItemFields("DVDs");
 
 			assertTrue("Title text column should be at the end", metaDataItems.get(5).getName().equals("Title"));
 			assertTrue("The album item count incorrectly changed", 
@@ -183,7 +183,7 @@ public class AlterAlbumTests {
 		try {
 			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
 
-			List<MetaItemField> metaDataItems = DatabaseOperations.getAlbumItemFieldNamesAndTypes("Books");
+			List<MetaItemField> metaDataItems = DatabaseOperations.getMetaItemFields("Books");
 			long originalAlbumItemCount = DatabaseOperations.getNumberOfItemsInAlbum("Books");
 
 			assertTrue("The first column name should be 'Book Title'", metaDataItems.get(0).getName().equals("Book Title"));
@@ -193,7 +193,7 @@ public class AlterAlbumTests {
 
 			DatabaseOperations.renameAlbumItemField("Books", bookTitleField, titleField);
 
-			metaDataItems = DatabaseOperations.getAlbumItemFieldNamesAndTypes("Books");
+			metaDataItems = DatabaseOperations.getMetaItemFields("Books");
 
 			assertTrue("The first column name should now be 'Title'", metaDataItems.get(0).getName().equals("Title"));
 			assertTrue("The album item count incorrectly changed", 
@@ -208,7 +208,7 @@ public class AlterAlbumTests {
 		try {
 			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
 
-			List<MetaItemField> metaDataItems = DatabaseOperations.getAlbumItemFieldNamesAndTypes("DVDs");
+			List<MetaItemField> metaDataItems = DatabaseOperations.getMetaItemFields("DVDs");
 			long originalAlbumItemCount = DatabaseOperations.getNumberOfItemsInAlbum("DVDs");
 			
 			if (!metaDataItems.get(0).getName().equals("Title")) {
@@ -219,7 +219,7 @@ public class AlterAlbumTests {
 			MetaItemField titleField = new MetaItemField("DVD Title", FieldType.TEXT, dvdTitleField.isQuickSearchable());
 
 			DatabaseOperations.renameAlbumItemField("DVDs", dvdTitleField, titleField);
-			metaDataItems = DatabaseOperations.getAlbumItemFieldNamesAndTypes("DVDs");
+			metaDataItems = DatabaseOperations.getMetaItemFields("DVDs");
 
 			assertTrue("The first column name should now be 'DVD Title'", metaDataItems.get(0).getName().equals("DVD Title"));
 			assertTrue("The album item count incorrectly changed", originalAlbumItemCount == DatabaseOperations.getNumberOfItemsInAlbum("DVDs"));
@@ -261,7 +261,7 @@ public class AlterAlbumTests {
 	public void testDeleteAuthorField() {
 		try {
 			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
-			List<MetaItemField> metaDataItems = DatabaseOperations.getAlbumItemFieldNamesAndTypes("Books");
+			List<MetaItemField> metaDataItems = DatabaseOperations.getMetaItemFields("Books");
 			long originalAlbumItemCount = DatabaseOperations.getNumberOfItemsInAlbum("Books");
 
 			assertTrue("The second column name should be 'Author'", metaDataItems.get(1).getName().equals("Author"));
@@ -273,7 +273,7 @@ public class AlterAlbumTests {
 			
 			MetaItemField authorMetaItemField = new MetaItemField("Author", FieldType.TEXT, false);
 			DatabaseOperations.removeAlbumItemField("Books", authorMetaItemField);
-			metaDataItems = DatabaseOperations.getAlbumItemFieldNamesAndTypes("Books");
+			metaDataItems = DatabaseOperations.getMetaItemFields("Books");
 
 			for (MetaItemField metaItemField : metaDataItems) {
 				assertTrue("The 'Author' field should no longer be present", metaItemField.getName().equals("Books") == false);

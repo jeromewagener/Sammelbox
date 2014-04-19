@@ -71,12 +71,10 @@ public class SpreadsheetUpdateFunction extends BrowserFunction {
 							LOGGER.error("Tried to parse the optiontyp " + fieldItemValue + " which seems not to be a valid option.");
 						}
 					} else if (fieldType.equals(FieldType.DATE)) {
-						
-						if (fieldItemValue != "") {
+						if (!fieldItemValue.isEmpty()) {
 							SimpleDateFormat dateFormater = new SimpleDateFormat(SettingsManager.getSettings().getDateFormat());
 							java.util.Date utilDate = dateFormater.parse(fieldItemValue);
 							java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
-							//java.util.Date utilDate = new java.util.Date(sqlDate.getTime());
 							tmpAlbumItem.addField((String) updatesColumNameMapping.get(i), fieldType, sqlDate);
 						} else {
 							tmpAlbumItem.addField((String) updatesColumNameMapping.get(i), fieldType, null);

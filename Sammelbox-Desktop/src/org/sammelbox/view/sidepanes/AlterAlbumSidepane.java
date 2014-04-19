@@ -389,7 +389,7 @@ public final class AlterAlbumSidepane {
 		// Initialize the table
 		java.util.List<MetaItemField> validMetaItemFields = new ArrayList<MetaItemField>();
 		try {
-			validMetaItemFields = MetaItemFieldFilter.getValidMetaItemFields(DatabaseOperations.getAlbumItemFieldNamesAndTypes(album));
+			validMetaItemFields = MetaItemFieldFilter.getValidMetaItemFields(DatabaseOperations.getMetaItemFields(album));
 		} catch (DatabaseWrapperOperationException ex) {
 			LOGGER.error("An error occured while trying to get the list of valid meta item fields", ex);
 		}

@@ -98,7 +98,7 @@ public class AddAlbumItemTests {
 				fail("Inserted album item could not be retrieved");
 			}
 
-			List<MetaItemField> metaItemFields = DatabaseOperations.getAlbumItemFieldNamesAndTypes(albumName);
+			List<MetaItemField> metaItemFields = DatabaseOperations.getMetaItemFields(albumName);
 
 			for (MetaItemField metaItemField : metaItemFields) {
 				for (ItemField itemField : fields) {
@@ -156,7 +156,7 @@ public class AddAlbumItemTests {
 				fail("Inserted album item could not be retrieved");
 			}
 
-			List<MetaItemField> metaItemFields = DatabaseOperations.getAlbumItemFieldNamesAndTypes(albumName);
+			List<MetaItemField> metaItemFields = DatabaseOperations.getMetaItemFields(albumName);
 
 			for (MetaItemField metaItemField : metaItemFields) {
 				for (ItemField itemField : fields) {
@@ -216,7 +216,7 @@ public class AddAlbumItemTests {
 				fail("Inserted album item could not be retrieved");
 			}
 
-			List<MetaItemField> metaItemFields = DatabaseOperations.getAlbumItemFieldNamesAndTypes(albumName);
+			List<MetaItemField> metaItemFields = DatabaseOperations.getMetaItemFields(albumName);
 			for (MetaItemField metaItemField : metaItemFields) {
 				for (ItemField itemField : fields) {
 					if (itemField.getName().equals(metaItemField.getName())) {

@@ -232,7 +232,7 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 		if (!anchor.equals(UIConstants.NO_ANCHOR_DEFINED)) {
 			BrowserFacade.jumpToAnchor(BrowserFacade.getFutureJumpAnchor());
 		}
-		ApplicationUI.getAlbumItemBrowser().execute("");
+		ApplicationUI.createOrRetrieveAlbumItemBrowser().execute("");
 	}
 
 	@Override

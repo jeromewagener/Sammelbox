@@ -33,7 +33,7 @@ public final class WelcomePageCreator {
 	}
 	
 	static void loadWelcomePage() {		
-		ApplicationUI.getAlbumItemBrowser().setText(
+		ApplicationUI.createOrRetrieveAlbumItemBrowser().setText(
 				"<!DOCTYPE HTML>" +
 				"<html>" +
 				"  <head>" +
