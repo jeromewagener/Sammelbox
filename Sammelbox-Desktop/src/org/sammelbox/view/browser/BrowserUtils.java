@@ -73,6 +73,7 @@ public final class BrowserUtils {
 		} catch (DatabaseWrapperOperationException ex) {
 			LOGGER.error("An error occured while reinitializing the album item store using the following SQL query (" + sqlQuery + ")", ex);
 		}
+		
 		showAlbum();
 	}
 

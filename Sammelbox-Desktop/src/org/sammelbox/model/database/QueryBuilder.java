@@ -27,6 +27,7 @@ import java.util.Map;
 import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.model.album.FieldType;
+import org.sammelbox.model.album.MetaItemField;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 import org.sammelbox.model.database.operations.DatabaseOperations;
 import org.sammelbox.view.browser.BrowserFacade;
@@ -240,14 +241,33 @@ public final class QueryBuilder {
 		String query = buildQuery(queryComponents, connectByAnd, album, sortField, sortAscending);
 		BrowserFacade.performBrowserQueryAndShow(query);
 	}
+
+	public static String createOrderedSelectStarQuery(String albumName) {		
+		List<MetaItemField> metaItemFields = new ArrayList<MetaItemField>();
+		try {
+			metaItemFields.addAll(DatabaseOperations.getMetaItemFields(albumName));
+		} catch (DatabaseWrapperOperationException dwoe) {
+			LOGGER.error("An error occurred while retrieving meta information about: " + albumName, dwoe);
+		}
+		
+		String orderBy = "";
+		if (!metaItemFields.isEmpty()) {
+			orderBy = " ORDER BY " + DatabaseStringUtilities.transformColumnNameToSelectQueryName(metaItemFields.get(0).getName());
+		}
+		
+		return "SELECT * " + 
+	           "FROM " + DatabaseStringUtilities.encloseNameWithQuotes(DatabaseStringUtilities.generateTableName(albumName)) + 
+	           orderBy;
+	}
 	
 	/**
 	 * Creates a simple select * from albumName with a properly formatted albumName
 	 * @param albumName The album on which the query should be performed.
 	 * @return A string containing the proper SQL string.
 	 */
-	public static String createSelectStarQuery(String albumName) {
-		return "SELECT * FROM " + DatabaseStringUtilities.encloseNameWithQuotes(DatabaseStringUtilities.generateTableName(albumName));
+	public static String createSelectStarQuery(String albumName) {		
+		return "SELECT * " + 
+	           "FROM " + DatabaseStringUtilities.encloseNameWithQuotes(DatabaseStringUtilities.generateTableName(albumName));
 	}
 	
 	/**
@@ -258,7 +278,6 @@ public final class QueryBuilder {
 	 * @return The properly formatted select query containing a wildcard as the value for in the where clause
 	 */
 	public static String createSelectColumnQuery(String albumName, String columnName) {
-
 		return " SELECT " + DatabaseStringUtilities.transformColumnNameToSelectQueryName(columnName)+ 
 			   " FROM " + DatabaseStringUtilities.encloseNameWithQuotes(DatabaseStringUtilities.generateTableName(albumName)); 
 	}
@@ -272,6 +291,5 @@ public final class QueryBuilder {
 	public static String createCountAsAliasStarWhere(String albumName, String alias) {
 		return " SELECT COUNT(*) AS " + alias + 
 			   " FROM " +  DatabaseStringUtilities.encloseNameWithQuotes(DatabaseStringUtilities.generateTableName(albumName));
-		
 	}
 }

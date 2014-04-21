@@ -193,7 +193,7 @@ public class SpreadsheetComposite {
 				// update album item store
 				try {
 					AlbumItemStore.reinitializeStore(DatabaseOperations.executeSQLQuery(
-							QueryBuilder.createSelectStarQuery(GuiController.getGuiState().getSelectedAlbum())));
+							QueryBuilder.createOrderedSelectStarQuery(GuiController.getGuiState().getSelectedAlbum())));
 				} catch (DatabaseWrapperOperationException e) {
 					LOGGER.error("An error occurred while reinitializing the album item store", e);
 					ComponentFactory.getMessageBox(
@@ -251,7 +251,7 @@ public class SpreadsheetComposite {
 				// update album item store
 				try {
 					AlbumItemStore.reinitializeStore(DatabaseOperations.executeSQLQuery(
-							QueryBuilder.createSelectStarQuery(GuiController.getGuiState().getSelectedAlbum())));
+							QueryBuilder.createOrderedSelectStarQuery(GuiController.getGuiState().getSelectedAlbum())));
 				} catch (DatabaseWrapperOperationException e) {
 					LOGGER.error("An error occurred while reinitializing the album item store", e);
 					ComponentFactory.getMessageBox(

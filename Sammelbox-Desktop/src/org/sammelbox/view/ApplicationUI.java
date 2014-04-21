@@ -409,7 +409,7 @@ public final class ApplicationUI implements EventObserver {
 			LOGGER.error("An error occured while enabling the quick search field", ex);
 		}
 		
-		BrowserFacade.performBrowserQueryAndShow(QueryBuilder.createSelectStarQuery(albumName));
+		BrowserFacade.performBrowserQueryAndShow(QueryBuilder.createOrderedSelectStarQuery(albumName));
 		
 		ApplicationUI.getViewList().setEnabled(SavedSearchManager.hasAlbumSavedSearches(albumName));
 		EventObservable.addEventToQueue(SammelboxEvent.ALBUM_SELECTED);
