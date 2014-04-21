@@ -50,6 +50,7 @@ import org.sammelbox.model.database.operations.DatabaseOperations;
 import org.sammelbox.view.ApplicationUI;
 import org.sammelbox.view.browser.BrowserFacade;
 import org.sammelbox.view.various.ComponentFactory;
+import org.sammelbox.view.various.FieldSelectionDialog;
 import org.sammelbox.view.various.PanelType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -211,6 +212,20 @@ public final class QuickControlSidepane {
 		});
 		final MenuItem albumListPopupMenuItemSeparator2 = new MenuItem(popupMenuForAlbumList, SWT.SEPARATOR);
 
+		final MenuItem sortBy = new MenuItem(popupMenuForAlbumList, SWT.NONE);
+		sortBy.setText(Translator.toBeTranslated("Sort by"));
+		sortBy.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				new FieldSelectionDialog(ApplicationUI.getShell()).open(
+						Translator.toBeTranslated("Sort by:"),
+						Translator.toBeTranslated("The items should be sorted by:"),
+						GuiController.getGuiState().getSelectedAlbum(),
+						Translator.toBeTranslated("Save"));
+			}
+		});
+		
+		final MenuItem albumListPopupMenuItemSeparator3 = new MenuItem(popupMenuForAlbumList, SWT.SEPARATOR);
+		
 		final MenuItem removeAlbum = new MenuItem(popupMenuForAlbumList, SWT.NONE);
 		removeAlbum.setText(Translator.get(DictKeys.DROPDOWN_REMOVE));
 		removeAlbum.addSelectionListener(new SelectionAdapter() {
@@ -251,9 +266,10 @@ public final class QuickControlSidepane {
 				moveAlbumOneDown.setEnabled(extraMenuItemsEnabled);
 				moveAlbumOneUp.setEnabled(extraMenuItemsEnabled);
 				moveAlbumBottom.setEnabled(extraMenuItemsEnabled);
-				alterAlbum.setEnabled(extraMenuItemsEnabled);
+				sortBy.setEnabled(extraMenuItemsEnabled);
 				albumListPopupMenuItemSeparator1.setEnabled(extraMenuItemsEnabled);
-				albumListPopupMenuItemSeparator2.setEnabled(extraMenuItemsEnabled);		
+				albumListPopupMenuItemSeparator2.setEnabled(extraMenuItemsEnabled);
+				albumListPopupMenuItemSeparator3.setEnabled(extraMenuItemsEnabled);	
 				removeAlbum.setEnabled(extraMenuItemsEnabled);
 			}
 		});			

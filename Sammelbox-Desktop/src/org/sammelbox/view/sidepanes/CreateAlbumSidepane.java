@@ -347,7 +347,7 @@ public final class CreateAlbumSidepane {
 				ApplicationUI.refreshAlbumList();
 				ApplicationUI.setSelectedAlbumAndReload(albumName);
 				
-				BrowserFacade.performBrowserQueryAndShow(QueryBuilder.createSelectStarQuery(albumName));
+				BrowserFacade.performBrowserQueryAndShow(QueryBuilder.createOrderedSelectStarQuery(albumName));
 
 				ApplicationUI.changeRightCompositeTo(PanelType.EMPTY, EmptySidepane.build(parentComposite));
 			}

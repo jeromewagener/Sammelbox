@@ -126,7 +126,7 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 					LOGGER.error("A database error occured while deleting the album item #" + id + " from the album '" + 
 										ApplicationUI.getSelectedAlbum() + "'", ex);
 				}
-				BrowserFacade.performBrowserQueryAndShow(QueryBuilder.createSelectStarQuery(ApplicationUI.getSelectedAlbum()));
+				BrowserFacade.performBrowserQueryAndShow(QueryBuilder.createOrderedSelectStarQuery(ApplicationUI.getSelectedAlbum()));
 			}
 
 			// Do not change the page
@@ -178,7 +178,7 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 			String albumItemId = event.location.substring(UIConstants.RELOAD_AND_SHOW_ALBUM_VIEW.length());
 			
 			if (!GuiController.getGuiState().isViewSelected()) {
-				BrowserFacade.performBrowserQueryAndShow(QueryBuilder.createSelectStarQuery(GuiController.getGuiState().getSelectedAlbum()));
+				BrowserFacade.performBrowserQueryAndShow(QueryBuilder.createOrderedSelectStarQuery(GuiController.getGuiState().getSelectedAlbum()));
 			} else {
 				BrowserFacade.performBrowserQueryAndShow(SavedSearchManager.getSqlQueryBySavedSearchName(
 						GuiController.getGuiState().getSelectedAlbum(), GuiController.getGuiState().getSelectedSavedSearch()));
