@@ -96,7 +96,7 @@ public final class QueryOperations {
 
 		// If no field is quicksearchable return select * from albumName or no terms have been entered
 		if (quicksearchFieldNames == null || quicksearchFieldNames.isEmpty() || quickSearchTerms == null || quickSearchTerms.isEmpty() ) {
-			query = QueryBuilder.createSelectStarQuery(albumName);
+			query = QueryBuilder.createOrderedSelectStarQuery(albumName);
 			return executeSQLQuery(query);
 		}
 

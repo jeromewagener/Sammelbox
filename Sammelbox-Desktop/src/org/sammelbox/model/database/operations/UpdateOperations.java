@@ -177,7 +177,7 @@ public final class UpdateOperations {
 		String savepointName = DatabaseIntegrityManager.createSavepoint();
 		try {
 			// Backup the old data in java objects
-			List<AlbumItem> albumItems = QueryOperations.getAlbumItems(QueryBuilder.createSelectStarQuery(albumName));
+			List<AlbumItem> albumItems = QueryOperations.getAlbumItems(QueryBuilder.createOrderedSelectStarQuery(albumName));
 			// Create the new table pointing to new typeinfo
 			boolean hasPictureField = QueryOperations.isPictureAlbum(albumName);
 			List<MetaItemField> newFields = QueryOperations.getAlbumItemFieldNamesAndTypes(albumName);
