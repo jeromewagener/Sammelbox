@@ -354,6 +354,33 @@ function cloneRow(id) {
 			removeClass(elem, 'wrongInput');
 		}
 	}	
+	
+	var deleteDiv	= document.getElementById('deletediv:' + id);
+	var deleteTd	= document.getElementById('delete:' + id);
+	
+	if (hasClass(deleteDiv, 'hidden')) {
+		removeClass(deleteDiv, 'hidden');
+	}
+		
+	if (hasClass(deleteTd, 'whiteBorderless')) {
+		removeClass(deleteTd, 'whiteBorderless');
+	}
+}
+
+function deleteRow(id) {
+	var rowToDelete = document.getElementById("row:" + id);
+	var table = document.getElementById("spreadsheetTable");
+	
+	var rowCount = table.rows.length;
+  
+	for (var i = 0; i < rowCount; i++) {
+		var row = table.rows[i];
+
+		if (row == rowToDelete) {
+			table.deleteRow(i);
+			return;
+		}
+	}
 }
 
 /* Functions to increase/decrease the counters that are shown on the bottom of the Spreadsheet. */

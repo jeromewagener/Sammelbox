@@ -51,7 +51,7 @@ public final class SpreadsheetItemCreator {
 
 	public static void createSpreadsheetHeader(StringBuilder htmlSpreadsheetHeader, AlbumItem albumItem, Map<MetaItemField, Integer> metaItemToColumnIndexMap) {
 		htmlSpreadsheetHeader.append("<tr class=\"header\">");
-		htmlSpreadsheetHeader.append("<th> Del. </th>");
+		htmlSpreadsheetHeader.append("<th>&nbsp;&nbsp;&nbsp;&nbsp;</th>");
 		
 		long columnIndex = 0;
 		for(ItemField itemField : ItemFieldFilter.getValidItemFields(albumItem.getFields())) {
@@ -130,8 +130,25 @@ public final class SpreadsheetItemCreator {
 		long row = -1;
 		htmlSpreadsheetRow.delete(0, htmlSpreadsheetRow.length());
 				
-		htmlSpreadsheetRow.append("<td id=\"delete:" + albumItem.getField(FieldType.ID) + "" + "\" class=\"field\">X" + albumItem.getField(FieldType.ID) + "</td>");
 		
+		if ((long)albumItem.getField(FieldType.ID).getValue() == -1) {
+			
+		
+			htmlSpreadsheetRow.append("<td id=\"delete:" + albumItem.getField(FieldType.ID).getValue() + "" + "\" " +
+										  "class=\"field whiteBorderless\" >" +
+					
+										  "<div id=\"deletediv:" + albumItem.getField(FieldType.ID).getValue() + "\"" +
+										  	   "class=\"deleteText hidden\"" +
+										  	   "onClick=deleteRow(" + albumItem.getField(FieldType.ID).getValue() + ") > " +
+										  	   "&nbsp; x &nbsp;" +
+										  "</div>" +
+									  "</td>");
+		} else {
+			htmlSpreadsheetRow.append("<td id=\"delete:" + albumItem.getField(FieldType.ID).getValue() + "" + "\" " +
+					  					  "class=\"field deleteText\" " +
+					  					  ">&nbsp;" +
+									  "</td>");
+		}
 		for (ItemField itemField : ItemFieldFilterPlusID.getValidItemFields(albumItem.getFields())) {		
 			long col = 0;
 			for (MetaItemField metaItemField : metaItemToColumnIndexMap.keySet()) {

@@ -51,7 +51,7 @@ table
 
 .whiteBorderless
 {
-	border-right-width: 0px;
+	border-left-width: 0px;
 	border-bottom-width: 0px;
 	background-color: white;
 }
@@ -193,4 +193,9 @@ input
 { 
 	border-radius:4px; 
 	box-shadow: 5px 5px 8px #CCC; 
+}
+
+.deleteText:hover
+{
+	color: red;	
 }
