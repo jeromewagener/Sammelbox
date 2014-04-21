@@ -32,7 +32,6 @@ import org.slf4j.LoggerFactory;
 
 import static org.sammelbox.view.sidepanes.SettingsSidepane.*;
 
-// TODO when hovering over the info icons, some additional information should be shown to the user
 public class Configurator {
 	private static final Logger LOGGER = LoggerFactory.getLogger(Configurator.class);
 	
@@ -119,6 +118,9 @@ public class Configurator {
 		
 		Label storageInfoLabel = new Label(settingsComposite, SWT.NONE);
 		storageInfoLabel.setImage(FileSystemAccessWrapper.getImageFromResource("graphics/info.png"));
+		storageInfoLabel.setToolTipText(Translator.toBeTranslated(
+				"This setting allows you to choose a different storage location if desired." + 
+				"Depending on the amount of images that you want to use, this directory might need some space."));
 		
 		// Create shortcut?
 		new Label(settingsComposite, SWT.NULL);
@@ -128,6 +130,9 @@ public class Configurator {
 		new Label(settingsComposite, SWT.NULL);
 		Label shortcutInfoLabel = new Label(settingsComposite, SWT.NONE);
 		shortcutInfoLabel.setImage(FileSystemAccessWrapper.getImageFromResource("graphics/info.png"));
+		shortcutInfoLabel.setToolTipText(Translator.toBeTranslated(
+				"This setting allows you to create a desktop shortcut if desired. If you choose to not create a "+
+				"desktop shortcut, you will need to start Sammelbox from within the the Sammelbox storage folder."));
 		
 		if (!isWindows()) {
 			createDesktopShortCut.setEnabled(false);

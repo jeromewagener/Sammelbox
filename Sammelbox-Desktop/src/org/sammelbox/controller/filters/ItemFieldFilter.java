@@ -27,7 +27,6 @@ import java.util.List;
 import org.sammelbox.model.album.FieldType;
 import org.sammelbox.model.album.ItemField;
 
-// TODO this class together with MetaItemFieldFilter needs to be refactored
 public final class ItemFieldFilter {
 	private ItemFieldFilter() {
 	}
@@ -39,8 +38,6 @@ public final class ItemFieldFilter {
 		List<ItemField> validItemFields = new ArrayList<ItemField>();
 		List<FieldType> validFieldTypes = new LinkedList<FieldType>(Arrays.asList(FieldType.values()));
 
-		// TODO implement or delete for future releases
-		validFieldTypes.remove(FieldType.TIME);
 		validFieldTypes.remove(FieldType.ID);
 		validFieldTypes.remove(FieldType.UUID);
 		

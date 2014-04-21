@@ -5,9 +5,11 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.browser.BrowserFunction;
 import org.sammelbox.controller.GuiController;
+import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.controller.managers.SettingsManager;
 import org.sammelbox.model.album.AlbumItem;
 import org.sammelbox.model.album.AlbumItemStore;
@@ -17,6 +19,7 @@ import org.sammelbox.model.album.StarRating;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 import org.sammelbox.model.database.operations.DatabaseOperations;
 import org.sammelbox.view.ApplicationUI;
+import org.sammelbox.view.various.ComponentFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +54,13 @@ public class SpreadsheetUpdateFunction extends BrowserFunction {
 						tmpAlbumItem.setItemId(id);
 					}
 				} else {
-					// TODO Return feedback to the user... Skipping this row.
+					ComponentFactory.getMessageBox(
+							  Translator.toBeTranslated("An error occurred"), 
+							  Translator.toBeTranslated("Unfortunately, an internal error occurred and not all of " + 
+							     "your changes might be applied. Please verify them manually. " +
+							     "(Error: The first field type must be an ID field)"),
+							  SWT.ERROR | SWT.OK).open();
+					
 					LOGGER.error("The first field type must be an ID field.");
 					continue;
 				}
@@ -113,15 +122,33 @@ public class SpreadsheetUpdateFunction extends BrowserFunction {
 				}
 
 			} catch (NumberFormatException nfe) {
-				// TODO Return feedback to the user... Skipping this row.
+				ComponentFactory.getMessageBox(
+						  Translator.toBeTranslated("An error occurred"), 
+						  Translator.toBeTranslated("Unfortunately, an internal error occurred and not all of " + 
+						     "your changes might be applied. Please verify them manually. " +
+						     "(Error: An error occured while parsing a number of an update row.)"),
+						  SWT.ERROR | SWT.OK).open();
+				
 				LOGGER.error("An error occured while parsing a number of an update row.", nfe);
 				continue;
 			} catch (DatabaseWrapperOperationException dbwoe) {
-				// TODO Return feedback to the user... Skipping this row.
+				ComponentFactory.getMessageBox(
+						  Translator.toBeTranslated("An error occurred"), 
+						  Translator.toBeTranslated("Unfortunately, an internal error occurred and not all of " + 
+						     "your changes might be applied. Please verify them manually. " +
+						     "(Error: An error occured while storing or updating an item.)"),
+						  SWT.ERROR | SWT.OK).open();
+				
 				LOGGER.error("An error occured while storing or updating an item.", dbwoe);
 				continue;
 			} catch (ParseException pe) {
-				// TODO Return feedback to the user... Skipping this row.
+				ComponentFactory.getMessageBox(
+						  Translator.toBeTranslated("An error occurred"), 
+						  Translator.toBeTranslated("Unfortunately, an internal error occurred and not all of " + 
+						     "your changes might be applied. Please verify them manually. " +
+						     "(Error: An error occured while storing or updating a date.)"),
+						  SWT.ERROR | SWT.OK).open();
+				
 				LOGGER.error("An error occured while storing or updating a date.", pe);
 				continue;
 			}
@@ -134,14 +161,19 @@ public class SpreadsheetUpdateFunction extends BrowserFunction {
 			try {
 				DatabaseOperations.deleteAlbumItem(AlbumItemStore.getAlbumItem(id));
 			} catch (DatabaseWrapperOperationException dbwoe) {
-				// TODO Return feedback to the user... Skipping this row.
+				ComponentFactory.getMessageBox(
+						  Translator.toBeTranslated("An error occurred"), 
+						  Translator.toBeTranslated("Unfortunately, an internal error occurred and not all of " + 
+						     "your changes might be applied. Please verify them manually. " +
+						     "(Error: An error occured while deleting an item.)"),
+						  SWT.ERROR | SWT.OK).open();
+				
 				LOGGER.error("An error occured while deleting an item.", dbwoe);
 				continue;
 			}			
 		}
 
-		// TODO find a more generic way to solve this.
-		ApplicationUI.setSelectedAlbum(GuiController.getGuiState().getSelectedAlbum());
+		ApplicationUI.setSelectedAlbumAndReload(GuiController.getGuiState().getSelectedAlbum());
 		
 		return null;
 	}

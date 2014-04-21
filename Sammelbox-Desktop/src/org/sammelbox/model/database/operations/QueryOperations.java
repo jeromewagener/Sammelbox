@@ -152,7 +152,6 @@ public final class QueryOperations {
 		return executeQuickSearchQuery(query, albumName);
 	}
 	
-	// TODO: Find a better spot for this method.
 	public static long transformDateStringToUTCUnixTime(String dateString) throws ParseException {
 		SimpleDateFormat sdf = new SimpleDateFormat(SettingsManager.getSettings().getDateFormat());
 		sdf.setTimeZone(TimeZone.getTimeZone("UTC"));

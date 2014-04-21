@@ -37,8 +37,6 @@ public final class MetaItemFieldFilterPlusID {
 		List<MetaItemField> validMetaItemFields = new ArrayList<MetaItemField>();
 		List<FieldType> validFieldTypes = new LinkedList<FieldType>(Arrays.asList(FieldType.values()));
 
-		// TODO implement or delete for future releases
-		validFieldTypes.remove(FieldType.TIME);
 		validFieldTypes.remove(FieldType.UUID);
 		
 		for (MetaItemField metaItemField : metaItemFields) {
@@ -58,8 +56,6 @@ public final class MetaItemFieldFilterPlusID {
 		List<MetaItemField> validMetaItemFields = new ArrayList<MetaItemField>();
 		List<FieldType> validFieldTypes = new LinkedList<FieldType>(Arrays.asList(FieldType.values()));	
 		
-		// TODO implement or delete for future releases
-		validFieldTypes.remove(FieldType.TIME);
 		validFieldTypes.remove(FieldType.UUID);
 		
 		for (MetaItemField metaItemField : metaItemFields) {

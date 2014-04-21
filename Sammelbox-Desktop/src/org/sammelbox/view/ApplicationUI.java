@@ -369,11 +369,11 @@ public final class ApplicationUI implements EventObserver {
 		return ApplicationUI.quickSearch;
 	}
 
-	/** Sets the currently selected/active album
+	/** Sets the currently selected/active album and reloads it
 	 * @param albumName The name of the now selected/active album. If the albumName is null or empty then all albums are deselected.  
 	 * @return True if the album is selected internally and in the SWT Album list. If all albums were successfully deselected then true is also returned. 
 	 * False otherwise.*/
-	public static boolean setSelectedAlbum(String albumName) {		
+	public static boolean setSelectedAlbumAndReload(String albumName) {		
 		// Set the album name and verify that it is in the list
 		GuiController.getGuiState().setSelectedAlbum(albumName);
 		if (albumName == null || albumName.isEmpty()) {

@@ -211,7 +211,7 @@ public final class AlterAlbumSidepane {
 					DatabaseOperations.renameAlbum(oldAlbumName, newAlbumName);
 					albumNameText.setData(newAlbumName);
 					ApplicationUI.refreshAlbumList();
-					ApplicationUI.setSelectedAlbum(newAlbumName);
+					ApplicationUI.setSelectedAlbumAndReload(newAlbumName);
 
 					SavedSearchManager.updateAlbumNameIfNecessary(oldAlbumName, newAlbumName);
 					

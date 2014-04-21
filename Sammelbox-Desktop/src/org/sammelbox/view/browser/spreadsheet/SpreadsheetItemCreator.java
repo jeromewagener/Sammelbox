@@ -174,7 +174,6 @@ public final class SpreadsheetItemCreator {
 				htmlSpreadsheetRow.append(getValueLine(((Double) itemField.getValue()).toString(), row, col));
 			} else if (itemField.getType().equals(FieldType.STAR_RATING)) {
 				htmlSpreadsheetRow.append(getStarsAsComboBoxes(((StarRating) itemField.getValue()), row, col));
-				//TODO remove or use - htmlSpreadsheetRow.append(getStars(((StarRating) fieldItem.getValue())));
 			} else if (itemField.getType().equals(FieldType.URL)) {
 				htmlSpreadsheetRow.append(getValueLine(((String) itemField.getValue()), row, col));	
 			}
@@ -235,24 +234,6 @@ public final class SpreadsheetItemCreator {
 						"</select>" +
 					"</div>" +
 				"</td>";
-	}
-	
-	// TODO decide to use or delete if not
-	@SuppressWarnings("unused")
-	private static String getStars(StarRating rating) {
-		if (rating.equals(StarRating.ONE_STAR)) {
-			return "<td class=\"field\"><img alt=\"\" height=\"20\" src=\"" + FileSystemLocations.getOneStarPNG() + "\"></td>";
-		} else if (rating.equals(StarRating.TWO_STARS)) {
-			return "<td class=\"field\"><img alt=\"\" height=\"20\" src=\"" + FileSystemLocations.getTwoStarsPNG() + "\"></td>";
-		} else if (rating.equals(StarRating.THREE_STARS)) {
-			return "<td class=\"field\"><img alt=\"\" height=\"20\" src=\"" + FileSystemLocations.getThreeStarsPNG() + "\"></td>";
-		} else if (rating.equals(StarRating.FOUR_STARS)) {
-			return "<td class=\"field\"><img alt=\"\" height=\"20\" src=\"" + FileSystemLocations.getFourStarsPNG() + "\"></td>";
-		} else if (rating.equals(StarRating.FIVE_STARS)) {
-			return "<td class=\"field\"><img alt=\"\" height=\"20\" src=\"" + FileSystemLocations.getFiveStarsPNG() + "\"></td>";
-		}
-		
-		return "<td class=\"field\"><img alt=\"\" height=\"20\" src=\"" + FileSystemLocations.getZeroStarsPNG() + "\"></td>";
 	}
 	
 	private static String getStarsAsComboBoxes(StarRating rating, long id, long columnIndex) {

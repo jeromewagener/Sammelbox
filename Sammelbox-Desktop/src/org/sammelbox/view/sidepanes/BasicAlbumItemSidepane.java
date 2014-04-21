@@ -134,8 +134,7 @@ public final class BasicAlbumItemSidepane {
 			String fieldName = metaItem.getName();
 			FieldType fieldType = metaItem.getType();
 
-			// TODO is this check still necessary? see the switch below
-			// Do not show the id field!
+			// Do not show the id or typeinfo field!
 			if (fieldName.equals("id") || fieldName.equals("typeinfo")) {
 				continue;
 			}
@@ -197,7 +196,6 @@ public final class BasicAlbumItemSidepane {
 		return basicAlbumItemComposite;
 	}
 
-	// TODO extract to own class
 	/** Returns a selection listener suitable for the add and update composite.
 	 * @param composite the composite to which the listener should be attached
 	 * @param isUpdateAlbumItemComposite if true, the listener is used for the update composite, otherwise for the add composite
@@ -319,7 +317,6 @@ public final class BasicAlbumItemSidepane {
 		};
 	}
 	
-	// TODO extract all these into own builders
 	private static void addTextComponent(Composite basicAlbumItemComposite, AlbumItem albumItem, String fieldName, boolean loadDataIntoFields) {
 		ComponentFactory.getSmallBoldItalicLabel(basicAlbumItemComposite, fieldName + ":");
 

@@ -86,8 +86,8 @@ public final class CreateOperations {
 											throws DatabaseWrapperOperationException {
 		String typeInfoTableName = "";
 		String createTempTableSQL = "";
-		List<MetaItemField> columns =  new ArrayList<MetaItemField>(fields);
-		// TODO comment. Whats up with this temporary table?
+		List<MetaItemField> columns = new ArrayList<MetaItemField>(fields);
+
 		boolean temporary = (columns == null);
 		String sqlTableName = tableName;
 

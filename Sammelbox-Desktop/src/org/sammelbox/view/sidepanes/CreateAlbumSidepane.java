@@ -345,7 +345,7 @@ public final class CreateAlbumSidepane {
 
 				// Correctly select and display the selected album.
 				ApplicationUI.refreshAlbumList();
-				ApplicationUI.setSelectedAlbum(albumName);
+				ApplicationUI.setSelectedAlbumAndReload(albumName);
 				
 				BrowserFacade.performBrowserQueryAndShow(QueryBuilder.createSelectStarQuery(albumName));
 

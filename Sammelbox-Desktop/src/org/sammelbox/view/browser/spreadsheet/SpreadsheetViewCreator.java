@@ -68,13 +68,11 @@ public final class SpreadsheetViewCreator {
 		Map<Integer, MetaItemField> indexToMetaItemFieldMap = null;
 		List<MetaItemField> metaItemFields = null;
 		
-		
 		try {
 			indexToMetaItemFieldMap = DatabaseOperations.getAlbumItemMetaMap(GuiController.getGuiState().getSelectedAlbum());
 			metaItemFields = new ArrayList<MetaItemField>(indexToMetaItemFieldMap.values());
-		} catch (DatabaseWrapperOperationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (DatabaseWrapperOperationException dwoe) {
+			LOGGER.error("An error occurred while gathering meta information", dwoe);
 		}
 		
 		Map<Integer, MetaItemField> columnIndexToMetaItemMap = null;

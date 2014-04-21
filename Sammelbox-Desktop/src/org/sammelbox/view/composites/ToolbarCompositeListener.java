@@ -38,7 +38,7 @@ public final class ToolbarCompositeListener {
 				
 				homeButton.setImage(homeActiveIcon);
 
-				ApplicationUI.setSelectedAlbum(GuiState.NO_ALBUM_SELECTED);
+				ApplicationUI.setSelectedAlbumAndReload(GuiState.NO_ALBUM_SELECTED);
 			}
 
 			@Override

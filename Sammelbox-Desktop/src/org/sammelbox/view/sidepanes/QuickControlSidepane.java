@@ -138,11 +138,9 @@ public final class QuickControlSidepane {
 				if (albumList.getSelectionIndex() != -1 && GuiController.continueWithUnsavedModifications(ApplicationUI.getShell())) {
 					GuiController.getGuiState().setUnsavedAlbumItem(false);
 					
-					ApplicationUI.setSelectedAlbum(albumList.getItem(albumList.getSelectionIndex()));
+					ApplicationUI.setSelectedAlbumAndReload(albumList.getItem(albumList.getSelectionIndex()));
 					ApplicationUI.changeRightCompositeTo(PanelType.EMPTY, EmptySidepane.build(ApplicationUI.getThreePanelComposite()));
 					WelcomePageManager.increaseClickCountForAlbumOrView(albumList.getItem(albumList.getSelectionIndex()));
-				} else {
-					// TODO (re)select original album
 				}
 			}
 		});
@@ -153,7 +151,7 @@ public final class QuickControlSidepane {
 			public void handleEvent(Event event) {				
 				if ((albumList.getItemCount() > 0) && albumList.getSelectionIndex() < 0) {
 					String firstAlbumNameInList = albumList.getItem(0);
-					ApplicationUI.setSelectedAlbum(firstAlbumNameInList);					
+					ApplicationUI.setSelectedAlbumAndReload(firstAlbumNameInList);					
 				}
 			}
 		});
