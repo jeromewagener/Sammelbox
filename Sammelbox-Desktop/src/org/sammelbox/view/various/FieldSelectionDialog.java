@@ -1,6 +1,8 @@
 package org.sammelbox.view.various;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -14,8 +16,12 @@ import org.eclipse.swt.widgets.Shell;
 import org.sammelbox.controller.filters.MetaItemFieldFilter;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 import org.sammelbox.model.database.operations.DatabaseOperations;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FieldSelectionDialog extends Dialog {
+	private static final Logger LOGGER = LoggerFactory.getLogger(FieldSelectionDialog.class);
+	
 	/** Stores the value which is eventually entered */
 	private String value = null;
 
@@ -37,7 +43,7 @@ public class FieldSelectionDialog extends Dialog {
 	 * @param albumName the album name for which a field should be selected
 	 * @param buttonText the text for the dialog button (E.g. "Rename") 
 	 * @return A string holding the value that the user entered or null, if the dialog was canceled/closed */
-	public String open(String title, String labelText, String albumName, String buttonText) {
+	public String open(String title, String labelText, String albumName, String buttonText, String defaultSelectedField) {
 		final Shell shell = new Shell(getParent(), SWT.TITLE | SWT.BORDER | SWT.APPLICATION_MODAL);
 		shell.setText(title);
 		shell.setLayout(new GridLayout(1, true));
@@ -45,6 +51,12 @@ public class FieldSelectionDialog extends Dialog {
 		ComponentFactory.getH3Label(shell, labelText);
 
 		final Combo fieldSelection = new Combo(shell, SWT.READ_ONLY);
+		fieldSelection.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent event) {
+				value = fieldSelection.getItem(fieldSelection.getSelectionIndex());
+			}
+		});
 		
 		GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		fieldSelection.setLayoutData(gridData);
@@ -52,11 +64,25 @@ public class FieldSelectionDialog extends Dialog {
 		String[] fieldNames = null;
 		try {
 			fieldNames = MetaItemFieldFilter.getValidFieldNamesAsStringArray(DatabaseOperations.getMetaItemFields(albumName));
-		} catch (DatabaseWrapperOperationException e) {
-			// TODO Auto-generated catch block
+		} catch (DatabaseWrapperOperationException dwoe) {
+			LOGGER.error("An error occurred while retrieving meta information for " + albumName, dwoe);
 		}
 		
 		fieldSelection.setItems(fieldNames);
+		
+		// select first item by default
+		if (fieldNames.length != 0) {
+			fieldSelection.select(0);
+		}
+		
+		// select given fieldname if possible
+		for (int i=0; i<fieldNames.length; i++) {
+			if (fieldNames[i].equals(defaultSelectedField)) {
+				fieldSelection.select(i);
+				value = defaultSelectedField;
+				break;
+			}
+		}
 		
 		final Button button = new Button(shell, SWT.PUSH);
 		button.setText(buttonText);

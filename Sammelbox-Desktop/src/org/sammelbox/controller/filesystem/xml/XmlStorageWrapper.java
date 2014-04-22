@@ -36,6 +36,7 @@ import org.sammelbox.controller.filesystem.FileSystemLocations;
 import org.sammelbox.controller.i18n.Language;
 import org.sammelbox.controller.managers.SavedSearchManager.SavedSearch;
 import org.sammelbox.controller.managers.SettingsManager;
+import org.sammelbox.model.album.Album;
 import org.sammelbox.model.database.QueryComponent;
 import org.sammelbox.model.database.QueryOperator;
 import org.sammelbox.model.settings.ApplicationSettings;
@@ -76,14 +77,15 @@ public final class XmlStorageWrapper {
 		FileSystemAccessWrapper.writeToFile(xmlOutput.toString(), FileSystemLocations.getSettingsXML());
 	}
 	
-	public static void storeAlbums(Collection<String> albums) {
+	public static void storeAlbums(Collection<Album> albums) {
 		StringBuilder xmlOutput = new StringBuilder();
 		
 		xmlOutput.append("<albums>\n");
 		
-		for (String album : albums) {
+		for (Album album : albums) {
 			xmlOutput.append("\t<album>\n");
-			xmlOutput.append("\t\t<name><![CDATA[" + album + "]]></name>\n");
+			xmlOutput.append("\t\t<name><![CDATA[" + album.getAlbumName() + "]]></name>\n");
+			xmlOutput.append("\t\t<sortByField><![CDATA[" + album.getSortByField() + "]]></sortByField>\n");
 			xmlOutput.append("\t</album>\n");
 		}
 		
@@ -193,10 +195,10 @@ public final class XmlStorageWrapper {
 		return applicationSettings;
 	}
 
-	public static List<String> retrieveAlbums() {
+	public static List<Album> retrieveAlbums() {
 		String albumsAsXml = FileSystemAccessWrapper.readFileAsString(FileSystemLocations.getAlbumsXML());
 		
-		List<String> albumToPosition = new LinkedList<String>();
+		List<Album> albumToPosition = new LinkedList<Album>();
 		
 		if (albumsAsXml.isEmpty()) {
 			return albumToPosition;
@@ -216,17 +218,17 @@ public final class XmlStorageWrapper {
 			} else {
 				NodeList albumNodes = document.getElementsByTagName("album");
 				
-				String name = "";
-				
 				for (int i = 0; i < albumNodes.getLength(); i++) {
 					Node node = albumNodes.item(i);
 
 					if (node.getNodeType() == Node.ELEMENT_NODE) {
 						Element element = (Element) node;
 						
-						name = getValue("name", element);
+						Album album = new Album();
+						album.setAlbumName(getValue("name", element));
+						album.setSortByField(getValue("sortByField", element));
 						
-						albumToPosition.add(name);
+						albumToPosition.add(album);
 					}
 				}
 			}
