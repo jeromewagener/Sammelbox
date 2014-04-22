@@ -23,6 +23,7 @@ import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.controller.managers.AlbumManager;
 import org.sammelbox.controller.managers.WelcomePageManager;
+import org.sammelbox.model.album.Album;
 import org.sammelbox.view.ApplicationUI;
 import org.sammelbox.view.UIConstants;
 
@@ -64,14 +65,14 @@ public final class WelcomePageCreator {
 										      Translator.get(DictKeys.BROWSER_NO_INFORMATION_AVAILABLE) + 
 										   "</li>");
 		} else {
-			for (String album : AlbumManager.getAlbums()) {
+			for (Album album : AlbumManager.getAlbums()) {
 				albumInformationBuilder.append("<li>" +
-											   "  Album <b>" + album + "</b><br>" +
+											   "  Album <b>" + album.getAlbumName() + "</b><br>" +
 											   "  <font size=-1>" +
 											   "  <i>" + 
 													Translator.get(DictKeys.BROWSER_NUMBER_OF_ITEMS_AND_LAST_UPDATED, 
-															WelcomePageManager.getNumberOfItemsInAlbum(album),
-															WelcomePageManager.getLastModifiedDate(album)) +
+															WelcomePageManager.getNumberOfItemsInAlbum(album.getAlbumName()),
+															WelcomePageManager.getLastModifiedDate(album.getAlbumName())) +
 											   "  </i>" +
 											   "  </font>" +
 											   "</li>");

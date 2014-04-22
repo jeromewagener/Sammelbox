@@ -50,6 +50,7 @@ import org.sammelbox.controller.managers.SavedSearchManager;
 import org.sammelbox.controller.managers.SavedSearchManager.SavedSearch;
 import org.sammelbox.controller.menu.MenuManager;
 import org.sammelbox.model.GuiState;
+import org.sammelbox.model.album.Album;
 import org.sammelbox.model.database.QueryBuilder;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 import org.sammelbox.model.database.operations.DatabaseOperations;
@@ -213,8 +214,8 @@ public final class ApplicationUI implements EventObserver {
 
 		// Create the album manager
 		AlbumManager.initialize();
-		for (String albumName : AlbumManager.getAlbums()) {
-			albums.add(albumName);
+		for (Album album : AlbumManager.getAlbums()) {
+			albums.add(album.getAlbumName());
 		}
 		
 		// Create the saved searches manager
@@ -492,8 +493,8 @@ public final class ApplicationUI implements EventObserver {
 	public void reactToEvent(SammelboxEvent event) {		
 		if (event.equals(SammelboxEvent.ALBUM_LIST_UPDATED)) {
 			albums.removeAll();
-			for (String album : AlbumManager.getAlbums()) {
-				albums.add(album);
+			for (Album album : AlbumManager.getAlbums()) {
+				albums.add(album.getAlbumName());
 			}
 		
 		} else if (event.equals(SammelboxEvent.ALBUM_SELECTED)) {			

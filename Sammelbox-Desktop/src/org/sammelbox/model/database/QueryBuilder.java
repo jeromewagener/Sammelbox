@@ -26,6 +26,7 @@ import java.util.Map;
 
 import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
+import org.sammelbox.controller.managers.AlbumManager;
 import org.sammelbox.model.album.FieldType;
 import org.sammelbox.model.album.MetaItemField;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
@@ -252,7 +253,23 @@ public final class QueryBuilder {
 		
 		String orderBy = "";
 		if (!metaItemFields.isEmpty()) {
-			orderBy = " ORDER BY " + DatabaseStringUtilities.transformColumnNameToSelectQueryName(metaItemFields.get(0).getName());
+			String sortByField = AlbumManager.getSortByField(albumName);
+			
+			// check whether the the "SortByField" is valid
+			boolean isSortByFieldValid = false;
+			for (MetaItemField metaItemField : metaItemFields) {
+				if (metaItemField.getName().equals(sortByField)) {
+					isSortByFieldValid = true;
+					break;
+				}
+			}
+			
+			// Sort by "SortByField" or by first column
+			if (isSortByFieldValid) {
+				orderBy = " ORDER BY " + DatabaseStringUtilities.transformColumnNameToSelectQueryName(sortByField);
+			} else {
+				orderBy = " ORDER BY " + DatabaseStringUtilities.transformColumnNameToSelectQueryName(metaItemFields.get(0).getName());
+			}
 		}
 		
 		return "SELECT * " + 

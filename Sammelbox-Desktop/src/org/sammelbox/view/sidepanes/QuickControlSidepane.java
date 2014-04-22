@@ -45,6 +45,7 @@ import org.sammelbox.controller.managers.SavedSearchManager;
 import org.sammelbox.controller.managers.SavedSearchManager.SavedSearch;
 import org.sammelbox.controller.managers.WelcomePageManager;
 import org.sammelbox.model.GuiState;
+import org.sammelbox.model.database.QueryBuilder;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 import org.sammelbox.model.database.operations.DatabaseOperations;
 import org.sammelbox.view.ApplicationUI;
@@ -216,11 +217,18 @@ public final class QuickControlSidepane {
 		sortBy.setText(Translator.toBeTranslated("Sort by"));
 		sortBy.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				new FieldSelectionDialog(ApplicationUI.getShell()).open(
+				FieldSelectionDialog fieldSelectionDialog = new FieldSelectionDialog(ApplicationUI.getShell());
+				
+				String sortByField = fieldSelectionDialog.open(
 						Translator.toBeTranslated("Sort by:"),
 						Translator.toBeTranslated("The items should be sorted by:"),
 						GuiController.getGuiState().getSelectedAlbum(),
-						Translator.toBeTranslated("Save"));
+						Translator.toBeTranslated("Save"),
+						AlbumManager.getSortByField(GuiController.getGuiState().getSelectedAlbum()));
+				
+				String selectedName = GuiController.getGuiState().getSelectedAlbum();
+				AlbumManager.setSortByField(selectedName, sortByField);
+				BrowserFacade.performBrowserQueryAndShow(QueryBuilder.createOrderedSelectStarQuery(selectedName));
 			}
 		});
 		
