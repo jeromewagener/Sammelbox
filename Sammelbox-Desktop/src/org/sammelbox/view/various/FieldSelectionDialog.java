@@ -14,12 +14,16 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 import org.sammelbox.controller.filters.MetaItemFieldFilter;
+import org.sammelbox.controller.i18n.Translator;
+import org.sammelbox.model.album.Album;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 import org.sammelbox.model.database.operations.DatabaseOperations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class FieldSelectionDialog extends Dialog {
+	private static final String SEPARATOR = "---------------";
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(FieldSelectionDialog.class);
 	
 	/** Stores the value which is eventually entered */
@@ -55,6 +59,10 @@ public class FieldSelectionDialog extends Dialog {
 			@Override
 			public void widgetSelected(SelectionEvent event) {
 				value = fieldSelection.getItem(fieldSelection.getSelectionIndex());
+				
+				if (value.equals(SEPARATOR) || value.equals(Translator.toBeTranslated("Do not sort"))) {
+					value = Album.NO_SORTING;
+				}
 			}
 		});
 		
@@ -69,18 +77,26 @@ public class FieldSelectionDialog extends Dialog {
 		}
 		
 		fieldSelection.setItems(fieldNames);
+		fieldSelection.add(SEPARATOR);
+		fieldSelection.add(Translator.toBeTranslated("Do not sort"));
 		
 		// select first item by default
 		if (fieldNames.length != 0) {
 			fieldSelection.select(0);
 		}
 		
-		// select given fieldname if possible
-		for (int i=0; i<fieldNames.length; i++) {
-			if (fieldNames[i].equals(defaultSelectedField)) {
-				fieldSelection.select(i);
-				value = defaultSelectedField;
-				break;
+		if (defaultSelectedField.equals(Album.NO_SORTING)) {
+			// select the last item in the list which must be the "do not sort" option
+			fieldSelection.select(fieldSelection.getItemCount() - 1);
+			value = defaultSelectedField;
+		} else {
+			// select given fieldname if possible
+			for (int i=0; i<fieldNames.length; i++) {
+				if (fieldNames[i].equals(defaultSelectedField)) {
+					fieldSelection.select(i);
+					value = defaultSelectedField;
+					break;
+				}
 			}
 		}
 		
@@ -118,7 +134,7 @@ public class FieldSelectionDialog extends Dialog {
 				shell.getDisplay().sleep();
 			}
 		}
-
+		
 		return value;
 	}
 }
