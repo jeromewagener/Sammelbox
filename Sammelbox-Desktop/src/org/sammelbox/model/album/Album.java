@@ -1,6 +1,8 @@
 package org.sammelbox.model.album;
 
 public class Album implements Comparable<Album> {
+	public final static String NO_SORTING = "NO_SORTING";
+	
 	private String albumName;
 	private String sortByField;
 	

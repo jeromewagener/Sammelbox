@@ -27,6 +27,7 @@ import java.util.Map;
 import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.controller.managers.AlbumManager;
+import org.sammelbox.model.album.Album;
 import org.sammelbox.model.album.FieldType;
 import org.sammelbox.model.album.MetaItemField;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
@@ -267,7 +268,7 @@ public final class QueryBuilder {
 			// Sort by "SortByField" or by first column
 			if (isSortByFieldValid) {
 				orderBy = " ORDER BY " + DatabaseStringUtilities.transformColumnNameToSelectQueryName(sortByField);
-			} else {
+			} else if (!Album.NO_SORTING.equals(sortByField)) {
 				orderBy = " ORDER BY " + DatabaseStringUtilities.transformColumnNameToSelectQueryName(metaItemFields.get(0).getName());
 			}
 		}
