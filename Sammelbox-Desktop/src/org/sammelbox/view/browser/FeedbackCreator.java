@@ -187,14 +187,4 @@ public final class FeedbackCreator {
 	static void showSynchronizationPageWithProgressBar(String messageToShow) {
 		showTemplate("transfer.html", Translator.get(DictKeys.BROWSER_SYNCRONIZATION_HEADER), messageToShow);
 	}
-	
-	static void showImportPage() {
-		showTemplate("default.html", Translator.toBeTranslated("Importing an Album from CSV File"), 
-				Translator.toBeTranslated("Please note that you can specify the filetype by ..."));
-	}
-	
-	static void showSettingsPage() {
-		showTemplate("default.html", Translator.toBeTranslated("Modifying Settings"), 
-				Translator.toBeTranslated("Please note that you will need to restart after modifying the settings ..."));
-	}
 }

@@ -13,6 +13,7 @@ import org.sammelbox.view.ApplicationUI;
 import org.sammelbox.view.browser.BrowserFacade;
 import org.sammelbox.view.sidepanes.EmptySidepane;
 import org.sammelbox.view.sidepanes.SynchronizeSidepane;
+import org.sammelbox.view.various.ComponentFactory;
 import org.sammelbox.view.various.PanelType;
 
 public final class SammelboxMenuItemListener {
@@ -47,6 +48,15 @@ public final class SammelboxMenuItemListener {
 			public void widgetSelected(SelectionEvent evt) {
 				ApplicationUI.changeRightCompositeTo(PanelType.EMPTY, EmptySidepane.build(ApplicationUI.getThreePanelComposite()));
 
+				// Show restore backup warning - do you really want to delete these items?
+				if (!ComponentFactory.showYesNoDialog(ApplicationUI.getShell(), 
+						Translator.toBeTranslated("Warning: You might lose recent modifications"), 
+						Translator.toBeTranslated("Do you really want to restore a previous backup? Please note that " +
+								"all recent modifications will be lost. The restore process will overwrite everything!"))) {
+					return;
+				}
+				
+				// Open backup selection dialog
 				FileDialog openFileDialog = new FileDialog(ApplicationUI.getShell(), SWT.OPEN);
 				openFileDialog.setText(Translator.get(DictKeys.DIALOG_RESTORE_FROM_FILE));
 				openFileDialog.setFilterPath(System.getProperty("user.home"));
@@ -76,6 +86,8 @@ public final class SammelboxMenuItemListener {
 		return new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent event) {
+				BrowserFacade.showHtmlPage("synchronize");
+				
 				ApplicationUI.changeRightCompositeTo(
 						PanelType.SYNCHRONIZATION, SynchronizeSidepane.build(ApplicationUI.getThreePanelComposite()));
 			}

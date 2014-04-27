@@ -56,7 +56,7 @@ public final class HelpMenuItemListener {
 			public void widgetSelected(SelectionEvent selectionEvent) {
 				// No default album is selected on help
 				ApplicationUI.refreshAlbumList();
-				BrowserFacade.showHelpPage();
+				BrowserFacade.showHtmlPage("help");
 				ApplicationUI.changeRightCompositeTo(PanelType.HELP, EmptySidepane.build(ApplicationUI.getThreePanelComposite()));
 			}
 		};
@@ -72,17 +72,6 @@ public final class HelpMenuItemListener {
 				templateContent.put("HEADER", Translator.get(DictKeys.BROWSER_LICENSE_HEADER));
 				templateContent.put("MESSAGE", Translator.get(DictKeys.BROWSER_LICENSE));
 				BrowserFacade.fillAndLoadTemplate("about.html", templateContent);
-				ApplicationUI.changeRightCompositeTo(PanelType.HELP, EmptySidepane.build(ApplicationUI.getThreePanelComposite()));
-			}
-		};
-	}
-
-	public static SelectionListener getShowBrowserInfoListener() {
-		return new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent selectionEvent) {
-				ApplicationUI.refreshAlbumList();
-				BrowserFacade.loadHtmlFile("browserinfo.html");
 				ApplicationUI.changeRightCompositeTo(PanelType.HELP, EmptySidepane.build(ApplicationUI.getThreePanelComposite()));
 			}
 		};

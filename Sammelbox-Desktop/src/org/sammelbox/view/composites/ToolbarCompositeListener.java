@@ -155,7 +155,7 @@ public final class ToolbarCompositeListener {
 		return new MouseListener() {
 			@Override
 			public void mouseUp(MouseEvent mouseEvent) {
-				BrowserFacade.showSynchronizePage(Translator.get(DictKeys.BROWSER_SYNCRONIZATION_PRESS_START));
+				BrowserFacade.showHtmlPage("synchronize");
 				
 				if (ApplicationUI.getCurrentRightPanelType() != PanelType.SYNCHRONIZATION) {
 					ApplicationUI.changeRightCompositeTo(PanelType.SYNCHRONIZATION, SynchronizeSidepane.build(ApplicationUI.getThreePanelComposite()));
@@ -187,7 +187,7 @@ public final class ToolbarCompositeListener {
 			@Override
 			public void mouseUp(MouseEvent mouseEvent) {
 				if (ApplicationUI.getCurrentRightPanelType() != PanelType.HELP) {
-					BrowserFacade.showHelpPage();
+					BrowserFacade.showHtmlPage("help");
 					ApplicationUI.changeRightCompositeTo(PanelType.HELP, EmptySidepane.build(ApplicationUI.getThreePanelComposite()));
 					StatusBarComposite.getInstance(ApplicationUI.getShell()).writeStatus(Translator.get(DictKeys.STATUSBAR_HELP_OPENED));
 

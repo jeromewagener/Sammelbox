@@ -16,7 +16,7 @@ public final class SettingsMenuItemListener {
 		return new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				BrowserFacade.showSettingsPage();
+				BrowserFacade.showHtmlPage("settings");
 				
 				ApplicationUI.changeRightCompositeTo(
 						PanelType.SETTINGS, SettingsSidepane.build(ApplicationUI.getThreePanelComposite()));
