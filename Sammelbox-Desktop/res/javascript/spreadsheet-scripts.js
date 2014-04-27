@@ -310,7 +310,12 @@ function newItem(id) {
 	if (hasClass(row, 'empty')) {
 		cloneRow(id);
 		removeClass(row, 'empty');
-		addClass(row, 'new');
+		
+		if ((id % 2) == 0) {
+			addClass(row, 'newEven');
+		}	else {
+			addClass(row, 'newOdd');
+		}
 	}
 	
 	var changeObject = [];

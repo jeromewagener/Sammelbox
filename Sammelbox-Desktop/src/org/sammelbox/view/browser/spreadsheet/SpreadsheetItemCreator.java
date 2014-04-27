@@ -135,17 +135,17 @@ public final class SpreadsheetItemCreator {
 			
 		
 			htmlSpreadsheetRow.append("<td id=\"delete:" + albumItem.getField(FieldType.ID).getValue() + "" + "\" " +
-										  "class=\"field whiteBorderless\" >" +
+										  "class=\"deleteText whiteBorderless\" >" +
 					
 										  "<div id=\"deletediv:" + albumItem.getField(FieldType.ID).getValue() + "\"" +
-										  	   "class=\"deleteText hidden\"" +
+										  	   "class=\"hidden\"" +
 										  	   "onClick=deleteRow(" + albumItem.getField(FieldType.ID).getValue() + ") > " +
-										  	   "&nbsp; x &nbsp;" +
+										  	   "<b>✘</b>" +
 										  "</div>" +
 									  "</td>");
 		} else {
 			htmlSpreadsheetRow.append("<td id=\"delete:" + albumItem.getField(FieldType.ID).getValue() + "" + "\" " +
-					  					  "class=\"field deleteText\" " +
+					  					  "class=\"deleteText\" " +
 					  					  ">&nbsp;" +
 									  "</td>");
 		}

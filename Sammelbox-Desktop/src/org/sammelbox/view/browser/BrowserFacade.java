@@ -29,6 +29,7 @@ import org.sammelbox.model.album.AlbumItem;
 import org.sammelbox.model.album.AlbumItemResultSet;
 import org.sammelbox.view.ApplicationUI;
 import org.sammelbox.view.UIConstants;
+import org.sammelbox.view.browser.spreadsheet.SpreadsheetAbortFunction;
 import org.sammelbox.view.browser.spreadsheet.SpreadsheetUpdateFunction;
 
 public final class BrowserFacade {	
@@ -81,6 +82,7 @@ public final class BrowserFacade {
 	public static void showEditItemsSpreadsheet(List<Long> selectedItemIds) { 
 		BrowserUtils.showEditableSpreadsheet(selectedItemIds);
 		new SpreadsheetUpdateFunction(ApplicationUI.createOrRetrieveAlbumItemBrowser(), "spreadsheetUpdateFunction");
+		new SpreadsheetAbortFunction(ApplicationUI.createOrRetrieveAlbumItemBrowser(), "spreadsheetAbortFunction");
 	}
 	
 	public static void showHtmlPage(String pageName) {
