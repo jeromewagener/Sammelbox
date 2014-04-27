@@ -42,16 +42,16 @@ public enum Language {
 		}
 	}
 	
-	public static String getHelpPage(Language language) {
+	public static String getHtmlPage(Language language, String pageName) {
 		switch (language) {
 		case ENGLISH:
-			return "internationalization/help_en.html";
+			return "internationalization/html/" + pageName + "_en.html";
 
 		case DEUTSCH:
-			return "internationalization/help_de.html";
+			return "internationalization/html/" + pageName + "_de.html";
 		
 		default:
-			return "internationalization/help_en.html";
+			return "internationalization/html/" + pageName + "_en.html";
 		}
 	}
 	

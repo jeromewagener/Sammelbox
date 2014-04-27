@@ -73,8 +73,6 @@ public final class BrowserFacade {
 	public static void showBackupFinishedPage() { FeedbackCreator.showBackupFinishedPage(); }
 	public static void showSynchronizePage(String messageToShow) { FeedbackCreator.showSynchronizationPage(messageToShow); }
 	public static void showSynchronizePageWithProgressBar(String messageToShow) { FeedbackCreator.showSynchronizationPageWithProgressBar(messageToShow); }
-	public static void showSettingsPage() { FeedbackCreator.showSettingsPage(); }
-	public static void showImportPage() { FeedbackCreator.showImportPage(); }
 	
 	public static void showAddItemsSpreadsheet() { 
 		showEditItemsSpreadsheet(new ArrayList<Long>());
@@ -85,9 +83,10 @@ public final class BrowserFacade {
 		new SpreadsheetUpdateFunction(ApplicationUI.createOrRetrieveAlbumItemBrowser(), "spreadsheetUpdateFunction");
 	}
 	
-	public static void showHelpPage() {
+	public static void showHtmlPage(String pageName) {
 		String htmlHelpString = FileSystemAccessWrapper.readInputStreamIntoString(
-				ApplicationUI.getShell().getClass().getClassLoader().getResourceAsStream(Language.getHelpPage(Translator.getUsedLanguage())));
+				ApplicationUI.getShell().getClass().getClassLoader().getResourceAsStream(
+						Language.getHtmlPage(Translator.getUsedLanguage(), pageName)));
 		
 		ApplicationUI.createOrRetrieveAlbumItemBrowser().setText(htmlHelpString);
 	}

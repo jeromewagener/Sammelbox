@@ -78,11 +78,11 @@ public final class MenuManager implements EventObserver {
 		
 		MenuItem importAlbumItemsMenuItem = new MenuItem(sammelboxMenu, SWT.NONE);
 		importAlbumItemsMenuItem.setText(Translator.get(DictKeys.MENU_CSV_IMPORT));
-		importAlbumItemsMenuItem.addSelectionListener(ImportExportMenuItemListener.getImportAlbumItemsListener());
+		importAlbumItemsMenuItem.addSelectionListener(ImportExportMenuItemListener.getImportCSVAlbumItemsListener());
 		
 		MenuItem appendAlbumItemsMenuItem = new MenuItem(sammelboxMenu, SWT.NONE);
 		appendAlbumItemsMenuItem.setText(Translator.get(DictKeys.MENU_CSV_APPEND));
-		appendAlbumItemsMenuItem.addSelectionListener(ImportExportMenuItemListener.getAppendAlbumItemsListener());
+		appendAlbumItemsMenuItem.addSelectionListener(ImportExportMenuItemListener.getAppendCSVAlbumItemsListener());
 		
 		new MenuItem(sammelboxMenu, SWT.SEPARATOR);
 		
@@ -168,10 +168,6 @@ public final class MenuManager implements EventObserver {
 			dumpHTML.setText("Dump HTML");
 			dumpHTML.addSelectionListener(HelpMenuItemListener.getDumpHTMLListener());
 	
-			MenuItem showBrowserInfo = new MenuItem(debugSubMenu, SWT.NONE);
-			showBrowserInfo.setText("Show Browser Info");
-			showBrowserInfo.addSelectionListener(HelpMenuItemListener.getShowBrowserInfoListener());
-						
 			MenuItem disableSammelbox = new MenuItem(debugSubMenu, SWT.NONE);
 			disableSammelbox.setText("Call Test Function");
 			disableSammelbox.addSelectionListener(HelpMenuItemListener.getTestFunctionListener());

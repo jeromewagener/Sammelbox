@@ -16,21 +16,21 @@ import org.sammelbox.view.various.PanelType;
 import org.sammelbox.view.various.TextInputDialog;
 
 public class ImportExportMenuItemListener {
-	static SelectionAdapter getImportAlbumItemsListener() {
+	static SelectionAdapter getImportCSVAlbumItemsListener() {
 		return new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent evt) {
-				BrowserFacade.showImportPage();
+				BrowserFacade.showHtmlPage("import_csv");
 				ApplicationUI.changeRightCompositeTo(PanelType.IMPORT, ImportSidepane.build(ApplicationUI.getThreePanelComposite(), false));
 			}
 		};
 	}
 	
-	static SelectionAdapter getAppendAlbumItemsListener() {
+	static SelectionAdapter getAppendCSVAlbumItemsListener() {
 		return new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent evt) {
-				// TODO showAppendPage() similar to showImportPage
+				BrowserFacade.showHtmlPage("append_csv");
 				ApplicationUI.changeRightCompositeTo(PanelType.IMPORT, ImportSidepane.build(ApplicationUI.getThreePanelComposite(), true));
 			}
 		};
