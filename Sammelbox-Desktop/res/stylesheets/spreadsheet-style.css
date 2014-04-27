@@ -1,6 +1,7 @@
 body
 {
-	background-color: white;
+	background-color: #f2f1f0;
+	font-family:Arial,Helvetica,sans-serif;
 }
 
 .unselectable
@@ -53,7 +54,12 @@ table
 {
 	border-left-width: 0px;
 	border-bottom-width: 0px;
-	background-color: white;
+	background-color: #f2f1f0;
+	border-top-style: solid;
+	border-right-style: solid;
+	border-top-width: 1px;
+	border-right-width: 1px;	
+	border-color: #c4c1bd;
 }
 
 .label
@@ -66,17 +72,30 @@ table
 	display: none;	
 }
 
+table{
+	border-right-style: solid;
+	border-right-width: 1px;	
+	border-color: #c4c1bd;	
+}
+
+tr{
+	height: 23px;	
+}
+
 th
 {
-	border-style: solid;	
-	border-color: grey; 
+	color: #554f4c;
+	border-style: dotted;	
+	border-color: lightgrey; 
 	border-width: 1px;
 }
 
 td
 {
-	border-style: solid;	
-	border-color: grey; 
+	border-left-style: solid;
+	border-right-style: solid;	
+	border-left-color: darkgray;
+	border-right-color: darkgray;
 	vertical-align: middle; 
 	text-align: center;
 	border-width: 1px;
@@ -84,11 +103,12 @@ td
 	overflow: hidden;
 }
 
-input
+input, select
 {
 	border: none;
 	background-color: transparent;
 	width: 100%;
+	height: 80%;
 }
 
 .headerTable
@@ -119,9 +139,15 @@ input
 
 .header
 {
-	font-weight: bold;
+	border-style: solid;	
+	border-color: #aea9a5;
+	border-width: 1px;	
+	
+	
+	color: darkgrey;
+	font-weight: lighter;
 	border-style: solid;
-	background-color: lightgray;	
+	background-color: #f1f0ef;	
 }
 
 .dirty
@@ -129,9 +155,14 @@ input
 	background-color: lightgoldenrodyellow;
 }
 
-.new
+.newEven
 {
-	background-color: lightgreen;
+	background-color: #c3ccde;
+}
+
+.newOdd
+{
+	background-color: #d1d5de;
 }
 
 .delete
@@ -141,7 +172,7 @@ input
 
 .empty
 {
-	background-color: lightgrey;	
+	background-color: #ceffb6;	
 }
 
 .wrongInput
@@ -195,7 +226,14 @@ input
 	box-shadow: 5px 5px 8px #CCC; 
 }
 
+.deleteText
+{
+	border-left-style: solid;
+	border-color: #c4c1bd;
+}
+
 .deleteText:hover
 {
 	color: red;	
+	cursor:pointer;
 }

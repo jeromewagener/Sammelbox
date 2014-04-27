@@ -173,19 +173,13 @@ public final class SpreadsheetViewCreator {
 		htmlSpreadsheet.append("</div>");
 		htmlSpreadsheet.append("</br>");
 		htmlSpreadsheet.append("<button id=\"checkAndSend\" type=\"button\" onclick=\"checkAndSend();\" >" + Translator.toBeTranslated("Änderungen Sichern") + "</button> ");
+		htmlSpreadsheet.append("<button id=\"return\" type=\"button\" onclick=\"spreadsheetAbortFunction();\" >" + Translator.toBeTranslated("Abbrechen") + "</button> ");
 		htmlSpreadsheet.append("</br></br>");
 		htmlSpreadsheet.append("<label>");
-		htmlSpreadsheet.append("<div id=\"showModify\" class=\"smallLabel dirty\">To be modified <span id=\"modifyCount\">0</span></div> ");
-		htmlSpreadsheet.append("<div id=\"showAdd\" class=\"smallLabel new\">To be added <span id=\"addCount\">0</span></div> ");
+		htmlSpreadsheet.append("<div id=\"showModify\" class=\"hidden smallLabel dirty\">To be modified <span id=\"modifyCount\">0</span></div> ");
+		htmlSpreadsheet.append("<div id=\"showAdd\" class=\"hidden smallLabel new\">To be added <span id=\"addCount\">0</span></div> ");
 		htmlSpreadsheet.append("<div id=\"rowCount\" class=\"hidden\">" + AlbumItemStore.getAlbumItems().size() + "</div> ");
 		htmlSpreadsheet.append("</label>");
-		
-		
-		// Build header using album name. Include view name if appropriated
-		String collectionHeader = GuiController.getGuiState().getSelectedAlbum();
-		if (GuiController.getGuiState().isViewSelected()) {
-			collectionHeader += " - " + GuiController.getGuiState().getSelectedSavedSearch();
-		}
 		
 		// Create final page html
 		String finalPageAsHtml = 
@@ -204,7 +198,6 @@ public final class SpreadsheetViewCreator {
 				    "</script>" +
 				  "</head>" +
 				  "<body id=\"body\" class=\"normal\">" +
-				    "<h2>" + collectionHeader + "</h2> <span id=\"info\"></span>" + 
 				  	htmlSpreadsheet +
 				  "</body>" +
 				"</html>";
