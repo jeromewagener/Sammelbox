@@ -85,9 +85,9 @@ public class SpreadsheetComposite {
 	}
 	
 	private static void showNoItemSelectedMessage() {
-		ComponentFactory.getMessageBox(
-				Translator.toBeTranslated("No item selected"),
-				Translator.toBeTranslated("You need to select at least one item to perform this action"),
+		ComponentFactory.getMessageBox(Translator.get(
+				DictKeys.ERROR_NO_ITEM_SELECTED_HEADER),
+				Translator.get(DictKeys.ERROR_NO_ITEM_SELECTED),
 				SWT.OK | SWT.ICON_INFORMATION).open();
 	}
 	
@@ -240,10 +240,6 @@ public class SpreadsheetComposite {
 							DatabaseOperations.deleteAlbumItem(AlbumItemStore.getAlbumItem(selectedId));
 						} catch (DatabaseWrapperOperationException e) {
 							LOGGER.error("An error occurred while deleting the album item", e);
-							ComponentFactory.getMessageBox(
-									Translator.toBeTranslated("An error occurred"),
-									Translator.toBeTranslated("An error occurred while deleting the selected items."), 
-									SWT.ICON_ERROR | SWT.OK);
 						}
 					}
 				}
@@ -254,10 +250,6 @@ public class SpreadsheetComposite {
 							QueryBuilder.createOrderedSelectStarQuery(GuiController.getGuiState().getSelectedAlbum())));
 				} catch (DatabaseWrapperOperationException e) {
 					LOGGER.error("An error occurred while reinitializing the album item store", e);
-					ComponentFactory.getMessageBox(
-							Translator.toBeTranslated("An error occurred"),
-							Translator.toBeTranslated("An error occurred while refreshing the view. Please refresh manually!"), 
-							SWT.ICON_ERROR | SWT.OK);
 				}
 				
 				initializeWithItemsFromAlbumItemStore(table);

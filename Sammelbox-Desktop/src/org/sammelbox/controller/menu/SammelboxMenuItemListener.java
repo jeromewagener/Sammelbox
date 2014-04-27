@@ -50,9 +50,7 @@ public final class SammelboxMenuItemListener {
 
 				// Show restore backup warning - do you really want to delete these items?
 				if (!ComponentFactory.showYesNoDialog(ApplicationUI.getShell(), 
-						Translator.toBeTranslated("Warning: You might lose recent modifications"), 
-						Translator.toBeTranslated("Do you really want to restore a previous backup? Please note that " +
-								"all recent modifications will be lost. The restore process will overwrite everything!"))) {
+						Translator.get(DictKeys.WARNING), Translator.get(DictKeys.WARNING_RESTORE_OVERWRITES_EVERYTHING))) {
 					return;
 				}
 				
