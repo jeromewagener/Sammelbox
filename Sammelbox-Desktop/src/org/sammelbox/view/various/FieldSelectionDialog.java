@@ -14,6 +14,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 import org.sammelbox.controller.filters.MetaItemFieldFilter;
+import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.model.album.Album;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
@@ -43,7 +44,7 @@ public class FieldSelectionDialog extends Dialog {
 
 	/** Opens the text input dialog based on the parameters provided
 	 * @param title the window caption
-	 * @param labelText the text within the dialog. (E.g. "Please enter a new name") 
+	 * @param labelText the text within the dialog. (E.g. "Sort by") 
 	 * @param albumName the album name for which a field should be selected
 	 * @param buttonText the text for the dialog button (E.g. "Rename") 
 	 * @return A string holding the value that the user entered or null, if the dialog was canceled/closed */
@@ -60,7 +61,7 @@ public class FieldSelectionDialog extends Dialog {
 			public void widgetSelected(SelectionEvent event) {
 				value = fieldSelection.getItem(fieldSelection.getSelectionIndex());
 				
-				if (value.equals(SEPARATOR) || value.equals(Translator.toBeTranslated("Do not sort"))) {
+				if (value.equals(SEPARATOR) || value.equals(Translator.get(DictKeys.COMBOBOX_CONTENT_DO_NOT_SORT))) {
 					value = Album.NO_SORTING;
 				}
 			}
@@ -78,7 +79,7 @@ public class FieldSelectionDialog extends Dialog {
 		
 		fieldSelection.setItems(fieldNames);
 		fieldSelection.add(SEPARATOR);
-		fieldSelection.add(Translator.toBeTranslated("Do not sort"));
+		fieldSelection.add(Translator.get(DictKeys.COMBOBOX_CONTENT_DO_NOT_SORT));
 		
 		// select first item by default
 		if (fieldNames.length != 0) {

@@ -214,7 +214,7 @@ public final class QuickControlSidepane {
 		final MenuItem albumListPopupMenuItemSeparator2 = new MenuItem(popupMenuForAlbumList, SWT.SEPARATOR);
 
 		final MenuItem sortBy = new MenuItem(popupMenuForAlbumList, SWT.NONE);
-		sortBy.setText(Translator.toBeTranslated("Sort by"));
+		sortBy.setText(Translator.get(DictKeys.DROPDOWN_SORT_BY));
 		sortBy.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				FieldSelectionDialog fieldSelectionDialog = new FieldSelectionDialog(ApplicationUI.getShell());
