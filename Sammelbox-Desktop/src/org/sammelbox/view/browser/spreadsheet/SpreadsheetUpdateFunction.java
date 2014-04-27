@@ -9,6 +9,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.browser.BrowserFunction;
 import org.sammelbox.controller.GuiController;
+import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.controller.managers.SettingsManager;
 import org.sammelbox.model.album.AlbumItem;
@@ -55,10 +56,8 @@ public class SpreadsheetUpdateFunction extends BrowserFunction {
 					}
 				} else {
 					ComponentFactory.getMessageBox(
-							  Translator.toBeTranslated("An error occurred"), 
-							  Translator.toBeTranslated("Unfortunately, an internal error occurred and not all of " + 
-							     "your changes might be applied. Please verify them manually. " +
-							     "(Error: The first field type must be an ID field)"),
+							  Translator.get(DictKeys.ERROR_AN_INTERNAL_ERROR_OCCURRED_HEADER), 
+							  Translator.get(DictKeys.ERROR_AN_INTERNAL_ERROR_OCCURRED, "(Error: The first field type must be an ID field)"),
 							  SWT.ERROR | SWT.OK).open();
 					
 					LOGGER.error("The first field type must be an ID field.");
@@ -123,31 +122,25 @@ public class SpreadsheetUpdateFunction extends BrowserFunction {
 
 			} catch (NumberFormatException nfe) {
 				ComponentFactory.getMessageBox(
-						  Translator.toBeTranslated("An error occurred"), 
-						  Translator.toBeTranslated("Unfortunately, an internal error occurred and not all of " + 
-						     "your changes might be applied. Please verify them manually. " +
-						     "(Error: An error occured while parsing a number of an update row.)"),
-						  SWT.ERROR | SWT.OK).open();
+						Translator.get(DictKeys.ERROR_AN_INTERNAL_ERROR_OCCURRED_HEADER), 
+						Translator.get(DictKeys.ERROR_AN_INTERNAL_ERROR_OCCURRED, "(Error: An error occured while parsing a number of an update row.)"),
+						SWT.ERROR | SWT.OK).open();
 				
 				LOGGER.error("An error occured while parsing a number of an update row.", nfe);
 				continue;
 			} catch (DatabaseWrapperOperationException dbwoe) {
 				ComponentFactory.getMessageBox(
-						  Translator.toBeTranslated("An error occurred"), 
-						  Translator.toBeTranslated("Unfortunately, an internal error occurred and not all of " + 
-						     "your changes might be applied. Please verify them manually. " +
-						     "(Error: An error occured while storing or updating an item.)"),
-						  SWT.ERROR | SWT.OK).open();
+						Translator.get(DictKeys.ERROR_AN_INTERNAL_ERROR_OCCURRED_HEADER), 
+						Translator.get(DictKeys.ERROR_AN_INTERNAL_ERROR_OCCURRED, "(Error: An error occured while storing or updating an item.)"),
+						SWT.ERROR | SWT.OK).open();
 				
 				LOGGER.error("An error occured while storing or updating an item.", dbwoe);
 				continue;
 			} catch (ParseException pe) {
 				ComponentFactory.getMessageBox(
-						  Translator.toBeTranslated("An error occurred"), 
-						  Translator.toBeTranslated("Unfortunately, an internal error occurred and not all of " + 
-						     "your changes might be applied. Please verify them manually. " +
-						     "(Error: An error occured while storing or updating a date.)"),
-						  SWT.ERROR | SWT.OK).open();
+						Translator.get(DictKeys.ERROR_AN_INTERNAL_ERROR_OCCURRED_HEADER), 
+						Translator.get(DictKeys.ERROR_AN_INTERNAL_ERROR_OCCURRED, "(Error: An error occured while storing or updating a date.)"),
+					    SWT.ERROR | SWT.OK).open();
 				
 				LOGGER.error("An error occured while storing or updating a date.", pe);
 				continue;
@@ -162,11 +155,9 @@ public class SpreadsheetUpdateFunction extends BrowserFunction {
 				DatabaseOperations.deleteAlbumItem(AlbumItemStore.getAlbumItem(id));
 			} catch (DatabaseWrapperOperationException dbwoe) {
 				ComponentFactory.getMessageBox(
-						  Translator.toBeTranslated("An error occurred"), 
-						  Translator.toBeTranslated("Unfortunately, an internal error occurred and not all of " + 
-						     "your changes might be applied. Please verify them manually. " +
-						     "(Error: An error occured while deleting an item.)"),
-						  SWT.ERROR | SWT.OK).open();
+						Translator.get(DictKeys.ERROR_AN_INTERNAL_ERROR_OCCURRED_HEADER), 
+						Translator.get(DictKeys.ERROR_AN_INTERNAL_ERROR_OCCURRED, "(Error: An error occured while deleting an item.)"),
+						SWT.ERROR | SWT.OK).open();
 				
 				LOGGER.error("An error occured while deleting an item.", dbwoe);
 				continue;

@@ -87,6 +87,7 @@ public final class DictKeys {
 	public static final String DROPDOWN_ADD_ANOTHER_SAVED_SEARCH = "collector.dropdown.menu.ADD_ANOTHER_SAVED_SEARCH";
 	public static final String DROPDOWN_CREATE_NEW_ALBUM = "collector.dropdown.menu.CREATE_NEW_ALBUM";
 	public static final String DROPDOWN_ALTER_ALBUM = "collector.dropdown.menu.ALTER_ALBUM";
+	public static final String DROPDOWN_SORT_BY = "org.sammelbox.dropdown.menu.SORT_BY";
 	
 	/*   Dialog Messages   */
 	public static final String DIALOG_TITLE_PROGRAM_IS_RUNNING = "collector.dialog.title.PROGRAM_IS_RUNNING";
@@ -266,6 +267,7 @@ public final class DictKeys {
 	public static final String COMBOBOX_CONTENT_STARS = "org.sammelbox.combobox.content.STARS";
 	public static final String COMBOBOX_CONTENT_YES = "org.sammelbox.combobox.content.YES";
 	public static final String COMBOBOX_CONTENT_NO = "org.sammelbox.combobox.content.NO";
+	public static final String COMBOBOX_CONTENT_DO_NOT_SORT = "org.sammelbox.combobox.content.COMBOBOX_CONTENT_DO_NOT_SORT";
 	
 	/*   Browser   */
 	public static final String BROWSER_UPDATE = "collector.browser.text.UPDATE";
@@ -344,13 +346,18 @@ public final class DictKeys {
 	/*   Warnings   */
 	public static final String WARNING = "org.sammelbox.warning";
 	public static final String WARNING_SAVED_SEARCHES_MIGHT_BE_BROKEN = "org.sammelbox.warning.SAVED_SEARCHES_MIGHT_BE_BROKEN";
+	public static final String WARNING_RESTORE_OVERWRITES_EVERYTHING = "org.sammelbox.warning.WARNING_RESTORE_OVERWRITES_EVERYTHING";
 	
 	/*   Error Messages  */
 	public static final String ERROR_AN_ERROR_OCCURRED = "org.sammelbox.error.AN_ERROR_OCCURRED";
+	public static final String ERROR_AN_INTERNAL_ERROR_OCCURRED_HEADER = "org.sammelbox.error.ERROR_AN_INTERNAL_ERROR_OCCURRED_HEADER";
+	public static final String ERROR_AN_INTERNAL_ERROR_OCCURRED = "org.sammelbox.error.ERROR_AN_INTERNAL_ERROR_OCCURRED";
 	public static final String ERROR_FIELD_CAUSES_PROBLEMS = "org.sammelbox.error.FIELD_CAUSES_PROBLEMS";
 	public static final String ERROR_BACKUP_CREATION_FAILED = "org.sammelbox.error.BACKUP_CREATION_FAILED";
 	public static final String ERROR_RESTORE_FAILED = "org.sammelbox.error.RESTORE_FAILED";
 	public static final String ERROR_RESTORE_CLEANUP_FAILED = "org.sammelbox.error.RESTORE_CLEANUP_FAILED";
+	public static final String ERROR_NO_ITEM_SELECTED_HEADER = "org.sammelbox.error.ERROR_NO_ITEM_SELECTED_HEADER";
+	public static final String ERROR_NO_ITEM_SELECTED = "org.sammelbox.error.ERROR_NO_ITEM_SELECTED";
 	
 	/*   Configurator / Installer  */
 	public static final String CONFIGURATOR_WINDOW_TITLE = "org.sammelbox.installer.window.title";
@@ -363,4 +370,6 @@ public final class DictKeys {
 	public static final String CONFIGURATOR_DATE_FORMAT = "org.sammelbox.installer.label.date.format";
 	public static final String CONFIGURATOR_CANCEL = "org.sammelbox.installer.button.cancel";
 	public static final String CONFIGURATOR_START_SAMMELBOX = "org.sammelbox.installer.button.install";
+	public static final String CONFIGURATOR_STORAGE_TOOLTIP = "org.sammelbox.installer.storage.tooltip";
+	public static final String CONFIGURATOR_CREATE_SHORTCUT_TOOLTIP = "org.sammelbox.installer.create.shortcut.tooltip";
 }
