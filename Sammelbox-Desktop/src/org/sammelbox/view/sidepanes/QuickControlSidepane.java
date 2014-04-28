@@ -220,10 +220,10 @@ public final class QuickControlSidepane {
 				FieldSelectionDialog fieldSelectionDialog = new FieldSelectionDialog(ApplicationUI.getShell());
 				
 				String sortByField = fieldSelectionDialog.open(
-						Translator.toBeTranslated("Sort by:"),
-						Translator.toBeTranslated("The items should be sorted by:"),
+						Translator.get(DictKeys.DIALOG_TITLE_SORT_BY),
+						Translator.get(DictKeys.DIALOG_CONTENT_SORT_BY),
 						GuiController.getGuiState().getSelectedAlbum(),
-						Translator.toBeTranslated("Save"),
+						Translator.get(DictKeys.BUTTON_SAVE),
 						AlbumManager.getSortByField(GuiController.getGuiState().getSelectedAlbum()));
 				
 				String selectedName = GuiController.getGuiState().getSelectedAlbum();
