@@ -23,12 +23,21 @@ public class Album implements Comparable<Album> {
 	}	
 	
 	@Override
-	public int compareTo(Album otherAlbum) {
+	public int compareTo(Album otherAlbum) {		
 		return this.albumName.compareTo(otherAlbum.getAlbumName());
 	}
 	
 	@Override
 	public boolean equals(Object otherAlbum) {
-		return this.compareTo((Album) otherAlbum) == 0;
+		if (otherAlbum != null && otherAlbum instanceof Album) {
+			return this.compareTo((Album) otherAlbum) == 0;
+		} else {
+			return false;
+		}
+	}
+	
+	@Override
+	public int hashCode() {
+		return albumName.hashCode();
 	}
 }
