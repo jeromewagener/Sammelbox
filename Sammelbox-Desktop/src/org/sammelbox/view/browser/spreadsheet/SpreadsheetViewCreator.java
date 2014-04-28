@@ -164,6 +164,7 @@ public final class SpreadsheetViewCreator {
 		javaScriptArrayTableColName.append("]; ");
 		
 		htmlSpreadsheet.append("<div id=\"nextFreeId\" class=\"hidden\">" + AlbumItem.ITEM_ID_UNDEFINED + "</div>");
+		
 		htmlSpreadsheet.append("<div class=\"tableWrapper\">");
 		htmlSpreadsheet.append("<table id=\"spreadsheetTable\">");
 		htmlSpreadsheet.append(htmlSpreadsheetHeader);
@@ -179,12 +180,13 @@ public final class SpreadsheetViewCreator {
 		htmlSpreadsheet.append("<div id=\"showModify\" class=\"hidden smallLabel dirty\">To be modified <span id=\"modifyCount\">0</span></div> ");
 		htmlSpreadsheet.append("<div id=\"showAdd\" class=\"hidden smallLabel new\">To be added <span id=\"addCount\">0</span></div> ");
 		htmlSpreadsheet.append("<div id=\"rowCount\" class=\"hidden\">" + AlbumItemStore.getAlbumItems().size() + "</div> ");
+		htmlSpreadsheet.append("<div id=\"dragPreview\" class=\"dragPreview hidden\"></div>");
 		htmlSpreadsheet.append("</label>");
 		
-		// Create final page html
+		// Create final page
 		String finalPageAsHtml = 
 				"<!DOCTYPE HTML>" +
-				"<html onMouseUp=\"stopDrag(event);\">" +
+				"<html onMouseUp=\"stopDrag(event);\" onMouseMove=\"moveDiv(event);\">" +
 				  "<head>" +
 				    "<title>sammelbox.org</title>" +
 				    "<meta " + UIConstants.META_PARAMS + ">" + 
