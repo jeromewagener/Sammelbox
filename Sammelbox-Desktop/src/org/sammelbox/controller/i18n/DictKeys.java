@@ -19,9 +19,6 @@
 package org.sammelbox.controller.i18n;
 
 public final class DictKeys {
-	private DictKeys() {
-		// not needed
-	}
 	
 	/*  Enumeration Translations  */
 	public static final String FIELD_TYPE_TEXT = "org.sammelbox.enum.FIELD_TYPE_TEXT";
@@ -155,6 +152,8 @@ public final class DictKeys {
 	public static final String DIALOG_CONTENT_VERSION_CHECK_OUTDATED = "org.sammelbox.dialog.content.VERSION_CHECK_OUTDATED";	
 	public static final String DIALOG_TITLE_VERSION_CHECK_ERROR = "org.sammelbox.dialog.title.VERSION_CHECK_ERROR";
 	public static final String DIALOG_CONTENT_VERSION_CHECK_ERROR = "org.sammelbox.dialog.content.VERSION_CHECK_ERROR";
+	public static final String DIALOG_TITLE_SORT_BY = "org.sammelbox.dialog.title.TITLE_SORT_BY";
+	public static final String DIALOG_CONTENT_SORT_BY = "org.sammelbox.dialog.content.CONTENT_SORT_BY";
 	
 	/*   Open & Save Dialogs   */
 	public static final String DIALOG_BACKUP_TO_FILE = "collector.savedialog.title.BACKUP_TO_FILE";
@@ -213,7 +212,8 @@ public final class DictKeys {
 	public static final String BUTTON_CLONE_ROWS = "org.sammelbox.button.CLONE_ROWS";
 	public static final String BUTTON_DELETE_ROWS = "org.sammelbox.button.DELETE_ROWS";
 	public static final String BUTTON_ADD_ROWS = "org.sammelbox.button.ADD_ROWS";
-	
+	public static final String BUTTON_SAVE = "org.sammelbox.button.BUTTON_SAVE";
+		
 	/*   Labels   */
 	public static final String LABEL_ADD_ENTRY = "collector.label.caption.ADD_ENTRY";
 	public static final String LABEL_UPDATE_ENTRY = "collector.label.caption.UPDATE_ENTRY";
@@ -347,8 +347,11 @@ public final class DictKeys {
 	public static final String WARNING = "org.sammelbox.warning";
 	public static final String WARNING_SAVED_SEARCHES_MIGHT_BE_BROKEN = "org.sammelbox.warning.SAVED_SEARCHES_MIGHT_BE_BROKEN";
 	public static final String WARNING_RESTORE_OVERWRITES_EVERYTHING = "org.sammelbox.warning.WARNING_RESTORE_OVERWRITES_EVERYTHING";
-	
+	public static final String WARNING_DELETE_SELECTED = "org.sammelbox.warning.WARNING_DELETE_SELECTED";
+	public static final String WARNING_CLONE_SELECTED = "org.sammelbox.warning.WARNING_CLONE_SELECTED";
+		
 	/*   Error Messages  */
+	public static final String ERROR_AN_ERROR_OCCURRED_HEADER = "org.sammelbox.error.AN_ERROR_OCCURRED_HEADER";
 	public static final String ERROR_AN_ERROR_OCCURRED = "org.sammelbox.error.AN_ERROR_OCCURRED";
 	public static final String ERROR_AN_INTERNAL_ERROR_OCCURRED_HEADER = "org.sammelbox.error.ERROR_AN_INTERNAL_ERROR_OCCURRED_HEADER";
 	public static final String ERROR_AN_INTERNAL_ERROR_OCCURRED = "org.sammelbox.error.ERROR_AN_INTERNAL_ERROR_OCCURRED";
@@ -372,4 +375,8 @@ public final class DictKeys {
 	public static final String CONFIGURATOR_START_SAMMELBOX = "org.sammelbox.installer.button.install";
 	public static final String CONFIGURATOR_STORAGE_TOOLTIP = "org.sammelbox.installer.storage.tooltip";
 	public static final String CONFIGURATOR_CREATE_SHORTCUT_TOOLTIP = "org.sammelbox.installer.create.shortcut.tooltip";
+	
+	private DictKeys() {
+		// not needed
+	}
 }

@@ -170,8 +170,7 @@ public class SpreadsheetComposite {
 				
 				// do you really want to clone these items
 				MessageBox messageBox = ComponentFactory.getMessageBox(
-						Translator.toBeTranslated("Clone selected items?"), 
-						Translator.toBeTranslated("Are you sure that you want to clone the selected items?"), 
+						Translator.get(DictKeys.WARNING), Translator.get(DictKeys.WARNING_CLONE_SELECTED), 
 						SWT.ICON_WARNING | SWT.YES | SWT.NO);
 				
 				// if yes, clone them
@@ -183,8 +182,8 @@ public class SpreadsheetComposite {
 						} catch (DatabaseWrapperOperationException e) {
 							LOGGER.error("An error occurred while cloning the album item", e);
 							ComponentFactory.getMessageBox(
-									Translator.toBeTranslated("An error occurred"),
-									Translator.toBeTranslated("An error occurred while cloneing the selected items."), 
+									Translator.get(DictKeys.ERROR_AN_ERROR_OCCURRED_HEADER),
+									Translator.get(DictKeys.ERROR_AN_ERROR_OCCURRED, e.getMessage()), 
 									SWT.ICON_ERROR | SWT.OK);
 						}
 					}
@@ -197,8 +196,8 @@ public class SpreadsheetComposite {
 				} catch (DatabaseWrapperOperationException e) {
 					LOGGER.error("An error occurred while reinitializing the album item store", e);
 					ComponentFactory.getMessageBox(
-							Translator.toBeTranslated("An error occurred"),
-							Translator.toBeTranslated("An error occurred while refreshing the view. Please refresh manually!"), 
+							Translator.get(DictKeys.ERROR_AN_ERROR_OCCURRED_HEADER),
+							Translator.get(DictKeys.ERROR_AN_ERROR_OCCURRED, e.getMessage()), 
 							SWT.ICON_ERROR | SWT.OK);
 				}
 				
@@ -229,8 +228,7 @@ public class SpreadsheetComposite {
 				
 				// do you really want to delete these items?
 				MessageBox messageBox = ComponentFactory.getMessageBox(
-						Translator.toBeTranslated("Delete selected items?"), 
-						Translator.toBeTranslated("Are you sure that you want to delete the selected items?"), 
+						Translator.get(DictKeys.WARNING), Translator.get(DictKeys.WARNING_DELETE_SELECTED), 
 						SWT.ICON_WARNING | SWT.YES | SWT.NO);
 				
 				// if yes, delete selected items

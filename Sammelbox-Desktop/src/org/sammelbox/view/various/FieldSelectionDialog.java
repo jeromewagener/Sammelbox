@@ -76,13 +76,15 @@ public class FieldSelectionDialog extends Dialog {
 		} catch (DatabaseWrapperOperationException dwoe) {
 			LOGGER.error("An error occurred while retrieving meta information for " + albumName, dwoe);
 		}
-		
+				
 		fieldSelection.setItems(fieldNames);
 		fieldSelection.add(SEPARATOR);
 		fieldSelection.add(Translator.get(DictKeys.COMBOBOX_CONTENT_DO_NOT_SORT));
 		
 		// select first item by default
-		if (fieldNames.length != 0) {
+		if (fieldNames == null || fieldNames.length == 0) {
+			return Album.NO_SORTING;
+		} else {
 			fieldSelection.select(0);
 		}
 		
