@@ -38,6 +38,10 @@ var dragging = false;
 var updateTheseObjects = [];
 var deleteTheseObjects = [];
 
+var move = 0;
+var tableHeight = 0;
+var tableTop = 0;
+
 /*  function that stores the x coordinate of the mouse during an onMouseDown event on the resize area.
  *  furthermore, it disables the ability to select text inside the <body></body> tags which would leed
  *  to unexpected sizes during the onMouseUp event.
@@ -47,10 +51,28 @@ function startDrag(id, event) {
 	mouseDownX = event.clientX;
 	dragging = true;
 	
+	tableHeight = document.getElementById('spreadsheetTable').offsetHeight;
+	tableTop = document.getElementById('spreadsheetTable').offsetTop;
+	
 	var body = document.getElementById('body');
 	if (!hasClass(body, 'unselectable')) {
 		addClass(body, 'unselectable');
 	}
+	
+	var dragPreview = document.getElementById('dragPreview');
+	if (hasClass(dragPreview, 'hidden')) {
+		removeClass(dragPreview, 'hidden');
+	}
+}	
+	
+function moveDiv(e) {
+	move++;	
+
+	if(move % 5 == 0) {
+    	document.getElementById("dragPreview").style.top = tableTop + "px";
+    	document.getElementById("dragPreview").style.height = tableHeight + "px";
+  		document.getElementById("dragPreview").style.left = (e.pageX + 20) + "px";
+  	}
 }
 
 /*  function that calculates the delta between the onMouseDown x and onMouseUp x coordinates. 
@@ -78,6 +100,11 @@ function stopDrag(event) {
 	var body = document.getElementById('body');
 	if (hasClass(body, 'unselectable')) {
 		removeClass(body, 'unselectable');
+	}
+	
+	var dragPreview = document.getElementById('dragPreview');
+	if (!hasClass(dragPreview, 'hidden')) {
+		addClass(dragPreview, 'hidden');
 	}
 }
 

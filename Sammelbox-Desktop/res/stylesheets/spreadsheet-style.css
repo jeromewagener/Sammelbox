@@ -43,11 +43,21 @@ table
 	float: right;
 }
 
+.dragMe:hover
+{
+	cursor:pointer;
+}
+
 .hideByMe
 {
 	width: 20px;
 	height: 20px;
 	float: right;
+}
+
+.hideByMe:hover
+{
+	cursor:pointer;
 }
 
 .whiteBorderless
@@ -236,4 +246,12 @@ input, select
 {
 	color: red;	
 	cursor:pointer;
+}
+
+.dragPreview
+{
+	background-color:black; 
+	width: 1px; 
+	height: 1px; 
+	position:absolute;
 }
