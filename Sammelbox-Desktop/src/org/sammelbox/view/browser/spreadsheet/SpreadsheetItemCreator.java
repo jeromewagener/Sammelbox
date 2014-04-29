@@ -146,7 +146,7 @@ public final class SpreadsheetItemCreator {
 		} else {
 			htmlSpreadsheetRow.append("<td id=\"delete:" + albumItem.getField(FieldType.ID).getValue() + "" + "\" " +
 					  					  "class=\"deleteText\" " +
-					  					  ">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +
+					  					  ">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +
 									  "</td>");
 		}
 		for (ItemField itemField : ItemFieldFilterPlusID.getValidItemFields(albumItem.getFields())) {		
