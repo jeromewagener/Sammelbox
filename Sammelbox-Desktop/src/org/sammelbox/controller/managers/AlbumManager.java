@@ -18,6 +18,7 @@
 
 package org.sammelbox.controller.managers;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -62,11 +63,15 @@ public final class AlbumManager {
 
 			// retain all albums that are contained by the database
 			List<String> allAlbums = DatabaseOperations.getListOfAllAlbums();
+			List<Album> toBeRemovedAlbums = new ArrayList<Album>();
 			for (Album album : albums) {
 				if (!allAlbums.contains(album.getAlbumName())) {
-					albums.remove(album);
+					toBeRemovedAlbums.add(album);
 				}
 			}
+			
+			albums.removeAll(toBeRemovedAlbums);
+			storeAlbums();
 			
 		} catch (DatabaseWrapperOperationException ex) {
 			LOGGER.error("A problem occured while retrieving the list of albums from the database", ex);

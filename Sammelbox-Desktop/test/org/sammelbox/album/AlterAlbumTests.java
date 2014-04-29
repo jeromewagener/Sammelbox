@@ -37,6 +37,8 @@ import org.sammelbox.controller.managers.ConnectionManager;
 import org.sammelbox.controller.managers.DatabaseIntegrityManager;
 import org.sammelbox.model.album.AlbumItem;
 import org.sammelbox.model.album.AlbumItemPicture;
+import org.sammelbox.model.album.AlbumItemResultSet;
+import org.sammelbox.model.album.AlbumItemStore;
 import org.sammelbox.model.album.FieldType;
 import org.sammelbox.model.album.MetaItemField;
 import org.sammelbox.model.database.DatabaseStringUtilities;
@@ -556,5 +558,30 @@ public class AlterAlbumTests {
 		} catch (DatabaseWrapperOperationException e) {
 			fail("Alteration of album failed");
 		}
+	}
+	
+	@Test
+	public void testQuickSearchFlagsModificationAfterAlbumRename() {
+		try {
+			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
+
+			// Using the following search terms, only "Just for Fun" (Title) and Gamma (Author) 
+			// should be returned if the according quick-searchable flags are set
+			List<String> quickSearchTerms = new ArrayList<String>();
+			quickSearchTerms.add("Fun");
+			quickSearchTerms.add("Gamma");
+
+			// Using the test backup, no items should be returned
+			AlbumItemStore.reinitializeStore(DatabaseOperations.executeQuickSearch("Books", quickSearchTerms));
+			assertTrue("Since no quicksearchable flag is set, no items should be returned", AlbumItemStore.getAlbumItems().size() == 0);
+			
+			// The book album will be renamed and the quicksearchable 
+			// flag will be set on the title field
+			DatabaseOperations.renameAlbum("Books", "My Books");
+			
+			
+		} catch (DatabaseWrapperOperationException e) {
+			fail("Alteration of album failed");
+		}		
 	}
 }
