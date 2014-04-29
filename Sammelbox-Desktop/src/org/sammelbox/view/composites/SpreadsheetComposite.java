@@ -53,7 +53,7 @@ public class SpreadsheetComposite {
 			TableItem tableItem = new TableItem(table, SWT.NONE);
 			String[] values = new String[albumItem.getFields().size()];
 
-			int fieldIndex = 0;
+			int fieldIndex = 1;
 			for (ItemField itemField : ItemFieldFilterPlusID.getValidItemFields(albumItem.getFields())) {
 				if (itemField.getName().equals(DatabaseConstants.ID_COLUMN_NAME)) {
 					tableItem.setData(ID_TABLE_DATA_KEY, itemField.getValue());
@@ -75,9 +75,9 @@ public class SpreadsheetComposite {
 					} else {
 						values[fieldIndex] = String.valueOf(itemField.getValue());
 					}
+					
+					fieldIndex++;
 				}
-				
-				fieldIndex++;
 			}
 						
 			tableItem.setText(values);
