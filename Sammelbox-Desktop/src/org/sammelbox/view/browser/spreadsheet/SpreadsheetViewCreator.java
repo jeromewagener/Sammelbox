@@ -87,6 +87,7 @@ public final class SpreadsheetViewCreator {
 		metaItemToColumnIndexMap = invert(columnIndexToMetaItemMap);
 		
 		// Builders for efficient html creation
+		StringBuilder javaScriptTranslatedStrings = new StringBuilder();
 		StringBuilder htmlSpreadsheet = new StringBuilder();
 		StringBuilder htmlSpreadsheetHeader = new StringBuilder();
 		StringBuilder htmlSpreadsheetData = new StringBuilder();
@@ -97,6 +98,14 @@ public final class SpreadsheetViewCreator {
 		StringBuilder javaScriptArrayTableColType = new StringBuilder();
 		StringBuilder javaScriptArrayTableColName = new StringBuilder();
 		
+		// Do not remove space before first 'var'
+		javaScriptTranslatedStrings.append(" var translatedConfirmMessagePart1 ='" + Translator.toBeTranslated("Press OK to continue the update of your database.") + "'; ");
+		javaScriptTranslatedStrings.append("var translatedConfirmMessagePart2 ='" + Translator.toBeTranslated("These updates are not reversible!!!") + "'; ");
+		javaScriptTranslatedStrings.append("var translatedAdditionsString ='" + Translator.toBeTranslated("Additions") + "'; ");
+		javaScriptTranslatedStrings.append("var translatedModificationsString ='" + Translator.toBeTranslated("Modifications") + "'; ");
+		javaScriptTranslatedStrings.append("var translatedCancelString ='" + Translator.toBeTranslated("Press Cancel to abort!") + "'; ");
+		javaScriptTranslatedStrings.append("var translatedUpdateCanceledString ='" + Translator.toBeTranslated("Update cancelled!") + "'; ");
+
 		AlbumItem emptyAlbumItem = AlbumItemStore.getEmptyAlbumItem(GuiController.getGuiState().getSelectedAlbum(), metaItemFields);
 		
 		// Create the header of the spreadsheet
@@ -164,6 +173,7 @@ public final class SpreadsheetViewCreator {
 		javaScriptArrayTableColName.append("]; ");
 		
 		htmlSpreadsheet.append("<div id=\"nextFreeId\" class=\"hidden\">" + AlbumItem.ITEM_ID_UNDEFINED + "</div>");
+		
 		htmlSpreadsheet.append("<div class=\"tableWrapper\">");
 		htmlSpreadsheet.append("<table id=\"spreadsheetTable\">");
 		htmlSpreadsheet.append(htmlSpreadsheetHeader);
@@ -179,12 +189,13 @@ public final class SpreadsheetViewCreator {
 		htmlSpreadsheet.append("<div id=\"showModify\" class=\"hidden smallLabel dirty\">To be modified <span id=\"modifyCount\">0</span></div> ");
 		htmlSpreadsheet.append("<div id=\"showAdd\" class=\"hidden smallLabel new\">To be added <span id=\"addCount\">0</span></div> ");
 		htmlSpreadsheet.append("<div id=\"rowCount\" class=\"hidden\">" + AlbumItemStore.getAlbumItems().size() + "</div> ");
+		htmlSpreadsheet.append("<div id=\"dragPreview\" class=\"dragPreview hidden\"></div>");
 		htmlSpreadsheet.append("</label>");
 		
-		// Create final page html
+		// Create final page
 		String finalPageAsHtml = 
 				"<!DOCTYPE HTML>" +
-				"<html onMouseUp=\"stopDrag(event);\">" +
+				"<html onMouseUp=\"stopDrag(event);\" onMouseMove=\"moveDiv(event);\">" +
 				  "<head>" +
 				    "<title>sammelbox.org</title>" +
 				    "<meta " + UIConstants.META_PARAMS + ">" + 
@@ -195,6 +206,7 @@ public final class SpreadsheetViewCreator {
 						javaScriptArrayTableColId +
 						javaScriptArrayTableColType +
 						javaScriptArrayTableColName +
+						javaScriptTranslatedStrings +
 				    "</script>" +
 				  "</head>" +
 				  "<body id=\"body\" class=\"normal\">" +

@@ -38,6 +38,10 @@ var dragging = false;
 var updateTheseObjects = [];
 var deleteTheseObjects = [];
 
+var move = 0;
+var tableHeight = 0;
+var tableTop = 0;
+
 /*  function that stores the x coordinate of the mouse during an onMouseDown event on the resize area.
  *  furthermore, it disables the ability to select text inside the <body></body> tags which would leed
  *  to unexpected sizes during the onMouseUp event.
@@ -47,10 +51,28 @@ function startDrag(id, event) {
 	mouseDownX = event.clientX;
 	dragging = true;
 	
+	tableHeight = document.getElementById('spreadsheetTable').offsetHeight;
+	tableTop = document.getElementById('spreadsheetTable').offsetTop;
+	
 	var body = document.getElementById('body');
 	if (!hasClass(body, 'unselectable')) {
 		addClass(body, 'unselectable');
 	}
+	
+	var dragPreview = document.getElementById('dragPreview');
+	if (hasClass(dragPreview, 'hidden')) {
+		removeClass(dragPreview, 'hidden');
+	}
+}	
+	
+function moveDiv(e) {
+	move++;	
+
+	if(move % 5 == 0) {
+    	document.getElementById("dragPreview").style.top = tableTop + "px";
+    	document.getElementById("dragPreview").style.height = tableHeight + "px";
+  		document.getElementById("dragPreview").style.left = (e.pageX + 20) + "px";
+  	}
 }
 
 /*  function that calculates the delta between the onMouseDown x and onMouseUp x coordinates. 
@@ -78,6 +100,11 @@ function stopDrag(event) {
 	var body = document.getElementById('body');
 	if (hasClass(body, 'unselectable')) {
 		removeClass(body, 'unselectable');
+	}
+	
+	var dragPreview = document.getElementById('dragPreview');
+	if (!hasClass(dragPreview, 'hidden')) {
+		addClass(dragPreview, 'hidden');
 	}
 }
 
@@ -211,7 +238,9 @@ function markAsDirty(id, columnIndex) {
 	} else {	
 		if (!hasClass(row, 'dirty')) {
 			addClass(row, 'dirty');
-			increaseModifyCount();
+			if(id > 0) {
+				increaseModifyCount();	
+			}
 		}
 	}
 	
@@ -290,6 +319,18 @@ function remove(arr, item) {
 	}
 }
 
+/* A function to remove an array from an array without leaving an empty space.
+ * This function assumes that the inner array has the key to search for at its position [0]
+ * array[[1, 'some'], [2, 'random'], [3, 'text']] => array[[1, 'some'], [3, 'text']]
+ */
+function removeByKey(arr, key) {
+	for(var i = arr.length; i--;) {
+		if(arr[i][0] == key) {
+			arr.splice(i, 1);
+		}
+	}
+}
+
 /* A function to return the position of an item in an array.*/
 function posInArray(arr, item) {
 	for (var i = 0; i < arr.length; i++) {
@@ -301,7 +342,7 @@ function posInArray(arr, item) {
 }
 
 /*  A function that is called by markAsDirty() function. It removes the 'empty' class attribute
- *  and adds the 'new' class attribute. Then, the entire row is packed into an array wich is 
+ *  and adds the 'new' class attribute. Then, the entire row is packed into an array which is 
  *  added to the updateTheseObjects array.
  */
 function newItem(id) {
@@ -383,6 +424,8 @@ function deleteRow(id) {
 
 		if (row == rowToDelete) {
 			table.deleteRow(i);
+			removeByKey(updateTheseObjects, id);
+			decreaseRowCount();
 			return;
 		}
 	}
@@ -391,6 +434,10 @@ function deleteRow(id) {
 /* Functions to increase/decrease the counters that are shown on the bottom of the Spreadsheet. */
 function increaseRowCount() {
 	document.getElementById('addCount').innerHTML = parseInt(document.getElementById('addCount').innerHTML) + 1
+}
+
+function decreaseRowCount() {
+	document.getElementById('addCount').innerHTML = parseInt(document.getElementById('addCount').innerHTML) - 1
 }
 
 function increaseDeleteCount() {
@@ -432,14 +479,25 @@ function isDecimal (s) {
 }
 
 function checkAndSend() {
-	if (confirm("Press OK to continue the update of your database. \nThese updates are non reversible!!!\n" +
-		"\n Additions     : " + document.getElementById('addCount').innerHTML + 
-		"\n Modifications : " + document.getElementById('modifyCount').innerHTML + 
-		"\n\nPress Cancel to abort!")) {
-		
+	
+	var confirmMsg =	translatedConfirmMessagePart1 + "\n" + translatedConfirmMessagePart2 + "\n\n";
+	var addCounter = document.getElementById('addCount').innerHTML;
+	var modifyCounter = document.getElementById('modifyCount').innerHTML; 	
+	
+	if	(addCounter > 0) {
+		confirmMsg += translatedAdditionsString + "\t\t : " + addCounter + "\n";
+	}
+	
+	if	(modifyCounter > 0) {
+		confirmMsg += translatedModificationsString + "\t : " + modifyCounter + "\n";
+	}	
+	
+	confirmMsg += "\n\n"	+ translatedCancelString;
+	
+	if (confirm(confirmMsg)) {
 		spreadsheetUpdateFunction(tableColName, tableColType, updateTheseObjects, deleteTheseObjects);
 	} else {
-		alert("Update cancelled!");
+		alert(translatedUpdateCanceledString);
 	}
 }
 

@@ -140,13 +140,13 @@ public final class SpreadsheetItemCreator {
 										  "<div id=\"deletediv:" + albumItem.getField(FieldType.ID).getValue() + "\"" +
 										  	   "class=\"hidden\"" +
 										  	   "onClick=deleteRow(" + albumItem.getField(FieldType.ID).getValue() + ") > " +
-										  	   "<b>✘</b>" +
+										  	   "<b>&nbsp;✘&nbsp;</b>" +
 										  "</div>" +
 									  "</td>");
 		} else {
 			htmlSpreadsheetRow.append("<td id=\"delete:" + albumItem.getField(FieldType.ID).getValue() + "" + "\" " +
 					  					  "class=\"deleteText\" " +
-					  					  ">&nbsp;" +
+					  					  ">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +
 									  "</td>");
 		}
 		for (ItemField itemField : ItemFieldFilterPlusID.getValidItemFields(albumItem.getFields())) {		
