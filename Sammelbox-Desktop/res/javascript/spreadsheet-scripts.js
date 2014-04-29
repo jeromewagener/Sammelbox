@@ -238,7 +238,9 @@ function markAsDirty(id, columnIndex) {
 	} else {	
 		if (!hasClass(row, 'dirty')) {
 			addClass(row, 'dirty');
-			increaseModifyCount();
+			if(id > 0) {
+				increaseModifyCount();	
+			}
 		}
 	}
 	
@@ -317,6 +319,18 @@ function remove(arr, item) {
 	}
 }
 
+/* A function to remove an array from an array without leaving an empty space.
+ * This function assumes that the inner array has the key to search for at its position [0]
+ * array[[1, 'some'], [2, 'random'], [3, 'text']] => array[[1, 'some'], [3, 'text']]
+ */
+function removeByKey(arr, key) {
+	for(var i = arr.length; i--;) {
+		if(arr[i][0] == key) {
+			arr.splice(i, 1);
+		}
+	}
+}
+
 /* A function to return the position of an item in an array.*/
 function posInArray(arr, item) {
 	for (var i = 0; i < arr.length; i++) {
@@ -328,7 +342,7 @@ function posInArray(arr, item) {
 }
 
 /*  A function that is called by markAsDirty() function. It removes the 'empty' class attribute
- *  and adds the 'new' class attribute. Then, the entire row is packed into an array wich is 
+ *  and adds the 'new' class attribute. Then, the entire row is packed into an array which is 
  *  added to the updateTheseObjects array.
  */
 function newItem(id) {
@@ -410,6 +424,8 @@ function deleteRow(id) {
 
 		if (row == rowToDelete) {
 			table.deleteRow(i);
+			removeByKey(updateTheseObjects, id);
+			decreaseRowCount();
 			return;
 		}
 	}
@@ -418,6 +434,10 @@ function deleteRow(id) {
 /* Functions to increase/decrease the counters that are shown on the bottom of the Spreadsheet. */
 function increaseRowCount() {
 	document.getElementById('addCount').innerHTML = parseInt(document.getElementById('addCount').innerHTML) + 1
+}
+
+function decreaseRowCount() {
+	document.getElementById('addCount').innerHTML = parseInt(document.getElementById('addCount').innerHTML) - 1
 }
 
 function increaseDeleteCount() {
@@ -459,14 +479,25 @@ function isDecimal (s) {
 }
 
 function checkAndSend() {
-	if (confirm("Press OK to continue the update of your database. \nThese updates are non reversible!!!\n" +
-		"\n Additions     : " + document.getElementById('addCount').innerHTML + 
-		"\n Modifications : " + document.getElementById('modifyCount').innerHTML + 
-		"\n\nPress Cancel to abort!")) {
-		
+	
+	var confirmMsg =	translatedConfirmMessagePart1 + "\n" + translatedConfirmMessagePart2 + "\n\n";
+	var addCounter = document.getElementById('addCount').innerHTML;
+	var modifyCounter = document.getElementById('modifyCount').innerHTML; 	
+	
+	if	(addCounter > 0) {
+		confirmMsg += translatedAdditionsString + "\t\t : " + addCounter + "\n";
+	}
+	
+	if	(modifyCounter > 0) {
+		confirmMsg += translatedModificationsString + "\t : " + modifyCounter + "\n";
+	}	
+	
+	confirmMsg += "\n\n"	+ translatedCancelString;
+	
+	if (confirm(confirmMsg)) {
 		spreadsheetUpdateFunction(tableColName, tableColType, updateTheseObjects, deleteTheseObjects);
 	} else {
-		alert("Update cancelled!");
+		alert(translatedUpdateCanceledString);
 	}
 }
 
