@@ -58,8 +58,14 @@ public final class UpdateOperations {
 	}
 	
 	static void renameAlbum(String oldAlbumName, String newAlbumName) throws DatabaseWrapperOperationException {		
-		String savepointName =  DatabaseIntegrityManager.createSavepoint();
+		String savepointName = DatabaseIntegrityManager.createSavepoint();
 		try {
+			// Before starting to rename the different table, we have to remember whether
+			// the original album was quick-searchable together with the quick-searchable fields
+			boolean isQuickSearchable = DatabaseOperations.isAlbumQuicksearchable(oldAlbumName);
+			List<String> quickSearchableColumnNames = 
+					QueryOperations.getIndexedColumnNames(DatabaseStringUtilities.generateTableName(oldAlbumName));
+			
 			// Rename the album table
 			renameTable(oldAlbumName, newAlbumName);
 			
@@ -72,6 +78,12 @@ public final class UpdateOperations {
 			String oldPictureTableName = DatabaseStringUtilities.generatePictureTableName(oldAlbumName);
 			String newPictureTableName = DatabaseStringUtilities.generatePictureTableName(newAlbumName);
 			renameTable(oldPictureTableName, newPictureTableName);
+
+			// Recreate the index (if an index already exists)
+			if (isQuickSearchable) {
+				DeleteOperations.dropIndex(oldAlbumName);
+				CreateOperations.createIndex(newAlbumName, quickSearchableColumnNames);
+			}
 			
 			// Rename the picture folder
 			FileSystemAccessWrapper.renameAlbumPictureFolder(oldAlbumName, newAlbumName);
@@ -224,7 +236,7 @@ public final class UpdateOperations {
 				quickSearchableColumnNames.remove(metaItemField.getName());
 			}
 			
-			// update index for album
+			// update index for the album
 			DeleteOperations.dropIndex(albumName);
 			CreateOperations.createIndex(albumName, quickSearchableColumnNames);
 			
