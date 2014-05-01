@@ -195,12 +195,12 @@ public final class DeleteOperations {
 	
 	/**
 	 * Drops the first index associated to the given table name. 
-	 * @param tableName The name of the table to which the index belongs.
+	 * @param albumName The name of the album to which the index belongs.
 	 * @return true if the table has no associated index to it. false if the operation failed.
 	 * @throws DatabaseWrapperOperationException 
 	 */
-	static void dropIndex(String tableName) throws DatabaseWrapperOperationException {
-		String indexName = QueryOperations.getTableIndexName(tableName);		
+	static void dropIndex(String albumName) throws DatabaseWrapperOperationException {
+		String indexName = DatabaseStringUtilities.generateIndexTableName(albumName);		
 		
 		// null indicates that no index was there to drop
 		if (indexName == null) {

@@ -37,7 +37,6 @@ import org.sammelbox.controller.managers.ConnectionManager;
 import org.sammelbox.controller.managers.DatabaseIntegrityManager;
 import org.sammelbox.model.album.AlbumItem;
 import org.sammelbox.model.album.AlbumItemPicture;
-import org.sammelbox.model.album.AlbumItemResultSet;
 import org.sammelbox.model.album.AlbumItemStore;
 import org.sammelbox.model.album.FieldType;
 import org.sammelbox.model.album.MetaItemField;
@@ -571,14 +570,35 @@ public class AlterAlbumTests {
 			quickSearchTerms.add("Fun");
 			quickSearchTerms.add("Gamma");
 
-			// Using the test backup, no items should be returned
+			// Using the test backup, all book items should be returned as there is no quicksearchable flag set
 			AlbumItemStore.reinitializeStore(DatabaseOperations.executeQuickSearch("Books", quickSearchTerms));
-			assertTrue("Since no quicksearchable flag is set, no items should be returned", AlbumItemStore.getAlbumItems().size() == 0);
+			assertTrue("Since no quicksearchable flag is set, no items should be returned", 
+					AlbumItemStore.getAlbumItems().size() == 10);
 			
-			// The book album will be renamed and the quicksearchable 
-			// flag will be set on the title field
+			// The quicksearchable flag will be set on the title field and the album will be renamed  
+			DatabaseOperations.updateQuickSearchable("Books", new MetaItemField("Book Title", FieldType.TEXT, true));
 			DatabaseOperations.renameAlbum("Books", "My Books");
 			
+			// The quicksearch should now return 1 item
+			AlbumItemStore.reinitializeStore(DatabaseOperations.executeQuickSearch("My Books", quickSearchTerms));
+			assertTrue("Since the quicksearchable flag is set on the title, one item should be returned", 
+					AlbumItemStore.getAlbumItems().size() == 1);
+			
+			// The quicksearchable flag will be set on the authors field and the album will be renamed again  
+			DatabaseOperations.updateQuickSearchable("My Books", new MetaItemField("Author", FieldType.TEXT, true));
+			
+			// The quicksearch should now return 2 item
+			AlbumItemStore.reinitializeStore(DatabaseOperations.executeQuickSearch("My Books", quickSearchTerms));
+			assertTrue("Since the quicksearchable flag is set on the title and the authors, two item should be returned", 
+					AlbumItemStore.getAlbumItems().size() == 2);
+			
+			// Rename once more, the results should not change
+			DatabaseOperations.renameAlbum("My Books", "Favorite Books");
+			
+			// The quicksearch should still return 2 item
+			AlbumItemStore.reinitializeStore(DatabaseOperations.executeQuickSearch("Favorite Books", quickSearchTerms));
+			assertTrue("Since the quicksearchable flag is set on the title and the authors, two item should be returned", 
+					AlbumItemStore.getAlbumItems().size() == 2);
 			
 		} catch (DatabaseWrapperOperationException e) {
 			fail("Alteration of album failed");

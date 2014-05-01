@@ -97,7 +97,7 @@ public final class DatabaseOperations {
 	/**
 	 * Sets the ability of albumField to the value found in the metaItemField describing that field.
 	 * @param albumName The name of the album to which the item belongs.
-	 * @param metaItemField The field (column) to be set quicksearchable.
+	 * @param metaItemField The field (column) for which the quicksearchable flag should be updated
 	 * @throws DatabaseWrapperOperationException 
 	 */
 	public static void updateQuickSearchable(String albumName, MetaItemField metaItemField) throws DatabaseWrapperOperationException {

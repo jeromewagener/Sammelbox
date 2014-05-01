@@ -24,7 +24,7 @@ public final class FileSystemLocations {
 	/** PLEASE NOTE: this folder does not necessarily contain the collection data as the user can specify a redirect. In this case, only 
 	 * the redirect file will be kept within this default folder. However, if the user doesn't use a redirect, all collection data will 
 	 * be stored here. Please use {@link #getActiveHomeDir()} to identify the real home directory! */
-	public static final String DEFAULT_SAMMELBOX_HOME = System.getProperty("user.home") + File.separatorChar + "My-Sammelbox";
+	public static final String DEFAULT_SAMMELBOX_HOME = System.getProperty("user.home") + File.separatorChar + "Sammelbox";
 	
 	/** This directory is used to run unit tests without destroying any real collections on your development machine. */
 	public static final String DEFAULT_SAMMELBOX_TEST_HOME = System.getProperty("user.home") + File.separatorChar + ".sammelbox.tests";
