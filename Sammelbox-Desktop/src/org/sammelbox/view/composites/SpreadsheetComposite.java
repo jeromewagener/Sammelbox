@@ -13,6 +13,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -34,9 +36,14 @@ import org.sammelbox.model.database.QueryBuilder;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 import org.sammelbox.model.database.operations.DatabaseConstants;
 import org.sammelbox.model.database.operations.DatabaseOperations;
+import org.sammelbox.view.ApplicationUI;
 import org.sammelbox.view.browser.BrowserFacade;
 import org.sammelbox.view.browser.BrowserUtils;
+import org.sammelbox.view.sidepanes.AddAlbumItemSidepane;
+import org.sammelbox.view.sidepanes.ImageViewerSidepane;
+import org.sammelbox.view.sidepanes.UpdateAlbumItemSidepane;
 import org.sammelbox.view.various.ComponentFactory;
+import org.sammelbox.view.various.PanelType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -101,6 +108,7 @@ public class SpreadsheetComposite {
 		table.setLayoutData(gridData);
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
+		addTablePopupMenu(table);
 		
 		List<MetaItemField> metaItemFields = new ArrayList<MetaItemField>();
 		try {
@@ -122,7 +130,10 @@ public class SpreadsheetComposite {
 		initializeWithItemsFromAlbumItemStore(table);
 
 		Composite buttonComposite = new Composite(tableComposite, SWT.NONE);
-		buttonComposite.setLayout(new GridLayout(5, false));
+		buttonComposite.setLayout(new GridLayout(6, false));
+		
+		Label lblDescription = new Label (buttonComposite, SWT.NONE);
+		lblDescription.setText(Translator.get(DictKeys.LABEL_SPREADSHEET_ACTION));
 		
 		Button btnEdit = new Button(buttonComposite, SWT.PUSH);
 		btnEdit.setText(Translator.get(DictKeys.BUTTON_EDIT_ROWS));
@@ -272,5 +283,61 @@ public class SpreadsheetComposite {
 		});
 		
 		return tableComposite;
+	}
+	
+	public static void addTablePopupMenu(final Table table) {
+		Menu popupMenu = new Menu(table);
+		
+		MenuItem select = new MenuItem(popupMenu, SWT.NONE);
+		select.setText(Translator.get(DictKeys.DROPDOWN_SELECT));
+		select.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				table.getItem(table.getSelectionIndex()).setChecked(
+						!table.getItem(table.getSelectionIndex()).getChecked());
+			}
+		});
+		
+		new MenuItem(popupMenu, SWT.SEPARATOR);
+		
+		MenuItem editUsingSidepane = new MenuItem(popupMenu, SWT.NONE);
+		editUsingSidepane.setText(Translator.get(DictKeys.DROPDOWN_EDIT_ITEM));
+		editUsingSidepane.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				Long albumItemId = (Long) table.getItem(table.getSelectionIndex()).getData(ID_TABLE_DATA_KEY);
+				ApplicationUI.changeRightCompositeTo(
+					PanelType.UPDATE_ENTRY, 
+					UpdateAlbumItemSidepane.build(ApplicationUI.getThreePanelComposite(), GuiController.getGuiState().getSelectedAlbum(), albumItemId),
+					albumItemId);
+			}
+		});
+		
+		MenuItem addUsingSidepane = new MenuItem(popupMenu, SWT.NONE);
+		addUsingSidepane.setText(Translator.get(DictKeys.DROPDOWN_ADD_SINGLE_ITEM));
+		addUsingSidepane.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				ApplicationUI.changeRightCompositeTo(
+					PanelType.UPDATE_ENTRY, 
+					AddAlbumItemSidepane.build(
+						ApplicationUI.getThreePanelComposite(), 
+						GuiController.getGuiState().getSelectedAlbum()));
+			}
+		});
+		
+		new MenuItem(popupMenu, SWT.SEPARATOR);
+		
+		MenuItem showImages = new MenuItem(popupMenu, SWT.NONE);
+		showImages.setText(Translator.get(DictKeys.DROPDOWN_SHOW_IMAGES));
+		showImages.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				Long albumItemId = (Long) table.getItem(table.getSelectionIndex()).getData(ID_TABLE_DATA_KEY);
+				ApplicationUI.changeRightCompositeTo(
+						PanelType.IMAGE_VIEWER,
+						new ImageViewerSidepane(
+								ApplicationUI.getThreePanelComposite(), 
+								AlbumItemStore.getAlbumItem(albumItemId).getPictures()));
+			}
+		});
+		
+		table.setMenu(popupMenu);
 	}
 }

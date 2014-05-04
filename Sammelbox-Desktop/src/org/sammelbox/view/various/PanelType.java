@@ -28,5 +28,6 @@ public enum PanelType {
 	SYNCHRONIZATION,
 	SETTINGS,
 	HELP,
-	IMPORT
+	IMPORT,
+	IMAGE_VIEWER
 }

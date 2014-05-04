@@ -85,6 +85,10 @@ public final class DictKeys {
 	public static final String DROPDOWN_CREATE_NEW_ALBUM = "collector.dropdown.menu.CREATE_NEW_ALBUM";
 	public static final String DROPDOWN_ALTER_ALBUM = "collector.dropdown.menu.ALTER_ALBUM";
 	public static final String DROPDOWN_SORT_BY = "org.sammelbox.dropdown.menu.SORT_BY";
+	public static final String DROPDOWN_SELECT = "org.sammelbox.dropdown.menu.SELECT";
+	public static final String DROPDOWN_EDIT_ITEM = "org.sammelbox.dropdown.menu.EDIT_ITEM";
+	public static final String DROPDOWN_ADD_SINGLE_ITEM = "org.sammelbox.dropdown.menu.ADD_SINGLE_ITEM";
+	public static final String DROPDOWN_SHOW_IMAGES = "org.sammelbox.dropdown.menu.SHOW_IMAGES";
 	
 	/*   Dialog Messages   */
 	public static final String DIALOG_TITLE_PROGRAM_IS_RUNNING = "collector.dialog.title.PROGRAM_IS_RUNNING";
@@ -213,7 +217,8 @@ public final class DictKeys {
 	public static final String BUTTON_DELETE_ROWS = "org.sammelbox.button.DELETE_ROWS";
 	public static final String BUTTON_ADD_ROWS = "org.sammelbox.button.ADD_ROWS";
 	public static final String BUTTON_SAVE = "org.sammelbox.button.BUTTON_SAVE";
-		
+	public static final String BUTTON_SHOW_IMAGES_EXTERNALLY = "org.sammelbox.button.SHOW_IMAGES_EXTERNALLY";
+	
 	/*   Labels   */
 	public static final String LABEL_ADD_ENTRY = "collector.label.caption.ADD_ENTRY";
 	public static final String LABEL_UPDATE_ENTRY = "collector.label.caption.UPDATE_ENTRY";
@@ -258,6 +263,8 @@ public final class DictKeys {
 	public static final String LABEL_SELECT_ALBUM = "org.sammelbox.label.caption.SELECT_ALBUM";
 	public static final String LABEL_FULL_SYNC = "org.sammelbox.label.caption.FULL_SYNC";
 	public static final String LABEL_PROCESSING_IMG_X_OF_Y = "org.sammelbox.label.caption.PROCESSING_IMG_X_OF_Y";
+	public static final String LABEL_IMAGES = "org.sammelbox.label.caption.IMAGES";
+	public static final String LABEL_SPREADSHEET_ACTION = "org.sammelbox.label.caption.SPREADSHEET_ACTION";
 	
 	/*   Textbox   */
 	public static final String TEXT_MY_NEW_ALBUM = "collector.textbox.content.MY_NEW_ALBUM";
