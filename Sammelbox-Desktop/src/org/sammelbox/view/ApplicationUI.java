@@ -107,6 +107,7 @@ public final class ApplicationUI implements EventObserver {
 			put(PanelType.HELP, UIConstants.RIGHT_PANEL_SMALL_WIDTH);
 			put(PanelType.SETTINGS, UIConstants.RIGHT_PANEL_LARGE_WIDTH);
 			put(PanelType.IMPORT, UIConstants.RIGHT_PANEL_LARGE_WIDTH);
+			put(PanelType.IMAGE_VIEWER, UIConstants.RIGHT_PANEL_MEDIUM_WIDTH);
 		}
 	};
 	
