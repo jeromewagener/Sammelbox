@@ -158,6 +158,10 @@ public final class DictKeys {
 	public static final String DIALOG_CONTENT_VERSION_CHECK_ERROR = "org.sammelbox.dialog.content.VERSION_CHECK_ERROR";
 	public static final String DIALOG_TITLE_SORT_BY = "org.sammelbox.dialog.title.TITLE_SORT_BY";
 	public static final String DIALOG_CONTENT_SORT_BY = "org.sammelbox.dialog.content.CONTENT_SORT_BY";
+	public static final String DIALOG_TITLE_UPDATE_CONFIRMATION = "org.sammelbox.dialog.title.UPDATE_CONFIRMATION";
+	public static final String DIALOG_CONTENT_UPDATE_CONFIRMATION = "org.sammelbox.dialog.content.UPDATE_CONFIRMATION";
+	public static final String DIALOG_TITLE_ADDITION_CONFIRMATION = "org.sammelbox.dialog.title.ADDITION_CONFIRMATION";
+	public static final String DIALOG_CONTENT_ADDITION_CONFIRMATION = "org.sammelbox.dialog.content.ADDITION_CONFIRMATION";
 	
 	/*   Open & Save Dialogs   */
 	public static final String DIALOG_BACKUP_TO_FILE = "collector.savedialog.title.BACKUP_TO_FILE";
@@ -332,6 +336,8 @@ public final class DictKeys {
 	public static final String BROWSER_BACKUP_FINISHED_DETAIL = "org.sammelbox.browser.text.BACKUP_FINISHED_DETAIL";
 	public static final String BROWSER_LICENSE_HEADER = "org.sammelbox.browser.text.LICENSE_HEADER";
 	public static final String BROWSER_LICENSE = "org.sammelbox.browser.text.LICENSE";
+	public static final String BROWSER_SAVE_CHANGES = "org.sammelbox.browser.text.SAVE_CHANGES";
+	public static final String BROWSER_ABORT = "org.sammelbox.browser.text.ABORT";
 	
 	/*   Status Bar   */
 	public static final String STATUSBAR_PROGRAM_STARTED = "collector.statusbar.PROGRAM_STARTED";

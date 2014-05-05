@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.sammelbox.controller.filesystem.FileSystemAccessWrapper;
+import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Language;
 import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.model.album.AlbumItem;
@@ -31,6 +32,7 @@ import org.sammelbox.view.ApplicationUI;
 import org.sammelbox.view.UIConstants;
 import org.sammelbox.view.browser.spreadsheet.SpreadsheetAbortFunction;
 import org.sammelbox.view.browser.spreadsheet.SpreadsheetUpdateFunction;
+import org.sammelbox.view.browser.spreadsheet.YesNoDialogFunction;
 
 public final class BrowserFacade {	
 	private BrowserFacade() {
@@ -83,6 +85,14 @@ public final class BrowserFacade {
 		BrowserUtils.showEditableSpreadsheet(selectedItemIds);
 		new SpreadsheetUpdateFunction(ApplicationUI.createOrRetrieveAlbumItemBrowser(), "spreadsheetUpdateFunction");
 		new SpreadsheetAbortFunction(ApplicationUI.createOrRetrieveAlbumItemBrowser(), "spreadsheetAbortFunction");
+		new YesNoDialogFunction(ApplicationUI.createOrRetrieveAlbumItemBrowser(), 
+				"updateConfirmationDialogFunction", 
+				Translator.get(DictKeys.DIALOG_TITLE_UPDATE_CONFIRMATION), 
+				Translator.get(DictKeys.DIALOG_CONTENT_UPDATE_CONFIRMATION));
+		new YesNoDialogFunction(ApplicationUI.createOrRetrieveAlbumItemBrowser(), 
+				"addConfirmationDialogFunction", 
+				Translator.get(DictKeys.DIALOG_TITLE_ADDITION_CONFIRMATION), 
+				Translator.get(DictKeys.DIALOG_CONTENT_ADDITION_CONFIRMATION));
 	}
 	
 	public static void showHtmlPage(String pageName) {

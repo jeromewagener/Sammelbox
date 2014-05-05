@@ -6,12 +6,12 @@ import org.sammelbox.view.browser.BrowserFacade;
 
 public class SpreadsheetAbortFunction extends BrowserFunction {
 
-	public SpreadsheetAbortFunction (Browser browser, String name) {
+	public SpreadsheetAbortFunction(Browser browser, String name) {
 		super (browser, name);
 	}
 	
 	@Override
-	public Object function (Object[] arguments) {
+	public Object function(Object[] arguments) {
 		BrowserFacade.showAlbum();
 		return null;
 	}

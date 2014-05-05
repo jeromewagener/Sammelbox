@@ -478,26 +478,9 @@ function isDecimal (s) {
    return String(s).search (isDecimal_re) != -1
 }
 
-function checkAndSend() {
-	
-	var confirmMsg =	translatedConfirmMessagePart1 + "\n" + translatedConfirmMessagePart2 + "\n\n";
-	var addCounter = document.getElementById('addCount').innerHTML;
-	var modifyCounter = document.getElementById('modifyCount').innerHTML; 	
-	
-	if	(addCounter > 0) {
-		confirmMsg += translatedAdditionsString + "\t\t : " + addCounter + "\n";
-	}
-	
-	if	(modifyCounter > 0) {
-		confirmMsg += translatedModificationsString + "\t : " + modifyCounter + "\n";
-	}	
-	
-	confirmMsg += "\n\n"	+ translatedCancelString;
-	
-	if (confirm(confirmMsg)) {
+function checkAndSend() {	
+	if (updateConfirmationDialogFunction()) {
 		spreadsheetUpdateFunction(tableColName, tableColType, updateTheseObjects, deleteTheseObjects);
-	} else {
-		alert(translatedUpdateCanceledString);
 	}
 }
 
@@ -550,5 +533,6 @@ String.prototype.replaceAll = function(token, newToken, ignoreCase) {
         }
 
     }
-return str;
+    
+    return str;
 };

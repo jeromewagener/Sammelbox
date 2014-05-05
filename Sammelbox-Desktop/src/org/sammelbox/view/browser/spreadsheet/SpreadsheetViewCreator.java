@@ -26,6 +26,7 @@ import java.util.Map;
 import org.eclipse.swt.browser.Browser;
 import org.sammelbox.controller.GuiController;
 import org.sammelbox.controller.filters.ItemFieldFilter;
+import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.model.album.AlbumItem;
 import org.sammelbox.model.album.AlbumItemStore;
@@ -97,14 +98,6 @@ public final class SpreadsheetViewCreator {
 		StringBuilder javaScriptArrayTableColId = new StringBuilder();
 		StringBuilder javaScriptArrayTableColType = new StringBuilder();
 		StringBuilder javaScriptArrayTableColName = new StringBuilder();
-		
-		// Do not remove space before first 'var'
-		javaScriptTranslatedStrings.append(" var translatedConfirmMessagePart1 ='" + Translator.toBeTranslated("Press OK to continue the update of your database.") + "'; ");
-		javaScriptTranslatedStrings.append("var translatedConfirmMessagePart2 ='" + Translator.toBeTranslated("These updates are not reversible!!!") + "'; ");
-		javaScriptTranslatedStrings.append("var translatedAdditionsString ='" + Translator.toBeTranslated("Additions") + "'; ");
-		javaScriptTranslatedStrings.append("var translatedModificationsString ='" + Translator.toBeTranslated("Modifications") + "'; ");
-		javaScriptTranslatedStrings.append("var translatedCancelString ='" + Translator.toBeTranslated("Press Cancel to abort!") + "'; ");
-		javaScriptTranslatedStrings.append("var translatedUpdateCanceledString ='" + Translator.toBeTranslated("Update cancelled!") + "'; ");
 
 		AlbumItem emptyAlbumItem = AlbumItemStore.getEmptyAlbumItem(GuiController.getGuiState().getSelectedAlbum(), metaItemFields);
 		
@@ -182,8 +175,8 @@ public final class SpreadsheetViewCreator {
 		htmlSpreadsheet.append("</table>");
 		htmlSpreadsheet.append("</div>");
 		htmlSpreadsheet.append("</br>");
-		htmlSpreadsheet.append("<button id=\"checkAndSend\" type=\"button\" onclick=\"checkAndSend();\" >" + Translator.toBeTranslated("Änderungen Sichern") + "</button> ");
-		htmlSpreadsheet.append("<button id=\"return\" type=\"button\" onclick=\"spreadsheetAbortFunction();\" >" + Translator.toBeTranslated("Abbrechen") + "</button> ");
+		htmlSpreadsheet.append("<button id=\"checkAndSend\" type=\"button\" onclick=\"checkAndSend();\" >" + Translator.get(DictKeys.BROWSER_SAVE_CHANGES) + "</button> ");
+		htmlSpreadsheet.append("<button id=\"return\" type=\"button\" onclick=\"spreadsheetAbortFunction();\" >" + Translator.get(DictKeys.BROWSER_ABORT) + "</button> ");
 		htmlSpreadsheet.append("</br></br>");
 		htmlSpreadsheet.append("<label>");
 		htmlSpreadsheet.append("<div id=\"showModify\" class=\"hidden smallLabel dirty\">To be modified <span id=\"modifyCount\">0</span></div> ");
