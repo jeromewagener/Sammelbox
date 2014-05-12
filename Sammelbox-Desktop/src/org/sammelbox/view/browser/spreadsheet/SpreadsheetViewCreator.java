@@ -98,7 +98,7 @@ public final class SpreadsheetViewCreator {
 		StringBuilder javaScriptArrayTableColId = new StringBuilder();
 		StringBuilder javaScriptArrayTableColType = new StringBuilder();
 		StringBuilder javaScriptArrayTableColName = new StringBuilder();
-
+		
 		AlbumItem emptyAlbumItem = AlbumItemStore.getEmptyAlbumItem(GuiController.getGuiState().getSelectedAlbum(), metaItemFields);
 		
 		// Create the header of the spreadsheet

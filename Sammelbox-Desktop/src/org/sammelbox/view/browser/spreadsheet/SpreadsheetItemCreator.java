@@ -64,7 +64,7 @@ public final class SpreadsheetItemCreator {
 			}
 			
 			htmlSpreadsheetHeader.append(
-				"<th id=\"col:" + columnIndex + "\" width=\"170\">" + 
+				"<th id=\"col:" + columnIndex + "\" width=\"100\">" + 
 					"<table class=\"headerTable\">" +
 						"<tr>" +
 							"<td class=\"labelTd\">" + 

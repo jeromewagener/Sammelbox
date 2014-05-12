@@ -16,16 +16,10 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ** ----------------------------------------------------------------- */
 
-/*  script version is a variable that is never used beside from having a simple verioning
- *  controle in the context of the minimized js version of this code.
- */
-var scriptVersion = 0.1;
-
-/*  minColWidth is a constant for the minimum column size. A better solution need to be found.*/
-var minColWidth = 170;
+var minColWidth = 140;
 var minimizedColWidth = 25;
 
-/*  global variables that are needed for the dragging functionality.*/
+/* global variables that are needed for the dragging functionality. */
 var mouseDownX;
 var idDragStarted;
 var dragging = false;
@@ -33,8 +27,7 @@ var dragging = false;
 /* global variables to store the item updates/additions/deletions 
  *  deleteTheseObjects is an array of IDs
  *  updateTheseObjects is an array of arrays. One inner array holds one entire row.
- *  elements in the updateTheseObjects array with an id smaller or equal to -1 are new elements.
- */
+ *  elements in the updateTheseObjects array with an id smaller or equal to -1 are new elements. */
 var updateTheseObjects = [];
 var deleteTheseObjects = [];
 
@@ -44,8 +37,7 @@ var tableTop = 0;
 
 /*  function that stores the x coordinate of the mouse during an onMouseDown event on the resize area.
  *  furthermore, it disables the ability to select text inside the <body></body> tags which would leed
- *  to unexpected sizes during the onMouseUp event.
- */
+ *  to unexpected sizes during the onMouseUp event. */
 function startDrag(id, event) {
 	idDragStarted = id;
 	mouseDownX = event.clientX;
@@ -68,7 +60,7 @@ function startDrag(id, event) {
 function moveDiv(e) {
 	move++;	
 
-	if(move % 5 == 0) {
+	if (move % 5 == 0) {
     	document.getElementById("dragPreview").style.top = tableTop + "px";
     	document.getElementById("dragPreview").style.height = tableHeight + "px";
   		document.getElementById("dragPreview").style.left = (e.pageX + 20) + "px";
@@ -77,8 +69,7 @@ function moveDiv(e) {
 
 /*  function that calculates the delta between the onMouseDown x and onMouseUp x coordinates. 
  *  if this delta is smaller than the minColWidth constant, the delta is set to minColWidth.
- *  it also reenables the functioonality to select text inside the <body></body> tags.
- */
+ *  it also reenables the functioonality to select text inside the <body></body> tags. */
 function stopDrag(event) {
 	if (dragging == false) {
 		return;
@@ -119,8 +110,7 @@ function invertHidden(elem) {
 
 /*  function to invert the hidden class attribute of an entire column in the spreadsheet. 
  *  she also toogles the visability of the column controle elements and the width of the
- *  column from minColWidth to minimizedColWidth and vice versa.
- */
+ *  column from minColWidth to minimizedColWidth and vice versa. */
 function setHidden(column) {
 	var elem = document.getElementById('label:' + column);		
 	invertHidden(elem);
@@ -150,8 +140,7 @@ function setHidden(column) {
 
 /*  function to mark a row as a row the user wants to delete.
  *  adds to the row (<tr>) the class attribute 'delete' and adds the
- *  id of record to an array that is send during the updateAndDelete.
- */
+ *  id of record to an array that is send during the updateAndDelete. */
 function markAsDelete(id) {
 	var checkBox = document.getElementById('delete:' + id);
 	var row = document.getElementById('row:' + id);
@@ -173,8 +162,7 @@ function markAsDelete(id) {
 }
 
 /*  function to add the class atribute 'wrongInput' to an object.
- *  usually this object is a cell (<td>) which contains one input field.
- */
+ *  usually this object is a cell (<td>) which contains one input field. */
 function fieldIsWrong(cell, id) {	
 	if (!hasClass(cell, 'wrongInput')) {
 		addClass(cell, 'wrongInput');
@@ -183,8 +171,7 @@ function fieldIsWrong(cell, id) {
 }
 
 /*  function to remove the class atribute 'wrongInput' from an object.
- *  usually this object is a cell (<td>) which contains one input field.
- */
+ *  usually this object is a cell (<td>) which contains one input field. */
 function fieldIsOk(cell, id) {
 	if (hasClass(cell, 'wrongInput')) {
 		removeClass(cell, 'wrongInput');
@@ -197,8 +184,7 @@ function fieldIsOk(cell, id) {
  *  empty spare row. In that case, it calls the function to handel the addition of
  *  fields. For cells with a particuar type (such as INTEGER), a check with a regex is
  *  executed. Also, for every modified row, the entire row is pushed to an array
- *  which is send to the updateAndDelete java method.
- */
+ *  which is send to the updateAndDelete java method. */
 function markAsDirty(id, columnIndex) {	
 	var row = document.getElementById('row:' + id);	
 	var nextFreeId = document.getElementById('nextFreeId').innerHTML;
@@ -206,31 +192,11 @@ function markAsDirty(id, columnIndex) {
 	var cell = document.getElementById('value:' + columnIndex + ":" + id); 	
 	
 	var colType = tableColType[posInArray(tableColId, columnIndex)];
-	
-	switch (colType) {
-		case "INTEGER" : 
-			if (isInteger(field.value)) {
-				fieldIsOk(cell, id);
-			} else {
-				fieldIsWrong(cell, id);
-			}
-			break;
 			
-		case "DECIMAL" :
-			if (isDecimal(field.value)) {
-				fieldIsOk(cell, id);
-			} else {
-				fieldIsWrong(cell, id);
-			}
-			break;
-			
-		case "DATE" : 
-			if (isDate(field.value)) {
-				fieldIsOk(cell, id);
-			} else {
-				fieldIsWrong(cell, id);
-			}
-			break;
+   if (spreadsheetTypeValidatorFunction(colType, field.value)) {
+		fieldIsOk(cell, id);
+	} else {
+		fieldIsWrong(cell, id);
 	}
 	
 	if (id == nextFreeId) {
@@ -264,8 +230,7 @@ function markAsDirty(id, columnIndex) {
 
 /*  In case of a wrong regular expression, the following two functions are used to increment 
  *  and decrement the row counters for wrong input fields. Then a function is called that sums
- *  these violations up. 
- */
+ *  these violations up. */
 function decWrongCounter(id) {
 	var counter = parseInt(document.getElementById("corruptions:" + id).value);
 	counter = counter - 1;	
@@ -282,8 +247,7 @@ function incWrongCounter(id) {
 
 /*  This function sums the violations of the regular expression checked fields of the entire
  *  table up. Only if this number is equal to 0, the button to send the changes to the java
- *  programm is enabled.
- */
+ *  programm is enabled. */
 function enableDisableSendButoon() {
 	var total = 0;	
 	
@@ -450,32 +414,6 @@ function decreaseDeleteCount() {
 
 function increaseModifyCount() {
 	document.getElementById('modifyCount').innerHTML = parseInt(document.getElementById('modifyCount').innerHTML) + 1
-}
-
-/*  The following regular expression has been copied from 
- *  http://stackoverflow.com/questions/5465375/javascript-date-regex-dd-mm-yyyy/14807681#14807681
- */
-function isDate (s) {
-
-	if (s == "") {
-		return true;	
-	}	
-	
-	var isDate_re = /^(((0[1-9]|[12]\d|3[01])\/(0[13578]|1[02])\/((19|[2-9]\d)\d{2}))|((0[1-9]|[12]\d|30)\/(0[13456789]|1[012])\/((19|[2-9]\d)\d{2}))|((0[1-9]|1\d|2[0-8])\/02\/((19|[2-9]\d)\d{2}))|(29\/02\/((1[6-9]|[2-9]\d)(0[48]|[2468][048]|[13579][26])|((16|[2468][048]|[3579][26])00))))$/;
-   return String(s).search (isDate_re) != -1
-}
-
-/*  The following two functions have been copied from 
- *  http://ntt.cc/2008/05/10/over-10-useful-javascript-regular-expression-functions-to-improve-your-web-applications-efficiency.html
- */
-function isInteger (s) {
-	var isInteger_re     = /^\s*(\+|-)?\d+\s*$/;
-   return String(s).search (isInteger_re) != -1
-}
-
-function isDecimal (s) {
-	var isDecimal_re = /[+\-]?(?:0|[1-9]\d*)(?:\.\d*)?(?:[eE][+\-]?\d+)?/;
-   return String(s).search (isDecimal_re) != -1
 }
 
 function checkAndSend() {	

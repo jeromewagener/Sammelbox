@@ -23,7 +23,7 @@ table
 .tableWrapper
 {
 	width: 5000px;
-	overflow:scroll;	
+	overflow: hidden;
 }
 
 .normal
@@ -74,7 +74,7 @@ table
 
 .label
 {
-	white-space:nowrap;
+	white-space: nowrap;
 }
 
 .hidden
@@ -88,7 +88,7 @@ table{
 	border-color: #c4c1bd;	
 }
 
-tr{
+tr {
 	height: 23px;	
 }
 
@@ -98,6 +98,8 @@ th
 	border-style: dotted;	
 	border-color: lightgrey; 
 	border-width: 1px;
+	font-weight: normal;
+	font-size: 13px;
 }
 
 td
@@ -111,6 +113,8 @@ td
 	border-width: 1px;
 	white-space:nowrap;
 	overflow: hidden;
+   font-weight: normal;
+	font-size: 13px;
 }
 
 input, select
@@ -192,11 +196,11 @@ input, select
 
 .smallLabel
 {
-	font-size: 12px;
+	font-size: 10px;
 	border-color: grey;
 	border-style: solid;
 	border-width: 1px;
-	width: 180px;	
+	width: 140px;	
 	text-align: center;
 }
 
@@ -240,6 +244,7 @@ input, select
 {
 	border-left-style: solid;
 	border-color: #c4c1bd;
+	width: 25px;
 }
 
 .deleteText:hover

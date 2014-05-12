@@ -82,6 +82,7 @@ public class SpreadsheetUpdateFunction extends BrowserFunction {
 						if (!fieldItemValue.isEmpty()) {
 							SimpleDateFormat dateFormater = new SimpleDateFormat(SettingsManager.getSettings().getDateFormat());
 							java.util.Date utilDate = dateFormater.parse(fieldItemValue);
+							utilDate.setTime(utilDate.getTime() + (1000 * 60 * 60));
 							java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
 							tmpAlbumItem.addField((String) updatesColumNameMapping.get(i), fieldType, sqlDate);
 						} else {
