@@ -128,7 +128,6 @@ public final class QueryOperations {
 					}
 					else if (field.getType().equals(FieldType.DATE)) {
 						try {
-							
 							long utcTimeForDateTerm = transformDateStringToUTCUnixTime(term);
 							
 							queryFields.add(QueryBuilder.getQueryComponent(
@@ -149,7 +148,11 @@ public final class QueryOperations {
 
 		}// end of for - terms
 
-		return executeQuickSearchQuery(query, albumName);
+		if (query.isEmpty()) {
+			return executeSQLQuery(QueryBuilder.createOrderedSelectStarQuery(albumName));
+		} else {
+			return executeQuickSearchQuery(query, albumName);
+		}
 	}
 	
 	public static long transformDateStringToUTCUnixTime(String dateString) throws ParseException {
