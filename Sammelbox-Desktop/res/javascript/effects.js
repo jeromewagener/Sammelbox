@@ -57,21 +57,16 @@
    /*** Maximizes the given image to the window size. However, if the image is smaller
       than the window, the image will not be stretched! ***/
 
-   function maximizeImageSize(imageId, xOffset, yOffset) {     
-      document.getElementById(imageId).setAttribute("style",'width:auto');
-      document.getElementById(imageId).setAttribute("style",'height:auto');
-      
-      if ((window.innerHeight < document.getElementById(imageId).naturalHeight)
-         || (window.innerWidth < document.getElementById(imageId).naturalWidth))
-      {
-         if (document.getElementById(imageId).naturalWidth > document.getElementById(imageId).naturalHeight) {    
-         	newWidth = window.innerWidth - xOffset;        
-             document.getElementById(imageId).setAttribute("style",'width:' + newWidth + 'px');
-         } else {
-         	newHeight = window.innerHeight - yOffset;
-            document.getElementById(imageId).setAttribute("style",'height:' + newHeight + 'px');
-         }
-      }
+   function maximizeImageSize(imageId, yOffset) {     
+      if ((window.innerHeight - yOffset) < document.getElementById(imageId).naturalHeight) {
+      	newHeight = window.innerHeight - yOffset;
+         document.getElementById(imageId).setAttribute("style",'height:' + newHeight + 'px');
+      } else {
+			document.getElementById(imageId).setAttribute("style",'height:' + document.getElementById(imageId).naturalHeight + 'px');
+		}
+
+		var width = document.getElementById("bigimg").offsetWidth;
+		document.getElementById("bigImgDiv").style.width = width + "px";
    }
 
 

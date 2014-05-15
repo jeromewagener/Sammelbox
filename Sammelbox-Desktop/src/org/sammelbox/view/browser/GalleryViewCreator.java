@@ -107,7 +107,7 @@ public final class GalleryViewCreator {
 		       "<meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge,chrome=1\">" +
 		       "<link rel=stylesheet href=\"" + UIConstants.STYLE_CSS + "\" />" +
 		       "<script src=\"" + UIConstants.EFFECTS_JS + "\"></script>" +
-		       "<title>sammelbox.org</title>" +
+		       "<title>www.sammelbox.org</title>" +
 		     "</head>" +
 		     "<body style=\"background-color:#ffffff;font-family:" +  BrowserUtils.getDefaultSystemFont() + "\">" +
 		       "<h2>" + collectionHeader + "</h2>" +

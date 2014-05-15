@@ -28,8 +28,7 @@ public final class GalleryItemCreator {
 				     
 				     "<div class=\"pictureWrapper\">" + 
 				     	"<img src=\"" + getThumbnailForFirstPicture(albumItem) + "\">" +
-				     "</div>"+
-				     	
+				     "</div>" +
                 "</div>");
 	}
 }

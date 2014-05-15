@@ -50,56 +50,48 @@ public final class PictureViewCreator {
 			}
 	
 			StringBuilder smallPictures = new StringBuilder();
+
+			smallPictures.append("<div style=\" float:right; width:120; padding-top:20px\">" +
+					             "  <input type='button' " +
+					             "         onclick=\"parent.location.href='show:///lastPage'\" " +
+					             "         value='" + Translator.toBeTranslated("Go Back") + "'>" +
+					             "</div>");
+			
 			if (pictures.size() >= 2) {
 				int counter = 1;
 	
 				for (AlbumItemPicture picture : pictures) {
 					String escapedPicturePath = BrowserUtils.escapeBackslashesInFilePath(picture.getOriginalPicturePath());
 					smallPictures.append(
-							"<a onMouseover='change(\"bigimg\", \"" + escapedPicturePath + "\");maximizeImageSize(\"bigimg\", 150, 30);'>" + 
-									"  <img border=\"1\" " +
+							"<a style=\"\" onMouseOver='change(\"bigimg\", \"" + escapedPicturePath + "\");maximizeImageSize(\"bigimg\", 110);'>" + 
+									"  <img " +
 									"       onMouseOver='this.style.cursor=\"pointer\"' " +
 									"       id=\"smallimage" + counter + "\" " +
-									"		style=\"width:120px; margin-top:10px;\"" +
+									"		style=\" max-height:50px; margin-top:10px;\"" +
 									"       src=\"" + picture.getThumbnailPicturePath() + "\">" +
-									"</a>" +
-							"</br>");
+									"</a>");
 
 					counter++;
 				}
-	
-				smallPictures.append("<br>" +
-						             "<form>" +
-						             "  <input type='button' " +
-						             "         onclick=\"parent.location.href='show:///lastPage'\" " +
-						             "         value='Go Back'>" +
-						             "</form>");
 			}
 	
 			picturePage.append(
 					"<html>" +
 	                "  <head>" +
 					"      <meta " + UIConstants.META_PARAMS + ">" + 
-					"      <link rel=stylesheet href=\"" + UIConstants.STYLE_CSS + "\" />" +
 					"      <script src=\"" + UIConstants.EFFECTS_JS + "\"></script>" +
 			        "  </head>" +
-			        "  <body>" +
-			        "    <table>" +
-			        "      <tr>" +
-			        "        <td align=\"center\" valign=\"top\">" +
-			                   smallPictures.toString() +		
-			        "        </td>" +
-			        "        <td align=\"left\" valign=\"top\">" +
-			        "		   <div>" +
+			        "           <div style=\" width:100%; float:right; overflow-y:scroll; overflow:auto; height:70px;\">" + 
+			        				smallPictures.toString() + 
+			        			"</div>" +		
+			        "			<hr>" +
+			        "		   <div id=\"bigImgDiv\" style=\" width: 200px; display: block; margin-left: auto; margin-right: auto;\">" +
 			        "          		<img " +
 			        "               	id=\"bigimg\" src=\"" + originalPathToPicture + "\" " +
 			        "               	onMouseOver=\"changeCursorToHand('bigimg')\" " +
 			        "               	onClick=\"parent.location.href='show:///lastPage'\"" +
-			        "                   onLoad=\"maximizeImageSize('bigimg', 150, 30)\">" +
+			        "                   onLoad=\"maximizeImageSize('bigimg', 110)\">" +
 			        "          </div>" +
-			        "        </td>" +
-			        "      </tr>" +
-			        "    </table>" +
 			        "  </body>" +
 			        "</html>");
 	
