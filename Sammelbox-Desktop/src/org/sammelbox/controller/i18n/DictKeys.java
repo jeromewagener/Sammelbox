@@ -89,6 +89,7 @@ public final class DictKeys {
 	public static final String DROPDOWN_EDIT_ITEM = "org.sammelbox.dropdown.menu.EDIT_ITEM";
 	public static final String DROPDOWN_ADD_SINGLE_ITEM = "org.sammelbox.dropdown.menu.ADD_SINGLE_ITEM";
 	public static final String DROPDOWN_SHOW_IMAGES = "org.sammelbox.dropdown.menu.SHOW_IMAGES";
+	public static final String DROPDOWN_AGGREGATION_FUNCTIONS = "org.sammelbox.dropdown.menu.AGGREGATION_FUNCTIONS";
 	
 	/*   Dialog Messages   */
 	public static final String DIALOG_TITLE_PROGRAM_IS_RUNNING = "collector.dialog.title.PROGRAM_IS_RUNNING";
@@ -162,6 +163,8 @@ public final class DictKeys {
 	public static final String DIALOG_CONTENT_UPDATE_CONFIRMATION = "org.sammelbox.dialog.content.UPDATE_CONFIRMATION";
 	public static final String DIALOG_TITLE_ADDITION_CONFIRMATION = "org.sammelbox.dialog.title.ADDITION_CONFIRMATION";
 	public static final String DIALOG_CONTENT_ADDITION_CONFIRMATION = "org.sammelbox.dialog.content.ADDITION_CONFIRMATION";
+	public static final String DIALOG_TITLE_AGGREGATION_RESULT = "org.sammelbox.dialog.title.AGGREGATION_RESULT";
+	public static final String DIALOG_CONTENT_AGGREGATION_RESULT = "org.sammelbox.dialog.content.AGGREGATION_RESULT";
 	
 	/*   Open & Save Dialogs   */
 	public static final String DIALOG_BACKUP_TO_FILE = "collector.savedialog.title.BACKUP_TO_FILE";
@@ -222,6 +225,8 @@ public final class DictKeys {
 	public static final String BUTTON_ADD_ROWS = "org.sammelbox.button.ADD_ROWS";
 	public static final String BUTTON_SAVE = "org.sammelbox.button.BUTTON_SAVE";
 	public static final String BUTTON_SHOW_IMAGES_EXTERNALLY = "org.sammelbox.button.SHOW_IMAGES_EXTERNALLY";
+	public static final String BUTTON_GO_BACK = "org.sammelbox.button.GO_BACK";
+	public static final String BUTTON_EXECUTE_AGGREGATION_FUNCTION = "org.sammelbox.button.EXECUTE_AGGREGATION_FUNCTION";
 	
 	/*   Labels   */
 	public static final String LABEL_ADD_ENTRY = "collector.label.caption.ADD_ENTRY";
@@ -269,6 +274,9 @@ public final class DictKeys {
 	public static final String LABEL_PROCESSING_IMG_X_OF_Y = "org.sammelbox.label.caption.PROCESSING_IMG_X_OF_Y";
 	public static final String LABEL_IMAGES = "org.sammelbox.label.caption.IMAGES";
 	public static final String LABEL_SPREADSHEET_ACTION = "org.sammelbox.label.caption.SPREADSHEET_ACTION";
+	public static final String LABEL_AGGREGATION_FUNCTIONS = "org.sammelbox.label.caption.AGGREGATION_FUNCTIONS";
+	public static final String LABEL_ALBUM_FIELD = "org.sammelbox.label.caption.ALBUM_FIELD";
+	public static final String LABEL_ALBUM_FUNCTION = "org.sammelbox.label.caption.ALBUM_FUNCTION";
 	
 	/*   Textbox   */
 	public static final String TEXT_MY_NEW_ALBUM = "collector.textbox.content.MY_NEW_ALBUM";
@@ -279,6 +287,10 @@ public final class DictKeys {
 	public static final String COMBOBOX_CONTENT_YES = "org.sammelbox.combobox.content.YES";
 	public static final String COMBOBOX_CONTENT_NO = "org.sammelbox.combobox.content.NO";
 	public static final String COMBOBOX_CONTENT_DO_NOT_SORT = "org.sammelbox.combobox.content.COMBOBOX_CONTENT_DO_NOT_SORT";
+	public static final String COMBOBOX_CONTENT_SUM = "org.sammelbox.combobox.content.COMBOBOX_CONTENT_SUM";
+	public static final String COMBOBOX_CONTENT_AVERAGE = "org.sammelbox.combobox.content.COMBOBOX_CONTENT_AVERAGE";
+	public static final String COMBOBOX_CONTENT_MAX = "org.sammelbox.combobox.content.COMBOBOX_CONTENT_MAX";
+	public static final String COMBOBOX_CONTENT_MIN = "org.sammelbox.combobox.content.COMBOBOX_CONTENT_MIN";
 	
 	/*   Browser   */
 	public static final String BROWSER_UPDATE = "collector.browser.text.UPDATE";
@@ -374,6 +386,8 @@ public final class DictKeys {
 	public static final String ERROR_RESTORE_CLEANUP_FAILED = "org.sammelbox.error.RESTORE_CLEANUP_FAILED";
 	public static final String ERROR_NO_ITEM_SELECTED_HEADER = "org.sammelbox.error.ERROR_NO_ITEM_SELECTED_HEADER";
 	public static final String ERROR_NO_ITEM_SELECTED = "org.sammelbox.error.ERROR_NO_ITEM_SELECTED";
+	public static final String ERROR_NO_FIELD_OR_FUNCTION_SELECTED_HEADER = "org.sammelbox.error.ERROR_NO_FIELD_OR_FUNCTION_SELECTED_HEADER"; //No function and/or album field selected
+	public static final String ERROR_NO_FIELD_OR_FUNCTION_SELECTED = "org.sammelbox.error.ERROR_NO_FIELD_OR_FUNCTION_SELECTED"; // To execute a function, you need to select a function type and an album field. Please note that the album field must be of type integer or decimal to execute a function!
 	
 	/*   Configurator / Installer  */
 	public static final String CONFIGURATOR_WINDOW_TITLE = "org.sammelbox.installer.window.title";

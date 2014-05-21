@@ -130,6 +130,12 @@ public final class MenuManager implements EventObserver {
 		
 		new MenuItem(albumMenu, SWT.SEPARATOR);
 		
+		MenuItem albumFunctionAlbumMenuItem = new MenuItem(albumMenu, SWT.NONE);
+		albumFunctionAlbumMenuItem.setText(Translator.get(DictKeys.DROPDOWN_AGGREGATION_FUNCTIONS));
+		albumFunctionAlbumMenuItem.addSelectionListener(AlbumMenuItemListener.getFunctionListener());
+		
+		new MenuItem(albumMenu, SWT.SEPARATOR);
+		
 		MenuItem createNewAlbumMenuItem = new MenuItem(albumMenu, SWT.NONE);
 		createNewAlbumMenuItem.setText(Translator.get(DictKeys.MENU_CREATE_NEW_ALBUM));
 		createNewAlbumMenuItem.addSelectionListener(AlbumMenuItemListener.getCreateNewAlbumListener());

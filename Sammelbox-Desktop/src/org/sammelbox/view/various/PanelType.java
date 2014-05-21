@@ -29,5 +29,6 @@ public enum PanelType {
 	SETTINGS,
 	HELP,
 	IMPORT,
-	IMAGE_VIEWER
+	IMAGE_VIEWER,
+	ALBUM_FUNCTION
 }

@@ -69,6 +69,7 @@ import org.slf4j.LoggerFactory;
 public final class ApplicationUI implements EventObserver {	
 	private static final int NUMBER_OF_MAIN_PANEL_COMPOSITES = 3;
 	private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationUI.class);
+	
 	/** A reference to the main display */
 	private static final Display DISPLAY = Display.getDefault();
 	/** A reference to the main shell */
@@ -108,6 +109,7 @@ public final class ApplicationUI implements EventObserver {
 			put(PanelType.SETTINGS, UIConstants.RIGHT_PANEL_LARGE_WIDTH);
 			put(PanelType.IMPORT, UIConstants.RIGHT_PANEL_LARGE_WIDTH);
 			put(PanelType.IMAGE_VIEWER, UIConstants.RIGHT_PANEL_MEDIUM_WIDTH);
+			put(PanelType.ALBUM_FUNCTION, UIConstants.RIGHT_PANEL_LARGE_WIDTH);
 		}
 	};
 	

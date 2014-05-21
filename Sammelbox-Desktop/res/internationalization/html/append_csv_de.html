@@ -18,14 +18,15 @@
 		Open Office Calc erstellt werden. Der Inhalt solcher Dateien ist dabei tabular wobei jede Kolone
 		durch einen Komma oder ein anderes Symbol getrennt ist.<br>
 		  <b>Achtung! : </b> Um CSV Einträge zu einem bestehenden Album hinzufügen zu können müssen alle Kolonen
-			dem jeweiligen Album Feldtypen entsprechen.
+			dem jeweiligen Feldtypen entsprechen.
 	</p>
+
 	<p><b>Beispiel:</p></b>
 	<block>
-	   Book Titel;Autor;Seiten<br>
-	   Book 1;Author 1;42<br>
-	   Book 2;Author 2;21<br>
-      Book 3;Author 3;88
+	   Buch Titel;Author;Seiten<br>
+	   Buch 1;Author 1;42<br>
+	   Buch 2;Author 2;21<br>
+      Buch 3;Author 3;88
 	</block>
 
 	<h3>Bilder aus Kolone importieren</h3>
@@ -40,13 +41,13 @@
 		Feldtypen manuell zu definieren. Hierzu muss der Typ mittels '~' an den Kolonen-Namen angehängt werden.
 	</p>
 
-   <p><b>Example:</b></p>
+   <p><b>Beispiel:</b></p>
 	<block>
 	   Buch Titel<b>~TEXT</b>;Author<b>~TEXT</b>;Pages<b>~INTEGER</b>
 	</block>
 
 	<h3>Verfügbare Feldtypen und Werte</h3>
-	<p>Die folgende Tabelle beinhaltet alle verfügbaren Feld typen und aktzeptieren Werte:</p>
+	<p>Die folgende Tabelle beschreibt alle verfügbaren Feldtypen sowie die aktzeptierten Werte:</p>
 	<table>
 		<tr>
 			<th>Typ</th>
@@ -66,22 +67,21 @@
 		</tr>
 		<tr>
 			<td>DATE</td>
-			<td>A date in the format specified by the settings. <i>(E.g: 16/01/1988)</i>
-				Please verify your settings if you are unsure about the current format!</td>
+			<td>Ein Datum welches dem aktuellen Datumsformat entspricht. <i>(z.b.: 16/01/1988)</i>
+				 Bitte überprüfen Sie ihre Einstellungen falls Sie unsicher sind welches Format momentan aktiv ist.
+			</td>
 		</tr>
 		<tr>
 			<td>URL</td>
-			<td>A web link <i>(E.g: www.sammelbox.org)</i></td>
+			<td>Ein web-link (URL) <i>(z.B.: www.sammelbox.org)</i></td>
 		</tr>
 		<tr>
 			<td>OPTION</td>
-			<td>A yes, no & unknown field. Accepted values are 'YES', 'NO' and 'UNKNOWN'</td>
+			<td>Ein "Ja" / "Nein" / "Unbekannt" Feld. Aktzeptierte Werte sind 'YES' <i>(Ja)</i>, 'NO' <i>(Nein)</i> and 'UNKNOWN' <i>(Unbekannt)</i></td>
 		</tr>
 		<tr>
 			<td>STAR_RATING</td>
-			<td>A star rating between 0 and 5. Accepted values are 'ZERO_STARS', 'ONE_STAR', 'TWO_STARS'
-			    'THREE_STARS', 'FOUR_STARS' and 'FIVE_STARS'.                        
-			</td>
+			<td>Eine Bewertung mittels Sternen. Aktzeptierte Were sind 'ZERO_STARS' <i>(Null Sterne)</i>, 'ONE_STAR' <i>(Ein Stern)</i>, 'TWO_STARS' <i>(Zwei Sterne)</i>, 'THREE_STARS' <i>(Drei Sterne)</i>, 'FOUR_STARS' <i>(Vier Sterne)</i> and 'FIVE_STARS' <i>(Fünf Sterne)</i>.</td>
 		</tr>
 	</table>
 </body>

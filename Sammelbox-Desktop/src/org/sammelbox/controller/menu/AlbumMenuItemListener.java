@@ -16,6 +16,7 @@ import org.sammelbox.view.browser.BrowserFacade;
 import org.sammelbox.view.sidepanes.AdvancedSearchSidepane;
 import org.sammelbox.view.sidepanes.AlterAlbumSidepane;
 import org.sammelbox.view.sidepanes.CreateAlbumSidepane;
+import org.sammelbox.view.sidepanes.AlbumFunctionSidepane;
 import org.sammelbox.view.various.ComponentFactory;
 import org.sammelbox.view.various.PanelType;
 import org.slf4j.Logger;
@@ -31,7 +32,7 @@ public final class AlbumMenuItemListener {
 	static SelectionAdapter getAdvancedSearchListener() {
 		return new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent arg0) {
+			public void widgetSelected(SelectionEvent selectionEvent) {
 				if (ApplicationUI.isAlbumSelectedAndShowMessageIfNot()) {
 					ApplicationUI.changeRightCompositeTo(PanelType.ADVANCED_SEARCH, AdvancedSearchSidepane.build(
 							ApplicationUI.getThreePanelComposite(), ApplicationUI.getSelectedAlbum()));
@@ -40,10 +41,22 @@ public final class AlbumMenuItemListener {
 		};
 	}
 	
+	static SelectionAdapter getFunctionListener() {
+		return new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent selectionEvent) {
+				if (ApplicationUI.isAlbumSelectedAndShowMessageIfNot()) {
+					ApplicationUI.changeRightCompositeTo(PanelType.ALBUM_FUNCTION, 
+							new AlbumFunctionSidepane(ApplicationUI.getThreePanelComposite()));
+				}
+			}
+		};
+	}
+	
 	static SelectionAdapter getCreateNewAlbumListener() {
 		return new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent arg0) {
+			public void widgetSelected(SelectionEvent selectionEvent) {
 				BrowserFacade.clearAlterationList();
 				ApplicationUI.changeRightCompositeTo(PanelType.ADD_ALBUM, CreateAlbumSidepane.build(ApplicationUI.getThreePanelComposite()));
 			}
@@ -53,7 +66,7 @@ public final class AlbumMenuItemListener {
 	static SelectionAdapter getAlterAlbumListener() {
 		return new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent arg0) {
+			public void widgetSelected(SelectionEvent selectionEvent) {
 				if (ApplicationUI.isAlbumSelectedAndShowMessageIfNot()) {
 					ApplicationUI.changeRightCompositeTo(PanelType.ALTER_ALBUM, AlterAlbumSidepane.build(
 							ApplicationUI.getThreePanelComposite(), ApplicationUI.getSelectedAlbum()));
@@ -65,7 +78,7 @@ public final class AlbumMenuItemListener {
 	static SelectionAdapter getDeleteAlbumListener() {
 		return new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent arg0) {
+			public void widgetSelected(SelectionEvent selectionEvent) {
 				if (ApplicationUI.isAlbumSelectedAndShowMessageIfNot()) {					
 					MessageBox messageBox = ComponentFactory.getMessageBox(
 							Translator.get(DictKeys.DIALOG_TITLE_DELETE_ALBUM), 

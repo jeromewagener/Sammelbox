@@ -54,7 +54,7 @@ public final class PictureViewCreator {
 			smallPictures.append("<div style=\" float:right; width:120; padding-top:20px\">" +
 					             "  <input type='button' " +
 					             "         onclick=\"parent.location.href='show:///lastPage'\" " +
-					             "         value='" + Translator.toBeTranslated("Go Back") + "'>" +
+					             "         value='" + Translator.get(DictKeys.BUTTON_GO_BACK) + "'>" +
 					             "</div>");
 			
 			if (pictures.size() >= 2) {
