@@ -49,21 +49,18 @@ public final class MenuManager implements EventObserver {
 		MenuItem sammelboxItem = new MenuItem(menu, SWT.CASCADE);
 		MenuItem albumItem = new MenuItem(menu, SWT.CASCADE);
 		MenuItem importExport = new MenuItem(menu, SWT.CASCADE);
-		MenuItem settingsItem = new MenuItem(menu, SWT.CASCADE);
 		MenuItem helpItem = new MenuItem(menu, SWT.CASCADE);
 
 		// Set the text labels for each of the main menu items
 		sammelboxItem.setText(Translator.get(DictKeys.MENU_COLLECTOR));
 		albumItem.setText(Translator.get(DictKeys.MENU_ALBUM));
 		importExport.setText(Translator.get(DictKeys.MENU_IMPORT_EXPORT));
-		settingsItem.setText(Translator.get(DictKeys.MENU_SETTINGS));
 		helpItem.setText(Translator.get(DictKeys.MENU_HELP));
 
 		// Setup dropdown menus for the main menu items
 		createDropdownForSammelboxMenuItem(menu, sammelboxItem);
 		createDropdownForAlbumMenuItem(menu, albumItem);
 		createDropdownForImportExportMenuItem(menu, importExport);
-		createDropdownSettingsMenuItem(menu, settingsItem);
 		createDropdownHelpItem(menu, helpItem);
 
 		// Attach the menu bar to the given shell
@@ -98,6 +95,12 @@ public final class MenuManager implements EventObserver {
 	private static void createDropdownForSammelboxMenuItem(Menu menu, MenuItem sammelboxMenuItem) {
 		Menu sammelboxMenu = new Menu(menu);
 		sammelboxMenuItem.setMenu(sammelboxMenu);
+		
+		MenuItem settingsItem = new MenuItem(sammelboxMenu, SWT.NONE);
+		settingsItem.setText(Translator.get(DictKeys.MENU_SETTINGS));
+		settingsItem.addSelectionListener(SettingsMenuItemListener.getSettingsListener());
+		
+		new MenuItem(sammelboxMenu, SWT.SEPARATOR);
 		
 		MenuItem backupMenuItem = new MenuItem(sammelboxMenu, SWT.NONE);
 		backupMenuItem.setText(Translator.get(DictKeys.MENU_BACKUP_ALBUMS_TO_FILE));
@@ -149,15 +152,6 @@ public final class MenuManager implements EventObserver {
 		MenuItem deleteAlbumMenuItem = new MenuItem(albumMenu, SWT.NONE);
 		deleteAlbumMenuItem.setText(Translator.get(DictKeys.MENU_DELETE_SELECTED_ALBUM));
 		deleteAlbumMenuItem.addSelectionListener(AlbumMenuItemListener.getDeleteAlbumListener());	
-	}
-
-	private static void createDropdownSettingsMenuItem(Menu menu, MenuItem settingsMenuItem) {
-		Menu settingsMenu = new Menu(menu);
-		settingsMenuItem.setMenu(settingsMenu);
-
-		MenuItem settingsItem = new MenuItem(settingsMenu, SWT.NONE);
-		settingsItem.setText(Translator.get(DictKeys.MENU_SETTINGS));
-		settingsItem.addSelectionListener(SettingsMenuItemListener.getSettingsListener());
 	}
 
 	private static void createDropdownHelpItem(Menu menu, MenuItem helpItem) {

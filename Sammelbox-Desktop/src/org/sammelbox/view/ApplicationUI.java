@@ -386,7 +386,7 @@ public final class ApplicationUI implements EventObserver {
 		}
 		
 		// Reset view
-		GuiController.getGuiState().setSelectedView(GuiState.NO_VIEW_SELECTED);
+		GuiController.getGuiState().setSelectedSavedSearch(GuiState.NO_VIEW_SELECTED);
 		
 		int albumListItemCount = ApplicationUI.albums.getItemCount();
 		boolean albumSelectionIsInSync = false;
