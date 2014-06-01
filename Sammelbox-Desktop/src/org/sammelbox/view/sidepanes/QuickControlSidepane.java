@@ -148,7 +148,6 @@ public final class QuickControlSidepane {
 		});
 		
 		albumList.addListener(SWT.MenuDetect, new Listener() {
-
 			@Override
 			public void handleEvent(Event event) {				
 				if ((albumList.getItemCount() > 0) && albumList.getSelectionIndex() < 0) {
@@ -260,7 +259,6 @@ public final class QuickControlSidepane {
 		});
 		
 		popupMenuForAlbumList.addListener(SWT.Show, new Listener() {
-
 			@Override
 			public void handleEvent(Event event) {
 				createNewAlbum.setEnabled(true);
@@ -298,14 +296,13 @@ public final class QuickControlSidepane {
 				
 				String savedSearchesListItem = savedSearchesList.getItem(savedSearchesList.getSelectionIndex());
 					
-				GuiController.getGuiState().setSelectedView(savedSearchesListItem);
+				GuiController.getGuiState().setSelectedSavedSearch(savedSearchesListItem);
 				EventObservable.addEventToQueue(SammelboxEvent.SAVED_SEARCH_SELECTED);
 				
 				BrowserFacade.performBrowserQueryAndShow(SavedSearchManager.getSqlQueryBySavedSearchName(
 						GuiController.getGuiState().getSelectedAlbum(), GuiController.getGuiState().getSelectedSavedSearch()));
 
 				WelcomePageManager.increaseClickCountForAlbumOrView(savedSearchesList.getItem(savedSearchesList.getSelectionIndex()));
-							
 			}
 		});			
 
@@ -316,7 +313,7 @@ public final class QuickControlSidepane {
 			@Override
 			public void handleEvent(Event event) {
 				if (!GuiController.getGuiState().isAlbumSelected()) {
-					// A view has to have a parent album. Don't do anything if no album has been selected
+					// A saved search has to have a parent album. Don't do anything if no album has been selected
 					event.doit = false;
 				} else if ((savedSearchesList.getItemCount() > 0) && (savedSearchesList.getSelectionIndex() < 0)) {
 					savedSearchesList.select(0);
@@ -417,7 +414,6 @@ public final class QuickControlSidepane {
 		savedSearchesList.setMenu(popupMenuForSavedSearchList);
 		
 		popupMenuForSavedSearchList.addListener(SWT.Show, new Listener() {
-
 			@Override
 			public void handleEvent(Event event) {			
 				boolean extraMenuItemsEnabled = true;

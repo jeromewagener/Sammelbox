@@ -86,7 +86,7 @@ public class GuiState {
 		return selectedSavedSearch;
 	}
 
-	public void setSelectedView(String selectedView) {
+	public void setSelectedSavedSearch(String selectedView) {
 		this.selectedSavedSearch = selectedView;
 	}
 
