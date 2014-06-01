@@ -1,9 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <launch4jConfig>
   <dontWrapJar>false</dontWrapJar>
   <headerType>gui</headerType>
-  <jar>../Sammelbox-Desktop/release/Sammelbox-xxx.jar</jar>
-  <outfile>../Sammelbox-Desktop/release/Sammelbox-xxx.exe</outfile>
-  <errTitle>You need Java installed to run Sammelbox</errTitle>
+  <jar>../Sammelbox-Desktop/release/Sammelbox-1.0-SNAPSHOT-win64.jar</jar>
+  <outfile>../Sammelbox-Desktop/release/Sammelbox-1.0-SNAPSHOT-win64.exe</outfile>
+  <errTitle>You need to have Java installed to run Sammelbox</errTitle>
   <cmdLine></cmdLine>
   <chdir></chdir>
   <priority>normal</priority>
@@ -18,5 +19,6 @@
     <minVersion>1.7.0</minVersion>
     <maxVersion></maxVersion>
     <jdkPreference>preferJre</jdkPreference>
+    <runtimeBits>64/32</runtimeBits>
   </jre>
 </launch4jConfig>
