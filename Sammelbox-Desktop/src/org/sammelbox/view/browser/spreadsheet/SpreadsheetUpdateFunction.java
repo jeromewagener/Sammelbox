@@ -67,6 +67,14 @@ public class SpreadsheetUpdateFunction extends BrowserFunction {
 				for (int i = 1; i < ((Object[]) completeRow).length; i++) {
 					FieldType fieldType = FieldType.valueOf((String) updatesColumTypeMapping.get(i));
 					String fieldItemValue = (String) (((Object[]) completeRow)[i]);;
+
+					// TODO handle more elegantly
+					// Under Linux, leaving a spreadsheet field empty results in an empty string. 
+					// However, under Windows, an empty field in the spreadsheet results in a null pointer!
+					// This causes then issues with the processing of the line.
+					if (fieldItemValue == null) {
+						fieldItemValue = "";
+					}
 					
 					if (fieldType.equals(FieldType.OPTION)) {
 						if (fieldItemValue.equals(OptionType.YES.toString())) {
