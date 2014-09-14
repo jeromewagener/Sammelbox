@@ -103,7 +103,7 @@ public class SpreadsheetComposite {
 		GridLayout tableCompositeGridLayout = new GridLayout();
 		tableComposite.setLayout(tableCompositeGridLayout);
 
-		final Table table = new Table(tableComposite, SWT.BORDER | SWT.CHECK);
+		final Table table = new Table(tableComposite, SWT.BORDER | SWT.CHECK | SWT.FULL_SELECTION);
 		GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		table.setLayoutData(gridData);
 		table.setHeaderVisible(true);
@@ -292,6 +292,10 @@ public class SpreadsheetComposite {
 		select.setText(Translator.get(DictKeys.DROPDOWN_SELECT));
 		select.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
+				if (table.getSelectionIndex() == -1) {
+					return;
+				}
+				
 				table.getItem(table.getSelectionIndex()).setChecked(
 						!table.getItem(table.getSelectionIndex()).getChecked());
 			}
@@ -303,6 +307,10 @@ public class SpreadsheetComposite {
 		editUsingSidepane.setText(Translator.get(DictKeys.DROPDOWN_EDIT_ITEM));
 		editUsingSidepane.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
+				if (table.getSelectionIndex() == -1) {
+					return;
+				}
+				
 				Long albumItemId = (Long) table.getItem(table.getSelectionIndex()).getData(ID_TABLE_DATA_KEY);
 				ApplicationUI.changeRightCompositeTo(
 					PanelType.UPDATE_ENTRY, 
@@ -316,7 +324,7 @@ public class SpreadsheetComposite {
 		addUsingSidepane.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				ApplicationUI.changeRightCompositeTo(
-					PanelType.UPDATE_ENTRY, 
+					PanelType.ADD_ENTRY, 
 					AddAlbumItemSidepane.build(
 						ApplicationUI.getThreePanelComposite(), 
 						GuiController.getGuiState().getSelectedAlbum()));
@@ -329,6 +337,10 @@ public class SpreadsheetComposite {
 		showImages.setText(Translator.get(DictKeys.DROPDOWN_SHOW_IMAGES));
 		showImages.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
+				if (table.getSelectionIndex() == -1) {
+					return;
+				}
+				
 				Long albumItemId = (Long) table.getItem(table.getSelectionIndex()).getData(ID_TABLE_DATA_KEY);
 				ApplicationUI.changeRightCompositeTo(
 						PanelType.IMAGE_VIEWER,

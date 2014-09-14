@@ -274,7 +274,7 @@ public final class AlterAlbumSidepane {
 		moveDown.setText(Translator.get(DictKeys.DROPDOWN_MOVE_ONE_DOWN));
 		moveDown.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				if (albumFieldNamesAndTypesTable.getSelectionIndex() < (albumFieldNamesAndTypesTable.getItemCount() - 1)) {
+				if (albumFieldNamesAndTypesTable.getSelectionIndex() != -1 && albumFieldNamesAndTypesTable.getSelectionIndex() < (albumFieldNamesAndTypesTable.getItemCount() - 1)) {
 					int newPosition = albumFieldNamesAndTypesTable.getSelectionIndex() + 1;
 					TableItem originalItem = albumFieldNamesAndTypesTable.getItem(albumFieldNamesAndTypesTable.getSelectionIndex());
 					MetaItemField metaItemField = new MetaItemField(originalItem.getText(1), FieldType.valueOfTranslatedFieldType(originalItem.getText(2)), originalItem.getChecked());
@@ -310,31 +310,33 @@ public final class AlterAlbumSidepane {
 		renameAlbumField.setText(Translator.get(DictKeys.DROPDOWN_RENAME));
 		renameAlbumField.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				TableItem item = albumFieldNamesAndTypesTable.getItem(albumFieldNamesAndTypesTable.getSelectionIndex());
-
-				TextInputDialog textInputDialog = new TextInputDialog(parentComposite.getShell());
-				String newFieldName = textInputDialog.open(
-						Translator.get(DictKeys.DIALOG_TITLE_RENAME_FIELD),
-						Translator.get(DictKeys.DIALOG_CONTENT_RENAME_FIELD), item.getText(1), 
-						Translator.get(DictKeys.DIALOG_BUTTON_RENAME_FIELD));
-
-				if (newFieldName != null) {	    			
-					MetaItemField oldMetaItemField = new MetaItemField(item.getText(1), FieldType.valueOfTranslatedFieldType(item.getText(2)), item.getChecked());
-					MetaItemField newMetaItemField = new MetaItemField(newFieldName, FieldType.valueOfTranslatedFieldType(item.getText(2)), item.getChecked());
-
-					String albumName = albumNameText.getData().toString();
-					try {
-					    DatabaseOperations.renameAlbumItemField(albumName, oldMetaItemField, newMetaItemField);
-					    item.setText(1, newFieldName);
-						BrowserFacade.addModificationToAlterationList(Translator.get(DictKeys.BROWSER_ALBUMFIELD_RENAMED, oldMetaItemField.getName(), newMetaItemField.getName()));
-						AlterAlbumSidepane.updateAlterAlbumPage(yesButtonForIncludingImages, albumFieldNamesAndTypesTable);
-						
-						if (SavedSearchManager.hasAlbumSavedSearches(albumName)) {
-							ComponentFactory.getMessageBox(Translator.get(DictKeys.WARNING), 
-									Translator.get(DictKeys.WARNING_SAVED_SEARCHES_MIGHT_BE_BROKEN), SWT.ICON_INFORMATION).open();
+				if (albumFieldNamesAndTypesTable.getSelectionIndex() != -1) {
+					TableItem item = albumFieldNamesAndTypesTable.getItem(albumFieldNamesAndTypesTable.getSelectionIndex());
+	
+					TextInputDialog textInputDialog = new TextInputDialog(parentComposite.getShell());
+					String newFieldName = textInputDialog.open(
+							Translator.get(DictKeys.DIALOG_TITLE_RENAME_FIELD),
+							Translator.get(DictKeys.DIALOG_CONTENT_RENAME_FIELD), item.getText(1), 
+							Translator.get(DictKeys.DIALOG_BUTTON_RENAME_FIELD));
+	
+					if (newFieldName != null) {	    			
+						MetaItemField oldMetaItemField = new MetaItemField(item.getText(1), FieldType.valueOfTranslatedFieldType(item.getText(2)), item.getChecked());
+						MetaItemField newMetaItemField = new MetaItemField(newFieldName, FieldType.valueOfTranslatedFieldType(item.getText(2)), item.getChecked());
+	
+						String albumName = albumNameText.getData().toString();
+						try {
+						    DatabaseOperations.renameAlbumItemField(albumName, oldMetaItemField, newMetaItemField);
+						    item.setText(1, newFieldName);
+							BrowserFacade.addModificationToAlterationList(Translator.get(DictKeys.BROWSER_ALBUMFIELD_RENAMED, oldMetaItemField.getName(), newMetaItemField.getName()));
+							AlterAlbumSidepane.updateAlterAlbumPage(yesButtonForIncludingImages, albumFieldNamesAndTypesTable);
+							
+							if (SavedSearchManager.hasAlbumSavedSearches(albumName)) {
+								ComponentFactory.getMessageBox(Translator.get(DictKeys.WARNING), 
+										Translator.get(DictKeys.WARNING_SAVED_SEARCHES_MIGHT_BE_BROKEN), SWT.ICON_INFORMATION).open();
+							}
+						} catch (DatabaseWrapperOperationException ex) {
+							LOGGER.error("An error occured while renaming the album field", ex);
 						}
-					} catch (DatabaseWrapperOperationException ex) {
-						LOGGER.error("An error occured while renaming the album field", ex);
 					}
 				}
 			}
