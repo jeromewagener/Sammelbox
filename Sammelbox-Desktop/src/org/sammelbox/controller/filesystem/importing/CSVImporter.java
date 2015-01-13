@@ -61,8 +61,10 @@ public final class CSVImporter {
 			String line = br.readLine();
 			pictureColumnIndex = handleFirstLine(line, albumName, separationCharacter, metaItemFields, pictureColumnName, pictureSeparationCharacter, isSimulation);
 			
+			long lineCounter = 2;
 			while ((line = br.readLine()) != null) {
-				handleData(line, albumName, separationCharacter, metaItemFields, pictureSeparationCharacter, pictureColumnIndex, isSimulation);
+				handleData(line, lineCounter, albumName, separationCharacter, metaItemFields, pictureSeparationCharacter, pictureColumnIndex, isSimulation);
+				lineCounter++;
 			}
 						
 		} catch (FileNotFoundException fnfe) {
@@ -80,7 +82,7 @@ public final class CSVImporter {
 			String pictureColumnName, String pictureSeparationCharacter, boolean isSimulation) throws ImportException, DatabaseWrapperOperationException {
 		
 		if (line == null || line.isEmpty()) {
-			throw new ImportException("There seems to be no header data");
+			throw new ImportException("There seems to be no header in your CSV file. Please have a look at the help for more information.");
 		}
 		
 		int pictureColumnIndex = NO_PICTURE_INDEX;
@@ -99,9 +101,14 @@ public final class CSVImporter {
 					metaItemFields.add(new MetaItemField(fieldNameAndPossiblyType[0], FieldType.TEXT));
 				}
 			} else if (fieldNameAndPossiblyType.length == 2) {
-				metaItemFields.add(new MetaItemField(fieldNameAndPossiblyType[0], FieldType.valueOf(fieldNameAndPossiblyType[1])));
+				try {
+					metaItemFields.add(new MetaItemField(
+							fieldNameAndPossiblyType[0], FieldType.valueOf(fieldNameAndPossiblyType[1])));
+				} catch (IllegalArgumentException iae) {
+					throw new ImportException("An error occurred while reading the csv header!", iae);
+				}
 			} else {
-				throw new ImportException("Could not interpret: " + fieldHeader[i]);
+				throw new ImportException("A error occurred while reading the following header field: " + fieldHeader[i]);
 			}
 		}
 		
@@ -116,7 +123,7 @@ public final class CSVImporter {
 		return pictureColumnIndex;
 	}
 	
-	static void handleData(String line, String albumName, String separationCharacter, List<MetaItemField> metaItemFields, 
+	static void handleData(String line, long lineCounter, String albumName, String separationCharacter, List<MetaItemField> metaItemFields, 
 			String pictureSeperationCharacter, int pictureColumnIndex, boolean isSimulation) throws DatabaseWrapperOperationException, ImportException {
 		
 		// Credit for the regex goes to Bart Kiers (http://stackoverflow.com/a/1757107/2898363)
@@ -124,7 +131,7 @@ public final class CSVImporter {
 
 		int pictureOffset = pictureColumnIndex == NO_PICTURE_INDEX ? 0 : 1;
 		if ((metaItemFields.size() + pictureOffset) != fieldValues.length) {
-			throw new ImportException("The header line has a different number of columns compared to the current data line (" + line + ")");
+			throw new ImportException("The header line has a different number of columns compared to the current data line (" + lineCounter + ")");
 		}
 		
 		List<ItemField> itemFields = new ArrayList<>();
@@ -133,7 +140,7 @@ public final class CSVImporter {
 		// parse item fields
 		for (int index=0; index<metaItemFields.size(); index++) {
 			if (index != pictureColumnIndex) {
-				convertIntoDatabaseValueAndAddToItemFields(metaItemFields, fieldValues, index, itemFields);
+				convertIntoDatabaseValueAndAddToItemFields(lineCounter, metaItemFields, fieldValues, index, itemFields);
 			}	
 		}
 		
@@ -143,7 +150,10 @@ public final class CSVImporter {
 				if (!filePath.isEmpty()) {
 					if (isSimulation) {
 						// if it is a simulation, just check if the specified files exist!
-						new File(filePath).exists();
+						File image = new File(filePath);
+						if (!image.exists()) {
+							throw new ImportException("A problem has been encountered with the image(s) defined for the current line (" + lineCounter + ")");
+						}
 					} else {
 						pictures.add(ImageManipulator.adaptAndStoreImageForCollector(new File(filePath), albumName));
 					}
@@ -159,7 +169,7 @@ public final class CSVImporter {
 		}
 	}
 	
-	private static void convertIntoDatabaseValueAndAddToItemFields(List<MetaItemField> metaItemFields, String[] fieldValues, int index, List<ItemField> itemFields) {
+	private static void convertIntoDatabaseValueAndAddToItemFields(long lineCounter, List<MetaItemField> metaItemFields, String[] fieldValues, int index, List<ItemField> itemFields) throws ImportException {
 		switch (metaItemFields.get(index).getType()) {
 		case TEXT:
 			itemFields.add(new ItemField(metaItemFields.get(index).getName(), FieldType.TEXT, fieldValues[index]));
@@ -175,7 +185,11 @@ public final class CSVImporter {
 			}
 			break;
 		case OPTION:
-			itemFields.add(new ItemField(metaItemFields.get(index).getName(), FieldType.OPTION, OptionType.valueOf(fieldValues[index])));
+			try {
+				itemFields.add(new ItemField(metaItemFields.get(index).getName(), FieldType.OPTION, OptionType.valueOf(fieldValues[index])));
+			} catch (IllegalArgumentException iae) {
+				throw new ImportException("The option value in line " + lineCounter + " must correspond to 'YES', 'NO' or 'UNKNOWN'", iae);
+			}
 			break;
 		case STAR_RATING:
 			itemFields.add(new ItemField(metaItemFields.get(index).getName(), FieldType.STAR_RATING, StarRating.valueOf(fieldValues[index])));

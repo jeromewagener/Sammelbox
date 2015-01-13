@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.sammelbox.controller.events.EventObservable;
+import org.sammelbox.controller.events.SammelboxEvent;
 import org.sammelbox.model.album.FieldType;
 import org.sammelbox.model.album.MetaItemField;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
@@ -26,6 +28,8 @@ public final class CSVAppender {
 	public static void appendItemsFromCSV(String albumName, String csvFilePath, String separationCharacter, 
 			String pictureColumnName, String pictureSeparationCharacter, boolean isSimulation) throws ImportException {
 				
+		EventObservable.addEventToQueue(SammelboxEvent.DISABLE_SAMMELBOX);
+		
 		try (BufferedReader br = new BufferedReader(new FileReader(new File(csvFilePath)));) {
 			Map<Integer, MetaItemField> positionToMetaItemFieldMap = DatabaseOperations.getAlbumItemMetaMap(albumName);
 			int pictureColumnIndex = CSVImporter.NO_PICTURE_INDEX;
@@ -35,8 +39,10 @@ public final class CSVAppender {
 			String line = br.readLine();
 			pictureColumnIndex = handleFirstLine(line, albumName, separationCharacter, metaItemFields, pictureColumnName, pictureSeparationCharacter, positionToMetaItemFieldMap);
 			
+			long lineCounter = 2;
 			while ((line = br.readLine()) != null) {
-				CSVImporter.handleData(line, albumName, separationCharacter, metaItemFields, pictureSeparationCharacter, pictureColumnIndex, isSimulation);
+				CSVImporter.handleData(line, lineCounter, albumName, separationCharacter, metaItemFields, pictureSeparationCharacter, pictureColumnIndex, isSimulation);
+				lineCounter++;
 			}
 		} catch (FileNotFoundException fnfe) {
 			throw new ImportException("An error occured while handling the file", fnfe);
@@ -47,6 +53,8 @@ public final class CSVAppender {
 		} catch (DatabaseWrapperOperationException dwoe) {
 			throw new ImportException("An internal error occured", dwoe);
 		}
+		
+		EventObservable.addEventToQueue(SammelboxEvent.ENABLE_SAMMELBOX);
 	}
 	
 	private static int handleFirstLine(String line, String albumName, String separationCharacter, List<MetaItemField> metaItemFields, 

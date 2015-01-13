@@ -176,7 +176,7 @@ public final class ImportSidepane {
 		final Text imageColumnText = new Text(innerComposite, SWT.BORDER);
 		imageColumnText.setLayoutData(new GridData(GridData.FILL_BOTH));
 		imageColumnText.setEnabled(false);
-		imageColumnText.setText("IMG");
+		imageColumnText.setText("pictures");
 		
 		// image separator
 		Label imageSeparatorLabel = new Label(innerComposite, SWT.NONE);
