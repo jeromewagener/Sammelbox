@@ -54,6 +54,10 @@ public final class ImageManipulator {
 		try {
 			BufferedImage sourceImage = ImageIO.read(pictureFile);
 			
+			if (sourceImage == null) {
+				throw new IOException("Could not read image file");
+			}
+			
 			int imageWidth = sourceImage.getWidth();
 			int imageHeight	= sourceImage.getHeight();
 			

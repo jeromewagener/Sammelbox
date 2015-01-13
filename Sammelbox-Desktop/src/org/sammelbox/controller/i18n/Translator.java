@@ -47,6 +47,8 @@ public final class Translator {
 			case "de":
 				setLanguageManually(Language.DEUTSCH);
 				break;
+			case "fr":
+				setLanguageManually(Language.FRENCH);
 			default:
 				setLanguageManually(Language.ENGLISH);
 			}

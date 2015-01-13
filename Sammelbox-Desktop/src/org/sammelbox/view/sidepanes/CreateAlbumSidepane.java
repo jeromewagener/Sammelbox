@@ -164,7 +164,7 @@ public final class CreateAlbumSidepane {
 		moveDown.setText(Translator.get(DictKeys.DROPDOWN_MOVE_ONE_DOWN));
 		moveDown.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				if (albumFieldNamesAndTypesTable.getSelectionIndex() != albumFieldNamesAndTypesTable.getItemCount()) {
+				if (albumFieldNamesAndTypesTable.getSelectionIndex() != -1 && albumFieldNamesAndTypesTable.getSelectionIndex() != albumFieldNamesAndTypesTable.getItemCount()) {
 					TableItem originalItem = albumFieldNamesAndTypesTable.getItem(albumFieldNamesAndTypesTable.getSelectionIndex());
 
 					TableItem itemAtNewPosition = 
@@ -184,19 +184,21 @@ public final class CreateAlbumSidepane {
 		rename.setText(Translator.get(DictKeys.DROPDOWN_RENAME));
 		rename.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				TableItem item = albumFieldNamesAndTypesTable.getItem(albumFieldNamesAndTypesTable.getSelectionIndex());
-
-				TextInputDialog textInputDialog = new TextInputDialog(parentComposite.getShell());
-				String newName = textInputDialog.open(
-						Translator.get(DictKeys.DIALOG_TITLE_RENAME_FIELD), 
-						Translator.get(DictKeys.DIALOG_CONTENT_RENAME_FIELD), item.getText(1), 
-						Translator.get(DictKeys.DIALOG_BUTTON_RENAME_FIELD));
-
-				if (newName != null) {
-					item.setText(1, newName);
+				if (albumFieldNamesAndTypesTable.getSelectionIndex() != -1) {
+					TableItem item = albumFieldNamesAndTypesTable.getItem(albumFieldNamesAndTypesTable.getSelectionIndex());
+	
+					TextInputDialog textInputDialog = new TextInputDialog(parentComposite.getShell());
+					String newName = textInputDialog.open(
+							Translator.get(DictKeys.DIALOG_TITLE_RENAME_FIELD), 
+							Translator.get(DictKeys.DIALOG_CONTENT_RENAME_FIELD), item.getText(1), 
+							Translator.get(DictKeys.DIALOG_BUTTON_RENAME_FIELD));
+	
+					if (newName != null) {
+						item.setText(1, newName);
+					}
+					
+					CreateAlbumSidepane.updateCreateNewAlbumPage(yesButtonForIncludingImages, albumFieldNamesAndTypesTable);
 				}
-				
-				CreateAlbumSidepane.updateCreateNewAlbumPage(yesButtonForIncludingImages, albumFieldNamesAndTypesTable);
 			}
 		});
 

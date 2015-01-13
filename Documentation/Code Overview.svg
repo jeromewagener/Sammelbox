@@ -1,0 +1,471 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="772.47571"
+   height="350.28571"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="drawing.svg">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.98994949"
+     inkscape:cx="219.3731"
+     inkscape:cy="278.57736"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1871"
+     inkscape:window-height="1056"
+     inkscape:window-x="49"
+     inkscape:window-y="24"
+     inkscape:window-maximized="1"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(54.832873,-26.862182)">
+    <rect
+       style="fill:#ffffff;fill-rule:evenodd;stroke:#000000;stroke-width:1.0564934px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       id="rect2985"
+       width="771.41919"
+       height="349.22922"
+       x="-54.304626"
+       y="27.390429" />
+    <rect
+       style="fill:#ffffff;fill-rule:evenodd;stroke:#000000;stroke-width:0.57902515px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       id="rect2985-9"
+       width="510.63736"
+       height="158.47095"
+       x="206.34583"
+       y="27.506918" />
+    <rect
+       style="fill:#ffffff;fill-rule:evenodd;stroke:#000000;stroke-width:0.63900799px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       id="rect2985-9-8"
+       width="510.57739"
+       height="193.02718"
+       x="206.34904"
+       y="183.42899" />
+    <text
+       xml:space="preserve"
+       style="font-size:13px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="-46.006546"
+       y="43.372334"
+       id="text3053"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3055"
+         x="-46.006546"
+         y="43.372334"
+         style="font-weight:bold;-inkscape-font-specification:Sans Bold">Model</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="669.74194"
+       y="44.086617"
+       id="text3078"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3080"
+         x="669.74194"
+         y="44.086617"
+         style="font-size:13px;font-weight:bold;-inkscape-font-specification:Sans Bold">View</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="633.87317"
+       y="200.09677"
+       id="text3103"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3105"
+         x="633.87317"
+         y="200.09677"
+         style="font-size:13px;font-weight:bold;-inkscape-font-specification:Sans Bold">Controller</tspan></text>
+    <path
+       sodipodi:type="arc"
+       style="fill:#b3b3b3"
+       id="path3109"
+       sodipodi:cx="-56.07143"
+       sodipodi:cy="-55.852104"
+       sodipodi:rx="67.5"
+       sodipodi:ry="38.92857"
+       d="m 11.42857,-55.852104 c 0,21.499655 -30.22078,38.92857 -67.5,38.92857 -37.279221,0 -67.5,-17.428915 -67.5,-38.92857 0,-21.499656 30.220779,-38.92857 67.5,-38.92857 37.27922,0 67.5,17.428914 67.5,38.92857 z"
+       transform="matrix(1.4285714,0,0,1.1651376,311.53061,249.93757)" />
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="157.14287"
+       y="171.6479"
+       id="text3111"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3113"
+         x="157.14287"
+         y="171.6479"
+         style="font-size:13px;font-weight:bold;-inkscape-font-specification:Sans Bold">ApplicationUI</tspan><tspan
+         sodipodi:role="line"
+         x="157.14287"
+         y="186.90115"
+         id="tspan3119"
+         style="font-size:12px">* Sammelbox Entry Point</tspan><tspan
+         sodipodi:role="line"
+         x="157.14287"
+         y="201.90115"
+         id="tspan3115"
+         style="font-size:12px">* changeRightComposite</tspan><tspan
+         sodipodi:role="line"
+         x="157.14287"
+         y="216.90115"
+         id="tspan3117" /></text>
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:1.08206737;stroke-opacity:1"
+       id="rect3125"
+       width="107.49918"
+       height="19.11083"
+       x="69.741531"
+       y="328.62894" />
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:1.08452427;stroke-opacity:1"
+       id="rect3125-4"
+       width="108.00181"
+       height="19.108374"
+       x="69.995316"
+       y="241.75702" />
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:1.08942032;stroke-opacity:1"
+       id="rect3125-1"
+       width="109.00706"
+       height="19.103477"
+       x="68.987617"
+       y="292.81277" />
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:0.87982225;stroke-opacity:1"
+       id="rect3125-15"
+       width="70.325783"
+       height="19.313074"
+       x="-40.193344"
+       y="309.81967" />
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="-35.355339"
+       y="323.51682"
+       id="text3938"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3940"
+         x="-35.355339"
+         y="323.51682"
+         style="font-size:11px">AlbumItem</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="74.751282"
+       y="341.71988"
+       id="text3942"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3944"
+         x="74.751282"
+         y="341.71988"
+         style="font-size:11px">AlbumItemPicture</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="94.954338"
+       y="306.40515"
+       id="text3946"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3948"
+         x="94.954338"
+         y="306.40515"
+         style="font-size:11px">ItemFields</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="86.36805"
+       y="254.34167"
+       id="text3950"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3952"
+         x="86.36805"
+         y="254.34167"
+         style="font-size:11px">MetaItemField</tspan></text>
+    <path
+       sodipodi:type="star"
+       style="fill:none;stroke:#000000;stroke-width:2.77324891;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="path3954"
+       sodipodi:sides="3"
+       sodipodi:cx="232.33508"
+       sodipodi:cy="-203.25743"
+       sodipodi:r1="16.288219"
+       sodipodi:r2="8.1441097"
+       sodipodi:arg1="-2.6224465"
+       sodipodi:arg2="-1.575249"
+       inkscape:flatsided="false"
+       inkscape:rounded="0"
+       inkscape:randomized="0"
+       d="m 218.19295,-211.33865 14.10587,-0.0628 14.10587,-0.0628 -6.99854,12.24745 -6.99854,12.24745 -7.10733,-12.18464 z"
+       inkscape:transform-center-x="-0.014314733"
+       inkscape:transform-center-y="-1.5954132"
+       transform="matrix(-0.39484375,0,0,-0.39484375,216.21541,188.01065)" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.9184553px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 124.24876,271.43605 0,21.30311"
+       id="path3956"
+       inkscape:connector-curvature="0" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1.03897059px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 69.175964,305.87894 -37.84175,13.62244 37.84175,22.70408"
+       id="path3958"
+       inkscape:connector-curvature="0" />
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="56.913883"
+       y="307.56915"
+       id="text3960"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3962"
+         x="56.913883"
+         y="307.56915"
+         style="font-size:14px">*</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="56.985317"
+       y="354.83881"
+       id="text3960-7"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3962-4"
+         x="56.985317"
+         y="354.83881"
+         style="font-size:14px">*</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:9px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="33.092453"
+       y="312.03342"
+       id="text3985"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3987"
+         x="33.092453"
+         y="312.03342">1</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:11px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="33.603653"
+       y="334.86438"
+       id="text3985-3"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3987-5"
+         x="33.603653"
+         y="334.86438"
+         style="font-size:9px">1</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="-46.46701"
+       y="71.422852"
+       id="text4010"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan4012"
+         x="-46.46701"
+         y="71.422852"
+         style="font-size:13px">* AlbumItemStore</tspan><tspan
+         sodipodi:role="line"
+         x="-46.46701"
+         y="87.672852"
+         id="tspan4014"
+         style="font-size:13px">* AlbumItemResultSet (Wrapper)</tspan><tspan
+         sodipodi:role="line"
+         x="-46.46701"
+         y="103.92285"
+         id="tspan4018"
+         style="font-size:13px">* Database operations (CRUD) via </tspan><tspan
+         sodipodi:role="line"
+         x="-46.46701"
+         y="120.17285"
+         id="tspan4024"
+         style="font-size:13px">   DatabaseOperation (Facade)</tspan><tspan
+         sodipodi:role="line"
+         x="-46.46701"
+         y="136.42285"
+         id="tspan4020"
+         style="font-size:13px">* QueryBuilder</tspan></text>
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:0.87982225;stroke-opacity:1"
+       id="rect3125-15-6"
+       width="70.325783"
+       height="19.313074"
+       x="-41.728886"
+       y="240.64453" />
+    <text
+       xml:space="preserve"
+       style="font-size:11px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="-24.243652"
+       y="254.34167"
+       id="text4044"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan4046"
+         x="-24.243652"
+         y="254.34167">Album</tspan></text>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m -7.5761441,309.39499 0,-49.49748"
+       id="path4048"
+       inkscape:connector-curvature="0" />
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="-5.5203037"
+       y="311.54245"
+       id="text3960-6"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3962-9"
+         x="-5.5203037"
+         y="311.54245"
+         style="font-size:14px">*</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:9px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="-3.9522905"
+       y="270.75418"
+       id="text3985-0"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3987-3"
+         x="-3.9522905"
+         y="270.75418">1</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="382.84781"
+       y="53.321316"
+       id="text4092"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         x="382.84781"
+         y="53.321316"
+         id="tspan4096"
+         style="font-size:13px">* BrowserFacades</tspan><tspan
+         sodipodi:role="line"
+         x="382.84781"
+         y="69.57132"
+         id="tspan4100"
+         style="font-size:13px">* BrowserUtils</tspan><tspan
+         sodipodi:role="line"
+         x="382.84781"
+         y="85.82132"
+         id="tspan4102"
+         style="font-size:13px">* Different HTML creators</tspan><tspan
+         sodipodi:role="line"
+         x="382.84781"
+         y="102.07132"
+         id="tspan4104"
+         style="font-size:13px">* MainComposite</tspan><tspan
+         sodipodi:role="line"
+         x="382.84781"
+         y="118.32132"
+         id="tspan4106"
+         style="font-size:13px">* ImageProcessing</tspan><tspan
+         sodipodi:role="line"
+         x="382.84781"
+         y="134.57132"
+         id="tspan4108"
+         style="font-size:13px">* SidePanes are Factory Classes</tspan><tspan
+         sodipodi:role="line"
+         x="382.84781"
+         y="150.82132"
+         id="tspan4110"
+         style="font-size:13px">   build methods return composites</tspan><tspan
+         sodipodi:role="line"
+         x="382.84781"
+         y="167.07132"
+         id="tspan4112"
+         style="font-size:13px">* UIConstants</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="256.10864"
+       y="249.79027"
+       id="text4092-8"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         x="256.10864"
+         y="249.79027"
+         id="tspan4112-3"
+         style="font-size:13px">* Event handling via observer pattern</tspan><tspan
+         sodipodi:role="line"
+         x="256.10864"
+         y="266.04028"
+         style="font-size:13px"
+         id="tspan4233">* Filesystem, location, xml, import &amp; export handling</tspan><tspan
+         sodipodi:role="line"
+         x="256.10864"
+         y="282.29028"
+         style="font-size:13px"
+         id="tspan4235">* Translator</tspan><tspan
+         sodipodi:role="line"
+         x="256.10864"
+         y="298.54028"
+         style="font-size:13px"
+         id="tspan4237">* BrowserListener -&gt; Interaction between browser UI &amp; Sammelbox</tspan><tspan
+         sodipodi:role="line"
+         x="256.10864"
+         y="314.79028"
+         style="font-size:13px"
+         id="tspan4239">Various Managers which group different functionality</tspan><tspan
+         sodipodi:role="line"
+         x="256.10864"
+         y="331.04028"
+         style="font-size:13px"
+         id="tspan4241">* MenuManager</tspan><tspan
+         sodipodi:role="line"
+         x="256.10864"
+         y="347.29028"
+         style="font-size:13px"
+         id="tspan4243">* GuiController &amp; GuiState</tspan></text>
+  </g>
+</svg>

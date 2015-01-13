@@ -44,6 +44,7 @@ public final class DictKeys {
 	public static final String TO_BE_TRANSLATED = "collector.special.TO_BE_TRANSLATED";
 	public static final String ENGLISH = "org.sammelbox.special.ENGLISH";
 	public static final String GERMAN = "org.sammelbox.special.GERMAN";
+	public static final String FRENCH = "org.sammelbox.special.FRENCH";
 	
 	/*   Windows   */
 	public static final String TITLE_MAIN_WINDOW = "collector.window.title.MAIN_WINDOW";

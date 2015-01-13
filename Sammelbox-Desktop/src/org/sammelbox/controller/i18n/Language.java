@@ -25,7 +25,8 @@ public enum Language {
 	// if you add a language, please add the language to valuesWithoutUnknown()
 	UNKNOWN,
 	ENGLISH,
-	DEUTSCH;
+	DEUTSCH,
+	FRENCH;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(Language.class);
 	
@@ -37,6 +38,9 @@ public enum Language {
 		case DEUTSCH:
 			return "internationalization/dict_de";
 		
+		case FRENCH:
+			return "internationalization/dict_fr";
+			
 		default:
 			return "internationalization/dict_en";
 		}
@@ -50,6 +54,9 @@ public enum Language {
 		case DEUTSCH:
 			return "internationalization/html/" + pageName + "_de.html";
 		
+		case FRENCH:
+			return "internationalization/html/" + pageName + "_fr.html";
+			
 		default:
 			return "internationalization/html/" + pageName + "_en.html";
 		}
@@ -58,7 +65,8 @@ public enum Language {
 	public static Language[] valuesWithoutUnknown() {
 		return new Language[] {
 				Language.ENGLISH,
-				Language.DEUTSCH
+				Language.DEUTSCH,
+				Language.FRENCH
 		};
 	}
 	
@@ -67,6 +75,8 @@ public enum Language {
     		return Translator.get(DictKeys.ENGLISH);
     	} else if (DEUTSCH.equals(language)) {
     		return Translator.get(DictKeys.GERMAN);
+    	} else if (FRENCH.equals(language)) {
+    		return Translator.get(DictKeys.FRENCH);
     	}
     	
     	LOGGER.error("A translation for an unknown language was requested");
@@ -78,6 +88,8 @@ public enum Language {
     		return ENGLISH;
     	} else if ((Translator.get(DictKeys.GERMAN).equals(language))) {
     		return DEUTSCH;
+    	} else if ((Translator.get(DictKeys.FRENCH).equals(language))) {
+    		return FRENCH;
     	}
     	
     	LOGGER.error("A language for an unknown translation was requested");
