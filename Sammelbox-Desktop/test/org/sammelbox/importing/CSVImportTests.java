@@ -134,6 +134,7 @@ public class CSVImportTests {
 			assertTrue("The imported album should be a picture album",
 					DatabaseOperations.isPictureAlbum(IMPORT_ALBUM_NAME));	
 		} catch (DatabaseWrapperOperationException | ImportException e) {
+			e.printStackTrace();
 			fail(e.getMessage());
 		}
 	}

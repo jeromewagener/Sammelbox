@@ -18,10 +18,6 @@
 
 package org.sammelbox;
 
-import java.io.File;
-import java.io.RandomAccessFile;
-import java.nio.channels.FileChannel;
-
 import org.eclipse.swt.SWT;
 import org.sammelbox.controller.filesystem.FileSystemAccessWrapper;
 import org.sammelbox.controller.filesystem.FileSystemLocations;
@@ -37,6 +33,10 @@ import org.sammelbox.view.various.ComponentFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.io.RandomAccessFile;
+import java.nio.channels.FileChannel;
+
 public final class Sammelbox {
 	public static final String ORG_SQLITE_JDBC = "org.sqlite.JDBC";
 	private static final Logger LOGGER = LoggerFactory.getLogger(Sammelbox.class);
@@ -50,11 +50,11 @@ public final class Sammelbox {
 		try {
 			Class.forName(ORG_SQLITE_JDBC);
 			ConnectionManager.openConnection();
-		} catch (ClassNotFoundException cnfe) {
-			LOGGER.warn(ORG_SQLITE_JDBC + " couldn't be found on the classpath", cnfe);
-		} catch (DatabaseWrapperOperationException dwoe) {
+		} catch (ClassNotFoundException classNotFoundException) {
+			LOGGER.warn(ORG_SQLITE_JDBC + " couldn't be found on the classpath", classNotFoundException);
+		} catch (DatabaseWrapperOperationException databaseWrapperOperationException) {
 			try {
-				LOGGER.warn("Couldn't open a database connection. Will try to open a clean connection instead.", dwoe);
+				LOGGER.warn("Couldn't open a database connection. Will try to open a clean connection instead.", databaseWrapperOperationException);
 				ConnectionManager.openCleanConnection();	
 			} catch (DatabaseWrapperOperationException dwoe2) {
 				LOGGER.error("The database is corrupt since opening a connection failed. " +
@@ -108,7 +108,7 @@ public final class Sammelbox {
 				lockFile.close();
 			} else {
 				ComponentFactory.getMessageBox(Translator.get(DictKeys.DIALOG_TITLE_PROGRAM_IS_RUNNING), 
-						Translator.get(DictKeys.DIALOG_TITLE_PROGRAM_IS_RUNNING), 
+						Translator.get(DictKeys.DIALOG_CONTENT_PROGRAM_IS_RUNNING),
 						SWT.ICON_INFORMATION).open();
 			}
 		} catch (Exception ex) {

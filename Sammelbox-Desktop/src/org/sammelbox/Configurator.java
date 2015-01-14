@@ -43,7 +43,7 @@ public class Configurator {
 	private static Shell shell;
 	private static Label welcomeLabelLine1;
 	private static Label welcomeLabelLine2;
-	private static Label lblSammelBoxHomeDir;
+	private static Label lblSammelboxHomeDir;
 	private static Label lblChooseLanguage;
 	private static Label lblChooseDateFormat;
 	private static Button cancelButton;
@@ -92,7 +92,7 @@ public class Configurator {
 		settingsComposite.setLayoutData(settingsLayoutData);
 		
 		// Define the home directory
-		lblSammelBoxHomeDir = new Label(settingsComposite, SWT.NULL);
+		lblSammelboxHomeDir = new Label(settingsComposite, SWT.NULL);
 		
 		GridData gridDataForHomeDirLabel = new GridData ();
 		gridDataForHomeDirLabel.widthHint = 350;
@@ -119,21 +119,6 @@ public class Configurator {
 		Label storageInfoLabel = new Label(settingsComposite, SWT.NONE);
 		storageInfoLabel.setImage(FileSystemAccessWrapper.getImageFromResource("graphics/info.png"));
 		storageInfoLabel.setToolTipText(Translator.get(DictKeys.CONFIGURATOR_STORAGE_TOOLTIP));
-		
-		// Create shortcut?
-		new Label(settingsComposite, SWT.NULL);
-		final Button createDesktopShortCut = new Button(settingsComposite, SWT.CHECK);
-		createDesktopShortCut.setText(Translator.get(DictKeys.CONFIGURATOR_CREATE_DESKTOP_SHORTCUT));
-		createDesktopShortCut.setSelection(true);		
-		new Label(settingsComposite, SWT.NULL);
-		Label shortcutInfoLabel = new Label(settingsComposite, SWT.NONE);
-		shortcutInfoLabel.setImage(FileSystemAccessWrapper.getImageFromResource("graphics/info.png"));
-		shortcutInfoLabel.setToolTipText(Translator.get(DictKeys.CONFIGURATOR_CREATE_SHORTCUT_TOOLTIP));
-		
-		if (!isWindows()) {
-			createDesktopShortCut.setEnabled(false);
-			createDesktopShortCut.setSelection(false);
-		}
 		
 		// Choose the language
 		lblChooseLanguage = new Label(settingsComposite, SWT.NULL);
@@ -204,9 +189,6 @@ public class Configurator {
 				
 				// Copy executable and create starters
 				copyExecutableToActiveHomeDir();
-				if (createDesktopShortCut.getSelection()) {
-					createShortcut();
-				}
 				
 				// Close configurator and start sammelbox
 				shell.close();
@@ -216,8 +198,7 @@ public class Configurator {
 			private void copyExecutableToActiveHomeDir() {
 				// search for sammelbox exe in current directory
 				for (File file : new File(FileSystemLocations.INITIALIZATION_DIR).listFiles()) {
-					if (file.getName().toLowerCase().contains("sammelbox") && 
-					        (file.getName().toLowerCase().endsWith(".exe") || file.getName().toLowerCase().endsWith(".jar"))) {
+					if (file.getName().toLowerCase().contains("sammelbox") && file.getName().toLowerCase().endsWith(".jar")) {
 						try {
 							FileSystemAccessWrapper.copyFile(file, new File(
 									FileSystemLocations.DEFAULT_SAMMELBOX_HOME + File.separatorChar + file.getName()));
@@ -225,7 +206,7 @@ public class Configurator {
 							LOGGER.error("An error occurred while copying the Sammelbox executable", ioe);
 						}
 						break;
-					};
+					}
 				}
 			}
 		});
@@ -248,7 +229,7 @@ public class Configurator {
 		shell.setText(Translator.get(DictKeys.CONFIGURATOR_WINDOW_TITLE, BuildInformationManager.instance().getPublicVersionString()));
 		welcomeLabelLine1.setText(Translator.get(DictKeys.CONFIGURATOR_INFO_LINE_1));
 		welcomeLabelLine2.setText(Translator.get(DictKeys.CONFIGURATOR_INFO_LINE_2));	
-		lblSammelBoxHomeDir.setText(Translator.get(DictKeys.CONFIGURATOR_STORAGE_DIR));
+		lblSammelboxHomeDir.setText(Translator.get(DictKeys.CONFIGURATOR_STORAGE_DIR));
 		lblChooseLanguage.setText(Translator.get(DictKeys.CONFIGURATOR_LANGUAGE));
 		lblChooseDateFormat.setText(Translator.get(DictKeys.CONFIGURATOR_DATE_FORMAT));
 		cancelButton.setText(Translator.get(DictKeys.CONFIGURATOR_CANCEL));
@@ -261,34 +242,5 @@ public class Configurator {
 		
 		Label spacer = new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL);
 		spacer.setLayoutData(seperaratorGridData);
-	}
-	
-	private static void createShortcut() {
-		if (isWindows()) {
-			String vbsScriptForShortCutCreation = FileSystemLocations.TEMP_DIR + File.separatorChar + "createSammelboxShortcut.vbs";
-			StringBuilder vbsScriptForShortcutCreationBuilder = new StringBuilder();
-			
-			vbsScriptForShortcutCreationBuilder.append("set WshShell = WScript.CreateObject(\"WScript.Shell\")\n"); 
-			vbsScriptForShortcutCreationBuilder.append("strDesktop = WshShell.SpecialFolders(\"Desktop\")\n");
-			vbsScriptForShortcutCreationBuilder.append("set oShellLink = WshShell.CreateShortcut(strDesktop & \"\\Sammelbox.lnk\")\n");
-			vbsScriptForShortcutCreationBuilder.append("oShellLink.TargetPath = \"" + FileSystemLocations.DEFAULT_SAMMELBOX_HOME + File.separatorChar + "Sammelbox.exe\"\n");
-			vbsScriptForShortcutCreationBuilder.append("oShellLink.WindowStyle = 1\n");
-			vbsScriptForShortcutCreationBuilder.append("oShellLink.Description = \"Sammelbox - Collection Manager\"\n");
-			vbsScriptForShortcutCreationBuilder.append("oShellLink.WorkingDirectory = \"" + FileSystemLocations.DEFAULT_SAMMELBOX_HOME + "\"\n");
-			vbsScriptForShortcutCreationBuilder.append("oShellLink.Save\n");
-			
-			FileSystemAccessWrapper.writeToFile(
-					vbsScriptForShortcutCreationBuilder.toString(), vbsScriptForShortCutCreation);
-			
-			try {
-		         Runtime.getRuntime().exec("wscript " + vbsScriptForShortCutCreation);
-		    } catch (IOException e) {
-		    	LOGGER.error("An error occurred while creating the Windows desktop shortcut");
-		    }
-		}
-	}
-	
-	private static boolean isWindows() {
-		return System.getProperty("os.name").toLowerCase().contains("windows");
 	}
 }

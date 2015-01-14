@@ -403,7 +403,7 @@ public final class DictKeys {
 	public static final String CONFIGURATOR_START_SAMMELBOX = "org.sammelbox.installer.button.install";
 	public static final String CONFIGURATOR_STORAGE_TOOLTIP = "org.sammelbox.installer.storage.tooltip";
 	public static final String CONFIGURATOR_CREATE_SHORTCUT_TOOLTIP = "org.sammelbox.installer.create.shortcut.tooltip";
-	
+
 	private DictKeys() {
 		// not needed
 	}
