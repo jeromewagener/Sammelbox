@@ -18,17 +18,17 @@
 
 package org.sammelbox.controller.filesystem.exporting;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.List;
-
 import org.sammelbox.model.album.AlbumItem;
 import org.sammelbox.model.album.FieldType;
 import org.sammelbox.model.album.OptionType;
 import org.sammelbox.model.album.StarRating;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.List;
 
 public final class CSVExporter {
 	public static final String DEFAULT_SEPARATION_CHARACTER = ";";
@@ -80,7 +80,7 @@ public final class CSVExporter {
 			bufferedWriter.write(headerBuilder.toString() + dataBuilder.toString());
 			bufferedWriter.close();
 		} catch (IOException e) {
-			LOGGER.error("An error occured while writing the export data to its destinatation (" + filepath + ")", e);
+			LOGGER.error("An error occurred while writing the export data to its destinatation (" + filepath + ")", e);
 		}
 	}
 	

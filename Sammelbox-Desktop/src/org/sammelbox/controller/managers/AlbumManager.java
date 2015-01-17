@@ -18,10 +18,6 @@
 
 package org.sammelbox.controller.managers;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.sammelbox.controller.events.EventObservable;
 import org.sammelbox.controller.events.SammelboxEvent;
 import org.sammelbox.controller.filesystem.xml.XmlStorageWrapper;
@@ -33,9 +29,13 @@ import org.sammelbox.model.database.operations.DatabaseOperations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
 public final class AlbumManager {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AlbumManager.class);
-	private static List<Album> albums = new LinkedList<Album>();
+	private static List<Album> albums = new LinkedList<>();
 	
 	private AlbumManager() {
 		// not needed
@@ -63,7 +63,7 @@ public final class AlbumManager {
 
 			// retain all albums that are contained by the database
 			List<String> allAlbums = DatabaseOperations.getListOfAllAlbums();
-			List<Album> toBeRemovedAlbums = new ArrayList<Album>();
+			List<Album> toBeRemovedAlbums = new ArrayList<>();
 			for (Album album : albums) {
 				if (!allAlbums.contains(album.getAlbumName())) {
 					toBeRemovedAlbums.add(album);
@@ -74,7 +74,7 @@ public final class AlbumManager {
 			storeAlbums();
 			
 		} catch (DatabaseWrapperOperationException ex) {
-			LOGGER.error("A problem occured while retrieving the list of albums from the database", ex);
+			LOGGER.error("A problem occurred while retrieving the list of albums from the database", ex);
 		}
 	}
 	

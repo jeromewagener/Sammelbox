@@ -18,8 +18,6 @@
 
 package org.sammelbox.controller.listeners;
 
-import java.util.Arrays;
-
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.Text;
@@ -29,6 +27,8 @@ import org.sammelbox.view.ApplicationUI;
 import org.sammelbox.view.browser.BrowserFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Arrays;
 
 public class QuickSearchModifyListener implements ModifyListener {
 	private static final Logger LOGGER = LoggerFactory.getLogger(QuickSearchModifyListener.class);
@@ -47,7 +47,7 @@ public class QuickSearchModifyListener implements ModifyListener {
 						Arrays.asList(((Text) e.widget).getText().split(" "))));
 			}
 		} catch (DatabaseWrapperOperationException ex) {
-			LOGGER.error("An error occured while performing a quick search on the following string '" + ((Text) e.widget).getText() + "'", ex);
+			LOGGER.error("An error occurred while performing a quick search on the following string '" + ((Text) e.widget).getText() + "'", ex);
 		}
 	}
 }

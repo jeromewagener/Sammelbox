@@ -18,11 +18,6 @@
 
 package org.sammelbox.controller.managers;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
 import org.eclipse.swt.SWT;
 import org.sammelbox.controller.events.EventObservable;
 import org.sammelbox.controller.events.SammelboxEvent;
@@ -37,6 +32,11 @@ import org.sammelbox.model.database.operations.DatabaseOperations;
 import org.sammelbox.view.various.ComponentFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public final class SavedSearchManager {
 	private static final Logger LOGGER = LoggerFactory.getLogger(SavedSearchManager.class);
@@ -148,7 +148,7 @@ public final class SavedSearchManager {
 					albumNamesToSavedSearches.remove(albumName);
 				}
 			} catch (DatabaseWrapperOperationException ex) {
-				LOGGER.error("An error occured while retrieving the list of albums from the database \n Stacktrace: ", ex);
+				LOGGER.error("An error occurred while retrieving the list of albums from the database \n Stacktrace: ", ex);
 			}
 		}
 		

@@ -18,27 +18,22 @@
 
 package org.sammelbox.controller.managers;
 
-import java.text.SimpleDateFormat;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
 import org.sammelbox.controller.filesystem.xml.XmlStorageWrapper;
 import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
+import org.sammelbox.model.album.Album;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 import org.sammelbox.model.database.operations.DatabaseOperations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.Map;
+
 public final class WelcomePageManager {
 	private static final Logger LOGGER = LoggerFactory.getLogger(WelcomePageManager.class);
-	private static Map<String, Integer> albumAndViewsToClicks;
 	private static Map<String, Long> albumToLastModified;
 	
 	private WelcomePageManager() {
@@ -46,7 +41,6 @@ public final class WelcomePageManager {
 	}
 	
 	public static void initializeFromWelcomeFile() {
-		albumAndViewsToClicks = XmlStorageWrapper.retrieveAlbumAndSavedSearchesToClicks();
 		albumToLastModified = XmlStorageWrapper.retrieveAlbumToLastModified();
 	}
 
@@ -56,44 +50,26 @@ public final class WelcomePageManager {
 		storeWelcomePageManagerInformation();
 	}
 
-	public static void increaseClickCountForAlbumOrView(String albumOrViewName) {
-		Integer count = albumAndViewsToClicks.get(albumOrViewName);
-
-		if (count != null) {
-			albumAndViewsToClicks.put(albumOrViewName, count + 1);
-		} else {
-			albumAndViewsToClicks.put(albumOrViewName, 1);
-		}
-
-		storeWelcomePageManagerInformation();
-	}
-
 	private static void storeWelcomePageManagerInformation() {
-		// perform click cleanup
-		Iterator<String> albumOrViewNameIterator = albumAndViewsToClicks.keySet().iterator();
-		while (albumOrViewNameIterator.hasNext()) {
-			String albumOrViewName = albumOrViewNameIterator.next();
-			if (!AlbumManager.getAlbums().contains(albumOrViewName)
-					&& !SavedSearchManager.getSavedSearchesNames().contains(albumOrViewName)) {
-				albumOrViewNameIterator.remove();
-			}
-		}
-		
 		// perform last updated cleanup
 		Iterator<String> albumNameIterator = albumToLastModified.keySet().iterator();
 		while (albumNameIterator.hasNext()) {
 			String albumName = albumNameIterator.next();
-			if (!AlbumManager.getAlbums().contains(albumName)) {
+
+			boolean found = false;
+			for (Album album : AlbumManager.getAlbums()) {
+				if (album.getAlbumName().equals(albumName)) {
+					found = true;
+				}
+			}
+
+			if (!found) {
 				albumNameIterator.remove();
 			}
 		}
 		
 		// store
-		XmlStorageWrapper.storeWelcomePageManagerInformation(albumAndViewsToClicks, albumToLastModified);
-	}
-
-	public static Map<String, Integer> getAlbumAndViewsSortedByClicks() {
-		return sortByValue(albumAndViewsToClicks);
+		XmlStorageWrapper.storeWelcomePageManagerInformation(albumToLastModified);
 	}
 
 	public static String getLastModifiedDate(String albumName) {
@@ -112,28 +88,8 @@ public final class WelcomePageManager {
 			return DatabaseOperations.getNumberOfItemsInAlbum(albumName);
 		} catch (DatabaseWrapperOperationException ex) {
 			LOGGER.error("Could not retrieve the number of items in the '" + albumName + "' album", ex);
-			
+
 			return 0L;
 		}
-	}
-
-	private static <K, V extends Comparable<? super V>> Map<K, V> sortByValue( Map<K, V> map ) {
-		List<Map.Entry<K, V>> list = new LinkedList<Map.Entry<K, V>>( map.entrySet() );
-		Collections.sort( list, new Comparator<Map.Entry<K, V>>() {
-			public int compare( Map.Entry<K, V> o1, Map.Entry<K, V> o2 ) {
-				if ((o1.getValue()).compareTo( o2.getValue()) < 0 ) {
-					return 1;
-				} else {
-					return -1;
-				}
-			}
-		});
-
-		Map<K, V> result = new LinkedHashMap<K, V>();
-		for (Map.Entry<K, V> entry : list) {
-			result.put( entry.getKey(), entry.getValue() );
-		}
-
-		return result;
 	}
 }

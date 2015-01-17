@@ -18,25 +18,15 @@
 
 package org.sammelbox.controller.filesystem.importing;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.sql.Date;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.sammelbox.model.album.AlbumItem;
-import org.sammelbox.model.album.AlbumItemPicture;
-import org.sammelbox.model.album.FieldType;
-import org.sammelbox.model.album.ItemField;
-import org.sammelbox.model.album.MetaItemField;
-import org.sammelbox.model.album.OptionType;
-import org.sammelbox.model.album.StarRating;
+import org.sammelbox.model.album.*;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 import org.sammelbox.model.database.operations.DatabaseOperations;
 import org.sammelbox.view.image.ImageManipulator;
+
+import java.io.*;
+import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 public final class CSVImporter {
 	public static final int NO_PICTURE_INDEX = -1;
@@ -68,13 +58,13 @@ public final class CSVImporter {
 			}
 						
 		} catch (FileNotFoundException fnfe) {
-			throw new ImportException("An error occured while handling the file", fnfe);
+			throw new ImportException("An error occurred while handling the file", fnfe);
 		} catch (IOException ioe) {
-			throw new ImportException("An error occured while handling the file", ioe);
+			throw new ImportException("An error occurred while handling the file", ioe);
 		} catch (NumberFormatException nfe) {
-			throw new ImportException("An error occured while trying to interpret a decimal or integer value", nfe);
+			throw new ImportException("An error occurred while trying to interpret a decimal or integer value", nfe);
 		} catch (DatabaseWrapperOperationException dwoe) {
-			throw new ImportException("An internal error occured", dwoe);
+			throw new ImportException("An internal error occurred", dwoe);
 		}
 	}
 	

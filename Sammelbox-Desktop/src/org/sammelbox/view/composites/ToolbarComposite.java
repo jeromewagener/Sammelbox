@@ -74,8 +74,7 @@ public class ToolbarComposite extends Composite implements EventObserver {
 	public ToolbarComposite(final Composite parentComposite) {
 		super(parentComposite, SWT.NONE);
 		
-		Image homeActiveIcon = null, addNewAlbumActiveIcon = null, addAlbumItemActiveIcon = null, 
-		      advancedSearchActiveIcon = null, synchronizeActiveIcon = null, helpActiveIcon = null;
+		Image homeActiveIcon, addNewAlbumActiveIcon, addAlbumItemActiveIcon, advancedSearchActiveIcon, synchronizeActiveIcon, helpActiveIcon;
 		Composite toolbarComposite = new Composite(parentComposite, SWT.NONE);
 
 		EventObservable.registerObserver(this);
@@ -100,8 +99,8 @@ public class ToolbarComposite extends Composite implements EventObserver {
 		homeActiveIcon = FileSystemAccessWrapper.getImageFromResource("graphics/home-active.png");
 		addNewAlbumIcon = FileSystemAccessWrapper.getImageFromResource("graphics/add.png");
 		addNewAlbumActiveIcon = FileSystemAccessWrapper.getImageFromResource("graphics/add-active.png");
-		addAlbumItemIcon = FileSystemAccessWrapper.getImageFromResource("graphics/additem.png");
-		addAlbumItemActiveIcon = FileSystemAccessWrapper.getImageFromResource("graphics/additem-active.png");
+		addAlbumItemIcon = FileSystemAccessWrapper.getImageFromResource("graphics/add-item.png");
+		addAlbumItemActiveIcon = FileSystemAccessWrapper.getImageFromResource("graphics/add-item-active.png");
 		advancedSearchIcon = FileSystemAccessWrapper.getImageFromResource("graphics/search.png");
 		advancedSearchActiveIcon = FileSystemAccessWrapper.getImageFromResource("graphics/search-active.png");
 		synchronizeIcon = FileSystemAccessWrapper.getImageFromResource("graphics/sync.png");
@@ -205,7 +204,7 @@ public class ToolbarComposite extends Composite implements EventObserver {
 				changeViewButton.enabledGalleryMenu(false);
 			}
 		} catch (DatabaseWrapperOperationException ex) {
-			LOGGER.error("An error occured while checking whether "
+			LOGGER.error("An error occurred while checking whether "
 					+ "the following album contains pictures: '" + albumName + "'", ex);
 		}
 	}

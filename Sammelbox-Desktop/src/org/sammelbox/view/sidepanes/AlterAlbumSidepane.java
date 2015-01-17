@@ -18,8 +18,6 @@
 
 package org.sammelbox.view.sidepanes;
 
-import java.util.ArrayList;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -27,18 +25,7 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 import org.sammelbox.controller.filesystem.FileSystemAccessWrapper;
 import org.sammelbox.controller.filters.MetaItemFieldFilter;
 import org.sammelbox.controller.i18n.DictKeys;
@@ -55,6 +42,8 @@ import org.sammelbox.view.various.ComponentFactory;
 import org.sammelbox.view.various.TextInputDialog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
 
 public final class AlterAlbumSidepane {
 	private static final int FIELD_NAMES_TO_TYPES_TABLE_HEIGHT_IN_PIXELS = 110;
@@ -241,7 +230,7 @@ public final class AlterAlbumSidepane {
 						}
 					}
 				} catch(DatabaseWrapperOperationException ex) {
-					LOGGER.error("A database error occured", ex);
+					LOGGER.error("A database error occurred", ex);
 				}
 			}
 		});
@@ -265,7 +254,7 @@ public final class AlterAlbumSidepane {
 						}
 					}
 				} catch (DatabaseWrapperOperationException ex) {
-					LOGGER.error("A database error occured", ex);
+					LOGGER.error("A database error occurred", ex);
 				}
 			}
 		});
@@ -299,7 +288,7 @@ public final class AlterAlbumSidepane {
 							AlterAlbumSidepane.updateAlterAlbumPage(yesButtonForIncludingImages, albumFieldNamesAndTypesTable);
 						}
 					} catch (DatabaseWrapperOperationException ex) {
-						LOGGER.error("A database error occured", ex);
+						LOGGER.error("A database error occurred", ex);
 					}
 				}
 			}
@@ -335,7 +324,7 @@ public final class AlterAlbumSidepane {
 										Translator.get(DictKeys.WARNING_SAVED_SEARCHES_MIGHT_BE_BROKEN), SWT.ICON_INFORMATION).open();
 							}
 						} catch (DatabaseWrapperOperationException ex) {
-							LOGGER.error("An error occured while renaming the album field", ex);
+							LOGGER.error("An error occurred while renaming the album field", ex);
 						}
 					}
 				}
@@ -366,7 +355,7 @@ public final class AlterAlbumSidepane {
 										Translator.get(DictKeys.WARNING_SAVED_SEARCHES_MIGHT_BE_BROKEN), SWT.ICON_INFORMATION).open();
 							}
 						} catch (DatabaseWrapperOperationException ex) {
-							LOGGER.error("An error occured while trying to delete an album item from the " + albumName + " album", ex);
+							LOGGER.error("An error occurred while trying to delete an album item from the " + albumName + " album", ex);
 						}
 
 						item.dispose();				
@@ -393,7 +382,7 @@ public final class AlterAlbumSidepane {
 		try {
 			validMetaItemFields = MetaItemFieldFilter.getValidMetaItemFields(DatabaseOperations.getMetaItemFields(album));
 		} catch (DatabaseWrapperOperationException ex) {
-			LOGGER.error("An error occured while trying to get the list of valid meta item fields", ex);
+			LOGGER.error("An error occurred while trying to get the list of valid meta item fields", ex);
 		}
 		for (MetaItemField metaItemField : validMetaItemFields) {
 			TableItem item = new TableItem(albumFieldNamesAndTypesTable, SWT.NONE);
@@ -438,7 +427,7 @@ public final class AlterAlbumSidepane {
 						}
 						AlterAlbumSidepane.updateAlterAlbumPage(yesButtonForIncludingImages, albumFieldNamesAndTypesTable);
 					} catch (DatabaseWrapperOperationException ex) {
-						LOGGER.error("A database error occured while trying to make the '" + metaItemField + "' " +
+						LOGGER.error("A database error occurred while trying to make the '" + metaItemField + "' " +
 								"in the '" + albumName + "' album quicksearchable", ex);
 					}
 				}
@@ -483,7 +472,7 @@ public final class AlterAlbumSidepane {
 						fieldNameText.setText("");
 					}
 				} catch (DatabaseWrapperOperationException ex) {
-					LOGGER.error("A database error occured while checking whether '" + metaItemField.getName() + "' is avialable as album name", ex);
+					LOGGER.error("A database error occurred while checking whether '" + metaItemField.getName() + "' is avialable as album name", ex);
 				}
 			}
 		});

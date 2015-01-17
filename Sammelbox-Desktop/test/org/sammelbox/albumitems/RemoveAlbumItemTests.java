@@ -18,27 +18,18 @@
 
 package org.sammelbox.albumitems;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import junit.framework.Assert;
+import org.junit.*;
+import org.sammelbox.TestRunner;
+import org.sammelbox.model.album.*;
+import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
+import org.sammelbox.model.database.operations.DatabaseOperations;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.Assert;
-
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.sammelbox.TestExecuter;
-import org.sammelbox.model.album.AlbumItem;
-import org.sammelbox.model.album.AlbumItemResultSet;
-import org.sammelbox.model.album.FieldType;
-import org.sammelbox.model.album.ItemField;
-import org.sammelbox.model.album.MetaItemField;
-import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
-import org.sammelbox.model.database.operations.DatabaseOperations;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class RemoveAlbumItemTests {
 	/** Item field name to identify the item to be deleted.*/
@@ -58,14 +49,14 @@ public class RemoveAlbumItemTests {
 
 	@Before
 	public void setUp() throws Exception {
-		TestExecuter.resetTestHome();
+		TestRunner.resetTestHome();
 		createDVDAlbum();
 		fillDVDAlbum();
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		TestExecuter.resetTestHome();
+		TestRunner.resetTestHome();
 	}
 
 	@Test

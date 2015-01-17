@@ -18,33 +18,18 @@
 
 package org.sammelbox.albumitems;
 
-import static org.junit.Assert.fail;
+import junit.framework.Assert;
+import org.junit.*;
+import org.sammelbox.TestRunner;
+import org.sammelbox.model.album.*;
+import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
+import org.sammelbox.model.database.operations.DatabaseOperations;
 
 import java.sql.Date;
 import java.sql.Time;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.TimeZone;
-import java.util.UUID;
+import java.util.*;
 
-import junit.framework.Assert;
-
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.sammelbox.TestExecuter;
-import org.sammelbox.model.album.AlbumItem;
-import org.sammelbox.model.album.AlbumItemPicture;
-import org.sammelbox.model.album.FieldType;
-import org.sammelbox.model.album.ItemField;
-import org.sammelbox.model.album.MetaItemField;
-import org.sammelbox.model.album.OptionType;
-import org.sammelbox.model.album.StarRating;
-import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
-import org.sammelbox.model.database.operations.DatabaseOperations;
+import static org.junit.Assert.fail;
 
 public class AddAlbumItemTests {
 	@BeforeClass
@@ -57,7 +42,7 @@ public class AddAlbumItemTests {
 
 	@Before
 	public void setUp() throws Exception {
-		TestExecuter.resetTestHome();
+		TestRunner.resetTestHome();
 		createBooksAlbum();
 	}
 

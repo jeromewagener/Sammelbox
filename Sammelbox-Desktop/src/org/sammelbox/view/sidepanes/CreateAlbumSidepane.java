@@ -18,8 +18,6 @@
 
 package org.sammelbox.view.sidepanes;
 
-import java.util.ArrayList;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -28,16 +26,7 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 import org.sammelbox.controller.filesystem.FileSystemAccessWrapper;
 import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
@@ -54,6 +43,8 @@ import org.sammelbox.view.various.PanelType;
 import org.sammelbox.view.various.TextInputDialog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
 
 public final class CreateAlbumSidepane {
 	private static final int SEPARATOR_HEIGHT_IN_PIXELS = 10;
@@ -308,7 +299,7 @@ public final class CreateAlbumSidepane {
 						return;
 					}
 				} catch (DatabaseWrapperOperationException ex) {
-					LOGGER.error("A database error occured while checking whether '" + albumName + "' is available as album name", ex);
+					LOGGER.error("A database error occurred while checking whether '" + albumName + "' is available as album name", ex);
 				}
 
 				if (!FileSystemAccessWrapper.isAlbumNameFileSystemCompliant(albumName)) {

@@ -18,32 +18,23 @@
 
 package org.sammelbox.album;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import org.junit.*;
+import org.sammelbox.TestRunner;
+import org.sammelbox.controller.filesystem.FileSystemLocations;
+import org.sammelbox.controller.managers.ConnectionManager;
+import org.sammelbox.controller.managers.DatabaseIntegrityManager;
+import org.sammelbox.model.album.*;
+import org.sammelbox.model.database.DatabaseStringUtilities;
+import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
+import org.sammelbox.model.database.operations.DatabaseOperations;
 
 import java.io.File;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.sammelbox.TestExecuter;
-import org.sammelbox.controller.filesystem.FileSystemLocations;
-import org.sammelbox.controller.managers.ConnectionManager;
-import org.sammelbox.controller.managers.DatabaseIntegrityManager;
-import org.sammelbox.model.album.AlbumItem;
-import org.sammelbox.model.album.AlbumItemResultSet;
-import org.sammelbox.model.album.FieldType;
-import org.sammelbox.model.album.ItemField;
-import org.sammelbox.model.album.MetaItemField;
-import org.sammelbox.model.album.OptionType;
-import org.sammelbox.model.database.DatabaseStringUtilities;
-import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
-import org.sammelbox.model.database.operations.DatabaseOperations;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class BackupRestoreTests {
 	@BeforeClass
@@ -52,12 +43,12 @@ public class BackupRestoreTests {
 
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		TestExecuter.resetTestHome();
+		TestRunner.resetTestHome();
 	}
 
 	@Before
 	public void setUp() {
-		TestExecuter.resetTestHome();
+		TestRunner.resetTestHome();
 	}
 
 	@After
@@ -340,8 +331,8 @@ public class BackupRestoreTests {
 	@Test
 	public void testRestoreOfTestDataAlbums() {
 		try {
-			assertTrue(new File(TestExecuter.PATH_TO_TEST_CBK).exists());
-			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
+			assertTrue(new File(TestRunner.PATH_TO_TEST_CBK).exists());
+			DatabaseIntegrityManager.restoreFromFile(TestRunner.PATH_TO_TEST_CBK);
 
 			AlbumItemResultSet allAlbumItems = DatabaseOperations.executeSQLQuery("SELECT * FROM Books");
 			assertTrue("Resultset should not be null", allAlbumItems != null);

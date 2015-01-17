@@ -1,10 +1,5 @@
 package org.sammelbox.controller.menu;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.Map;
-import java.util.Scanner;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -23,6 +18,11 @@ import org.sammelbox.view.various.ComponentFactory;
 import org.sammelbox.view.various.PanelType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.Map;
+import java.util.Scanner;
 
 public final class HelpMenuItemListener {
 	private static final Logger LOGGER = LoggerFactory.getLogger(HelpMenuItemListener.class);
@@ -96,7 +96,7 @@ public final class HelpMenuItemListener {
 								SWT.ICON_INFORMATION).open();
 					}
 				} catch (IOException ioe) {
-					LOGGER.error("An error occured while checking for updates.", ioe);
+					LOGGER.error("An error occurred while checking for updates.", ioe);
 					
 					ComponentFactory.getMessageBox(
 							Translator.get(DictKeys.DIALOG_TITLE_VERSION_CHECK_ERROR), 

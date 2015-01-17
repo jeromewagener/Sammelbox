@@ -18,35 +18,26 @@
 
 package org.sammelbox.exporting;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.io.File;
-import java.sql.Date;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.sammelbox.TestExecuter;
+import org.junit.*;
+import org.sammelbox.TestRunner;
 import org.sammelbox.controller.filesystem.FileSystemAccessWrapper;
 import org.sammelbox.controller.filesystem.FileSystemLocations;
 import org.sammelbox.controller.filesystem.exporting.CSVExporter;
 import org.sammelbox.controller.filesystem.exporting.HTMLExporter;
 import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
-import org.sammelbox.model.album.AlbumItem;
-import org.sammelbox.model.album.FieldType;
-import org.sammelbox.model.album.ItemField;
-import org.sammelbox.model.album.MetaItemField;
-import org.sammelbox.model.album.OptionType;
-import org.sammelbox.model.album.StarRating;
+import org.sammelbox.model.album.*;
 import org.sammelbox.model.database.DatabaseStringUtilities;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 import org.sammelbox.model.database.operations.DatabaseOperations;
+
+import java.io.File;
+import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class ExportTests {
 	@BeforeClass
@@ -60,7 +51,7 @@ public class ExportTests {
 
 	@Before
 	public void setUp() throws Exception {
-		TestExecuter.resetTestHome();
+		TestRunner.resetTestHome();
 	}
 
 	@After

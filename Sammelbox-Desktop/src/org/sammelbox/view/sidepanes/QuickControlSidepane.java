@@ -25,15 +25,7 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.List;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.MessageBox;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 import org.sammelbox.controller.GuiController;
 import org.sammelbox.controller.events.EventObservable;
 import org.sammelbox.controller.events.SammelboxEvent;
@@ -43,7 +35,6 @@ import org.sammelbox.controller.listeners.QuickSearchModifyListener;
 import org.sammelbox.controller.managers.AlbumManager;
 import org.sammelbox.controller.managers.SavedSearchManager;
 import org.sammelbox.controller.managers.SavedSearchManager.SavedSearch;
-import org.sammelbox.controller.managers.WelcomePageManager;
 import org.sammelbox.model.GuiState;
 import org.sammelbox.model.database.QueryBuilder;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
@@ -142,7 +133,6 @@ public final class QuickControlSidepane {
 					
 					ApplicationUI.setSelectedAlbumAndReload(albumList.getItem(albumList.getSelectionIndex()));
 					ApplicationUI.changeRightCompositeTo(PanelType.EMPTY, EmptySidepane.build(ApplicationUI.getThreePanelComposite()));
-					WelcomePageManager.increaseClickCountForAlbumOrView(albumList.getItem(albumList.getSelectionIndex()));
 				}
 			}
 		});
@@ -251,7 +241,7 @@ public final class QuickControlSidepane {
 							GuiController.getGuiState().setSelectedAlbum(GuiState.NO_ALBUM_SELECTED);
 							ApplicationUI.refreshAlbumList();
 						} catch (DatabaseWrapperOperationException ex) {
-							LOGGER.error("A database error occured while removing the following album: '" + ApplicationUI.getSelectedAlbum() + "'", ex);
+							LOGGER.error("A database error occurred while removing the following album: '" + ApplicationUI.getSelectedAlbum() + "'", ex);
 						}
 					}
 				}
@@ -301,8 +291,6 @@ public final class QuickControlSidepane {
 				
 				BrowserFacade.performBrowserQueryAndShow(SavedSearchManager.getSqlQueryBySavedSearchName(
 						GuiController.getGuiState().getSelectedAlbum(), GuiController.getGuiState().getSelectedSavedSearch()));
-
-				WelcomePageManager.increaseClickCountForAlbumOrView(savedSearchesList.getItem(savedSearchesList.getSelectionIndex()));
 			}
 		});			
 

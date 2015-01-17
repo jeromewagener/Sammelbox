@@ -18,14 +18,12 @@
 
 package org.sammelbox.controller.synchronization;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.SocketException;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.List;
-
+import com.jeromewagener.soutils.beaconing.BeaconSender;
+import com.jeromewagener.soutils.communication.CommunicationManager;
+import com.jeromewagener.soutils.filetransfer.FileTransferServer;
+import com.jeromewagener.soutils.messaging.SoutilsMessage;
+import com.jeromewagener.soutils.utilities.InetAddressUtilities;
+import com.jeromewagener.soutils.utilities.Soutilities;
 import org.eclipse.swt.widgets.Display;
 import org.sammelbox.controller.filesystem.FileSystemAccessWrapper;
 import org.sammelbox.controller.filesystem.FileSystemLocations;
@@ -39,12 +37,13 @@ import org.sammelbox.view.various.SynchronizeStep;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.jeromewagener.soutils.beaconing.BeaconSender;
-import com.jeromewagener.soutils.communication.CommunicationManager;
-import com.jeromewagener.soutils.filetransfer.FileTransferServer;
-import com.jeromewagener.soutils.messaging.SoutilsMessage;
-import com.jeromewagener.soutils.utilities.InetAddressUtilities;
-import com.jeromewagener.soutils.utilities.Soutilities;
+import java.io.File;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.SocketException;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SyncServerServiceImpl implements SyncServerService {
 	// TODO define file transfer port
@@ -101,7 +100,7 @@ public class SyncServerServiceImpl implements SyncServerService {
 
 			FileSystemAccessWrapper.zipFolderToFile(syncFolder.getAbsolutePath(), SYNC_ZIP_ARCHIVE_PATH);
 		} catch (IOException ioe) {
-			LOGGER.error("An error occured while packaging the information before synchronization", ioe);
+			LOGGER.error("An error occurred while packaging the information before synchronization", ioe);
 		}
 		
 		return new File(SYNC_ZIP_ARCHIVE_PATH);

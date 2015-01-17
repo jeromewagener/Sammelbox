@@ -18,6 +18,18 @@
 
 package org.sammelbox.model.database.operations;
 
+import org.sammelbox.controller.filesystem.FileSystemAccessWrapper;
+import org.sammelbox.controller.filters.ItemFieldFilter;
+import org.sammelbox.controller.managers.ConnectionManager;
+import org.sammelbox.controller.managers.DatabaseIntegrityManager;
+import org.sammelbox.model.album.*;
+import org.sammelbox.model.database.DatabaseStringUtilities;
+import org.sammelbox.model.database.QueryBuilder;
+import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
+import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException.DBErrorState;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -26,23 +38,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
-
-import org.sammelbox.controller.filesystem.FileSystemAccessWrapper;
-import org.sammelbox.controller.filters.ItemFieldFilter;
-import org.sammelbox.controller.managers.ConnectionManager;
-import org.sammelbox.controller.managers.DatabaseIntegrityManager;
-import org.sammelbox.model.album.AlbumItem;
-import org.sammelbox.model.album.AlbumItemPicture;
-import org.sammelbox.model.album.FieldType;
-import org.sammelbox.model.album.ItemField;
-import org.sammelbox.model.album.MetaItemField;
-import org.sammelbox.model.album.OptionType;
-import org.sammelbox.model.database.DatabaseStringUtilities;
-import org.sammelbox.model.database.QueryBuilder;
-import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
-import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException.DBErrorState;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public final class UpdateOperations {
 	private static final Logger LOGGER = LoggerFactory.getLogger(UpdateOperations.class);
@@ -62,7 +57,7 @@ public final class UpdateOperations {
 		try {
 			// Before starting to rename the different table, we have to remember whether
 			// the original album was quick-searchable together with the quick-searchable fields
-			boolean isQuickSearchable = DatabaseOperations.isAlbumQuicksearchable(oldAlbumName);
+			boolean isQuickSearchable = DatabaseOperations.isAlbumQuickSearchable(oldAlbumName);
 			List<String> quickSearchableColumnNames = 
 					QueryOperations.getIndexedColumnNames(DatabaseStringUtilities.generateTableName(oldAlbumName));
 			
@@ -109,15 +104,10 @@ public final class UpdateOperations {
 	 */
 	private static boolean renameTable(String oldTableName, String newTableName) {
 		boolean success = true;
+		String renameTableSQLString = "ALTER TABLE " + DatabaseStringUtilities.encloseNameWithQuotes(DatabaseStringUtilities.generateTableName(oldTableName)) +
+				" RENAME TO " + DatabaseStringUtilities.encloseNameWithQuotes(DatabaseStringUtilities.generateTableName(newTableName));
 
-		StringBuilder sb = new StringBuilder();
-		sb.append("ALTER TABLE ");
-		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(DatabaseStringUtilities.generateTableName(oldTableName)));
-		sb.append(" RENAME TO ");
-		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(DatabaseStringUtilities.generateTableName(newTableName)));
-		String renameTableSQLString = sb.toString();
-
-		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(renameTableSQLString);) {
+		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(renameTableSQLString)) {
 			preparedStatement.executeUpdate();
 		} catch (SQLException e) {
 			success = false;
@@ -179,7 +169,7 @@ public final class UpdateOperations {
 		}		
 	}
 
-	static void reorderAlbumItemField(String albumName, MetaItemField metaItemField, MetaItemField preceedingField) throws DatabaseWrapperOperationException {
+	static void reorderAlbumItemField(String albumName, MetaItemField metaItemField, MetaItemField precedingField) throws DatabaseWrapperOperationException {
 		// Check if the specified columns exists.
 		List<MetaItemField> metaInfos = QueryOperations.getAllAlbumItemMetaItemFields(albumName);
 		if (!metaInfos.contains(metaItemField)) {
@@ -193,7 +183,7 @@ public final class UpdateOperations {
 			// Create the new table pointing to new typeinfo
 			boolean hasPictureField = QueryOperations.isPictureAlbum(albumName);
 			List<MetaItemField> newFields = QueryOperations.getAlbumItemFieldNamesAndTypes(albumName);
-			newFields = reorderFieldInMetaItemList(metaItemField, preceedingField, newFields);
+			newFields = reorderFieldInMetaItemList(metaItemField, precedingField, newFields);
 
 			// Drop old tables
 			DeleteOperations.removeAlbum(albumName);
@@ -203,7 +193,7 @@ public final class UpdateOperations {
 					DatabaseStringUtilities.encloseNameWithQuotes(DatabaseStringUtilities.generateTableName(albumName)), hasPictureField);
 
 			// Restore the old data from the temporary tables in the new tables [reorder column]
-			List<AlbumItem> newAlbumItems = reorderFieldInAlbumItemList(metaItemField, preceedingField, albumItems);
+			List<AlbumItem> newAlbumItems = reorderFieldInAlbumItemList(metaItemField, precedingField, albumItems);
 			// replace the empty picField with the saved raw PicField 
 			for (AlbumItem albumItem : newAlbumItems) {
 				albumItem.setAlbumName(albumName);
@@ -259,9 +249,8 @@ public final class UpdateOperations {
 	 * @return The parameter fieldList with the specified field removed.
 	 */
 	static List<MetaItemField> removeFieldFromMetaItemList(MetaItemField metaItemField, final List<MetaItemField> fieldList) {
-		List<MetaItemField> newFieldList = fieldList;
-		newFieldList.remove(metaItemField);
-		return newFieldList; 
+		fieldList.remove(metaItemField);
+		return fieldList;
 	}
 
 	/**
@@ -272,11 +261,10 @@ public final class UpdateOperations {
 	 * @return The list of renamed fields.
 	 */
 	private static List<MetaItemField> renameFieldInMetaItemList(MetaItemField oldMetaItemField, MetaItemField newMetaItemField, final List<MetaItemField> fieldList) {
-		List<MetaItemField> newFieldList = fieldList;
-		int index = newFieldList.indexOf(oldMetaItemField);
-		MetaItemField renameMetaItemField = newFieldList.get(index);
+		int index = fieldList.indexOf(oldMetaItemField);
+		MetaItemField renameMetaItemField = fieldList.get(index);
 		renameMetaItemField.setName(newMetaItemField.getName());
-		return newFieldList; 
+		return fieldList;
 	}
 
 	/**
@@ -289,20 +277,19 @@ public final class UpdateOperations {
 	 * @return The list of fields in the new ordering.
 	 */
 	private static List<MetaItemField> reorderFieldInMetaItemList(MetaItemField metaItemField, MetaItemField precedingField, final List<MetaItemField> fieldList) {
-		List<MetaItemField> newFieldList = fieldList;
-		newFieldList.remove(metaItemField);
+		fieldList.remove(metaItemField);
 		if (precedingField == null) {
-			newFieldList.add(0,metaItemField);
+			fieldList.add(0,metaItemField);
 		} else {
 
-			int insertAfterIndex = newFieldList.indexOf(precedingField);
+			int insertAfterIndex = fieldList.indexOf(precedingField);
 			if (insertAfterIndex==-1) {
-				newFieldList.add(metaItemField);
+				fieldList.add(metaItemField);
 			}else {
-				newFieldList.add(insertAfterIndex+1, metaItemField);
+				fieldList.add(insertAfterIndex+1, metaItemField);
 			}
 		}
-		return newFieldList; 
+		return fieldList;
 	}
 	
 	/**
@@ -313,11 +300,11 @@ public final class UpdateOperations {
 	 * @return The new list of album items.
 	 */
 	private static List<AlbumItem> renameFieldInAlbumItemList(MetaItemField oldMetaItemField, MetaItemField newMetaItemField, final List<AlbumItem> albumList) {
-		List<AlbumItem> newAlbumItemList = albumList;
-		for (AlbumItem albumItem: newAlbumItemList) {
+		for (AlbumItem albumItem: albumList) {
 			albumItem.renameField(oldMetaItemField, newMetaItemField);
 		}
-		return newAlbumItemList; 
+
+		return albumList;
 	}
 
 	/**
@@ -329,11 +316,11 @@ public final class UpdateOperations {
 	 * @return The list of album items in their new order. Content remains untouched.
 	 */
 	private static List<AlbumItem> reorderFieldInAlbumItemList(MetaItemField metaItemField, MetaItemField precedingField, final List<AlbumItem> albumList) {
-		List<AlbumItem> newAlbumItemList = albumList;
-		for (AlbumItem albumItem: newAlbumItemList) {
+		for (AlbumItem albumItem: albumList) {
 			albumItem.reorderField(metaItemField, precedingField);
 		}
-		return newAlbumItemList; 
+
+		return albumList;
 	}
 	
 	static void appendNewAlbumField(String albumName, MetaItemField metaItemField) throws DatabaseWrapperOperationException {
@@ -366,15 +353,9 @@ public final class UpdateOperations {
 	 */
 	private static void appendNewTableColumn(String albumName, MetaItemField metaItemField) throws DatabaseWrapperOperationException {
 		// Prepare the append column string for the main table.
-		StringBuilder sb = new StringBuilder("ALTER TABLE ");
-		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(
-				DatabaseStringUtilities.generateTableName(albumName)));
-		sb.append(" ADD COLUMN ");
-		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(metaItemField.getName()));
-		sb.append(" ");
-		sb.append(FieldType.TEXT.toDatabaseTypeString());
 
-		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(sb.toString())) {
+		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement("ALTER TABLE " + DatabaseStringUtilities.encloseNameWithQuotes(
+				DatabaseStringUtilities.generateTableName(albumName)) + " ADD COLUMN " + DatabaseStringUtilities.encloseNameWithQuotes(metaItemField.getName()) + " " + FieldType.TEXT.toDatabaseTypeString())) {
 			preparedStatement.executeUpdate();
 		} catch (SQLException e) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE, e);
@@ -413,35 +394,23 @@ public final class UpdateOperations {
 	
 	/**
 	 * Appends a new column to the typeInfoTable. Necessary when the main table is altered to have additional columns.
-	 * @param tableName The name of the table to which the column belongs.
+	 * @param albumName The name of the album to which the column belongs.
 	 * @param metaItemField The metadata of the new column.
-	 * @throws SQLException Exception thrown if any part of the operation fails.
-	 * @throws DatabaseWrapperOperationException 
+	 * @throws DatabaseWrapperOperationException
 	 */
 	private static void appendNewTypeInfoTableColumn(String albumName, MetaItemField metaItemField) throws DatabaseWrapperOperationException {
 		String typeInfoTableName = DatabaseStringUtilities.generateTypeInfoTableName(albumName);
 		String columnName = DatabaseStringUtilities.encloseNameWithQuotes(metaItemField.getName());
 		// Prepare the append column string for the type table.
-		StringBuilder sb = new StringBuilder("ALTER TABLE ");
-		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(typeInfoTableName));
-		sb.append(" ADD COLUMN ");
-		sb.append(columnName);
-		sb.append(" TEXT");
 
-		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(sb.toString())) {
+		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(
+				"ALTER TABLE " + DatabaseStringUtilities.encloseNameWithQuotes(typeInfoTableName) + " ADD COLUMN " + columnName + " TEXT")) {
 			preparedStatement.executeUpdate();					
 		} catch (SQLException sqlEx) {
 			throw new DatabaseWrapperOperationException(DBErrorState.ERROR_DIRTY_STATE, sqlEx);
 		}
-		
-		sb.delete(0,sb.length());
-		sb.append("UPDATE ");
-		sb.append(typeInfoTableName);
-		sb.append(" SET ");
-		sb.append(columnName);
-		sb.append(" = ?");
-		
-		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(sb.toString())){
+
+		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement("UPDATE " + typeInfoTableName + " SET " + columnName + " = ?")){
 			preparedStatement.setString(1, metaItemField.getType().toString());
 			preparedStatement.executeUpdate();
 		}catch (SQLException sqlEx) {
@@ -454,18 +423,17 @@ public final class UpdateOperations {
 	/**
 	 * Helper method which adds an entry to the typeInfo table to indicate the types used in the main table and updates the 
 	 * schema version UUID if properly included in the metafields.
-	 * @param item the item describing the newly created main table. Making up the content of the typeInfoTable.
-	 * @return True if the operation was successful. False otherwise.
-	 * @throws DatabaseWrapperOperationException 
+	 * @param metaItemFields the items describing the newly created main table. Making up the content of the typeInfoTable.
+	 * @throws DatabaseWrapperOperationException
 	 */
-	static void addTypeInfo(String typeInfoTableName, List<MetaItemField> metafields) throws DatabaseWrapperOperationException {
+	static void addTypeInfo(String typeInfoTableName, List<MetaItemField> metaItemFields) throws DatabaseWrapperOperationException {
 		StringBuilder sb = new StringBuilder("INSERT INTO ");
 		sb.append(typeInfoTableName);
 		sb.append(" ( ");
 
 		// The 'while iterator loop' is used here because it is cheaper and more reliable than a foreach
 		// to add commas ',' in between elements
-		Iterator<MetaItemField> it = metafields.iterator();		
+		Iterator<MetaItemField> it = metaItemFields.iterator();
 		while(it.hasNext()) {
 			String fieldName = DatabaseStringUtilities.encloseNameWithQuotes(it.next().getName()); 
 			sb.append(fieldName);
@@ -476,7 +444,7 @@ public final class UpdateOperations {
 		}
 		sb.append(" ) VALUES ( ");
 
-		it = metafields.iterator();		
+		it = metaItemFields.iterator();
 		while(it.hasNext()) {
 			it.next();
 			sb.append("?");
@@ -491,7 +459,7 @@ public final class UpdateOperations {
 		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(sb.toString())) {			
 			// Replace the wildcard character '?' by the real type values
 			int parameterIndex = 1;
-			for (MetaItemField metaItemField : metafields){
+			for (MetaItemField metaItemField : metaItemFields){
 				String columnValue = metaItemField.getType().toString();
 
 				// Generate a new schema version UUID a table is created or modified.
@@ -512,20 +480,20 @@ public final class UpdateOperations {
 	/**
 	 * Rebuilds the index for a table after an alter table operation. 
 	 * @param albumName The album to which these fields belong.
-	 * @param items The items containing the information of whether they are quicksearchable.
+	 * @param metaItemFields The items containing the information of whether they are quicksearchable.
 	 * @throws DatabaseWrapperOperationException 
 	 */
-	static void rebuildIndexForTable(String albumName, List<MetaItemField> fields) throws DatabaseWrapperOperationException {
-		List<String> quicksearchColumnNames = new ArrayList<String>();
-		for (MetaItemField metaItemField : fields) {
+	static void rebuildIndexForTable(String albumName, List<MetaItemField> metaItemFields) throws DatabaseWrapperOperationException {
+		List<String> quickSearchColumnNames = new ArrayList<>();
+		for (MetaItemField metaItemField : metaItemFields) {
 			if (metaItemField.isQuickSearchable()) {
-				quicksearchColumnNames.add(metaItemField.getName());
+				quickSearchColumnNames.add(metaItemField.getName());
 			}
 		}
-		if (!quicksearchColumnNames.isEmpty()){
+		if (!quickSearchColumnNames.isEmpty()){
 			String savepointName = DatabaseIntegrityManager.createSavepoint();
 			try {
-				CreateOperations.createIndex(albumName, quicksearchColumnNames);
+				CreateOperations.createIndex(albumName, quickSearchColumnNames);
 			} catch (DatabaseWrapperOperationException e) {
 				if (e.getErrorState().equals(DBErrorState.ERROR_DIRTY_STATE)) {
 					DatabaseIntegrityManager.rollbackToSavepoint(savepointName);
@@ -641,15 +609,10 @@ public final class UpdateOperations {
 	
 	static void updateContentVersion(String albumName, long itemID, UUID newUuid) throws DatabaseWrapperOperationException {	
 		String savepointName = DatabaseIntegrityManager.createSavepoint();
-		
-		StringBuilder sb = new StringBuilder("UPDATE ");
-		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(DatabaseStringUtilities.generateTableName(albumName)));
-		sb.append(" SET ");
-		sb.append(DatabaseConstants.CONTENT_VERSION_COLUMN_NAME);
-		sb.append(" = ? ");
-		sb.append("WHERE id = ?");
-		
-		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(sb.toString())){			
+
+		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(
+				"UPDATE " + DatabaseStringUtilities.encloseNameWithQuotes(DatabaseStringUtilities.generateTableName(albumName)) +
+						" SET " + DatabaseConstants.CONTENT_VERSION_COLUMN_NAME + " = ? " + "WHERE id = ?")){
 			preparedStatement.setString(1, newUuid.toString());
 			preparedStatement.setLong(2, itemID);
 			preparedStatement.executeUpdate();
@@ -663,15 +626,10 @@ public final class UpdateOperations {
 
 	private static void updateSchemaVersion(String albumName) throws DatabaseWrapperOperationException  {
 		String savepointName = DatabaseIntegrityManager.createSavepoint();
-		
 		String typeInfoTableName = DatabaseStringUtilities.generateTypeInfoTableName(albumName);
-		StringBuilder sb = new StringBuilder("UPDATE ");
-		sb.append(typeInfoTableName);
-		sb.append(" SET ");
-		sb.append(DatabaseConstants.SCHEMA_VERSION_COLUMN_NAME);
-		sb.append(" = ?");
-		
-		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(sb.toString())) {		
+
+		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(
+				"UPDATE " + typeInfoTableName + " SET " + DatabaseConstants.SCHEMA_VERSION_COLUMN_NAME + " = ?")) {
 			preparedStatement.setString(1, UUID.randomUUID().toString());
 			preparedStatement.executeUpdate();
 		} catch (SQLException sqlEx) {
@@ -731,18 +689,10 @@ public final class UpdateOperations {
 		}
 	}
 	
-	static void addNewAlbumToAlbumMasterTable(String albumName, boolean hasPictures) throws DatabaseWrapperOperationException {		
-		StringBuilder sb = new StringBuilder("INSERT INTO ");
-		sb.append(DatabaseConstants.ALBUM_MASTER_TABLE_NAME);
-		sb.append(" (");
-		sb.append(DatabaseConstants.ALBUMNAME_IN_ALBUM_MASTER_TABLE);
-		sb.append(", ");
-		sb.append(DatabaseConstants.ALBUM_TABLENAME_IN_ALBUM_MASTER_TABLE);		
-		sb.append(", ");
-		sb.append(DatabaseConstants.HAS_PICTURES_COLUMN_IN_ALBUM_MASTER_TABLE);
-		sb.append(") VALUES( ?, ?, ?)");
-
-		String addAlbumQuery = sb.toString();
+	static void addNewAlbumToAlbumMasterTable(String albumName, boolean hasPictures) throws DatabaseWrapperOperationException {
+		String addAlbumQuery = "INSERT INTO " + DatabaseConstants.ALBUM_MASTER_TABLE_NAME +
+				" (" + DatabaseConstants.ALBUMNAME_IN_ALBUM_MASTER_TABLE + ", " + DatabaseConstants.ALBUM_TABLENAME_IN_ALBUM_MASTER_TABLE +
+				", " + DatabaseConstants.HAS_PICTURES_COLUMN_IN_ALBUM_MASTER_TABLE + ") VALUES( ?, ?, ?)";
 
 		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(addAlbumQuery)){			
 			// New album name
@@ -760,15 +710,10 @@ public final class UpdateOperations {
 	}
 
 	static void removeAlbumFromAlbumMasterTable(String albumName) throws DatabaseWrapperOperationException  {
-		StringBuilder sb = new StringBuilder("DELETE FROM ");	
-		sb.append(DatabaseConstants.ALBUM_MASTER_TABLE_NAME);
-		sb.append(" WHERE ");
-		sb.append(DatabaseConstants.ALBUMNAME_IN_ALBUM_MASTER_TABLE);
-		sb.append(" = ?");
+		String unRegisterNewAlbumFromAlbumMasterTable =
+				"DELETE FROM " + DatabaseConstants.ALBUM_MASTER_TABLE_NAME + " WHERE " + DatabaseConstants.ALBUMNAME_IN_ALBUM_MASTER_TABLE + " = ?";
 
-		String unRegisterNewAlbumFromAlbumMasterableString = sb.toString();		
-
-		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(unRegisterNewAlbumFromAlbumMasterableString)){  			
+		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(unRegisterNewAlbumFromAlbumMasterTable)){
 			// WHERE album name
 			preparedStatement.setString(FIRST_PARAM_INDEX, albumName);
 			preparedStatement.executeUpdate();
@@ -781,28 +726,28 @@ public final class UpdateOperations {
 	 * Updates the album name and the album table reference in the album master table
 	 * @param oldAlbumName the original album name which should be updated
 	 * @param newAlbumName the new album name
-	 * @param newHasPicturesFlagOptionType.UNKNOWN will be ignored. Yes and no will be set accordingly
+	 * @param newHasPicturesFlag newHasPicturesFlagOptionType.UNKNOWN will be ignored. Yes and no will be set accordingly
 	 */
 	private static void updateAlbumInAlbumMasterTable(String oldAlbumName, String newAlbumName, OptionType newHasPicturesFlag) throws DatabaseWrapperOperationException  {
 
-		StringBuilder sb = new StringBuilder("UPDATE ");		
-		sb.append(DatabaseStringUtilities.transformColumnNameToSelectQueryName(DatabaseConstants.ALBUM_MASTER_TABLE_NAME));
-		sb.append(" SET ");
-		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(DatabaseConstants.ALBUMNAME_IN_ALBUM_MASTER_TABLE));
-		sb.append(" = ?, ");
-		sb.append(DatabaseStringUtilities.encloseNameWithQuotes(DatabaseConstants.ALBUM_TABLENAME_IN_ALBUM_MASTER_TABLE));
-		sb.append(" = ? ");
+		StringBuilder stringBuilder = new StringBuilder("UPDATE ");
+		stringBuilder.append(DatabaseStringUtilities.transformColumnNameToSelectQueryName(DatabaseConstants.ALBUM_MASTER_TABLE_NAME));
+		stringBuilder.append(" SET ");
+		stringBuilder.append(DatabaseStringUtilities.encloseNameWithQuotes(DatabaseConstants.ALBUMNAME_IN_ALBUM_MASTER_TABLE));
+		stringBuilder.append(" = ?, ");
+		stringBuilder.append(DatabaseStringUtilities.encloseNameWithQuotes(DatabaseConstants.ALBUM_TABLENAME_IN_ALBUM_MASTER_TABLE));
+		stringBuilder.append(" = ? ");
 		if (newHasPicturesFlag != OptionType.UNKNOWN) {
-			sb.append(", " + DatabaseStringUtilities.encloseNameWithQuotes(DatabaseConstants.HAS_PICTURES_COLUMN_IN_ALBUM_MASTER_TABLE));
-			sb.append(" = ? ");
+			stringBuilder.append(", ").append(DatabaseStringUtilities.encloseNameWithQuotes(DatabaseConstants.HAS_PICTURES_COLUMN_IN_ALBUM_MASTER_TABLE));
+			stringBuilder.append(" = ? ");
 		}
-		sb.append("WHERE ");
-		sb.append(DatabaseStringUtilities.transformColumnNameToSelectQueryName(DatabaseConstants.ALBUMNAME_IN_ALBUM_MASTER_TABLE));
-		sb.append(" = ?");
+		stringBuilder.append("WHERE ");
+		stringBuilder.append(DatabaseStringUtilities.transformColumnNameToSelectQueryName(DatabaseConstants.ALBUMNAME_IN_ALBUM_MASTER_TABLE));
+		stringBuilder.append(" = ?");
 
-		String unRegisterNewAlbumFromAlbumMasterableString = sb.toString();
+		String unRegisterNewAlbumFromAlbumMasterTable = stringBuilder.toString();
 
-		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(unRegisterNewAlbumFromAlbumMasterableString);){			
+		try (PreparedStatement preparedStatement = ConnectionManager.getConnection().prepareStatement(unRegisterNewAlbumFromAlbumMasterTable)){
 			// New album name
 			preparedStatement.setString(NEW_ALBUM_NAME_PARAM_INDEX, newAlbumName);
 			// New album table name

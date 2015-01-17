@@ -1,10 +1,5 @@
 package org.sammelbox.view.sidepanes;
 
-import java.awt.Desktop;
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.DisposeEvent;
@@ -26,6 +21,11 @@ import org.sammelbox.view.image.ImageDropAndManagementComposite;
 import org.sammelbox.view.various.ComponentFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
 
 public final class ImageViewerSidepane extends Composite {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ImageViewerSidepane.class);
@@ -75,7 +75,7 @@ public final class ImageViewerSidepane extends Composite {
 				    try {
 						desktop.open(imageFile);
 					} catch (IOException e) {
-						LOGGER.error("An error occured while opening the images in an external image viewer", e);
+						LOGGER.error("An error occurred while opening the images in an external image viewer", e);
 					}
 				}
 			}

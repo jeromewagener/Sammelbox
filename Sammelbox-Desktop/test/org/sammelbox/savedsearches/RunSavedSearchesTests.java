@@ -18,17 +18,8 @@
 
 package org.sammelbox.savedsearches;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.util.List;
-
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.sammelbox.TestExecuter;
+import org.junit.*;
+import org.sammelbox.TestRunner;
 import org.sammelbox.controller.managers.ConnectionManager;
 import org.sammelbox.controller.managers.DatabaseIntegrityManager;
 import org.sammelbox.controller.managers.SavedSearchManager;
@@ -38,6 +29,11 @@ import org.sammelbox.model.album.AlbumItemStore;
 import org.sammelbox.model.database.QueryBuilderException;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 
+import java.util.List;
+
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 public class RunSavedSearchesTests {
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -45,24 +41,24 @@ public class RunSavedSearchesTests {
 
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		TestExecuter.resetTestHome();
+		TestRunner.resetTestHome();
 	}
 
 	@Before
 	public void setUp() {
-		TestExecuter.resetTestHome();
+		TestRunner.resetTestHome();
 	}
 
 	@After
 	public void tearDown() throws Exception {
 		ConnectionManager.closeConnection();
-		TestExecuter.resetTestHome();
+		TestRunner.resetTestHome();
 	}
 
 	@Test
 	public void testExistingSavedSearchesForBooks() {
 		try {
-			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
+			DatabaseIntegrityManager.restoreFromFile(TestRunner.PATH_TO_TEST_CBK);
 			
 			SavedSearchManager.initialize();
 			
@@ -86,7 +82,7 @@ public class RunSavedSearchesTests {
 	@Test
 	public void testExistingSavedSearchesForDVDs() {
 		try {
-			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
+			DatabaseIntegrityManager.restoreFromFile(TestRunner.PATH_TO_TEST_CBK);
 			
 			SavedSearchManager.initialize();
 			

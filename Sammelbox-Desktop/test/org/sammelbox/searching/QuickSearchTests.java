@@ -18,23 +18,19 @@
 
 package org.sammelbox.searching;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.util.ArrayList;
-
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.sammelbox.TestExecuter;
+import org.junit.*;
+import org.sammelbox.TestRunner;
 import org.sammelbox.controller.managers.DatabaseIntegrityManager;
 import org.sammelbox.model.album.AlbumItemResultSet;
 import org.sammelbox.model.album.MetaItemField;
 import org.sammelbox.model.database.DatabaseStringUtilities;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 import org.sammelbox.model.database.operations.DatabaseOperations;
+
+import java.util.ArrayList;
+
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class QuickSearchTests {
 	@BeforeClass
@@ -43,23 +39,23 @@ public class QuickSearchTests {
 
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		TestExecuter.resetTestHome();
+		TestRunner.resetTestHome();
 	}
 
 	@Before
 	public void setUp() {
-		TestExecuter.resetTestHome();
+		TestRunner.resetTestHome();
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		TestExecuter.resetTestHome();
+		TestRunner.resetTestHome();
 	}
 
 	@Test
 	public void testQuickSearchActorInDVDs() {
 		try {
-			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
+			DatabaseIntegrityManager.restoreFromFile(TestRunner.PATH_TO_TEST_CBK);
 			ArrayList<String> quickSearchTerms = new ArrayList<String>();
 			quickSearchTerms.add("Smith");
 			AlbumItemResultSet searchResults = DatabaseOperations.executeQuickSearch("DVDs", quickSearchTerms);
@@ -87,7 +83,7 @@ public class QuickSearchTests {
 	@Test
 	public void testQuickSearchActorsInDVDs() {
 		try {
-			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
+			DatabaseIntegrityManager.restoreFromFile(TestRunner.PATH_TO_TEST_CBK);
 			ArrayList<String> quickSearchTerms = new ArrayList<String>();
 			quickSearchTerms.add("Cooper");
 			quickSearchTerms.add("Wilson");
@@ -116,7 +112,7 @@ public class QuickSearchTests {
 	@Test
 	public void testQuickSearchTitleInDVDs() {
 		try {
-			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
+			DatabaseIntegrityManager.restoreFromFile(TestRunner.PATH_TO_TEST_CBK);
 			ArrayList<String> quickSearchTerms = new ArrayList<String>();
 			quickSearchTerms.add("Me");
 			AlbumItemResultSet searchResults = DatabaseOperations.executeQuickSearch("DVDs", quickSearchTerms);
@@ -143,7 +139,7 @@ public class QuickSearchTests {
 	@Test
 	public void testRemoveQuickSearchFlag() {
 		try {
-			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
+			DatabaseIntegrityManager.restoreFromFile(TestRunner.PATH_TO_TEST_CBK);
 		
 			MetaItemField dvdTitleMetaItemField = null;
 			for (MetaItemField metaItemField : DatabaseOperations.getAlbumItemMetaMap("DVDs").values()) {

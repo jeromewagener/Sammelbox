@@ -18,21 +18,12 @@
 
 package org.sammelbox.view.browser.spreadsheet;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.eclipse.swt.browser.Browser;
 import org.sammelbox.controller.GuiController;
 import org.sammelbox.controller.filters.ItemFieldFilter;
 import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
-import org.sammelbox.model.album.AlbumItem;
-import org.sammelbox.model.album.AlbumItemStore;
-import org.sammelbox.model.album.FieldType;
-import org.sammelbox.model.album.ItemField;
-import org.sammelbox.model.album.MetaItemField;
+import org.sammelbox.model.album.*;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 import org.sammelbox.model.database.operations.DatabaseConstants;
 import org.sammelbox.model.database.operations.DatabaseOperations;
@@ -41,6 +32,11 @@ import org.sammelbox.view.UIConstants;
 import org.sammelbox.view.browser.BrowserUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public final class SpreadsheetViewCreator {	
 	private static final Logger LOGGER = LoggerFactory.getLogger(SpreadsheetViewCreator.class);
@@ -82,7 +78,7 @@ public final class SpreadsheetViewCreator {
 		try {
 			columnIndexToMetaItemMap = DatabaseOperations.getAlbumItemMetaMap(GuiController.getGuiState().getSelectedAlbum());
 		} catch (DatabaseWrapperOperationException e) {
-			LOGGER.error("An error occured while retieving the albumItemMetaMap. ", e);
+			LOGGER.error("An error occurred while retieving the albumItemMetaMap. ", e);
 		}
 		
 		metaItemToColumnIndexMap = invert(columnIndexToMetaItemMap);

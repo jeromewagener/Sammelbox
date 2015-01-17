@@ -18,19 +18,8 @@
 
 package org.sammelbox.album;
 
-import static org.junit.Assert.*;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.sammelbox.TestExecuter;
+import org.junit.*;
+import org.sammelbox.TestRunner;
 import org.sammelbox.controller.filesystem.FileSystemLocations;
 import org.sammelbox.controller.managers.ConnectionManager;
 import org.sammelbox.model.album.AlbumItemResultSet;
@@ -42,6 +31,13 @@ import org.sammelbox.model.database.operations.DatabaseConstants;
 import org.sammelbox.model.database.operations.DatabaseOperations;
 import org.sammelbox.utilities.TestQueries;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 public class CreateAlbumTests {
 
 	@BeforeClass
@@ -51,12 +47,12 @@ public class CreateAlbumTests {
 
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		TestExecuter.resetTestHome();
+		TestRunner.resetTestHome();
 	}
 
 	@Before
 	public void setUp() {
-		TestExecuter.resetTestHome();
+		TestRunner.resetTestHome();
 	}
 
 	@After

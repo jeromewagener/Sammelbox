@@ -18,23 +18,19 @@
 
 package org.sammelbox.view.browser;
 
-import java.util.List;
-
 import org.eclipse.swt.browser.Browser;
 import org.sammelbox.controller.GuiController;
 import org.sammelbox.controller.filesystem.FileSystemLocations;
 import org.sammelbox.controller.filters.ItemFieldFilter;
-import org.sammelbox.model.album.AlbumItem;
-import org.sammelbox.model.album.AlbumItemPicture;
-import org.sammelbox.model.album.AlbumItemStore;
-import org.sammelbox.model.album.FieldType;
-import org.sammelbox.model.album.ItemField;
+import org.sammelbox.model.album.*;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 import org.sammelbox.model.database.operations.DatabaseOperations;
 import org.sammelbox.view.ApplicationUI;
 import org.sammelbox.view.UIConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 public final class GalleryViewCreator {
 	private static final Logger LOGGER = LoggerFactory.getLogger(GalleryViewCreator.class);
@@ -63,7 +59,7 @@ public final class GalleryViewCreator {
 			try {
 				pictures = DatabaseOperations.getAlbumItemPictures(ApplicationUI.getSelectedAlbum(), id);
 			} catch (DatabaseWrapperOperationException ex) {
-				LOGGER.error("An error occured while retrieving the pictures associated with the album item #'" + 
+				LOGGER.error("An error occurred while retrieving the pictures associated with the album item #'" +
 					id + "' from the album '" + ApplicationUI.getSelectedAlbum() + "'", ex);
 			}
 			

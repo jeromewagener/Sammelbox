@@ -18,9 +18,6 @@
 
 package org.sammelbox.view.browser;
 
-import java.util.LinkedList;
-import java.util.Map;
-
 import org.eclipse.swt.browser.Browser;
 import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
@@ -31,6 +28,9 @@ import org.sammelbox.view.ApplicationUI;
 import org.sammelbox.view.UIConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.LinkedList;
+import java.util.Map;
 
 public final class FeedbackCreator {
 	private static final Logger LOGGER = LoggerFactory.getLogger(FeedbackCreator.class);
@@ -54,7 +54,7 @@ public final class FeedbackCreator {
 								DetailedItemCreator.getImageAndDetailContainer(updatedAlbumItem)));
 			}
 		} catch (DatabaseWrapperOperationException ex) {
-			LOGGER.error("An error occured while fetching the album item #" + albumItemId + " in the album: " + 
+			LOGGER.error("An error occurred while fetching the album item #" + albumItemId + " in the album: " +
 							ApplicationUI.getSelectedAlbum(), ex);
 		}
 	}
@@ -72,7 +72,7 @@ public final class FeedbackCreator {
 								DetailedItemCreator.getImageAndDetailContainer(addedAlbumItem)));
 			}
 		} catch (DatabaseWrapperOperationException ex) {
-			LOGGER.error("An error occured while fetching the album item #" + albumItemId + " in the album: " + 
+			LOGGER.error("An error occurred while fetching the album item #" + albumItemId + " in the album: " +
 					ApplicationUI.getSelectedAlbum(), ex);
 		}
 	}

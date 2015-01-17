@@ -1,20 +1,16 @@
 package org.sammelbox.controller.filesystem.importing;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import org.sammelbox.controller.events.EventObservable;
 import org.sammelbox.controller.events.SammelboxEvent;
 import org.sammelbox.model.album.FieldType;
 import org.sammelbox.model.album.MetaItemField;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 import org.sammelbox.model.database.operations.DatabaseOperations;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public final class CSVAppender {
 	private CSVAppender() {}
@@ -45,13 +41,13 @@ public final class CSVAppender {
 				lineCounter++;
 			}
 		} catch (FileNotFoundException fnfe) {
-			throw new ImportException("An error occured while handling the file", fnfe);
+			throw new ImportException("An error occurred while handling the file", fnfe);
 		} catch (IOException ioe) {
-			throw new ImportException("An error occured while handling the file", ioe);
+			throw new ImportException("An error occurred while handling the file", ioe);
 		} catch (NumberFormatException nfe) {
-			throw new ImportException("An error occured while trying to interpret a decimal or integer value", nfe);
+			throw new ImportException("An error occurred while trying to interpret a decimal or integer value", nfe);
 		} catch (DatabaseWrapperOperationException dwoe) {
-			throw new ImportException("An internal error occured", dwoe);
+			throw new ImportException("An internal error occurred", dwoe);
 		}
 		
 		EventObservable.addEventToQueue(SammelboxEvent.ENABLE_SAMMELBOX);

@@ -40,12 +40,11 @@ public final class FileSystemLocations {
 	public static final String APP_DATA_DIR_NAME = "app-data";
 	public static final String CSS_JS_DIR_NAME = "css-js";
 	public static final String ALBUM_PICTURES_DIR_NAME = "album-pictures";
-	public static final String VERSION_FILE_NAME = "sammelbox.version";
-	
+
 	public static final String TEMP_DIR = System.getProperty("java.io.tmpdir") + File.separatorChar;
 	public static final String USER_HOME = System.getProperty("user.home");
-	public static final String INITIALIZATION_DIR = System.getProperty("user.dir");
-	
+	public static final String WORKING_DIR = System.getProperty("user.dir");
+
 	private FileSystemLocations() {}
 	
 	/** The path to the currently active home directory */
@@ -65,7 +64,6 @@ public final class FileSystemLocations {
 	public static String getAlbumPicturesDir()        { return activeHomeDir + File.separatorChar + ALBUM_PICTURES_DIR_NAME; }
 	public static String getDatabaseFile()            { return activeHomeDir + File.separatorChar + DATABASE_NAME; }
 	public static String getDatabaseRestoreFile()     { return activeHomeDir + File.separatorChar + DATABASE_TO_RESTORE_NAME; }
-	public static String getVersionFilePath()         { return activeHomeDir + File.separatorChar + APP_DATA_DIR_NAME + File.separatorChar + "sammelbox.ver"; }
 	public static String getCssJsDir()                { return activeHomeDir + File.separatorChar + APP_DATA_DIR_NAME + File.separatorChar + CSS_JS_DIR_NAME; }
 	
 	public static String getPlaceholderPNG()          { return getAppDataGraphicsDir() + File.separatorChar + "placeholder.png"; }

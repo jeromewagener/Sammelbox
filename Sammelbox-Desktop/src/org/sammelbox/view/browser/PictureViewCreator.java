@@ -18,8 +18,6 @@
 
 package org.sammelbox.view.browser;
 
-import java.util.List;
-
 import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.model.album.AlbumItemPicture;
@@ -30,6 +28,8 @@ import org.sammelbox.view.UIConstants;
 import org.sammelbox.view.composites.StatusBarComposite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 public final class PictureViewCreator {
 	private static final Logger LOGGER = LoggerFactory.getLogger(PictureViewCreator.class);
@@ -97,7 +97,7 @@ public final class PictureViewCreator {
 	
 			ApplicationUI.createOrRetrieveAlbumItemBrowser().setText(picturePage.toString());
 		} catch (DatabaseWrapperOperationException ex) {
-			LOGGER.error("An error occured while fetching the album item #" + albumItemId + " in the album: " + 
+			LOGGER.error("An error occurred while fetching the album item #" + albumItemId + " in the album: " +
 					ApplicationUI.getSelectedAlbum(), ex);
 		}
 	}

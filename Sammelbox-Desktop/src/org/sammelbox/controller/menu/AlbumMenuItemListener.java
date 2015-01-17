@@ -14,9 +14,9 @@ import org.sammelbox.model.database.operations.DatabaseOperations;
 import org.sammelbox.view.ApplicationUI;
 import org.sammelbox.view.browser.BrowserFacade;
 import org.sammelbox.view.sidepanes.AdvancedSearchSidepane;
+import org.sammelbox.view.sidepanes.AlbumFunctionSidepane;
 import org.sammelbox.view.sidepanes.AlterAlbumSidepane;
 import org.sammelbox.view.sidepanes.CreateAlbumSidepane;
-import org.sammelbox.view.sidepanes.AlbumFunctionSidepane;
 import org.sammelbox.view.various.ComponentFactory;
 import org.sammelbox.view.various.PanelType;
 import org.slf4j.Logger;
@@ -93,7 +93,7 @@ public final class AlbumMenuItemListener {
 							GuiController.getGuiState().setSelectedAlbum(GuiState.NO_ALBUM_SELECTED);
 							ApplicationUI.refreshAlbumList();
 						} catch (DatabaseWrapperOperationException ex) {
-							LOGGER.error("A database error occured while removing the following album: '" + 
+							LOGGER.error("A database error occurred while removing the following album: '" +
 												ApplicationUI.getSelectedAlbum() + "'", ex);
 						}
 					}

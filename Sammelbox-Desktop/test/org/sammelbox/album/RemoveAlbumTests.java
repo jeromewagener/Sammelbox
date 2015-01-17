@@ -18,22 +18,17 @@
 
 package org.sammelbox.album;
 
-import static org.junit.Assert.fail;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.sammelbox.TestExecuter;
+import org.junit.*;
+import org.sammelbox.TestRunner;
 import org.sammelbox.model.album.FieldType;
 import org.sammelbox.model.album.MetaItemField;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 import org.sammelbox.model.database.operations.DatabaseOperations;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.fail;
 
 public class RemoveAlbumTests {
 	@BeforeClass
@@ -46,7 +41,7 @@ public class RemoveAlbumTests {
 
 	@Before
 	public void setUp() throws Exception {
-		TestExecuter.resetTestHome();
+		TestRunner.resetTestHome();
 
 		// Create Album to delete
 		final String albumName = "Books";
@@ -72,7 +67,7 @@ public class RemoveAlbumTests {
 
 	@After
 	public void tearDown() throws Exception {
-		TestExecuter.resetTestHome();
+		TestRunner.resetTestHome();
 	}
 
 	@Test

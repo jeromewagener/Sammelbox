@@ -18,20 +18,16 @@
 
 package org.sammelbox.model.album;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException.DBErrorState;
 import org.sammelbox.model.database.operations.DatabaseConstants;
 import org.sammelbox.model.database.operations.DatabaseOperations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.sql.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class AlbumItemResultSet {	
 	private static final Logger LOGGER = LoggerFactory.getLogger(AlbumItemResultSet.class);
@@ -166,7 +162,7 @@ public class AlbumItemResultSet {
 				return metaData.getColumnCount();
 			}
 		} catch (SQLException e) {
-			LOGGER.error("An error occured while retrieving the field could from the album item result set");
+			LOGGER.error("An error occurred while retrieving the field could from the album item result set");
 		}
 
 		return 0;
@@ -248,7 +244,7 @@ public class AlbumItemResultSet {
 		try {
 			items.close();
 		} catch (SQLException e) {			
-			LOGGER.error("An error occured while closing the album item result set");
+			LOGGER.error("An error occurred while closing the album item result set");
 			return false;
 		}
 		return true;

@@ -18,11 +18,6 @@
 
 package org.sammelbox.controller.filesystem.exporting;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.List;
-
 import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.model.album.AlbumItem;
@@ -32,6 +27,12 @@ import org.sammelbox.model.album.StarRating;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.util.List;
+
 public final class HTMLExporter {
 	private static final Logger LOGGER = LoggerFactory.getLogger(HTMLExporter.class);
 	private static final String TABLE_STYLE = " style=\"border:1px solid black;\" ";
@@ -39,7 +40,7 @@ public final class HTMLExporter {
 	private HTMLExporter() {
 	}
 	
-	public static void exportAlbum(List<AlbumItem> albumItems, String filepath) {
+	public static void exportAlbum(List<AlbumItem> albumItems, String filePath) {
 		StringBuilder headerBuilder = new StringBuilder();
 		StringBuilder dataBuilder = new StringBuilder();
 		boolean firstLine = true;
@@ -51,41 +52,40 @@ public final class HTMLExporter {
 			dataBuilder.append("<tr>");
 			
 			for (int i=0; i<albumItem.getFields().size(); i++) {			
-				if (albumItem.getField(i).getType().equals(FieldType.UUID)) {
-					// schema or content version UUID --> ignore 
-				}
-				else if (albumItem.getField(i).getType().equals(FieldType.ID)) {
+				if (albumItem.getField(i).getType().equals(FieldType.UUID) || albumItem.getField(i).getType().equals(FieldType.ID)) {
+					// schema or content version UUID --> ignore
 					// do not show ID either
+					continue;
 				}
-				else {
-					if (albumItem.getField(i).getType().equals(FieldType.OPTION)) {
-						addHeaderIfFirstLine(firstLine, albumItem, headerBuilder, i);
 
-						if (albumItem.getField(i).getValue() == OptionType.YES) {
-							dataBuilder.append("<td" + TABLE_STYLE + ">" + Translator.get(DictKeys.BROWSER_YES) + "</td>");
-						} else if (albumItem.getField(i).getValue() == OptionType.NO) {
-							dataBuilder.append("<td" + TABLE_STYLE + ">" + Translator.get(DictKeys.BROWSER_NO) + "</td>");
-						} else {
-							dataBuilder.append("<td" + TABLE_STYLE + ">" + Translator.get(DictKeys.BROWSER_UNKNOWN) + "</td>");
-						}
-					} else if (albumItem.getField(i).getType().equals(FieldType.STAR_RATING)) {
-						addHeaderIfFirstLine(firstLine, albumItem, headerBuilder, i);
+				if (albumItem.getField(i).getType().equals(FieldType.OPTION)) {
+					addHeaderIfFirstLine(firstLine, albumItem, headerBuilder, i);
 
-						if (albumItem.getField(i).getValue() == null || albumItem.getField(i).getValue().equals("")) {
-							dataBuilder.append("<td" + TABLE_STYLE + ">" + "-" + "</td>");
-						} else {
-							dataBuilder.append("<td " + TABLE_STYLE + ">" + StarRating.toComboBoxArray()[((StarRating) albumItem.getField(i).getValue()).getIntegerValue()] + "</td>");
-						}
+					if (albumItem.getField(i).getValue() == OptionType.YES) {
+						dataBuilder.append("<td" + TABLE_STYLE + ">").append(Translator.get(DictKeys.BROWSER_YES)).append("</td>");
+					} else if (albumItem.getField(i).getValue() == OptionType.NO) {
+						dataBuilder.append("<td" + TABLE_STYLE + ">").append(Translator.get(DictKeys.BROWSER_NO)).append("</td>");
 					} else {
-						addHeaderIfFirstLine(firstLine, albumItem, headerBuilder, i);
-						
-						if (albumItem.getField(i).getValue() == null || albumItem.getField(i).getValue().equals("")) {
-							dataBuilder.append("<td" + TABLE_STYLE + ">" + "-" + "</td>");
-						} else {
-							dataBuilder.append("<td" + TABLE_STYLE + ">" + albumItem.getField(i).getValue() + "</td>");
-						}
+						dataBuilder.append("<td" + TABLE_STYLE + ">").append(Translator.get(DictKeys.BROWSER_UNKNOWN)).append("</td>");
+					}
+				} else if (albumItem.getField(i).getType().equals(FieldType.STAR_RATING)) {
+					addHeaderIfFirstLine(firstLine, albumItem, headerBuilder, i);
+
+					if (albumItem.getField(i).getValue() == null || albumItem.getField(i).getValue().equals("")) {
+						dataBuilder.append("<td" + TABLE_STYLE + ">" + "-" + "</td>");
+					} else {
+						dataBuilder.append("<td " + TABLE_STYLE + ">").append(StarRating.toComboBoxArray()[((StarRating) albumItem.getField(i).getValue()).getIntegerValue()]).append("</td>");
+					}
+				} else {
+					addHeaderIfFirstLine(firstLine, albumItem, headerBuilder, i);
+
+					if (albumItem.getField(i).getValue() == null || albumItem.getField(i).getValue().equals("")) {
+						dataBuilder.append("<td" + TABLE_STYLE + ">" + "-" + "</td>");
+					} else {
+						dataBuilder.append("<td" + TABLE_STYLE + ">").append(albumItem.getField(i).getValue()).append("</td>");
 					}
 				}
+
 			}
 			
 			if (firstLine) {
@@ -98,7 +98,7 @@ public final class HTMLExporter {
 		}
 
 		try {
-			BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(filepath));
+			BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filePath), "UTF-8"));
 			bufferedWriter.write("<html>" +
 								 "	<head>" +
 								 "		<meta charset=\"UTF-8\">" +
@@ -112,13 +112,13 @@ public final class HTMLExporter {
 								 "</html>");
 			bufferedWriter.close();
 		} catch (IOException e) {
-			LOGGER.error("An error occured while writing the HTML to its destination", e);
+			LOGGER.error("An error occurred while writing the HTML to its destination", e);
 		}
 	}
 	
 	private static void addHeaderIfFirstLine(boolean firstLine, AlbumItem albumItem, StringBuilder builder, int fieldPosition) {
 		if (firstLine) {
-			builder.append("<th" + TABLE_STYLE + "\">" + albumItem.getField(fieldPosition).getName() + "</th>");
+			builder.append("<th" + TABLE_STYLE + "\">").append(albumItem.getField(fieldPosition).getName()).append("</th>");
 		}
 	}
 }

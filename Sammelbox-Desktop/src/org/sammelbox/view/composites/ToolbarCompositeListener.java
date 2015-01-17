@@ -9,11 +9,7 @@ import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.model.GuiState;
 import org.sammelbox.view.ApplicationUI;
 import org.sammelbox.view.browser.BrowserFacade;
-import org.sammelbox.view.sidepanes.AddAlbumItemSidepane;
-import org.sammelbox.view.sidepanes.AdvancedSearchSidepane;
-import org.sammelbox.view.sidepanes.CreateAlbumSidepane;
-import org.sammelbox.view.sidepanes.EmptySidepane;
-import org.sammelbox.view.sidepanes.SynchronizeSidepane;
+import org.sammelbox.view.sidepanes.*;
 import org.sammelbox.view.various.PanelType;
 
 public final class ToolbarCompositeListener {
@@ -39,6 +35,7 @@ public final class ToolbarCompositeListener {
 				homeButton.setImage(homeActiveIcon);
 
 				ApplicationUI.setSelectedAlbumAndReload(GuiState.NO_ALBUM_SELECTED);
+				ApplicationUI.getSavedSearchesListBox().removeAll();
 			}
 
 			@Override

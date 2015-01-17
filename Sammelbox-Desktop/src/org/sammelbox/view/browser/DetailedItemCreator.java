@@ -18,25 +18,20 @@
 
 package org.sammelbox.view.browser;
 
-import java.text.SimpleDateFormat;
-import java.util.List;
-
 import org.sammelbox.controller.filesystem.FileSystemLocations;
 import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.controller.managers.SettingsManager;
-import org.sammelbox.model.album.AlbumItem;
-import org.sammelbox.model.album.AlbumItemPicture;
-import org.sammelbox.model.album.FieldType;
-import org.sammelbox.model.album.ItemField;
-import org.sammelbox.model.album.OptionType;
-import org.sammelbox.model.album.StarRating;
+import org.sammelbox.model.album.*;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 import org.sammelbox.model.database.operations.DatabaseConstants;
 import org.sammelbox.model.database.operations.DatabaseOperations;
 import org.sammelbox.view.ApplicationUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.text.SimpleDateFormat;
+import java.util.List;
 
 public final class DetailedItemCreator {
 	private static final Logger LOGGER = LoggerFactory.getLogger(DetailedItemCreator.class);
@@ -126,7 +121,7 @@ public final class DetailedItemCreator {
 		            "<div class=\"altPictureWrapper\">" + getAlternativePicturesHtml(id, pictures, hasButtonsAndLinks) + "</div>");
 			}
 		} catch (DatabaseWrapperOperationException ex) {
-			LOGGER.error("An issue regarding the album item picture occured", ex);
+			LOGGER.error("An issue regarding the album item picture occurred", ex);
 		}
 
 		if (hasButtonsAndLinks) {

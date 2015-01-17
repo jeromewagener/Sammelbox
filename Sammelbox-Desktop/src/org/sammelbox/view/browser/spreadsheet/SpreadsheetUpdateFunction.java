@@ -1,10 +1,5 @@
 package org.sammelbox.view.browser.spreadsheet;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.List;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.browser.BrowserFunction;
@@ -12,17 +7,18 @@ import org.sammelbox.controller.GuiController;
 import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.controller.managers.SettingsManager;
-import org.sammelbox.model.album.AlbumItem;
-import org.sammelbox.model.album.AlbumItemStore;
-import org.sammelbox.model.album.FieldType;
-import org.sammelbox.model.album.OptionType;
-import org.sammelbox.model.album.StarRating;
+import org.sammelbox.model.album.*;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 import org.sammelbox.model.database.operations.DatabaseOperations;
 import org.sammelbox.view.ApplicationUI;
 import org.sammelbox.view.various.ComponentFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.List;
 
 public class SpreadsheetUpdateFunction extends BrowserFunction {
 	private static final Logger LOGGER = LoggerFactory.getLogger(SpreadsheetUpdateFunction.class);
@@ -132,26 +128,26 @@ public class SpreadsheetUpdateFunction extends BrowserFunction {
 			} catch (NumberFormatException nfe) {
 				ComponentFactory.getMessageBox(
 						Translator.get(DictKeys.ERROR_AN_INTERNAL_ERROR_OCCURRED_HEADER), 
-						Translator.get(DictKeys.ERROR_AN_INTERNAL_ERROR_OCCURRED, "(Error: An error occured while parsing a number of an update row.)"),
+						Translator.get(DictKeys.ERROR_AN_INTERNAL_ERROR_OCCURRED, "(Error: An error occurred while parsing a number of an update row.)"),
 						SWT.ERROR | SWT.OK).open();
 				
-				LOGGER.error("An error occured while parsing a number of an update row.", nfe);
+				LOGGER.error("An error occurred while parsing a number of an update row.", nfe);
 				continue;
 			} catch (DatabaseWrapperOperationException dbwoe) {
 				ComponentFactory.getMessageBox(
 						Translator.get(DictKeys.ERROR_AN_INTERNAL_ERROR_OCCURRED_HEADER), 
-						Translator.get(DictKeys.ERROR_AN_INTERNAL_ERROR_OCCURRED, "(Error: An error occured while storing or updating an item.)"),
+						Translator.get(DictKeys.ERROR_AN_INTERNAL_ERROR_OCCURRED, "(Error: An error occurred while storing or updating an item.)"),
 						SWT.ERROR | SWT.OK).open();
 				
-				LOGGER.error("An error occured while storing or updating an item.", dbwoe);
+				LOGGER.error("An error occurred while storing or updating an item.", dbwoe);
 				continue;
 			} catch (ParseException pe) {
 				ComponentFactory.getMessageBox(
 						Translator.get(DictKeys.ERROR_AN_INTERNAL_ERROR_OCCURRED_HEADER), 
-						Translator.get(DictKeys.ERROR_AN_INTERNAL_ERROR_OCCURRED, "(Error: An error occured while storing or updating a date.)"),
+						Translator.get(DictKeys.ERROR_AN_INTERNAL_ERROR_OCCURRED, "(Error: An error occurred while storing or updating a date.)"),
 					    SWT.ERROR | SWT.OK).open();
 				
-				LOGGER.error("An error occured while storing or updating a date.", pe);
+				LOGGER.error("An error occurred while storing or updating a date.", pe);
 				continue;
 			}
 		}
@@ -165,10 +161,10 @@ public class SpreadsheetUpdateFunction extends BrowserFunction {
 			} catch (DatabaseWrapperOperationException dbwoe) {
 				ComponentFactory.getMessageBox(
 						Translator.get(DictKeys.ERROR_AN_INTERNAL_ERROR_OCCURRED_HEADER), 
-						Translator.get(DictKeys.ERROR_AN_INTERNAL_ERROR_OCCURRED, "(Error: An error occured while deleting an item.)"),
+						Translator.get(DictKeys.ERROR_AN_INTERNAL_ERROR_OCCURRED, "(Error: An error occurred while deleting an item.)"),
 						SWT.ERROR | SWT.OK).open();
 				
-				LOGGER.error("An error occured while deleting an item.", dbwoe);
+				LOGGER.error("An error occurred while deleting an item.", dbwoe);
 				continue;
 			}			
 		}

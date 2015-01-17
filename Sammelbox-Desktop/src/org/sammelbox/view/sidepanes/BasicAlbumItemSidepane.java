@@ -18,43 +18,16 @@
 
 package org.sammelbox.view.sidepanes;
 
-import java.sql.Date;
-import java.sql.Time;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.events.TraverseEvent;
-import org.eclipse.swt.events.TraverseListener;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.DateTime;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 import org.sammelbox.controller.GuiController;
 import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
-import org.sammelbox.controller.managers.WelcomePageManager;
-import org.sammelbox.model.album.AlbumItem;
-import org.sammelbox.model.album.AlbumItemPicture;
-import org.sammelbox.model.album.FieldType;
-import org.sammelbox.model.album.MetaItemField;
-import org.sammelbox.model.album.OptionType;
-import org.sammelbox.model.album.StarRating;
+import org.sammelbox.model.album.*;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 import org.sammelbox.model.database.operations.DatabaseOperations;
 import org.sammelbox.view.ApplicationUI;
@@ -64,6 +37,12 @@ import org.sammelbox.view.various.ComponentFactory;
 import org.sammelbox.view.various.PanelType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.sql.Date;
+import java.sql.Time;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 
 public final class BasicAlbumItemSidepane {
 	private static final Logger LOGGER = LoggerFactory.getLogger(BasicAlbumItemSidepane.class);
@@ -127,7 +106,7 @@ public final class BasicAlbumItemSidepane {
 			// if the album contains pictures, show the picture composite
 			addPictureComposite = DatabaseOperations.isPictureAlbum(album);
 		} catch(DatabaseWrapperOperationException ex) {
-			LOGGER.error("A database related error occured", ex);
+			LOGGER.error("A database related error occurred", ex);
 		}
 
 		for (MetaItemField metaItem : metaItemFields) {
@@ -188,7 +167,7 @@ public final class BasicAlbumItemSidepane {
 				imageDropAndManagementComposite.setData(AlbumItemPicture.ALBUM_ITEM_PICTURE, AlbumItemPicture.ALBUM_ITEM_PICTURE);
 				
 			} catch (DatabaseWrapperOperationException ex) {
-				LOGGER.error("An error occured while fetching the images for the album item #'" + albumItemId + 
+				LOGGER.error("An error occurred while fetching the images for the album item #'" + albumItemId +
 						"' from the album '" + ApplicationUI.getSelectedAlbum() + "'", ex);
 			}
 		}
@@ -300,9 +279,8 @@ public final class BasicAlbumItemSidepane {
 					
 					// Update GUI
 					ApplicationUI.changeRightCompositeTo(PanelType.EMPTY, EmptySidepane.build(ApplicationUI.getThreePanelComposite()));
-					WelcomePageManager.updateLastModifiedWithCurrentDate(ApplicationUI.getSelectedAlbum());
 				} catch (DatabaseWrapperOperationException ex) {
-					LOGGER.error("A database related error occured", ex);
+					LOGGER.error("A database related error occurred", ex);
 				}
 			}
 		};

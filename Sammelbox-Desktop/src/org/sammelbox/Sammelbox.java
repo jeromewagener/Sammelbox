@@ -34,13 +34,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
 
 public final class Sammelbox {
 	public static final String ORG_SQLITE_JDBC = "org.sqlite.JDBC";
 	private static final Logger LOGGER = LoggerFactory.getLogger(Sammelbox.class);
-	
+
 	private Sammelbox() {
 		// Sammelbox is launched using the main method
 	}
@@ -76,10 +77,7 @@ public final class Sammelbox {
 			FileSystemLocations.setActiveHomeDir(FileSystemLocations.DEFAULT_SAMMELBOX_HOME);
 		}
 		
-		// create or update version file
-		FileSystemAccessWrapper.writeToFile(BuildInformationManager.instance().getVersion(), FileSystemLocations.getVersionFilePath());
-		
-		LOGGER.info("Sammelbox (build: " + BuildInformationManager.instance().getVersion() + 
+		LOGGER.info("Sammelbox (build: " + BuildInformationManager.instance().getVersion() +
 				" build on " + BuildInformationManager.instance().getBuildTimeStamp() + ") started");
 		try {
 			// Ensure that the folder structure including the lock file exists before locking
@@ -125,22 +123,30 @@ public final class Sammelbox {
 		} else {
 			FileSystemLocations.setActiveHomeDir(FileSystemLocations.DEFAULT_SAMMELBOX_HOME);
 		}
-		
-		if (!new File(FileSystemLocations.getVersionFilePath()).exists()) {
-			// if Sammelbox has never been started before, the home directory 
-			// should not yet exist and we will open the configurator
-			Configurator.launch();
-		} else if (new File(FileSystemLocations.getVersionFilePath()).exists() && isNewerVersion()) {
-			// update sammelbox
-			Configurator.launch();
-		} else {
-			// otherwise, we just start Sammelbox
-			Sammelbox.launch();
-		}
+
+		copyExecutableToActiveHomeDir();
+		Sammelbox.launch();
 	}
 
-	private static boolean isNewerVersion() {
-		// TODO read version file and check whether the executable is newer than the one used before
-		return false; 
+	/** We copy the executable to the active home dir to have it handy in case we copy around the sammelbox */
+	private static void copyExecutableToActiveHomeDir() {
+		File workingDirectory = new File(FileSystemLocations.WORKING_DIR);
+		File[] filesInWorkingDirectory = workingDirectory.listFiles();
+
+		if (filesInWorkingDirectory != null) {
+			// search for sammelbox exe in current directory
+			for (File file : filesInWorkingDirectory) {
+				if (file.getName().toLowerCase().contains("sammelbox") && file.getName().toLowerCase().endsWith(".jar")) {
+					try {
+						FileSystemAccessWrapper.copyFile(file, new File(
+								FileSystemLocations.DEFAULT_SAMMELBOX_HOME + File.separatorChar + file.getName()));
+					} catch (IOException | SecurityException ex) {
+						LOGGER.error("An error occurred while copying the Sammelbox executable", ex);
+					}
+
+					break;
+				}
+			}
+		}
 	}
 }

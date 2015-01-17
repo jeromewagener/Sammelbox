@@ -18,17 +18,8 @@
 
 package org.sammelbox.searching;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.util.ArrayList;
-
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.sammelbox.TestExecuter;
+import org.junit.*;
+import org.sammelbox.TestRunner;
 import org.sammelbox.controller.managers.DatabaseIntegrityManager;
 import org.sammelbox.model.album.AlbumItemResultSet;
 import org.sammelbox.model.database.QueryBuilder;
@@ -38,6 +29,11 @@ import org.sammelbox.model.database.QueryOperator;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 import org.sammelbox.model.database.operations.DatabaseOperations;
 
+import java.util.ArrayList;
+
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 public class AdvancedSearchTests {
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -45,23 +41,23 @@ public class AdvancedSearchTests {
 
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		TestExecuter.resetTestHome();
+		TestRunner.resetTestHome();
 	}
 
 	@Before
 	public void setUp() {
-		TestExecuter.resetTestHome();
+		TestRunner.resetTestHome();
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		TestExecuter.resetTestHome();
+		TestRunner.resetTestHome();
 	}
 
 	@Test
 	public void testSearchForTitleInDVDsUsingSQL() {
 		try {
-			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
+			DatabaseIntegrityManager.restoreFromFile(TestRunner.PATH_TO_TEST_CBK);
 			AlbumItemResultSet searchResults = DatabaseOperations.executeSQLQuery("SELECT * FROM DVDs WHERE Title = 'The Simpsons Movie'");
 			assertTrue("Resultset should not be null", searchResults != null);
 
@@ -85,7 +81,7 @@ public class AdvancedSearchTests {
 	@Test
 	public void testSearchForTitleAndActorsInDVDsUsingSQL() {
 		try {
-			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
+			DatabaseIntegrityManager.restoreFromFile(TestRunner.PATH_TO_TEST_CBK);
 			AlbumItemResultSet searchResults = DatabaseOperations.executeSQLQuery(
 					"SELECT * FROM DVDs WHERE Title = 'The Simpsons Movie' and Actors = 'The Simpsons'");
 			assertTrue("Resultset should not be null", searchResults != null);
@@ -110,7 +106,7 @@ public class AdvancedSearchTests {
 	@Test
 	public void testSearchForTitleInDVDsUsingQueryBuilder() {
 		try {
-			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
+			DatabaseIntegrityManager.restoreFromFile(TestRunner.PATH_TO_TEST_CBK);
 			ArrayList<QueryComponent> queryComponents = new ArrayList<QueryComponent>();
 			queryComponents.add(QueryBuilder.getQueryComponent("Title", QueryOperator.EQUALS, "Short Circuit 2"));
 			AlbumItemResultSet searchResults = DatabaseOperations.executeSQLQuery(
@@ -138,7 +134,7 @@ public class AdvancedSearchTests {
 	@Test
 	public void testSearchForTitleAndAuthorInDVDsUsingQueryBuilder() {
 		try {
-			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
+			DatabaseIntegrityManager.restoreFromFile(TestRunner.PATH_TO_TEST_CBK);
 
 			ArrayList<QueryComponent> queryComponents = new ArrayList<QueryComponent>();
 			queryComponents.add(QueryBuilder.getQueryComponent("Title", QueryOperator.EQUALS, "Short Circuit 2"));
@@ -170,7 +166,7 @@ public class AdvancedSearchTests {
 	@Test
 	public void testSearchForTitlesInDVDsUsingQueryBuilder() {
 		try {
-			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
+			DatabaseIntegrityManager.restoreFromFile(TestRunner.PATH_TO_TEST_CBK);
 			ArrayList<QueryComponent> queryComponents = new ArrayList<QueryComponent>();
 			queryComponents.add(QueryBuilder.getQueryComponent("Title", QueryOperator.EQUALS, "Short Circuit 2"));
 			queryComponents.add(QueryBuilder.getQueryComponent("Title", QueryOperator.EQUALS, "One Flew Over The Cuckoo's Nest"));
@@ -202,7 +198,7 @@ public class AdvancedSearchTests {
 	@Test
 	public void testSearchByLikeForAuthorInBooksUsingQueryBuilder() {
 		try {
-			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
+			DatabaseIntegrityManager.restoreFromFile(TestRunner.PATH_TO_TEST_CBK);
 			ArrayList<QueryComponent> queryComponents = new ArrayList<QueryComponent>();
 			queryComponents.add(QueryBuilder.getQueryComponent("Author", QueryOperator.CONTAINS, "Helm"));
 			AlbumItemResultSet searchResults = DatabaseOperations.executeSQLQuery(
@@ -231,7 +227,7 @@ public class AdvancedSearchTests {
 	@Test
 	public void testSearchByLikeForTitlesInBooksUsingQueryBuilder() {
 		try {
-			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
+			DatabaseIntegrityManager.restoreFromFile(TestRunner.PATH_TO_TEST_CBK);
 			ArrayList<QueryComponent> queryComponents = new ArrayList<QueryComponent>();
 			queryComponents.add(QueryBuilder.getQueryComponent("Book Title", QueryOperator.CONTAINS, "Code"));
 			queryComponents.add(QueryBuilder.getQueryComponent("Book Title", QueryOperator.CONTAINS, "Design"));
@@ -263,7 +259,7 @@ public class AdvancedSearchTests {
 	@Test
 	public void testSearchForHighPriceBooksUsingBiggerThan() {
 		try {
-			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
+			DatabaseIntegrityManager.restoreFromFile(TestRunner.PATH_TO_TEST_CBK);
 			ArrayList<QueryComponent> queryComponents = new ArrayList<QueryComponent>();
 			queryComponents.add(QueryBuilder.getQueryComponent("Price", QueryOperator.BIGGER, "30.0"));
 			AlbumItemResultSet searchResults = DatabaseOperations.executeSQLQuery(
@@ -285,7 +281,7 @@ public class AdvancedSearchTests {
 	@Test
 	public void testSearchForHighPriceBooksUsingBiggerThanOrEqual() {
 		try {
-			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
+			DatabaseIntegrityManager.restoreFromFile(TestRunner.PATH_TO_TEST_CBK);
 			ArrayList<QueryComponent> queryComponents = new ArrayList<QueryComponent>();
 			queryComponents.add(QueryBuilder.getQueryComponent("Price", QueryOperator.BIGGER_OR_EQUAL, "30.0"));
 			AlbumItemResultSet searchResults = DatabaseOperations.executeSQLQuery(
@@ -307,7 +303,7 @@ public class AdvancedSearchTests {
 	@Test
 	public void testSearchArtistInEmptyMusicAlbumUsingQueryBuilder() {
 		try {
-			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
+			DatabaseIntegrityManager.restoreFromFile(TestRunner.PATH_TO_TEST_CBK);
 			ArrayList<QueryComponent> queryComponents = new ArrayList<QueryComponent>();
 			queryComponents.add(QueryBuilder.getQueryComponent("Artist", QueryOperator.EQUALS, "Rick Astley"));
 			AlbumItemResultSet searchResults = DatabaseOperations.executeSQLQuery(

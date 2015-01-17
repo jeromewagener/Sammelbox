@@ -18,13 +18,6 @@
 
 package org.sammelbox.view.image;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.util.UUID;
-
-import javax.imageio.ImageIO;
-
 import org.imgscalr.Scalr;
 import org.sammelbox.controller.filesystem.FileSystemAccessWrapper;
 import org.sammelbox.controller.filesystem.FileSystemLocations;
@@ -32,6 +25,12 @@ import org.sammelbox.model.album.AlbumItemPicture;
 import org.sammelbox.view.ApplicationUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.UUID;
 
 public final class ImageManipulator {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationUI.class);
@@ -99,7 +98,7 @@ public final class ImageManipulator {
 			return new AlbumItemPicture(newFileNameForThumbnail, newFileNameForOriginal, album, AlbumItemPicture.PICTURE_ID_UNDEFINED);
 			
 		} catch (IOException ex) {
-			LOGGER.error("An file handling error occured while manipulating an image", ex);
+			LOGGER.error("An file handling error occurred while manipulating an image", ex);
 		}
 		
 		return null;

@@ -18,19 +18,6 @@
 
 package org.sammelbox.controller.filesystem.xml;
 
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.sammelbox.controller.filesystem.FileSystemAccessWrapper;
 import org.sammelbox.controller.filesystem.FileSystemLocations;
 import org.sammelbox.controller.i18n.Language;
@@ -49,6 +36,13 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.*;
 
 public final class XmlStorageWrapper {
 	private static final Logger LOGGER = LoggerFactory.getLogger(XmlStorageWrapper.class);
@@ -125,21 +119,12 @@ public final class XmlStorageWrapper {
 		FileSystemAccessWrapper.writeToFile(xmlOutput.toString(), FileSystemLocations.getSavedSearchesXML());
 	}
 	
-	public static void storeWelcomePageManagerInformation(
-			Map<String, Integer> albumAndSavedSearchesToClicks,
-			Map<String, Long> albumToLastModified) {
+	public static void storeWelcomePageManagerInformation(Map<String, Long> albumToLastModified) {
 		
 		StringBuilder xmlOutput = new StringBuilder();
 		
 		xmlOutput.append("<welcomePageInformation>\n");
-		
-		for (Map.Entry<String, Integer> mapEntry : albumAndSavedSearchesToClicks.entrySet()) {
-			xmlOutput.append("\t<albumAndViewsToClicks>\n");
-			xmlOutput.append("\t\t<name><![CDATA[" + mapEntry.getKey() + "]]></name>\n");
-			xmlOutput.append("\t\t<clicks><![CDATA[" + mapEntry.getValue() + "]]></clicks>\n");
-			xmlOutput.append("\t</albumAndViewsToClicks>\n");
-		}
-		
+
 		for (Map.Entry<String, Long> mapEntry : albumToLastModified.entrySet()) {
 			xmlOutput.append("\t<albumToLastModified>\n");
 			xmlOutput.append("\t\t<albumName><![CDATA[" + mapEntry.getKey() + "]]></albumName>\n");
@@ -189,7 +174,7 @@ public final class XmlStorageWrapper {
 				}
 			}
 		} catch (ParserConfigurationException | IOException | SAXException | XmlParsingException ex) {
-			LOGGER.error("An error occured while parsing the settings XML file", ex);
+			LOGGER.error("An error occurred while parsing the settings XML file", ex);
 		}
 		
 		return applicationSettings;
@@ -233,7 +218,7 @@ public final class XmlStorageWrapper {
 				}
 			}
 		} catch (ParserConfigurationException | IOException | SAXException | XmlParsingException ex) {
-			LOGGER.error("An error occured while parsing the albums XML file");
+			LOGGER.error("An error occurred while parsing the albums XML file");
 		}
 		
 		return albumToPosition;
@@ -306,7 +291,7 @@ public final class XmlStorageWrapper {
 				}
 			}
 		} catch (ParserConfigurationException | IOException | SAXException | XmlParsingException ex) {
-			LOGGER.error("An error occured while parsing the saved search XML file");
+			LOGGER.error("An error occurred while parsing the saved search XML file");
 		}
 		
 		return albumNamesToSavedSearches;
@@ -352,7 +337,7 @@ public final class XmlStorageWrapper {
 				}
 			}
 		} catch (ParserConfigurationException | IOException | SAXException | XmlParsingException ex) {
-			LOGGER.error("An error occured while parsing the welcome page XML file");
+			LOGGER.error("An error occurred while parsing the welcome page XML file");
 		}
 		
 		return albumToLastModified;
@@ -398,7 +383,7 @@ public final class XmlStorageWrapper {
 				}
 			}
 		} catch (ParserConfigurationException | IOException | SAXException | XmlParsingException ex) {
-			LOGGER.error("An error occured while parsing the welcome page XML file");
+			LOGGER.error("An error occurred while parsing the welcome page XML file");
 		}
 		
 		return albumAndSavedSearchesToClicks;

@@ -18,13 +18,6 @@
 
 package org.sammelbox.view.browser;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.io.StringWriter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.widgets.Display;
@@ -43,6 +36,13 @@ import org.sammelbox.view.composites.SpreadsheetComposite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.tidy.Tidy;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.StringWriter;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public final class BrowserUtils {
 	public static final String PROJECT_WEBSITE = "http://www.sammelbox.org";
@@ -71,7 +71,7 @@ public final class BrowserUtils {
 		try {
 			AlbumItemStore.reinitializeStoreAndUpdateStatus(DatabaseOperations.executeSQLQuery(sqlQuery));
 		} catch (DatabaseWrapperOperationException ex) {
-			LOGGER.error("An error occured while reinitializing the album item store using the following SQL query (" + sqlQuery + ")", ex);
+			LOGGER.error("An error occurred while reinitializing the album item store using the following SQL query (" + sqlQuery + ")", ex);
 		}
 		
 		showAlbum();

@@ -18,20 +18,16 @@
 
 package org.sammelbox.savedsearches;
 
-import static org.junit.Assert.assertTrue;
-
-import java.util.ArrayList;
-
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.sammelbox.TestExecuter;
+import org.junit.*;
+import org.sammelbox.TestRunner;
 import org.sammelbox.controller.managers.DatabaseIntegrityManager;
 import org.sammelbox.controller.managers.SavedSearchManager;
 import org.sammelbox.model.database.QueryComponent;
 import org.sammelbox.model.database.QueryOperator;
+
+import java.util.ArrayList;
+
+import static org.junit.Assert.assertTrue;
 
 public class ModifySavedSearchesTests {
 	@BeforeClass
@@ -40,22 +36,22 @@ public class ModifySavedSearchesTests {
 
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		TestExecuter.resetTestHome();
+		TestRunner.resetTestHome();
 	}
 
 	@Before
 	public void setUp() {
-		TestExecuter.resetTestHome();
+		TestRunner.resetTestHome();
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		TestExecuter.resetTestHome();
+		TestRunner.resetTestHome();
 	}
 	
 	@Test
 	public void testMoveSavedSearches() {
-		DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
+		DatabaseIntegrityManager.restoreFromFile(TestRunner.PATH_TO_TEST_CBK);
 		
 		SavedSearchManager.initialize();
 		

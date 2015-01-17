@@ -1,22 +1,12 @@
 package org.sammelbox;
 
-
-import java.io.File;
-import java.io.IOException;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.DirectoryDialog;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.*;
 import org.sammelbox.controller.filesystem.FileSystemAccessWrapper;
 import org.sammelbox.controller.filesystem.FileSystemLocations;
 import org.sammelbox.controller.i18n.DictKeys;
@@ -187,27 +177,9 @@ public class Configurator {
 				SettingsManager.setApplicationSettings(applicationSettings);
 				SettingsManager.storeToSettingsFile();	
 				
-				// Copy executable and create starters
-				copyExecutableToActiveHomeDir();
-				
 				// Close configurator and start sammelbox
 				shell.close();
 				Sammelbox.launch();
-			}
-
-			private void copyExecutableToActiveHomeDir() {
-				// search for sammelbox exe in current directory
-				for (File file : new File(FileSystemLocations.INITIALIZATION_DIR).listFiles()) {
-					if (file.getName().toLowerCase().contains("sammelbox") && file.getName().toLowerCase().endsWith(".jar")) {
-						try {
-							FileSystemAccessWrapper.copyFile(file, new File(
-									FileSystemLocations.DEFAULT_SAMMELBOX_HOME + File.separatorChar + file.getName()));
-						} catch (IOException ioe) {
-							LOGGER.error("An error occurred while copying the Sammelbox executable", ioe);
-						}
-						break;
-					}
-				}
 			}
 		});
 		
@@ -237,10 +209,10 @@ public class Configurator {
 	}
 	
 	private static void createSpacer() {
-		GridData seperaratorGridData = new GridData(GridData.FILL_BOTH);
-		seperaratorGridData.minimumHeight = SEPARATOR_HEIGHT;
+		GridData separatorGridData = new GridData(GridData.FILL_BOTH);
+		separatorGridData.minimumHeight = SEPARATOR_HEIGHT;
 		
 		Label spacer = new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL);
-		spacer.setLayoutData(seperaratorGridData);
+		spacer.setLayoutData(separatorGridData);
 	}
 }

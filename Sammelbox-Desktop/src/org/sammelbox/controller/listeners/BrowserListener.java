@@ -18,12 +18,6 @@
 
 package org.sammelbox.controller.listeners;
 
-import java.awt.Desktop;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.LocationEvent;
 import org.eclipse.swt.browser.LocationListener;
@@ -53,6 +47,12 @@ import org.sammelbox.view.various.ComponentFactory;
 import org.sammelbox.view.various.PanelType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.awt.*;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
 
 public class BrowserListener implements LocationListener, ProgressListener, MenuDetectListener {
 	private static final Logger LOGGER = LoggerFactory.getLogger(BrowserListener.class);
@@ -123,7 +123,7 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 				} catch (NumberFormatException nfe) {
 					LOGGER.error("Couldn't parse the following id: '" + id + "'", nfe);
 				} catch (DatabaseWrapperOperationException ex) {
-					LOGGER.error("A database error occured while deleting the album item #" + id + " from the album '" + 
+					LOGGER.error("A database error occurred while deleting the album item #" + id + " from the album '" +
 										ApplicationUI.getSelectedAlbum() + "'", ex);
 				}
 				BrowserFacade.performBrowserQueryAndShow(QueryBuilder.createOrderedSelectStarQuery(ApplicationUI.getSelectedAlbum()));
@@ -169,7 +169,7 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 			} catch (NumberFormatException nfe) {
 				LOGGER.error("Couldn't parse the following id: '" + id + "'", nfe);
 			} catch (DatabaseWrapperOperationException ex) {
-				LOGGER.error("A database related error occured: \n Stacktrace: ", ex);
+				LOGGER.error("A database related error occurred: \n Stacktrace: ", ex);
 			}
 
 			// Do not change the page
@@ -211,7 +211,7 @@ public class BrowserListener implements LocationListener, ProgressListener, Menu
 		            runtime.exec("xdg-open " + url);
 		        }
 			} catch (IOException | URISyntaxException ex) {
-				LOGGER.error("An error occured while opening the following URL: " + url, ex);
+				LOGGER.error("An error occurred while opening the following URL: " + url, ex);
 			}
 			
 			// Do not change the page

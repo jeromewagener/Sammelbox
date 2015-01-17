@@ -18,27 +18,13 @@
 
 package org.sammelbox.view.sidepanes;
 
-import java.sql.Date;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 import org.sammelbox.controller.filters.MetaItemFieldFilter;
 import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
@@ -58,6 +44,11 @@ import org.sammelbox.view.various.ComponentFactory;
 import org.sammelbox.view.various.TextInputDialog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 
 public final class AdvancedSearchSidepane {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AdvancedSearchSidepane.class);
@@ -104,7 +95,7 @@ public final class AdvancedSearchSidepane {
 			fieldToSearchCombo.setData("validMetaItemFields", MetaItemFieldFilter.getValidMetaItemFields(DatabaseOperations.getMetaItemFields(album)));
 			fieldToSearchCombo.setItems(MetaItemFieldFilter.getValidFieldNamesAsStringArray(DatabaseOperations.getMetaItemFields(album)));	
 		} catch (DatabaseWrapperOperationException ex) {
-			LOGGER.error("A database related error occured", ex);
+			LOGGER.error("A database related error occurred", ex);
 		}
 		Label searchOperatorLabel = new Label(innerComposite, SWT.NONE);
 		searchOperatorLabel.setText(Translator.get(DictKeys.LABEL_SEARCH_OPERATOR));
@@ -271,7 +262,7 @@ public final class AdvancedSearchSidepane {
 			fieldToSortCombo.setData("validMetaItemFields", MetaItemFieldFilter.getValidMetaItemFields(DatabaseOperations.getMetaItemFields(album)));
 			fieldToSortCombo.setItems(MetaItemFieldFilter.getValidFieldNamesAsStringArray(DatabaseOperations.getMetaItemFields(album)));
 		} catch (DatabaseWrapperOperationException ex) {
-			LOGGER.error("A database related error occured", ex);
+			LOGGER.error("A database related error occurred", ex);
 		}
 		
 		if (savedSearch != null && savedSearch.getOrderByField() != null && !savedSearch.getOrderByField().isEmpty()) {
@@ -412,7 +403,7 @@ public final class AdvancedSearchSidepane {
 				}
 			}			
 		} catch (DatabaseWrapperOperationException dwoe) {
-			LOGGER.error("A database related error occured", dwoe);
+			LOGGER.error("A database related error occurred", dwoe);
 		}
 		
 		return queryComponents;	

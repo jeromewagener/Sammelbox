@@ -18,15 +18,6 @@
 
 package org.sammelbox.controller.managers;
 
-import java.io.File;
-import java.io.IOException;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.UUID;
-
 import org.sammelbox.controller.filesystem.FileSystemAccessWrapper;
 import org.sammelbox.controller.filesystem.FileSystemLocations;
 import org.sammelbox.controller.filesystem.backup.BackupThread;
@@ -36,6 +27,15 @@ import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException.DBErrorState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.UUID;
 
 public final class DatabaseIntegrityManager {
 	private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseIntegrityManager.class);
@@ -157,7 +157,7 @@ public final class DatabaseIntegrityManager {
 	
 	/**
 	 * Gets the time stamp when the last change to the database happened.
-	 * @return The time in milliseconds when the last change to the database occured. -1 If not initialized.
+	 * @return The time in milliseconds when the last change to the database occurred. -1 If not initialized.
 	 */
 	public static long getLastDatabaseChangeTimeStamp() {
 		return DatabaseIntegrityManager.lastChangeTimeStampInMillis;

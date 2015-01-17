@@ -1,17 +1,7 @@
 package org.sammelbox.albumitems;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.sammelbox.TestExecuter;
+import org.junit.*;
+import org.sammelbox.TestRunner;
 import org.sammelbox.controller.managers.DatabaseIntegrityManager;
 import org.sammelbox.model.album.AlbumItem;
 import org.sammelbox.model.album.FieldType;
@@ -19,6 +9,12 @@ import org.sammelbox.model.album.MetaItemField;
 import org.sammelbox.model.database.QueryBuilder;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 import org.sammelbox.model.database.operations.DatabaseOperations;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class AlbumItemPictureTests {
 	
@@ -28,23 +24,23 @@ public class AlbumItemPictureTests {
 
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		TestExecuter.resetTestHome();
+		TestRunner.resetTestHome();
 	}
 
 	@Before
 	public void setUp() throws Exception {
-		TestExecuter.resetTestHome();
+		TestRunner.resetTestHome();
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		TestExecuter.resetTestHome();
+		TestRunner.resetTestHome();
 	}
 	
 	@Test
 	public void testAlbumModificationAfterItemDeletion() {
 		try {
-			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
+			DatabaseIntegrityManager.restoreFromFile(TestRunner.PATH_TO_TEST_CBK);
 			Map<Long, String> albumItemIdToPictureName = new HashMap<>();
 			
 			for (AlbumItem albumItem : DatabaseOperations.getAlbumItems(QueryBuilder.createSelectStarQuery("DVDs"))) {
@@ -77,7 +73,7 @@ public class AlbumItemPictureTests {
 	@Test
 	public void testAlbumModificationAfterMultiItemDeletion() {
 		try {
-			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
+			DatabaseIntegrityManager.restoreFromFile(TestRunner.PATH_TO_TEST_CBK);
 			Map<Long, String> albumItemIdToPictureName = new HashMap<>();
 			
 			for (AlbumItem albumItem : DatabaseOperations.getAlbumItems(QueryBuilder.createSelectStarQuery("DVDs"))) {
@@ -118,7 +114,7 @@ public class AlbumItemPictureTests {
 	@Test
 	public void testAlbumModificationAfterFirstLastItemDeletion() {
 		try {
-			DatabaseIntegrityManager.restoreFromFile(TestExecuter.PATH_TO_TEST_CBK);
+			DatabaseIntegrityManager.restoreFromFile(TestRunner.PATH_TO_TEST_CBK);
 			Map<Long, String> albumItemIdToPictureName = new HashMap<>();
 			
 			for (AlbumItem albumItem : DatabaseOperations.getAlbumItems(QueryBuilder.createSelectStarQuery("DVDs"))) {

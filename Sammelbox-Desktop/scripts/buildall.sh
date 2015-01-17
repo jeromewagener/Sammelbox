@@ -42,8 +42,8 @@ mvn clean install -DskipTests -P'linux64,!linux32,!win64,!win32,!macos64,!macos3
 cp target/*.jar release
 
 # build linux x32 jar and copy jar
-mvn clean install -DskipTests -P'linux32,!linux64,!win64,!win32,!macos64,!macos32'
-cp target/*.jar release
+#mvn clean install -DskipTests -P'linux32,!linux64,!win64,!win32,!macos64,!macos32'
+#cp target/*.jar release
 
 
 # build win x64 jar and copy jar
@@ -51,13 +51,13 @@ mvn clean install -DskipTests -P'win64,!win32,!linux64,!linux32,!macos64,!macos3
 cp target/*.jar release
 
 # build win x32 jar and copy jar
-mvn clean install -DskipTests -P'win32,!win64,!linux64,!linux32,!macos64,!macos32'
-cp target/*.jar release
+#mvn clean install -DskipTests -P'win32,!win64,!linux64,!linux32,!macos64,!macos32'
+#cp target/*.jar release
 
 
-# build macos x64 jar and copy jar
-mvn clean install -DskipTests -P'macos64,!macos32,win64,!win32,!linux64,!linux32'
-cp target/*.jar release
+# build macos x32 jar and copy jar
+#mvn clean install -DskipTests -P'macos64,!macos32,win64,!win32,!linux64,!linux32'
+#cp target/*.jar release
 
 # build macos x64 jar and copy jar
 mvn clean install -DskipTests -P'macos32,!macos64,win64,!win32,!linux64,!linux32'

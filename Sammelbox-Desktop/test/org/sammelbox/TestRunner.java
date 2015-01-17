@@ -18,10 +18,6 @@
 
 package org.sammelbox;
 
-import static org.junit.Assert.fail;
-
-import java.io.File;
-
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.sammelbox.album.AlterAlbumTests;
@@ -43,6 +39,10 @@ import org.sammelbox.savedsearches.SavedSearchesTests;
 import org.sammelbox.searching.AdvancedSearchTests;
 import org.sammelbox.searching.QuickSearchTests;
 import org.sammelbox.sidepanes.SidepaneCreationTests;
+
+import java.io.File;
+
+import static org.junit.Assert.fail;
 
 @RunWith(Suite.class)
 
@@ -71,7 +71,7 @@ import org.sammelbox.sidepanes.SidepaneCreationTests;
 	SidepaneCreationTests.class
 })
 
-public class TestExecuter {
+public class TestRunner {
 	public static final String PATH_TO_TEST_CBK = 
 			System.getProperty("user.dir") + File.separatorChar + "test" +
 					File.separatorChar + "testdata" + File.separatorChar + "test-albums-version-3.4.3.cbk";
@@ -98,7 +98,7 @@ public class TestExecuter {
 			ConnectionManager.openConnection();
 			FileSystemAccessWrapper.updateAlbumFileStructure(ConnectionManager.getConnection());
 		} catch (Exception e) {
-			fail("A problem occured while resetting the test home directory");
+			fail("A problem occurred while resetting the test home directory");
 		}
 	}
 }

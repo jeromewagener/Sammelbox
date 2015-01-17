@@ -18,9 +18,6 @@
 
 package org.sammelbox.view;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -28,14 +25,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Layout;
-import org.eclipse.swt.widgets.List;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 import org.sammelbox.controller.GuiController;
 import org.sammelbox.controller.events.EventObservable;
 import org.sammelbox.controller.events.EventObserver;
@@ -66,6 +56,9 @@ import org.sammelbox.view.various.ScreenUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public final class ApplicationUI implements EventObserver {	
 	private static final int NUMBER_OF_MAIN_PANEL_COMPOSITES = 3;
 	private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationUI.class);
@@ -80,11 +73,13 @@ public final class ApplicationUI implements EventObserver {
 	/** A reference to the SWT list containing all available albums */
 	private static List albums;
 	/** A reference to the SWT list containing all available saved searches */
-	private static List savedSearches;
+	private static List savedSearchesListBox;
 	
 	/** A reference to a composite being part of the general user interface */
-	private static Composite threePanelComposite = null, upperLeftSubComposite = null, lowerLeftSubComposite = null, 
-			leftComposite = null, rightComposite = null, centerComposite = null, statusComposite = null;
+	private static Composite threePanelComposite = null;
+	private static Composite leftComposite = null;
+	private static Composite rightComposite = null;
+	private static Composite centerComposite = null;
 	private static ToolbarComposite toolbarComposite = null;
 	/** A reference to the SWT browser in charge of presenting album items */
 	private static Browser albumItemBrowser;
@@ -92,9 +87,7 @@ public final class ApplicationUI implements EventObserver {
 	private static BrowserListener albumItemBrowserListener;
 	/** The panel type that is currently visible on the right of the main three panel composite */
 	private static PanelType currentRightPanelType = PanelType.EMPTY;
-	/** An instance in order to register as an observer to event observable */
-	private static ApplicationUI instance = new ApplicationUI();
-	
+
 	/** Defines the panel size for the different panel types */
 	private static Map<PanelType, Integer> panelTypeToPixelSize = new HashMap<PanelType, Integer>() {
 		private static final long serialVersionUID = 1L;	{
@@ -117,12 +110,9 @@ public final class ApplicationUI implements EventObserver {
 		EventObservable.registerObserver(this);
 	}
 
-	public void unregisterFromObservables() {
-		EventObservable.unregisterObserver(instance);
-	}
-	
 	/** This method initializes the main user interface. This involves the creation of different sub-composites */
 	public static void initialize() {
+		new ApplicationUI();
 		initialize(true);
 	}
 		
@@ -190,9 +180,9 @@ public final class ApplicationUI implements EventObserver {
 		leftComposite = new Composite(threePanelComposite, SWT.NONE);
 		leftComposite.setLayout(new GridLayout(1, false));
 		leftComposite.setLayoutData(gridDataForLeftComposite);
-		upperLeftSubComposite = QuickControlSidepane.build(leftComposite);
+		Composite upperLeftSubComposite = QuickControlSidepane.build(leftComposite);
 		upperLeftSubComposite.setLayoutData(gridDataForUpperLeftComposite);
-		lowerLeftSubComposite = EmptySidepane.build(leftComposite);		
+		Composite lowerLeftSubComposite = EmptySidepane.build(leftComposite);
 		lowerLeftSubComposite.setLayoutData(gridDataForLowerLeftComposite);
 		albumItemBrowserListener = new BrowserListener(threePanelComposite);
 		centerComposite = new BrowserComposite(threePanelComposite, SWT.NONE, albumItemBrowserListener);
@@ -202,7 +192,7 @@ public final class ApplicationUI implements EventObserver {
 		rightComposite.setLayout(new GridLayout(1, false));
 		rightComposite.setLayoutData(gridDataForRightComposite);
 
-		statusComposite = StatusBarComposite.getInstance(SHELL).getStatusbarComposite();
+		Composite statusComposite = StatusBarComposite.getInstance(SHELL).getStatusbarComposite();
 		statusComposite.setLayout(new GridLayout(1, false));
 		statusComposite.setLayoutData(gridDataForStatusBarComposite);
 
@@ -278,21 +268,6 @@ public final class ApplicationUI implements EventObserver {
 		centerComposite = newCenterComposite;
 		centerComposite.moveBelow(leftComposite);
 		centerComposite.getParent().layout();
-	}
-
-	/** This method exchanges the lower left composite with a composite provided as parameter. Hereby, the previous composite is disposed. 
-	 * @param newLowerLeftComposite the new composite for the lower left element of the user interface */
-	public static void changeLowerLeftCompositeTo(Composite newLowerLeftComposite) {
-		Layout layout = lowerLeftSubComposite.getLayout();
-		GridData layoutData = (GridData) lowerLeftSubComposite.getLayoutData();
-
-		lowerLeftSubComposite.dispose();
-		newLowerLeftComposite.setLayout(layout);
-		newLowerLeftComposite.setLayoutData(layoutData);
-
-		lowerLeftSubComposite = newLowerLeftComposite;
-		lowerLeftSubComposite.moveBelow(upperLeftSubComposite);
-		lowerLeftSubComposite.getParent().layout();
 	}
 
 	public static void resizeRightCompositeTo(int pixels) {
@@ -398,7 +373,7 @@ public final class ApplicationUI implements EventObserver {
 			 }
 		}
 		
-		if (!albumSelectionIsInSync) {
+		if (!albumSelectionIsInSync && albumName.equals(GuiState.NO_ALBUM_SELECTED)) {
 			LOGGER.error("The album list does not contain the album that is supposed to be selected");
 			return false;
 		}
@@ -408,14 +383,14 @@ public final class ApplicationUI implements EventObserver {
 		}
 		
 		try {
-			ApplicationUI.getQuickSearchTextField().setEnabled(DatabaseOperations.isAlbumQuicksearchable(albumName));
+			ApplicationUI.getQuickSearchTextField().setEnabled(DatabaseOperations.isAlbumQuickSearchable(albumName));
 		} catch (DatabaseWrapperOperationException ex) {
-			LOGGER.error("An error occured while enabling the quick search field", ex);
+			LOGGER.error("An error occurred while enabling the quick search field", ex);
 		}
 		
 		BrowserFacade.performBrowserQueryAndShow(QueryBuilder.createOrderedSelectStarQuery(albumName));
 		
-		ApplicationUI.getViewList().setEnabled(SavedSearchManager.hasAlbumSavedSearches(albumName));
+		ApplicationUI.getSavedSearchesListBox().setEnabled(SavedSearchManager.hasAlbumSavedSearches(albumName));
 		EventObservable.addEventToQueue(SammelboxEvent.ALBUM_SELECTED);
 		toolbarComposite.enableAlbumButtons(albumName);
 		
@@ -430,27 +405,21 @@ public final class ApplicationUI implements EventObserver {
 	}
 
 	/** Sets the the list of albums
-	 * @param albumList the list of albums */ 
+	 * @param albumList the list of albums */
 	public static void setAlbumList(List albumList) {
 		ApplicationUI.albums = albumList;
 	}
 
-	/** Sets the the list of views
-	 * @param albums the list of albums */ 
+	/** Sets the the list of saved searches
+	 * @param savedSearches the list of saved searches */
 	public static void setSavedSearchesList(List savedSearches) {
-		ApplicationUI.savedSearches = savedSearches;
+		ApplicationUI.savedSearchesListBox = savedSearches;
 	}
 
-	/** Returns the list of views 
-	 * @return the album list */
-	public static List getViewList() {
-		return savedSearches;
-	}
-
-	/** Sets the album item browser
-	 * @param browser the reference to the albumItemBrowser */
-	public static void setAlbumItemBrowser(Browser browser) {
-		ApplicationUI.albumItemBrowser = browser;
+	/** Returns the list of saved searches
+	 * @return the list of saved searches */
+	public static List getSavedSearchesListBox() {
+		return savedSearchesListBox;
 	}
 
 	/** Creates or retrieves the album item browser
@@ -481,15 +450,10 @@ public final class ApplicationUI implements EventObserver {
 	}
 	
 	/**
-	 * When the horizontal or vertical screen resolution is smaller than their respective thresholds
-	 * {@value #MIN_DISPLAY_WIDTH_BEFORE_MAXIMIZE} and {@link #MIN_DISPLAY_HEIGHT_BEFORE_MAXIMIZE} then
-	 * it returns true, False otherwise.
+	 * Decides whether the application should start in fullscreen mode or window mode, depending on the available resolution
 	 */
 	public static boolean maximizeShellOnStartUp(int screenWidth, int screenHeight) {
-		if (UIConstants.MIN_SHELL_WIDTH >= screenWidth || UIConstants.MIN_SHELL_HEIGHT >= screenHeight){
-			return true;
-		}
-		return false;
+		return UIConstants.MIN_SHELL_WIDTH >= screenWidth || UIConstants.MIN_SHELL_HEIGHT >= screenHeight;
 	}
 	
 	@Override
@@ -501,21 +465,21 @@ public final class ApplicationUI implements EventObserver {
 			}
 		
 		} else if (event.equals(SammelboxEvent.ALBUM_SELECTED)) {			
-			savedSearches.setItems(SavedSearchManager.getSavedSearchesNamesArray(GuiController.getGuiState().getSelectedAlbum()));
+			savedSearchesListBox.setItems(SavedSearchManager.getSavedSearchesNamesArray(GuiController.getGuiState().getSelectedAlbum()));
 			BrowserFacade.resetFutureJumpAnchor();
 		
 		} else if (event.equals(SammelboxEvent.SAVED_SEARCH_SELECTED)) {
 			BrowserFacade.resetFutureJumpAnchor();
 		
 		} else if (event.equals(SammelboxEvent.SAVED_SEARCHES_LIST_UPDATED)) {
-			savedSearches.removeAll();
+			savedSearchesListBox.removeAll();
 
 			for (SavedSearch albumView : SavedSearchManager.getSavedSearches(GuiController.getGuiState().getSelectedAlbum())) {
-				savedSearches.add(albumView.getName());				
+				savedSearchesListBox.add(albumView.getName());
 			}
 			
-			if (!savedSearches.isEnabled() && savedSearches.getItemCount() != 0) {
-				savedSearches.setEnabled(true);
+			if (!savedSearchesListBox.isEnabled() && savedSearchesListBox.getItemCount() != 0) {
+				savedSearchesListBox.setEnabled(true);
 			}
 		
 		} else if (event.equals(SammelboxEvent.NO_ALBUM_SELECTED)) {
@@ -527,7 +491,7 @@ public final class ApplicationUI implements EventObserver {
 		} else if (event.equals(SammelboxEvent.DISABLE_SAMMELBOX)) {
 			quickSearch.setEnabled(false);
 			albums.setEnabled(false);
-			savedSearches.setEnabled(false);
+			savedSearchesListBox.setEnabled(false);
 			
 			if (currentRightPanelType.equals(PanelType.ADD_ENTRY) || currentRightPanelType.equals(PanelType.UPDATE_ENTRY)) {
 				setEnabledOnCompositeControls(rightComposite, false);		
@@ -536,7 +500,7 @@ public final class ApplicationUI implements EventObserver {
 		} else if (event.equals(SammelboxEvent.ENABLE_SAMMELBOX)) {
 			quickSearch.setEnabled(true);
 			albums.setEnabled(true);
-			savedSearches.setEnabled(true);
+			savedSearchesListBox.setEnabled(true);
 			
 			if (currentRightPanelType.equals(PanelType.ADD_ENTRY) || currentRightPanelType.equals(PanelType.UPDATE_ENTRY)) {
 				setEnabledOnCompositeControls(rightComposite, true);		

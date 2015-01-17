@@ -28,8 +28,6 @@ import org.sammelbox.view.ApplicationUI;
 import org.sammelbox.view.UIConstants;
 
 public final class WelcomePageCreator {
-	private static final int NUMBER_OF_FAVORITES_SHOWN = 5;
-
 	private WelcomePageCreator() {
 	}
 	
@@ -50,7 +48,6 @@ public final class WelcomePageCreator {
 				"      </div>" +
 		        "      <div style=\"float:left; margin-top:25px; padding:10px; background-color:#;" + BrowserUtils.getBackgroundColorOfWidgetInHex() + "\">" +
 					     generateAlbumInformation() +
-					     generateFavorites() +
 			    "      </div>" +
 			    "    </div>" +
 				"  </body>" +
@@ -61,53 +58,24 @@ public final class WelcomePageCreator {
 		StringBuilder albumInformationBuilder = new StringBuilder("<h4>" + Translator.get(DictKeys.BROWSER_ALBUM_INFORMATION) + "</h4><ul>");
 
 		if (AlbumManager.getAlbums().isEmpty()) {
-			albumInformationBuilder.append("<li>" + 
-										      Translator.get(DictKeys.BROWSER_NO_INFORMATION_AVAILABLE) + 
-										   "</li>");
+			albumInformationBuilder.append("<li>" +
+					Translator.get(DictKeys.BROWSER_NO_INFORMATION_AVAILABLE) +
+					"</li>");
 		} else {
 			for (Album album : AlbumManager.getAlbums()) {
 				albumInformationBuilder.append("<li>" +
-											   "  Album <b>" + album.getAlbumName() + "</b><br>" +
-											   "  <font size=-1>" +
-											   "  <i>" + 
-													Translator.get(DictKeys.BROWSER_NUMBER_OF_ITEMS_AND_LAST_UPDATED, 
-															WelcomePageManager.getNumberOfItemsInAlbum(album.getAlbumName()),
-															WelcomePageManager.getLastModifiedDate(album.getAlbumName())) +
-											   "  </i>" +
-											   "  </font>" +
-											   "</li>");
+						"  Album <b>" + album.getAlbumName() + "</b><br>" +
+						"  <font size=-1>" +
+						"  <i>" +
+						Translator.get(DictKeys.BROWSER_NUMBER_OF_ITEMS_AND_LAST_UPDATED,
+								WelcomePageManager.getNumberOfItemsInAlbum(album.getAlbumName()),
+								WelcomePageManager.getLastModifiedDate(album.getAlbumName())) +
+						"  </i>" +
+						"  </font>" +
+						"</li>");
 			}
 		}
 
 		return albumInformationBuilder.append("</ul>").toString();
-	}
-
-	private static String generateFavorites() {
-		StringBuilder favoriteBuilder = new StringBuilder("<h4>" + Translator.get(DictKeys.BROWSER_FAVORITE_ALBUMS_AND_VIEWS) + "</h4><ol>");
-
-		int favCounter = 0;
-		if (WelcomePageManager.getAlbumAndViewsSortedByClicks().keySet().isEmpty()) {
-			favoriteBuilder.append("<li>" + 
-									  Translator.get(DictKeys.BROWSER_NO_INFORMATION_AVAILABLE) + 
-								   "</li>");
-		} else {
-			for (String albumOrViewName : WelcomePageManager.getAlbumAndViewsSortedByClicks().keySet()) {
-				favoriteBuilder.append("<li>" +
-										  albumOrViewName + 
-										  "<font size=-1>" +
-										    "<i>" + 
-										      Translator.get(DictKeys.BROWSER_CLICKS_FOR_ALBUM, 
-										  			WelcomePageManager.getAlbumAndViewsSortedByClicks().get(albumOrViewName)) + 
-										    "</i>" +
-										  "</font>" +
-										"</li>");
-	
-				if (++favCounter == NUMBER_OF_FAVORITES_SHOWN) {
-					break;
-				}
-			}
-		}
-
-		return favoriteBuilder.append("</ol>").toString();	
 	}
 }

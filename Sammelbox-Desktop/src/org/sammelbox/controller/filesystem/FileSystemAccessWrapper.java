@@ -18,16 +18,14 @@
 
 package org.sammelbox.controller.filesystem;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.PrintWriter;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Display;
+import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
+import org.sammelbox.model.database.operations.DatabaseOperations;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.*;
 import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.util.ArrayList;
@@ -36,13 +34,6 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
-
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Display;
-import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
-import org.sammelbox.model.database.operations.DatabaseOperations;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public final class FileSystemAccessWrapper {
 	private static final Logger LOGGER = LoggerFactory.getLogger(FileSystemAccessWrapper.class);
@@ -149,7 +140,7 @@ public final class FileSystemAccessWrapper {
 					ostream.write(buffer, 0, length);
 				}
 			} catch (IOException ioe) {
-				LOGGER.error("An error occured while extracting the resource (" + resourceName + ") to " + outputResourcePath, ioe);
+				LOGGER.error("An error occurred while extracting the resource (" + resourceName + ") to " + outputResourcePath, ioe);
 				return false;
 			}
 		}
@@ -236,7 +227,7 @@ public final class FileSystemAccessWrapper {
 				out.write(buf, 0, len);
 			}
 		} catch (IOException ioe) {
-			LOGGER.error("An error occured while copying the file", ioe);
+			LOGGER.error("An error occurred while copying the file", ioe);
 		}
 	}
 	
@@ -367,14 +358,14 @@ public final class FileSystemAccessWrapper {
 							fileOutputStream.write(buf, 0, len);
 						}
 					} catch (IOException ioe) {
-						LOGGER.error("An error occured while unzipping " + zipLocation + " to " + folderLocation, ioe);
+						LOGGER.error("An error occurred while unzipping " + zipLocation + " to " + folderLocation, ioe);
 					}
 				}
 			}
 			
 			zipFile.close();
 		} catch (IOException ioe) {
-			LOGGER.error("An error occured while unziping the archive to the folder", ioe);
+			LOGGER.error("An error occurred while unziping the archive to the folder", ioe);
 		}
 
 	}
@@ -410,7 +401,7 @@ public final class FileSystemAccessWrapper {
 					deleteDirectoryRecursively(files[i]);
 				} else {
 					if (!files[i].delete()) {
-						LOGGER.error("An error occured while recursively deleting directories");
+						LOGGER.error("An error occurred while recursively deleting directories");
 					}
 				}
 			}
@@ -476,7 +467,7 @@ public final class FileSystemAccessWrapper {
 				try {
 					currentFile = files[i].getCanonicalFile();
 				} catch (IOException ex) {
-					LOGGER.error("An error occured while processing files", ex);
+					LOGGER.error("An error occurred while processing files", ex);
 					continue;
 				}
 				if (currentFile.getName().matches(fileNameRegex)){
@@ -493,7 +484,7 @@ public final class FileSystemAccessWrapper {
 			printWriter.write(content);
 			printWriter.close();
 		} catch (Exception ex) {
-			LOGGER.error("An error occured while writing '" + content + "' to filepath", ex);
+			LOGGER.error("An error occurred while writing '" + content + "' to filepath", ex);
 		}
 	}
 	
@@ -515,7 +506,7 @@ public final class FileSystemAccessWrapper {
 
 			return new String(buffer, Charset.defaultCharset());
 		} catch (Exception e) {
-			LOGGER.error("An error occured while reading the file (" + filePath + ") into a string", e);
+			LOGGER.error("An error occurred while reading the file (" + filePath + ") into a string", e);
 		}
 
 		return new String(buffer, Charset.defaultCharset());
@@ -533,7 +524,7 @@ public final class FileSystemAccessWrapper {
 				stringBuilder.append(ls);
 			}
 		} catch (IOException ioe) {
-			LOGGER.error("An error occured while reading the input stream to a string", ioe);
+			LOGGER.error("An error occurred while reading the input stream to a string", ioe);
 		}
 
 		return stringBuilder.toString();
