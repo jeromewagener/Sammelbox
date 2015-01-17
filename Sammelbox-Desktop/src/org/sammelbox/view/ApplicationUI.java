@@ -220,6 +220,8 @@ public final class ApplicationUI implements EventObserver {
 		Rectangle displayClientArea = DISPLAY.getPrimaryMonitor().getClientArea();
 		if (maximizeShellOnStartUp(displayClientArea.width, displayClientArea.height)){
 			SHELL.setMaximized(true);
+		} else {
+			SHELL.setSize(UIConstants.MIN_SHELL_WIDTH, UIConstants.MIN_SHELL_HEIGHT);
 		}
 		
 		if (showShell) {
