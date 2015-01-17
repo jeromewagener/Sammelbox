@@ -18,10 +18,6 @@
 
 package org.sammelbox.view.browser;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import org.sammelbox.controller.filesystem.FileSystemAccessWrapper;
 import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Language;
@@ -30,10 +26,14 @@ import org.sammelbox.model.album.AlbumItem;
 import org.sammelbox.model.album.AlbumItemResultSet;
 import org.sammelbox.view.ApplicationUI;
 import org.sammelbox.view.UIConstants;
-import org.sammelbox.view.browser.spreadsheet.SpreadsheetTypeValidatorFunction;
 import org.sammelbox.view.browser.spreadsheet.SpreadsheetAbortFunction;
+import org.sammelbox.view.browser.spreadsheet.SpreadsheetTypeValidatorFunction;
 import org.sammelbox.view.browser.spreadsheet.SpreadsheetUpdateFunction;
 import org.sammelbox.view.browser.spreadsheet.YesNoDialogFunction;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public final class BrowserFacade {	
 	private BrowserFacade() {
@@ -52,7 +52,7 @@ public final class BrowserFacade {
 	public static void showResultSet(AlbumItemResultSet resultSet) { BrowserUtils.showResultSet(resultSet); }
 	public static void showCreateNewAlbumPage(AlbumItem albumItem) { FeedbackCreator.showCreateNewAlbumPage(ApplicationUI.createOrRetrieveAlbumItemBrowser(), albumItem); }
 	public static void showCreateAlterAlbumPage(AlbumItem albumItem) { FeedbackCreator.showCreateAlterAlbumPage(ApplicationUI.createOrRetrieveAlbumItemBrowser(), albumItem); }
-	public static void generateAlbumItemUpdatedPage(long albumItemId) { FeedbackCreator.generatAlbumItemUpdatedPage(albumItemId); }
+	public static void generateAlbumItemUpdatedPage(long albumItemId) { FeedbackCreator.generateAlbumItemUpdatedPage(albumItemId); }
 	public static void generateAlbumItemAddedPage(long idOfNewAlbumItem) { FeedbackCreator.generateAlbumItemAddedPage(idOfNewAlbumItem); }
 	public static void addModificationToAlterationList(String modification) { FeedbackCreator.addModificationToAlterationList(modification); }
 	public static void clearAlterationList() { FeedbackCreator.clearAlterationList(); }

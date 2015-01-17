@@ -1,0 +1,87 @@
+<html>
+<head>
+	<title>Importing a CSV file</title>
+	<style type="text/css">
+		table {
+			border-collapse: collapse;
+		}
+		table, th, td {
+			border: 1px solid black;
+			padding: 5px;
+		}
+	</style>
+</head>
+<body>
+	<h2>Importing a CSV file</h2>
+	<p>Sammelbox allows you import CSV (comma seperated value) files as new albums.
+	   Such files can be created using Spreadsheet applications such as Micosoft Excel
+	   or Open Office Calc. The content of these files is usually of tabular nature
+	   whereby each column is seperated by a comma or a similar symbol.
+	</p>
+	<p><b>Example:</p></b>
+	<block>
+	   Book Title;Author;Pages<br>
+	   Book 1;Author 1;42<br>
+	   Book 2;Author 2;21<br>
+      Book 3;Author 3;88
+	</block>
+
+	<h3>Specifying an image column</h3>
+	<p>Sammelbox allows to import images for each entry. The images must be referenced
+	   by their complete path. <i>(e.g. C:/My-Pictures/picture1.jpg)</i> If multiple
+           images should be imported, then these images must be separated by a predefined
+           character.
+	</p>
+
+	<h3>Specifying field types</h3>
+	<p>Sammelbox will import by default all columns (fields) as simple text. However,
+           you can add a specific fieldtype to a header column in order to <b>manually define</b> 
+           the filetype. <i>(Must be appended after the '~' character)</i>
+	</p>
+
+        <p><b>Example:</p></b>
+	<block>
+	   Book Title<b>~TEXT</b>;Author<b>~TEXT</b>;Pages<b>~INTEGER</b>
+	</block>
+
+	<h3>Available field types and accepted values</h3>
+	<p>The following table will list the available field types and accepted field values:</p>
+	<table>
+		<tr>
+			<th>Type</th>
+			<th>Accepted Values</th>
+		</tr>
+		<tr>
+			<td>TEXT</td>
+			<td>Almost everything. However, please note that text fields have limited search capabilities.</td>
+		</tr>
+		<tr>
+			<td>DECIMAL</td>
+			<td>Decimal numbers <i>(e.g: 42.21)</i></td>
+		</tr>
+		<tr>
+			<td>INTEGER</td>
+			<td>Integers <i>(e.g: 21)</i></td>
+		</tr>
+		<tr>
+			<td>DATE</td>
+			<td>A date in the format specified by the settings. <i>(E.g: 16/01/1988)</i>
+				Please verify your settings if you are unsure about the current format!</td>
+		</tr>
+		<tr>
+			<td>URL</td>
+			<td>A web link <i>(E.g: www.sammelbox.org)</i></td>
+		</tr>
+		<tr>
+			<td>OPTION</td>
+			<td>A yes, no & unknown field. Accepted values are 'YES', 'NO' and 'UNKNOWN'</td>
+		</tr>
+		<tr>
+			<td>STAR_RATING</td>
+			<td>A star rating between 0 and 5. Accepted values are 'ZERO_STARS', 'ONE_STAR', 'TWO_STARS'
+			    'THREE_STARS', 'FOUR_STARS' and 'FIVE_STARS'.                        
+			</td>
+		</tr>
+	</table>
+</body>
+</html>

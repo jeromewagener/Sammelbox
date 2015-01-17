@@ -69,12 +69,12 @@ public final class FileSystemLocations {
 	public static String getPlaceholderPNG()          { return getAppDataGraphicsDir() + File.separatorChar + "placeholder.png"; }
 	public static String getPlaceholder2PNG()         { return getAppDataGraphicsDir() + File.separatorChar + "placeholder2.png"; }
 	public static String getPlaceholder3PNG()         { return getAppDataGraphicsDir() + File.separatorChar + "placeholder3.png"; }
-	public static String getZeroStarsPNG()            { return getAppDataGraphicsDir() + File.separatorChar + "zerostars.png"; }
-	public static String getOneStarPNG()              { return getAppDataGraphicsDir() + File.separatorChar + "onestar.png"; }
-	public static String getTwoStarsPNG()             { return getAppDataGraphicsDir() + File.separatorChar + "twostars.png"; }
-	public static String getThreeStarsPNG()           { return getAppDataGraphicsDir() + File.separatorChar + "threestars.png"; }
-	public static String getFourStarsPNG()            { return getAppDataGraphicsDir() + File.separatorChar + "fourstars.png"; }
-	public static String getFiveStarsPNG()            { return getAppDataGraphicsDir() + File.separatorChar + "fivestars.png"; }
+	public static String getZeroStarsPNG()            { return getAppDataGraphicsDir() + File.separatorChar + "zero-stars.png"; }
+	public static String getOneStarPNG()              { return getAppDataGraphicsDir() + File.separatorChar + "one-star.png"; }
+	public static String getTwoStarsPNG()             { return getAppDataGraphicsDir() + File.separatorChar + "two-stars.png"; }
+	public static String getThreeStarsPNG()           { return getAppDataGraphicsDir() + File.separatorChar + "three-stars.png"; }
+	public static String getFourStarsPNG()            { return getAppDataGraphicsDir() + File.separatorChar + "four-stars.png"; }
+	public static String getFiveStarsPNG()            { return getAppDataGraphicsDir() + File.separatorChar + "five-stars.png"; }
 	public static String getMinimizeArrowPNG()        { return getAppDataGraphicsDir() + File.separatorChar + "minimize-arrow.png"; }
 	public static String getMaximizeArrowPNG()        { return getAppDataGraphicsDir() + File.separatorChar + "maximize-arrow.png"; }
 	public static String getResizeSpreadsheetPNG()    { return getAppDataGraphicsDir() + File.separatorChar + "resize-spreadsheet.png"; }

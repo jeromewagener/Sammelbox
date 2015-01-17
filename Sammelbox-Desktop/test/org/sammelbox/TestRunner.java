@@ -31,6 +31,7 @@ import org.sammelbox.albumitems.UpdateAlbumItemTests;
 import org.sammelbox.controller.filesystem.FileSystemAccessWrapper;
 import org.sammelbox.controller.filesystem.FileSystemLocations;
 import org.sammelbox.controller.managers.ConnectionManager;
+import org.sammelbox.controller.managers.WelcomePageManager;
 import org.sammelbox.exporting.ExportTests;
 import org.sammelbox.importing.CSVImportTests;
 import org.sammelbox.savedsearches.ModifySavedSearchesTests;
@@ -94,9 +95,10 @@ public class TestRunner {
 			ConnectionManager.closeConnection();
 			FileSystemAccessWrapper.removeHomeDirectory();
 			Class.forName(Sammelbox.ORG_SQLITE_JDBC);
-			FileSystemAccessWrapper.updateSammelboxFileStructure();			
+			FileSystemAccessWrapper.updateSammelboxFileStructure();
+			WelcomePageManager.initializeFromWelcomeFile();
 			ConnectionManager.openConnection();
-			FileSystemAccessWrapper.updateAlbumFileStructure(ConnectionManager.getConnection());
+			FileSystemAccessWrapper.updateAlbumFileStructure();
 		} catch (Exception e) {
 			fail("A problem occurred while resetting the test home directory");
 		}

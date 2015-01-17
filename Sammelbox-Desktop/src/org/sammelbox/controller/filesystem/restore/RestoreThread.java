@@ -1,9 +1,5 @@
 package org.sammelbox.controller.filesystem.restore;
 
-import java.io.File;
-import java.sql.SQLException;
-import java.sql.Statement;
-
 import org.eclipse.swt.widgets.Display;
 import org.sammelbox.controller.events.EventObservable;
 import org.sammelbox.controller.events.SammelboxEvent;
@@ -19,6 +15,10 @@ import org.sammelbox.view.ApplicationUI;
 import org.sammelbox.view.browser.BrowserFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 public class RestoreThread extends Thread {
 	private static final Logger LOGGER = LoggerFactory.getLogger(RestoreThread.class);
@@ -78,7 +78,7 @@ public class RestoreThread extends Thread {
 			errorString = Translator.get(DictKeys.ERROR_RESTORE_CLEANUP_FAILED);
 		}
 		
-		if (!FileSystemAccessWrapper.updateAlbumFileStructure(ConnectionManager.getConnection())) {
+		if (!FileSystemAccessWrapper.updateAlbumFileStructure()) {
 			LOGGER.error("An issue occurred while updating the album file structure");
 			errorString = Translator.get(DictKeys.ERROR_RESTORE_CLEANUP_FAILED);
 		}

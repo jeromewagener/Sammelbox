@@ -18,13 +18,13 @@
 
 package org.sammelbox.controller.i18n;
 
-import java.text.MessageFormat;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
-
 import org.sammelbox.controller.managers.SettingsManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.text.MessageFormat;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 public final class Translator {
 	private static final Logger LOGGER = LoggerFactory.getLogger(Translator.class);
@@ -45,7 +45,7 @@ public final class Translator {
 		} else {
 			switch (System.getProperty("user.language")) {
 			case "de":
-				setLanguageManually(Language.DEUTSCH);
+				setLanguageManually(Language.GERMAN);
 				break;
 			case "fr":
 				setLanguageManually(Language.FRENCH);

@@ -18,6 +18,16 @@
 
 package org.sammelbox.model.database.operations;
 
+import org.sammelbox.controller.filesystem.FileSystemAccessWrapper;
+import org.sammelbox.controller.managers.ConnectionManager;
+import org.sammelbox.controller.managers.DatabaseIntegrityManager;
+import org.sammelbox.model.album.*;
+import org.sammelbox.model.database.DatabaseStringUtilities;
+import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
+import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException.DBErrorState;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -25,21 +35,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
-import org.sammelbox.controller.filesystem.FileSystemAccessWrapper;
-import org.sammelbox.controller.managers.ConnectionManager;
-import org.sammelbox.controller.managers.DatabaseIntegrityManager;
-import org.sammelbox.model.album.AlbumItem;
-import org.sammelbox.model.album.AlbumItemPicture;
-import org.sammelbox.model.album.FieldType;
-import org.sammelbox.model.album.ItemField;
-import org.sammelbox.model.album.MetaItemField;
-import org.sammelbox.model.album.SampleAlbumItemPicture;
-import org.sammelbox.model.database.DatabaseStringUtilities;
-import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
-import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException.DBErrorState;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public final class CreateOperations {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CreateOperations.class);
@@ -67,7 +62,7 @@ public final class CreateOperations {
 		createPictureTable(DatabaseStringUtilities.generateTableName(albumName));
 		
 		// Create picture directory
-		FileSystemAccessWrapper.updateAlbumFileStructure(ConnectionManager.getConnection());
+		FileSystemAccessWrapper.updateAlbumFileStructure();
 		
 		// Make columns quick-searchable
 		createIndex(DatabaseStringUtilities.generateTableName(albumName), quickSearchableColumnNames);

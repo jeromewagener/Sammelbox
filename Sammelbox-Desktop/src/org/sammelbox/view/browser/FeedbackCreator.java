@@ -39,9 +39,9 @@ public final class FeedbackCreator {
 	}
 	
 	/** A list of alterations that have already been performed via the alter album functionality */
-	private static LinkedList<String> alterations = new LinkedList<String>();
+	private static LinkedList<String> alterations = new LinkedList<>();
 	
-	static void generatAlbumItemUpdatedPage(long albumItemId) {
+	static void generateAlbumItemUpdatedPage(long albumItemId) {
 		AlbumItem updatedAlbumItem;
 		try {
 			updatedAlbumItem = DatabaseOperations.getAlbumItem(ApplicationUI.getSelectedAlbum(), albumItemId);
@@ -137,7 +137,7 @@ public final class FeedbackCreator {
 		StringBuilder listItems = new StringBuilder();
 		
 		for (String alteration : alterations) {
-			listItems.append("<li>" + alteration + "</li>");
+			listItems.append("<li>").append(alteration).append("</li>");
 		}
 		
 		return listItems.toString();

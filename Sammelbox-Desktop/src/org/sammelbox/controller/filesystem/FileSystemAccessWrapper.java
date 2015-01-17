@@ -26,8 +26,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
-import java.nio.charset.Charset;
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -37,7 +35,6 @@ import java.util.zip.ZipOutputStream;
 
 public final class FileSystemAccessWrapper {
 	private static final Logger LOGGER = LoggerFactory.getLogger(FileSystemAccessWrapper.class);
-	private static final boolean OVERWRITE_EXISITING_FILES = true;	
 	private static final int ONE_KB_BUFFER_SIZE = 1024;
 	/** A simple regular expression.. to prevent album names whose folders of the same name cause problems on the filesystem
 	 * Minimum length is 3 alphanumeric characters possibly white spaces, underscores (u005F) hyphen_minuses (u002D). */
@@ -64,21 +61,16 @@ public final class FileSystemAccessWrapper {
 	/** This method is used to create and update the file-structure
 	 *  This method must be called during initialization of the program.*/
 	public static boolean updateSammelboxFileStructure() {		
-		boolean dirsCreatedWithoutError = true;
-				
-		dirsCreatedWithoutError &= createDirectoryAndLogError(FileSystemLocations.getActiveHomeDir());
+		boolean dirsCreatedWithoutError = createDirectoryAndLogError(FileSystemLocations.getActiveHomeDir());
 		dirsCreatedWithoutError &= dirsCreatedWithoutError && createDirectoryAndLogError(FileSystemLocations.getAlbumPicturesDir());
 		dirsCreatedWithoutError &= dirsCreatedWithoutError && createDirectoryAndLogError(FileSystemLocations.getThumbnailsDir());
 		dirsCreatedWithoutError &= dirsCreatedWithoutError && createDirectoryAndLogError(FileSystemLocations.getAppDataDir());
 		dirsCreatedWithoutError &= dirsCreatedWithoutError && createDirectoryAndLogError(FileSystemLocations.getAppDataGraphicsDir());
 		dirsCreatedWithoutError &= dirsCreatedWithoutError && createDirectoryAndLogError(FileSystemLocations.getBackupDir());
 		dirsCreatedWithoutError &= dirsCreatedWithoutError && createDirectoryAndLogError(FileSystemLocations.getCssJsDir());
-		
-		if (!dirsCreatedWithoutError || !extractAllResources() || !createLockFile()) {
-			return false;
-		}
-		
-		return true;
+
+		return dirsCreatedWithoutError && extractAllResources() && createLockFile();
+
 	}
 	
 	private static boolean createLockFile() {
@@ -99,17 +91,15 @@ public final class FileSystemAccessWrapper {
 
 	/** Extracts all resources from the jar to the file system */
 	private static boolean extractAllResources() {
-		boolean isSuccess = true;
-		
-		isSuccess &= extractResourceToFile("graphics/placeholder.png", FileSystemLocations.getPlaceholderPNG());
+		boolean isSuccess = extractResourceToFile("graphics/placeholder.png", FileSystemLocations.getPlaceholderPNG());
 		isSuccess &= extractResourceToFile("graphics/placeholder2.png", FileSystemLocations.getPlaceholder2PNG());
 		isSuccess &= extractResourceToFile("graphics/placeholder3.png", FileSystemLocations.getPlaceholder3PNG());
-		isSuccess &= extractResourceToFile("graphics/zerostars.png", FileSystemLocations.getZeroStarsPNG());
-		isSuccess &= extractResourceToFile("graphics/onestar.png", FileSystemLocations.getOneStarPNG());
-		isSuccess &= extractResourceToFile("graphics/twostars.png", FileSystemLocations.getTwoStarsPNG());
-		isSuccess &= extractResourceToFile("graphics/threestars.png", FileSystemLocations.getThreeStarsPNG());
-		isSuccess &= extractResourceToFile("graphics/fourstars.png", FileSystemLocations.getFourStarsPNG());
-		isSuccess &= extractResourceToFile("graphics/fivestars.png", FileSystemLocations.getFiveStarsPNG());
+		isSuccess &= extractResourceToFile("graphics/zero-stars.png", FileSystemLocations.getZeroStarsPNG());
+		isSuccess &= extractResourceToFile("graphics/one-star.png", FileSystemLocations.getOneStarPNG());
+		isSuccess &= extractResourceToFile("graphics/two-stars.png", FileSystemLocations.getTwoStarsPNG());
+		isSuccess &= extractResourceToFile("graphics/three-stars.png", FileSystemLocations.getThreeStarsPNG());
+		isSuccess &= extractResourceToFile("graphics/four-stars.png", FileSystemLocations.getFourStarsPNG());
+		isSuccess &= extractResourceToFile("graphics/five-stars.png", FileSystemLocations.getFiveStarsPNG());
 		isSuccess &= extractResourceToFile("graphics/logo.png", FileSystemLocations.getLogoPNG());
 		isSuccess &= extractResourceToFile("graphics/logo-small.png", FileSystemLocations.getLogoSmallPNG());
 		isSuccess &= extractResourceToFile("javascript/effects.js", FileSystemLocations.getEffectsJS());
@@ -127,22 +117,18 @@ public final class FileSystemAccessWrapper {
 	 * @param resourceName the name of the resource to be extracted 
 	 * @param outputResourcePath the absolute location to which the resource should be extracted */
 	private static boolean extractResourceToFile(String resourceName, String outputResourcePath) {
-		File resource = new File(outputResourcePath);
-		
-		if (!resource.exists() || OVERWRITE_EXISITING_FILES) {			
-			try (InputStream istream = FileSystemAccessWrapper.class.getClassLoader().getResourceAsStream(resourceName);
-				 OutputStream ostream = new FileOutputStream(outputResourcePath);)
-			{
-				byte buffer[] = new byte[ONE_KB_BUFFER_SIZE];
-				int length;
+		try (InputStream inputStream = FileSystemAccessWrapper.class.getClassLoader().getResourceAsStream(resourceName);
+			 OutputStream outputStream = new FileOutputStream(outputResourcePath))
+		{
+			byte buffer[] = new byte[ONE_KB_BUFFER_SIZE];
+			int length;
 
-				while ((length=istream.read(buffer)) > 0) {
-					ostream.write(buffer, 0, length);
-				}
-			} catch (IOException ioe) {
-				LOGGER.error("An error occurred while extracting the resource (" + resourceName + ") to " + outputResourcePath, ioe);
-				return false;
+			while ((length=inputStream.read(buffer)) > 0) {
+				outputStream.write(buffer, 0, length);
 			}
+		} catch (IOException ioe) {
+			LOGGER.error("An error occurred while extracting the resource (" + resourceName + ") to " + outputResourcePath, ioe);
+			return false;
 		}
 		
 		return true;
@@ -152,7 +138,7 @@ public final class FileSystemAccessWrapper {
 	 *  During this process no existing directory or file is overwritten.
 	 *  This method must be called after a new album is created or altered.
 	 *  It should be also called during initialization of the program after the file structure has been updated. */
-	public static boolean updateAlbumFileStructure(Connection databaseConnection) {
+	public static boolean updateAlbumFileStructure() {
 		// Create inside the album home directory all album directories
 		try {
 			for (String albumName : DatabaseOperations.getListOfAllAlbums()) {
@@ -199,15 +185,14 @@ public final class FileSystemAccessWrapper {
 	 * @throws IOException Exception raised if a problem is encountered during the copy process.
 	 */
 	public static void copyDirectory(File sourceLocation , File targetLocation, String excludeFileRegex) throws IOException {
-
 		if (sourceLocation.isDirectory()) {
 			if (!targetLocation.exists() && !targetLocation.mkdir()) {
 				LOGGER.error("Could not create target location");
 			}
 
 			String[] children = sourceLocation.list();
-			for (int i=0; i<children.length; i++) {
-				copyDirectory(	new File(sourceLocation, children[i]), new File(targetLocation, children[i]), excludeFileRegex);
+			for (String child : children) {
+				copyDirectory(new File(sourceLocation, child), new File(targetLocation, child), excludeFileRegex);
 			}
 		} else {
 			if (excludeFileRegex != null && !excludeFileRegex.isEmpty() && sourceLocation.getCanonicalFile().getName().matches(excludeFileRegex)) {
@@ -219,7 +204,7 @@ public final class FileSystemAccessWrapper {
 
 	public static void copyFile(File sourceLocation, File targetLocation) throws IOException {
 		try (InputStream in = new FileInputStream(sourceLocation);
-			 OutputStream out = new FileOutputStream(targetLocation);)
+			 OutputStream out = new FileOutputStream(targetLocation))
 		{
 			byte[] buf = new byte[ONE_KB_BUFFER_SIZE];
 			int len;
@@ -229,16 +214,6 @@ public final class FileSystemAccessWrapper {
 		} catch (IOException ioe) {
 			LOGGER.error("An error occurred while copying the file", ioe);
 		}
-	}
-	
-	/**
-	 * Provides a file which points to the picture location within the application folder.
-	 * @param fileNameWithExtension The name including file type extension of the picture.
-	 * @param albumName The name of the album to which the picture
-	 * @return The file which points to the physical location of the picture.
-	 */
-	public static File getFileInAppHome(String fileNameWithExtension, String albumName) {
-		return new File(FileSystemLocations.getAlbumPicturesDir() + File.separatorChar + albumName + File.separatorChar + fileNameWithExtension);
 	}
 
 	/**
@@ -270,37 +245,38 @@ public final class FileSystemAccessWrapper {
 		// retrieve all sub directories and files from the file/folder
 		File[] files = locationFile.listFiles();
 
-		for (int i=0; i < files.length; i++) {
-			// if the file is directory, call the function recursively
-			if (files[i].isDirectory()) {
-				String zipFolderPath = parentName;
-				if (parentName.isEmpty()) {
-					zipFolderPath = files[i].getName() + "/";
-				} else {
-					zipFolderPath += files[i].getName() + "/";
-				}
-				addDirectory(zipOutputStream, zipFolderPath, files[i]);
-				continue;
-			}
-
-			// being here means that we have a file and not a directory
-			try {
-				byte[] buffer = new byte[ONE_KB_BUFFER_SIZE];
-				FileInputStream fileInputStream = new FileInputStream(files[i]);
-				zipOutputStream.putNextEntry(new ZipEntry(parentName + files[i].getName()));
-
-				// Store the file inside the zip
-				int length;
-				while((length = fileInputStream.read(buffer)) > 0) {
-					zipOutputStream.write(buffer, 0, length);
+		if (files != null) {
+			for (File file : files) {
+				// if the file is directory, call the function recursively
+				if (file.isDirectory()) {
+					String zipFolderPath = parentName;
+					if (parentName.isEmpty()) {
+						zipFolderPath = file.getName() + "/";
+					} else {
+						zipFolderPath += file.getName() + "/";
+					}
+					addDirectory(zipOutputStream, zipFolderPath, file);
+					continue;
 				}
 
-				// close current zip entry and the input stream of the current file
-				zipOutputStream.closeEntry();
-				fileInputStream.close();
-			}
-			catch(IOException ioe){
-				LOGGER.error("Adding folder {} to zip file failed.", ioe);				
+				// being here means that we have a file and not a directory
+				try {
+					byte[] buffer = new byte[ONE_KB_BUFFER_SIZE];
+					FileInputStream fileInputStream = new FileInputStream(file);
+					zipOutputStream.putNextEntry(new ZipEntry(parentName + file.getName()));
+
+					// Store the file inside the zip
+					int length;
+					while ((length = fileInputStream.read(buffer)) > 0) {
+						zipOutputStream.write(buffer, 0, length);
+					}
+
+					// close current zip entry and the input stream of the current file
+					zipOutputStream.closeEntry();
+					fileInputStream.close();
+				} catch (IOException ioe) {
+					LOGGER.error("Adding folder {} to zip file failed.", ioe);
+				}
 			}
 		}
 	}
@@ -337,7 +313,7 @@ public final class FileSystemAccessWrapper {
 			Enumeration<? extends ZipEntry> zipFileEntries = zipFile.entries();
 
 			while (zipFileEntries.hasMoreElements()) {
-				ZipEntry entry = (ZipEntry) zipFileEntries.nextElement();
+				ZipEntry entry = zipFileEntries.nextElement();
 
 				if (!entry.isDirectory()) {
 					File destFile = new File(folderLocation, entry.getName());
@@ -348,7 +324,7 @@ public final class FileSystemAccessWrapper {
 					}
 
 					try (FileOutputStream fileOutputStream = new FileOutputStream(destFile);
-						 InputStream inputStream = zipFile.getInputStream(entry);) {
+						 InputStream inputStream = zipFile.getInputStream(entry)) {
 	
 						// Copy the bits from inputStream to fileOutputStream
 						byte[] buf = new byte[ONE_KB_BUFFER_SIZE];
@@ -396,12 +372,15 @@ public final class FileSystemAccessWrapper {
 	public static boolean deleteDirectoryRecursively(File directory) {
 		if(directory.exists() && directory.isDirectory()) {
 			File[] files = directory.listFiles();
-			for(int i=0; i<files.length; i++) {
-				if(files[i].isDirectory()) {
-					deleteDirectoryRecursively(files[i]);
-				} else {
-					if (!files[i].delete()) {
-						LOGGER.error("An error occurred while recursively deleting directories");
+
+			if (files != null) {
+				for (File file : files) {
+					if (file.isDirectory()) {
+						deleteDirectoryRecursively(file);
+					} else {
+						if (!file.delete()) {
+							LOGGER.error("An error occurred while recursively deleting directories");
+						}
 					}
 				}
 			}
@@ -417,11 +396,13 @@ public final class FileSystemAccessWrapper {
 	public static void clearHomeDirectory() {	
 		File[] files = new File(FileSystemLocations.getActiveHomeDir()).listFiles();
 
-		for (int i=0; i<files.length; i++) {
-			if (files[i].isDirectory()) {
-				deleteDirectoryRecursively(files[i]);
-			} else if (!files[i].getName().equals(FileSystemLocations.DATABASE_NAME) && !files[i].delete()) {
-				LOGGER.error("Could not delete: " + FileSystemLocations.DATABASE_NAME);
+		if (files != null) {
+			for (File file : files) {
+				if (file.isDirectory()) {
+					deleteDirectoryRecursively(file);
+				} else if (!file.getName().equals(FileSystemLocations.DATABASE_NAME) && !file.delete()) {
+					LOGGER.error("Could not delete: " + FileSystemLocations.DATABASE_NAME);
+				}
 			}
 		}
 	}
@@ -444,7 +425,7 @@ public final class FileSystemAccessWrapper {
 	}
 
 	/**
-	 * Convenience method to delete the temporary database file {@link #DATABASE_TO_RESTORE}
+	 * Convenience method to delete the temporary database file
 	 * @return true if and only if the file or directory is successfully deleted; false otherwise 
 	 */
 	public static boolean deleteDatabaseRestoreFile() {
@@ -458,29 +439,33 @@ public final class FileSystemAccessWrapper {
 	 * @return A list of file handles to the matching files. Empty list if none are found.
 	 */
 	public static List<File> getAllMatchingFilesInHomeDirectory(String fileNameRegex) {
-		List<File> matchingFiles = new ArrayList<File>();
+		List<File> matchingFiles = new ArrayList<>();
 		File path = new File(FileSystemLocations.getAppDataDir());
 		File[] files = path.listFiles();
-		for(int i=0; i<files.length; i++) {
-			if(!files[i].isDirectory()) {
-				File currentFile;
-				try {
-					currentFile = files[i].getCanonicalFile();
-				} catch (IOException ex) {
-					LOGGER.error("An error occurred while processing files", ex);
-					continue;
-				}
-				if (currentFile.getName().matches(fileNameRegex)){
-					matchingFiles.add(currentFile);
+
+		if (files != null) {
+			for (File file : files) {
+				if (!file.isDirectory()) {
+					File currentFile;
+					try {
+						currentFile = file.getCanonicalFile();
+					} catch (IOException ex) {
+						LOGGER.error("An error occurred while processing files", ex);
+						continue;
+					}
+					if (currentFile.getName().matches(fileNameRegex)) {
+						matchingFiles.add(currentFile);
+					}
 				}
 			}
-		}		
+		}
+
 		return matchingFiles;		
 	}
 
 	public static void writeToFile(String content, String filepath) {
 		try {
-			PrintWriter printWriter = new PrintWriter(filepath, Charset.defaultCharset().name());
+			PrintWriter printWriter = new PrintWriter(filepath, "UTF-8");
 			printWriter.write(content);
 			printWriter.close();
 		} catch (Exception ex) {
@@ -504,20 +489,20 @@ public final class FileSystemAccessWrapper {
 			bufferedInputStream.read(buffer);
 			bufferedInputStream.close();
 
-			return new String(buffer, Charset.defaultCharset());
-		} catch (Exception e) {
-			LOGGER.error("An error occurred while reading the file (" + filePath + ") into a string", e);
+			return new String(buffer, "UTF-8");
+		} catch (IOException ex) {
+			LOGGER.error("An error occurred while reading the file (" + filePath + ") into a string", ex);
 		}
 
-		return new String(buffer, Charset.defaultCharset());
+		return "";
 	}
 	
 	public static String readInputStreamIntoString(InputStream fileInputStream) {
 		StringBuilder stringBuilder = new StringBuilder();
 
 		try {
-			BufferedReader reader = new BufferedReader(new InputStreamReader(fileInputStream, Charset.defaultCharset()));
-			String line = null;
+			BufferedReader reader = new BufferedReader(new InputStreamReader(fileInputStream, "UTF-8"));
+			String line;
 			String ls = System.getProperty("line.separator");
 			while((line = reader.readLine()) != null) {
 				stringBuilder.append(line);
@@ -550,12 +535,10 @@ public final class FileSystemAccessWrapper {
 		
 		File testFile = new File(getFilePathForAlbum(albumName));
 		try {
-			testFile.getCanonicalPath();
+			return !testFile.getCanonicalPath().isEmpty();
 		} catch (IOException e) {
 			return false;
 		}
-		
-		return true;
 	}
 	
 	public static Image getImageFromResource(String resourcePath) {

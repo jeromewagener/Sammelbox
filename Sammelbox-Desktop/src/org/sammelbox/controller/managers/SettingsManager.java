@@ -18,11 +18,11 @@
 
 package org.sammelbox.controller.managers;
 
-import java.util.Locale;
-
 import org.sammelbox.controller.filesystem.xml.XmlStorageWrapper;
 import org.sammelbox.controller.i18n.Language;
 import org.sammelbox.model.settings.ApplicationSettings;
+
+import java.util.Locale;
 
 public final class SettingsManager {	
 	private static ApplicationSettings applicationSettings = new ApplicationSettings();
@@ -44,7 +44,7 @@ public final class SettingsManager {
 	
 	public static Locale getUserDefinedLocale() {
 		switch (applicationSettings.getUserDefinedLanguage()) {
-		case DEUTSCH:
+		case GERMAN:
 			return Locale.GERMAN;
 
 		default:
