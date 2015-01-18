@@ -60,7 +60,7 @@ cp target/*.jar release
 #cp target/*.jar release
 
 # build macos x64 jar and copy jar
-mvn clean install -DskipTests -P'macos32,!macos64,win64,!win32,!linux64,!linux32'
+mvn clean install -DskipTests -P'macos64,!macos32,win64,!win32,!linux64,!linux32'
 cp target/*.jar release
 
 cd scripts

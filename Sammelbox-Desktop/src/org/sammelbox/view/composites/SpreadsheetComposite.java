@@ -1,37 +1,19 @@
 package org.sammelbox.view.composites;
 
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.MessageBox;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.*;
 import org.sammelbox.controller.GuiController;
 import org.sammelbox.controller.filters.ItemFieldFilterPlusID;
 import org.sammelbox.controller.filters.MetaItemFieldFilterPlusID;
 import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.controller.managers.SettingsManager;
-import org.sammelbox.model.album.AlbumItem;
-import org.sammelbox.model.album.AlbumItemStore;
-import org.sammelbox.model.album.FieldType;
-import org.sammelbox.model.album.ItemField;
-import org.sammelbox.model.album.MetaItemField;
-import org.sammelbox.model.album.OptionType;
-import org.sammelbox.model.album.StarRating;
+import org.sammelbox.model.album.*;
 import org.sammelbox.model.database.QueryBuilder;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 import org.sammelbox.model.database.operations.DatabaseConstants;
@@ -46,6 +28,10 @@ import org.sammelbox.view.various.ComponentFactory;
 import org.sammelbox.view.various.PanelType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SpreadsheetComposite {
 	private static final String ID_TABLE_DATA_KEY = "ID";
@@ -110,7 +96,7 @@ public class SpreadsheetComposite {
 		table.setLinesVisible(true);
 		addTablePopupMenu(table);
 		
-		List<MetaItemField> metaItemFields = new ArrayList<MetaItemField>();
+		List<MetaItemField> metaItemFields = new ArrayList<>();
 		try {
 			metaItemFields.addAll(DatabaseOperations.getMetaItemFields(GuiController.getGuiState().getSelectedAlbum()));
 		} catch (DatabaseWrapperOperationException dwoe) {
@@ -141,7 +127,7 @@ public class SpreadsheetComposite {
 			@Override
 			public void widgetSelected(SelectionEvent selectionEvent) {
 				TableItem[] tableItems = table.getItems();
-				List<Long> selectedItemIds = new ArrayList<Long>();
+				List<Long> selectedItemIds = new ArrayList<>();
 				
 				for (TableItem tableItem : tableItems) {
 					if (tableItem.getChecked()) {
@@ -164,7 +150,7 @@ public class SpreadsheetComposite {
 			@Override
 			public void widgetSelected(SelectionEvent selectionEvent) {
 				TableItem[] tableItems = table.getItems();
-				List<Long> selectedItemIds = new ArrayList<Long>();
+				List<Long> selectedItemIds = new ArrayList<>();
 				
 				// search for selected table items
 				for (TableItem tableItem : tableItems) {
@@ -222,7 +208,7 @@ public class SpreadsheetComposite {
 			@Override
 			public void widgetSelected(SelectionEvent selectionEvent) {
 				TableItem[] tableItems = table.getItems();
-				List<Long> selectedItemIds = new ArrayList<Long>();
+				List<Long> selectedItemIds = new ArrayList<>();
 				
 				// search for selected table items
 				for (TableItem tableItem : tableItems) {

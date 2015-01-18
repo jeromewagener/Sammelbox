@@ -18,11 +18,6 @@
 
 package org.sammelbox.view.browser.spreadsheet;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import org.sammelbox.controller.GuiController;
 import org.sammelbox.controller.filesystem.FileSystemLocations;
 import org.sammelbox.controller.filters.ItemFieldFilter;
@@ -30,18 +25,18 @@ import org.sammelbox.controller.filters.ItemFieldFilterPlusID;
 import org.sammelbox.controller.i18n.DictKeys;
 import org.sammelbox.controller.i18n.Translator;
 import org.sammelbox.controller.managers.SettingsManager;
-import org.sammelbox.model.album.AlbumItem;
-import org.sammelbox.model.album.FieldType;
-import org.sammelbox.model.album.ItemField;
-import org.sammelbox.model.album.MetaItemField;
-import org.sammelbox.model.album.OptionType;
-import org.sammelbox.model.album.StarRating;
+import org.sammelbox.model.album.*;
 import org.sammelbox.model.database.exceptions.DatabaseWrapperOperationException;
 import org.sammelbox.model.database.operations.DatabaseConstants;
 import org.sammelbox.model.database.operations.DatabaseOperations;
 import org.sammelbox.view.browser.BrowserUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public final class SpreadsheetItemCreator {
 	private static final Logger LOGGER = LoggerFactory.getLogger(SpreadsheetItemCreator.class);
@@ -70,17 +65,17 @@ public final class SpreadsheetItemCreator {
 							"<td class=\"labelTd\">" + 
 						    	"<div id=\"label:" + columnIndex + "\" class=\"label\">" + itemField.getName() + "</div>" + 
 							"</td>" +
-						    	
-							"<td class=\"smallTd\">" + 
+
+							"<td class=\"smallTd\">" +
 								"<div id=\"arrowRight:" + columnIndex + "\" " +
 									 "class=\"hideByMe\" " +
-									 "onClick=\"setHidden(" + columnIndex + ");\" " +
-									 "style=\"background-image:url(" + FileSystemLocations.getMinimizeArrowPNG() + ")\">" +
+									 "onClick=\"setHidden(" + columnIndex + ");\">" +
+									"<img src=\"" + FileSystemLocations.getMinimizeArrowPNG() + "\">" +
 								"</div>" +
 								"<div id=\"arrowLeft:" + columnIndex + "\" " +
 									 "class=\"hideByMe hidden tooltip\" " +
-									 "onClick=\"setHidden(" + columnIndex + ");\" " +
-									 "style=\"background-image:url(" + FileSystemLocations.getMaximizeArrowPNG() + ")\">" +
+									 "onClick=\"setHidden(" + columnIndex + ");\">" +
+						             "<img src=\"" + FileSystemLocations.getMaximizeArrowPNG() + "\">" +
 									 "<label> " + itemField.getName() + " </label>" +
 								"</div>" +
 							"</td>" +
@@ -89,8 +84,8 @@ public final class SpreadsheetItemCreator {
 								"<div id=\"dragMe:" + columnIndex + "\" " +
 									 "class=\"dragMe\" " +
 									 "onmousedown=\"startDrag(" + columnIndex + " ,event);\"  " +
-									 "style=\"background-image:url(" + FileSystemLocations.getResizeSpreadsheetPNG() + ")\">" +
-								"</div>" + 
+									 "style=\"background-color:gray;border-radius: 15px;\">" +
+								"</div>" +
 							"</td>" +
 						"</tr>" +
 					"</table>" +
@@ -104,22 +99,21 @@ public final class SpreadsheetItemCreator {
 												 Map<MetaItemField, Integer> metaItemToColumnIndexMap) {
 		
 		String albumName = GuiController.getGuiState().getSelectedAlbum();
-		AlbumItem newAlbumItem = null;
-		
+
 		List<MetaItemField> metaItemFields = new ArrayList<MetaItemField>();
 		try {
 			metaItemFields = DatabaseOperations.getMetaItemFields(albumName);
 		} catch (DatabaseWrapperOperationException databaseWrapperOperationException) {
 			LOGGER.error("An error occurred while retrieving the meta item fields for " + albumName, databaseWrapperOperationException);
 		}
-		
-		newAlbumItem = new AlbumItem(albumName);		
+
+		AlbumItem newAlbumItem = new AlbumItem(albumName);
 		newAlbumItem.initializeWithDefaultValuesUsingMetaItems(metaItemFields);
 		
 		StringBuilder footerRowBuilder = new StringBuilder();
 		createSpreadsheetRow(newAlbumItem, footerRowBuilder, metaItemToColumnIndexMap);
 		
-		htmlSpreadsheetFooter.append("<tr id=\"row:" + newAlbumItem.getItemId() + "\" class=\"empty\">");
+		htmlSpreadsheetFooter.append("<tr id=\"row:").append(newAlbumItem.getItemId()).append("\" class=\"empty\">");
 		htmlSpreadsheetFooter.append(footerRowBuilder);
 		htmlSpreadsheetFooter.append("</tr>");
 		
@@ -135,14 +129,14 @@ public final class SpreadsheetItemCreator {
 			
 		
 			htmlSpreadsheetRow.append("<td id=\"delete:" + albumItem.getField(FieldType.ID).getValue() + "" + "\" " +
-										  "class=\"deleteText whiteBorderless\" >" +
-					
-										  "<div id=\"deletediv:" + albumItem.getField(FieldType.ID).getValue() + "\"" +
-										  	   "class=\"hidden\"" +
-										  	   "onClick=deleteRow(" + albumItem.getField(FieldType.ID).getValue() + ") > " +
-										  	   "<b>&nbsp;✘&nbsp;</b>" +
-										  "</div>" +
-									  "</td>");
+					"class=\"deleteText whiteBorderless\" >" +
+
+					"<div id=\"deletediv:" + albumItem.getField(FieldType.ID).getValue() + "\"" +
+					"class=\"hidden\"" +
+					"onClick=deleteRow(" + albumItem.getField(FieldType.ID).getValue() + ") > " +
+					"<b>&nbsp;X&nbsp;</b>" +
+					"</div>" +
+					"</td>");
 		} else {
 			htmlSpreadsheetRow.append("<td id=\"delete:" + albumItem.getField(FieldType.ID).getValue() + "" + "\" " +
 					  					  "class=\"deleteText\" " +
@@ -186,9 +180,9 @@ public final class SpreadsheetItemCreator {
 			} else if (itemField.getType().equals(FieldType.TEXT)) {
 				htmlSpreadsheetRow.append(getValueLine(BrowserUtils.escapeHtmlString((String) itemField.getValue()), row, col));
 			} else if (itemField.getType().equals(FieldType.INTEGER)) {
-				htmlSpreadsheetRow.append(getValueLine(((Integer) itemField.getValue()).toString(), row, col));
+				htmlSpreadsheetRow.append(getValueLine(itemField.getValue().toString(), row, col));
 			} else if (itemField.getType().equals(FieldType.DECIMAL)) {
-				htmlSpreadsheetRow.append(getValueLine(((Double) itemField.getValue()).toString(), row, col));
+				htmlSpreadsheetRow.append(getValueLine(itemField.getValue().toString(), row, col));
 			} else if (itemField.getType().equals(FieldType.STAR_RATING)) {
 				htmlSpreadsheetRow.append(getStarsAsComboBoxes(((StarRating) itemField.getValue()), row, col));
 			} else if (itemField.getType().equals(FieldType.URL)) {

@@ -29,8 +29,8 @@ public class SpreadsheetUpdateFunction extends BrowserFunction {
 	
 	@Override
 	public Object function (Object[] arguments) {
-		List<Object> updatesColumNameMapping = Arrays.asList((Object[]) arguments[0]);
-		List<Object> updatesColumTypeMapping = Arrays.asList((Object[]) arguments[1]);
+		List<Object> updatesColumnNameMapping = Arrays.asList((Object[]) arguments[0]);
+		List<Object> updatesColumnTypeMapping = Arrays.asList((Object[]) arguments[1]);
 		List<Object> updates = Arrays.asList((Object[]) arguments[2]);
 		List<Object> deleteCandidates = Arrays.asList((Object[]) arguments[3]);
 		
@@ -38,7 +38,7 @@ public class SpreadsheetUpdateFunction extends BrowserFunction {
 			try	{
 				boolean isNewAlbumItem = true;
 				
-				FieldType idFieldType = FieldType.valueOf((String) updatesColumTypeMapping.get(0));
+				FieldType idFieldType = FieldType.valueOf((String) updatesColumnTypeMapping.get(0));
 				String idFieldItemValue = (String) (((Object[]) completeRow)[0]);
 				
 				AlbumItem tmpAlbumItem = new AlbumItem(GuiController.getGuiState().getSelectedAlbum());
@@ -61,11 +61,10 @@ public class SpreadsheetUpdateFunction extends BrowserFunction {
 				}
 				
 				for (int i = 1; i < ((Object[]) completeRow).length; i++) {
-					FieldType fieldType = FieldType.valueOf((String) updatesColumTypeMapping.get(i));
-					String fieldItemValue = (String) (((Object[]) completeRow)[i]);;
+					FieldType fieldType = FieldType.valueOf((String) updatesColumnTypeMapping.get(i));
+					String fieldItemValue = (String) (((Object[]) completeRow)[i]);
 
-					// TODO handle more elegantly
-					// Under Linux, leaving a spreadsheet field empty results in an empty string. 
+					// Under Linux, leaving a spreadsheet field empty results in an empty string.
 					// However, under Windows, an empty field in the spreadsheet results in a null pointer!
 					// This causes then issues with the processing of the line.
 					if (fieldItemValue == null) {
@@ -74,48 +73,48 @@ public class SpreadsheetUpdateFunction extends BrowserFunction {
 					
 					if (fieldType.equals(FieldType.OPTION)) {
 						if (fieldItemValue.equals(OptionType.YES.toString())) {
-							tmpAlbumItem.addField((String) updatesColumNameMapping.get(i), fieldType, OptionType.YES);
+							tmpAlbumItem.addField((String) updatesColumnNameMapping.get(i), fieldType, OptionType.YES);
 						} else if (fieldItemValue.equals(OptionType.NO.toString())) {
-							tmpAlbumItem.addField((String) updatesColumNameMapping.get(i), fieldType, OptionType.NO);
+							tmpAlbumItem.addField((String) updatesColumnNameMapping.get(i), fieldType, OptionType.NO);
 						} else if (fieldItemValue.equals(OptionType.UNKNOWN.toString())) {
-							tmpAlbumItem.addField((String) updatesColumNameMapping.get(i), fieldType, OptionType.UNKNOWN);
+							tmpAlbumItem.addField((String) updatesColumnNameMapping.get(i), fieldType, OptionType.UNKNOWN);
 						} else {
 							LOGGER.error("Tried to parse the optiontyp " + fieldItemValue + " which seems not to be a valid option.");
 						}
 					} else if (fieldType.equals(FieldType.DATE)) {
 						if (!fieldItemValue.isEmpty()) {
-							SimpleDateFormat dateFormater = new SimpleDateFormat(SettingsManager.getSettings().getDateFormat());
-							java.util.Date utilDate = dateFormater.parse(fieldItemValue);
+							SimpleDateFormat simpleDateFormat = new SimpleDateFormat(SettingsManager.getSettings().getDateFormat());
+							java.util.Date utilDate = simpleDateFormat.parse(fieldItemValue);
 							utilDate.setTime(utilDate.getTime() + (1000 * 60 * 60));
 							java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
-							tmpAlbumItem.addField((String) updatesColumNameMapping.get(i), fieldType, sqlDate);
+							tmpAlbumItem.addField((String) updatesColumnNameMapping.get(i), fieldType, sqlDate);
 						} else {
-							tmpAlbumItem.addField((String) updatesColumNameMapping.get(i), fieldType, null);
+							tmpAlbumItem.addField((String) updatesColumnNameMapping.get(i), fieldType, null);
 						}	
 					} else if (fieldType.equals(FieldType.TEXT)) {
-						tmpAlbumItem.addField((String) updatesColumNameMapping.get(i), fieldType, fieldItemValue);
+						tmpAlbumItem.addField((String) updatesColumnNameMapping.get(i), fieldType, fieldItemValue);
 					} else if (fieldType.equals(FieldType.INTEGER)) {
-						tmpAlbumItem.addField((String) updatesColumNameMapping.get(i), fieldType, Integer.valueOf(fieldItemValue));
+						tmpAlbumItem.addField((String) updatesColumnNameMapping.get(i), fieldType, Integer.valueOf(fieldItemValue));
 					} else if (fieldType.equals(FieldType.DECIMAL)) {
-						tmpAlbumItem.addField((String) updatesColumNameMapping.get(i), fieldType, Double.valueOf(fieldItemValue));
+						tmpAlbumItem.addField((String) updatesColumnNameMapping.get(i), fieldType, Double.valueOf(fieldItemValue));
 					} else if (fieldType.equals(FieldType.STAR_RATING)) {
 						if (fieldItemValue.equals(StarRating.ZERO_STARS.toString())) {
-							tmpAlbumItem.addField((String) updatesColumNameMapping.get(i), fieldType, StarRating.ZERO_STARS);
+							tmpAlbumItem.addField((String) updatesColumnNameMapping.get(i), fieldType, StarRating.ZERO_STARS);
 						} else if (fieldItemValue.equals(StarRating.ONE_STAR.toString())) {
-							tmpAlbumItem.addField((String) updatesColumNameMapping.get(i), fieldType, StarRating.ONE_STAR);
+							tmpAlbumItem.addField((String) updatesColumnNameMapping.get(i), fieldType, StarRating.ONE_STAR);
 						} else if (fieldItemValue.equals(StarRating.TWO_STARS.toString())) {
-							tmpAlbumItem.addField((String) updatesColumNameMapping.get(i), fieldType, StarRating.TWO_STARS);
+							tmpAlbumItem.addField((String) updatesColumnNameMapping.get(i), fieldType, StarRating.TWO_STARS);
 						} else if (fieldItemValue.equals(StarRating.THREE_STARS.toString())) {
-							tmpAlbumItem.addField((String) updatesColumNameMapping.get(i), fieldType, StarRating.THREE_STARS);
+							tmpAlbumItem.addField((String) updatesColumnNameMapping.get(i), fieldType, StarRating.THREE_STARS);
 						} else if (fieldItemValue.equals(StarRating.FOUR_STARS.toString())) {
-							tmpAlbumItem.addField((String) updatesColumNameMapping.get(i), fieldType, StarRating.FOUR_STARS);
+							tmpAlbumItem.addField((String) updatesColumnNameMapping.get(i), fieldType, StarRating.FOUR_STARS);
 						} else if (fieldItemValue.equals(StarRating.FIVE_STARS.toString())) {
-							tmpAlbumItem.addField((String) updatesColumNameMapping.get(i), fieldType, StarRating.FIVE_STARS);
+							tmpAlbumItem.addField((String) updatesColumnNameMapping.get(i), fieldType, StarRating.FIVE_STARS);
 						} else {
 							LOGGER.error("Tried to parse the starRating " + fieldItemValue + " which seems not to be a valid starRating.");
 						}
 					} else if (fieldType.equals(FieldType.URL)) {
-						tmpAlbumItem.addField((String) updatesColumNameMapping.get(i), fieldType, fieldItemValue);
+						tmpAlbumItem.addField((String) updatesColumnNameMapping.get(i), fieldType, fieldItemValue);
 					}
 				}
 				
@@ -132,7 +131,6 @@ public class SpreadsheetUpdateFunction extends BrowserFunction {
 						SWT.ERROR | SWT.OK).open();
 				
 				LOGGER.error("An error occurred while parsing a number of an update row.", nfe);
-				continue;
 			} catch (DatabaseWrapperOperationException dbwoe) {
 				ComponentFactory.getMessageBox(
 						Translator.get(DictKeys.ERROR_AN_INTERNAL_ERROR_OCCURRED_HEADER), 
@@ -140,7 +138,6 @@ public class SpreadsheetUpdateFunction extends BrowserFunction {
 						SWT.ERROR | SWT.OK).open();
 				
 				LOGGER.error("An error occurred while storing or updating an item.", dbwoe);
-				continue;
 			} catch (ParseException pe) {
 				ComponentFactory.getMessageBox(
 						Translator.get(DictKeys.ERROR_AN_INTERNAL_ERROR_OCCURRED_HEADER), 
@@ -148,7 +145,6 @@ public class SpreadsheetUpdateFunction extends BrowserFunction {
 					    SWT.ERROR | SWT.OK).open();
 				
 				LOGGER.error("An error occurred while storing or updating a date.", pe);
-				continue;
 			}
 		}
 		
@@ -165,8 +161,7 @@ public class SpreadsheetUpdateFunction extends BrowserFunction {
 						SWT.ERROR | SWT.OK).open();
 				
 				LOGGER.error("An error occurred while deleting an item.", dbwoe);
-				continue;
-			}			
+			}
 		}
 
 		ApplicationUI.setSelectedAlbumAndReload(GuiController.getGuiState().getSelectedAlbum());

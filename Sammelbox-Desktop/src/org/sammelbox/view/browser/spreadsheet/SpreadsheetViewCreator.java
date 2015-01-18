@@ -47,7 +47,7 @@ public final class SpreadsheetViewCreator {
 	/** Inverts map. Keys become values.
 	 * Values must be unique for this function to work. */
 	private static <V, K> Map<V, K> invert(Map<K, V> map) {
-	    Map<V, K> inv = new HashMap<V, K>();
+	    Map<V, K> inv = new HashMap<>();
 
 	    for (Map.Entry<K, V> entry : map.entrySet()) {
 	        inv.put(entry.getValue(), entry.getKey());
@@ -62,29 +62,28 @@ public final class SpreadsheetViewCreator {
 			return;
 		}
 		
-		Map<Integer, MetaItemField> indexToMetaItemFieldMap = null;
+		Map<Integer, MetaItemField> indexToMetaItemFieldMap;
 		List<MetaItemField> metaItemFields = null;
 		
 		try {
 			indexToMetaItemFieldMap = DatabaseOperations.getAlbumItemMetaMap(GuiController.getGuiState().getSelectedAlbum());
-			metaItemFields = new ArrayList<MetaItemField>(indexToMetaItemFieldMap.values());
+			metaItemFields = new ArrayList<>(indexToMetaItemFieldMap.values());
 		} catch (DatabaseWrapperOperationException dwoe) {
 			LOGGER.error("An error occurred while gathering meta information", dwoe);
 		}
 		
 		Map<Integer, MetaItemField> columnIndexToMetaItemMap = null;
-		Map<MetaItemField, Integer> metaItemToColumnIndexMap = null;
+		Map<MetaItemField, Integer> metaItemToColumnIndexMap;
 		
 		try {
 			columnIndexToMetaItemMap = DatabaseOperations.getAlbumItemMetaMap(GuiController.getGuiState().getSelectedAlbum());
 		} catch (DatabaseWrapperOperationException e) {
-			LOGGER.error("An error occurred while retieving the albumItemMetaMap. ", e);
+			LOGGER.error("An error occurred while retrieving the albumItemMetaMap. ", e);
 		}
 		
 		metaItemToColumnIndexMap = invert(columnIndexToMetaItemMap);
 		
 		// Builders for efficient html creation
-		StringBuilder javaScriptTranslatedStrings = new StringBuilder();
 		StringBuilder htmlSpreadsheet = new StringBuilder();
 		StringBuilder htmlSpreadsheetHeader = new StringBuilder();
 		StringBuilder htmlSpreadsheetData = new StringBuilder();
@@ -103,8 +102,7 @@ public final class SpreadsheetViewCreator {
 		
 		// Add all available album items
 		boolean hasEvenCountingInList = false;
-		long idForUncreatedItem = -1;
-		
+
 		for(Long id : selectedIds){
 			AlbumItem albumItem = AlbumItemStore.getAlbumItem(id);
 			
@@ -114,14 +112,13 @@ public final class SpreadsheetViewCreator {
 		}
 		
 		// Create the footer of the spreadsheet
-		idForUncreatedItem = SpreadsheetItemCreator.createSpreadsheetFooter(htmlSpreadsheetFooter, emptyAlbumItem, metaItemToColumnIndexMap);
-
+		long idForUncreatedItem = SpreadsheetItemCreator.createSpreadsheetFooter(htmlSpreadsheetFooter, emptyAlbumItem, metaItemToColumnIndexMap);
 
 		// List all the rowIDs and put them in an array for javascript usages.
 		javaScriptArrayTableRowId.append(" var tableRowId=[");
 			
 		for (Long id : selectedIds) {
-			javaScriptArrayTableRowId.append("'" + id + "', ");
+			javaScriptArrayTableRowId.append("'").append(id).append("', ");
 		}
 		
 		// List all the columnIDs and put them in arrays for javascript usages.
@@ -130,12 +127,11 @@ public final class SpreadsheetViewCreator {
 		javaScriptArrayTableColName.append(" var tableColName=[");
 		
 		javaScriptArrayTableColId.append("'1'");
-		javaScriptArrayTableColType.append("'" + FieldType.ID.toString() + "'");
+		javaScriptArrayTableColType.append("'").append(FieldType.ID.toString()).append("'");
 		javaScriptArrayTableColName.append("'" + DatabaseConstants.ID_COLUMN_NAME + "'");
 		
 		for (ItemField itemField : ItemFieldFilter.getValidItemFields(emptyAlbumItem.getFields())) {
-			// TODO Refactor. This snippet is used multiple times (performance killer as discussed).
-			int columnIndex = 0; 
+			int columnIndex = 0;
 			
 			for (MetaItemField metaItemField : metaItemToColumnIndexMap.keySet()) {
 				if (metaItemField.getName().equals(itemField.getName())
@@ -148,10 +144,10 @@ public final class SpreadsheetViewCreator {
 			String columnType = itemField.getType().toString();
 			String columnName = itemField.getName();
 
-			javaScriptArrayTableColType.append(", '" + columnType + "'");
-			javaScriptArrayTableColName.append(", '" + columnName + "'");
+			javaScriptArrayTableColType.append(", '").append(columnType).append("'");
+			javaScriptArrayTableColName.append(", '").append(columnName).append("'");
 			
-			javaScriptArrayTableColId.append(", '" + columnIndex + "'");
+			javaScriptArrayTableColId.append(", '").append(columnIndex).append("'");
 		}
 		
 		javaScriptArrayTableRowId.append(idForUncreatedItem);
@@ -161,7 +157,7 @@ public final class SpreadsheetViewCreator {
 		javaScriptArrayTableColType.append("]; ");
 		javaScriptArrayTableColName.append("]; ");
 		
-		htmlSpreadsheet.append("<div id=\"nextFreeId\" class=\"hidden\">" + AlbumItem.ITEM_ID_UNDEFINED + "</div>");
+		htmlSpreadsheet.append("<div id=\"nextFreeId\" class=\"hidden\">").append(AlbumItem.ITEM_ID_UNDEFINED).append("</div>");
 		
 		htmlSpreadsheet.append("<div class=\"tableWrapper\">");
 		htmlSpreadsheet.append("<table id=\"spreadsheetTable\">");
@@ -171,13 +167,13 @@ public final class SpreadsheetViewCreator {
 		htmlSpreadsheet.append("</table>");
 		htmlSpreadsheet.append("</div>");
 		htmlSpreadsheet.append("</br>");
-		htmlSpreadsheet.append("<button id=\"checkAndSend\" type=\"button\" onclick=\"checkAndSend();\" >" + Translator.get(DictKeys.BROWSER_SAVE_CHANGES) + "</button> ");
-		htmlSpreadsheet.append("<button id=\"return\" type=\"button\" onclick=\"spreadsheetAbortFunction();\" >" + Translator.get(DictKeys.BROWSER_ABORT) + "</button> ");
+		htmlSpreadsheet.append("<button id=\"checkAndSend\" type=\"button\" onclick=\"checkAndSend();\" >").append(Translator.get(DictKeys.BROWSER_SAVE_CHANGES)).append("</button> ");
+		htmlSpreadsheet.append("<button id=\"return\" type=\"button\" onclick=\"spreadsheetAbortFunction();\" >").append(Translator.get(DictKeys.BROWSER_ABORT)).append("</button> ");
 		htmlSpreadsheet.append("</br></br>");
 		htmlSpreadsheet.append("<label>");
 		htmlSpreadsheet.append("<div id=\"showModify\" class=\"hidden smallLabel dirty\">To be modified <span id=\"modifyCount\">0</span></div> ");
 		htmlSpreadsheet.append("<div id=\"showAdd\" class=\"hidden smallLabel new\">To be added <span id=\"addCount\">0</span></div> ");
-		htmlSpreadsheet.append("<div id=\"rowCount\" class=\"hidden\">" + AlbumItemStore.getAlbumItems().size() + "</div> ");
+		htmlSpreadsheet.append("<div id=\"rowCount\" class=\"hidden\">").append(AlbumItemStore.getAlbumItems().size()).append("</div> ");
 		htmlSpreadsheet.append("<div id=\"dragPreview\" class=\"dragPreview hidden\"></div>");
 		htmlSpreadsheet.append("</label>");
 		
@@ -195,7 +191,6 @@ public final class SpreadsheetViewCreator {
 						javaScriptArrayTableColId +
 						javaScriptArrayTableColType +
 						javaScriptArrayTableColName +
-						javaScriptTranslatedStrings +
 				    "</script>" +
 				  "</head>" +
 				  "<body id=\"body\" class=\"normal\">" +
