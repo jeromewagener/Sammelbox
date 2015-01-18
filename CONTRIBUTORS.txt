@@ -7,3 +7,4 @@
 >> Mike de Dood (Testing & Reporting)
 >> Patrick Gomes (Bugfixing)
 >> Olivier Wagener (Testing, bugfixing and feature development)
+>> Bernard Paulus (French Translation)

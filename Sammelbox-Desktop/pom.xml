@@ -11,18 +11,22 @@
       <timestamp>${maven.build.timestamp}</timestamp>
       <maven.build.timestamp.format>dd-MM-yyyy HH:mm</maven.build.timestamp.format>
       <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
+      <sonar.sources>${basedir}/src/org/sammelbox</sonar.sources>
+      <sonar.binaries>${basedir}/target/classes/org/sammelbox</sonar.binaries>
+      <sonar.java.binaries>${basedir}/target/classes/org/sammelbox</sonar.java.binaries>
+      <sonar.tests>${basedir}/test/org/sammelbox</sonar.tests>
    </properties>
 
 
    <!-- The following local repository is necessary since no official or recent
      versions of the SWT library can be found in the official repositories
      Add new files using the following command:
-       >> mvn install:install-file -Dfile=swt-XX.jar -DgroupId=org.eclipse.swt -DartifactId=swt-XXXYY -Dversion=X.Y -Dpackaging=jar -DlocalRepositoryPath=../Sammelbox-Desktop/local-mvn-repo
+       >> mvn install:install-file -Dfile=swt-XX.jar -DgroupId=org.eclipse.swt -DartifactId=swt-XXXYY -Dversion=X.Y -Dpackaging=jar -DlocalRepositoryPath=../Sammelbox-Desktop/repo
    -->
    <repositories>
       <repository>
-         <id>swtrepo</id>
-         <url>file://${basedir}/swtrepo</url>
+         <id>repo</id>
+         <url>file://${basedir}/repo</url>
       </repository>
    </repositories>
 
@@ -108,7 +112,7 @@
             <dependency>
                <groupId>org.eclipse.swt</groupId>
                <artifactId>swt-linux64</artifactId>
-               <version>4.3</version>
+               <version>4.4</version>
             </dependency>
          </dependencies>
          <properties>
@@ -131,7 +135,7 @@
             <dependency>
                <groupId>org.eclipse.swt</groupId>
                <artifactId>swt-win64</artifactId>
-               <version>4.3</version>
+               <version>4.4</version>
             </dependency>
          </dependencies>
          <properties>
@@ -154,7 +158,7 @@
             <dependency>
                <groupId>org.eclipse.swt</groupId>
                <artifactId>swt-macos64</artifactId>
-               <version>4.3</version>
+               <version>4.4</version>
             </dependency>
          </dependencies>
          <properties>

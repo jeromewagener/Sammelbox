@@ -49,15 +49,17 @@ public final class Translator {
 				break;
 			case "fr":
 				setLanguageManually(Language.FRENCH);
+				break;
 			default:
 				setLanguageManually(Language.ENGLISH);
+				break;
 			}
 		}
 	}
 	
 	/**
 	 * Manually defines the language to be used by the translator
-	 * @param the language to be used to translate dictionary keys into human readable strings
+	 * @param language the language to be used to translate dictionary keys into human readable strings
 	 * */	
 	public static void setLanguageManually(Language language) {		
 		try {
@@ -87,7 +89,8 @@ public final class Translator {
 	 * @param stringToBeTranslated the string that needs to be translated
 	 * @return the string entered as parameter, with a warning prefix
 	 * */
-	public static String toBeTranslated(String stringToBeTranslated) {
+	@SuppressWarnings("unused")
+ 	public static String toBeTranslated(String stringToBeTranslated) {
 		LOGGER.warn("The following string needs to be translated: " + stringToBeTranslated);
 		return get(DictKeys.TO_BE_TRANSLATED, stringToBeTranslated);
 	}
