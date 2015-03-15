@@ -152,7 +152,11 @@ public class AlbumFunctionSidepane extends Composite {
 					}
 
 					if (function.equals(Translator.get(DictKeys.COMBOBOX_CONTENT_AVERAGE))) {
-						result /= AlbumItemStore.getAlbumItems().size();
+						if (AlbumItemStore.getAlbumItems().size() == 0) {
+							result = 0.0; 
+						} else {
+							result /= AlbumItemStore.getAlbumItems().size();
+						}
 					} else if (function.equals(Translator.get(DictKeys.COMBOBOX_CONTENT_MIN))) {
 						result = min;
 					} else if (function.equals(Translator.get(DictKeys.COMBOBOX_CONTENT_MAX))) {
