@@ -37,7 +37,7 @@ import static org.junit.Assert.fail;
 
 public class CSVImportTests {
 	public static final String CSV_TEST_FOLDER = 
-			System.getProperty("user.dir") + File.separatorChar + "test" + 
+			System.getProperty("user.dir") + File.separatorChar + "Sammelbox-Desktop" + File.separatorChar + "test" +
 					File.separatorChar + "testdata" + File.separatorChar + "import-test-data";
 	
 	public static final String TEST_CSV_1 = CSV_TEST_FOLDER + File.separatorChar + "myCollection1.csv";

@@ -178,7 +178,7 @@ public final class QueryOperations {
 	}
 	
 	static List<String> getListOfAllAlbums() throws DatabaseWrapperOperationException {
-		List<String> albumList = new ArrayList<String>();
+		List<String> albumList = new ArrayList<>();
 		String queryAllAlbumsSQL = QueryBuilder.createSelectColumnQuery(
 				DatabaseConstants.ALBUM_MASTER_TABLE_NAME, DatabaseConstants.ALBUMNAME_IN_ALBUM_MASTER_TABLE);
 

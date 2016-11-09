@@ -59,7 +59,7 @@ public class BackupThread extends Thread {
 		}
 
 		final String backupToSQLcommand = String.format(
-				BACKUP_TO + "%s", tempDir.getPath() + File.separatorChar + FileSystemLocations.DATABASE_TO_RESTORE_NAME);
+				BACKUP_TO + "'%s'", tempDir.getPath() + File.separatorChar + FileSystemLocations.DATABASE_TO_RESTORE_NAME);
 		
 		// backup database to file
 		try (Statement statement = ConnectionManager.getConnection().createStatement()){				

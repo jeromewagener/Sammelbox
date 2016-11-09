@@ -33,10 +33,7 @@ import org.sammelbox.view.various.ComponentFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public final class SavedSearchManager {
 	private static final Logger LOGGER = LoggerFactory.getLogger(SavedSearchManager.class);
@@ -141,17 +138,25 @@ public final class SavedSearchManager {
 	
 	private static void loadSavedSearches() {
 		albumNamesToSavedSearches = XmlStorageWrapper.retrieveSavedSearches();
-		
+		List<String> albumsToRemove = new ArrayList<>();
+
+		// Check what needs to be removed
 		for (String albumName : albumNamesToSavedSearches.keySet()) {
 			try {
 				if (!DatabaseOperations.getListOfAllAlbums().contains(albumName)) {
-					albumNamesToSavedSearches.remove(albumName);
+					albumsToRemove.add(albumName);
 				}
 			} catch (DatabaseWrapperOperationException ex) {
-				LOGGER.error("An error occurred while retrieving the list of albums from the database \n Stacktrace: ", ex);
+				LOGGER.error("An error occurred while retrieving the list of albums from the database", ex);
 			}
 		}
-		
+
+		// Remove if required
+		for (String album : albumsToRemove) {
+			albumNamesToSavedSearches.remove(album);
+		}
+
+		// Overwrite saved searches
 		SavedSearchManager.storeSavedSearches();
 	}
 	
