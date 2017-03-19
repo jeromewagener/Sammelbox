@@ -157,7 +157,6 @@ public final class QueryOperations {
 	
 	public static long transformDateStringToUTCUnixTime(String dateString) throws ParseException {
 		SimpleDateFormat sdf = new SimpleDateFormat(SettingsManager.getSettings().getDateFormat());
-		sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
 		Date parsedDate = sdf.parse(dateString);
 		return parsedDate.getTime();
 	}

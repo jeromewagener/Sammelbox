@@ -104,7 +104,7 @@ public class UpdateAlbumItemTests {
 				fail("The updatedAlbumItem is unexpectatly null");
 			}
 			
-			Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC")); 
+			Calendar cal = Calendar.getInstance();
 			cal.setTime(currentDate);
 			cal.set(Calendar.HOUR_OF_DAY, 0);
 			cal.set(Calendar.MINUTE, 0);
