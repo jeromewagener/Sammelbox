@@ -3,7 +3,7 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.eclipse.swt</groupId>
-  <artifactId>swt-linux64</artifactId>
-  <version>4.4</version>
+  <artifactId>swt-win64</artifactId>
+  <version>4.7.2</version>
   <description>POM was created from install:install-file</description>
 </project>
