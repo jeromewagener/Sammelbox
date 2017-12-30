@@ -74,7 +74,7 @@ public final class HelperOperations {
 				Date date = field.getValue();
 				// Date needs to be truncated to be properly searchable 
 				Date truncatedDate = truncateTimePartOfDate(date);
-				preparedStatement.setDate(parameterIndex, truncatedDate, Calendar.getInstance(TimeZone.getTimeZone("UTC")));		
+				preparedStatement.setDate(parameterIndex, truncatedDate, Calendar.getInstance());
 				break;
 			case TIME: 
 				Time time = field.getValue();
@@ -118,7 +118,7 @@ public final class HelperOperations {
 			return null;
 		}
 		
-		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC")); 
+		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
 		cal.set(Calendar.HOUR_OF_DAY, 0);
 		cal.set(Calendar.MINUTE, 0);

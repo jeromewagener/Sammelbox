@@ -73,7 +73,7 @@ import static org.junit.Assert.fail;
 })
 
 public class TestRunner {
-	public static final String PATH_TO_TEST_CBK = 
+	public static final String PATH_TO_TEST_CBK =
 			System.getProperty("user.dir") + File.separatorChar + "test" +
 					File.separatorChar + "testdata" + File.separatorChar + "test-albums-version-3.4.3.cbk";
 	

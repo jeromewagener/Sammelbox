@@ -53,7 +53,7 @@ public class RestoreThread extends Thread {
 		FileSystemAccessWrapper.clearHomeDirectory();
 		FileSystemAccessWrapper.unzipFileToFolder(backupLocationPath, FileSystemLocations.getActiveHomeDir());
 	
-		final String restoreToSQLCommand = String.format(RESTORE_FROM + "%s", FileSystemLocations.getDatabaseRestoreFile());
+		final String restoreToSQLCommand = String.format(RESTORE_FROM + "'%s'", FileSystemLocations.getDatabaseRestoreFile());
 		
 		try (Statement statement = ConnectionManager.getConnection().createStatement()) {			
 			statement.executeUpdate(restoreToSQLCommand);

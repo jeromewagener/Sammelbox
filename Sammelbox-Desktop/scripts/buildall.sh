@@ -33,7 +33,7 @@ cd ..
 # clean the release folder if it exists
 rm -rf release
 
-# (re)create emptry release folder
+# (re)create empty release folder
 mkdir release
 
 

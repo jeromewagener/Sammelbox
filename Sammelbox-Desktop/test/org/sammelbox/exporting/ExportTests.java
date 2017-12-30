@@ -64,7 +64,7 @@ public class ExportTests {
 			Date dummyDate = new Date(System.currentTimeMillis());
 			setupAlbum(dummyDate);
 		
-			File outputFile = new File(FileSystemLocations.TEMP_DIR + "test.html");
+			File outputFile = new File(FileSystemLocations.TEMP_DIR + "/test.html");
 			if (outputFile.exists()) {
 				outputFile.delete();
 			}
@@ -103,7 +103,7 @@ public class ExportTests {
 			Date dummyDate = new Date(System.currentTimeMillis());
 			setupAlbum(dummyDate);
 			
-			File outputFile = new File(FileSystemLocations.TEMP_DIR + "test.csv");
+			File outputFile = new File(FileSystemLocations.TEMP_DIR + "/test.csv");
 			if (outputFile.exists()) {
 				outputFile.delete();
 			}

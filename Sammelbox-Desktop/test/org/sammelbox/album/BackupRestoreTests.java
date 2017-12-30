@@ -212,7 +212,7 @@ public class BackupRestoreTests {
 
 			assertTrue("Resultset should contain 3 items", counter == 3);
 			DatabaseIntegrityManager.backupToFile(FileSystemLocations.TEMP_DIR + 
-					"testBackupRestoreOfSingleAlbum.cbk");
+					"/testBackupRestoreOfSingleAlbum.cbk");
 		} catch (DatabaseWrapperOperationException e) {
 			fail("testBackupOfSingleAlbum raised an exception");
 		} 
@@ -257,7 +257,7 @@ public class BackupRestoreTests {
 
 			assertTrue("Resultset should contain 0 items", counter == 0);	
 			DatabaseIntegrityManager.backupToFile(FileSystemLocations.TEMP_DIR + 
-					"testBackupRestoreOfMultipleAlbums.cbk");
+					"/testBackupRestoreOfMultipleAlbums.cbk");
 		} catch (DatabaseWrapperOperationException e) {
 			fail("Failed on internal db error");			
 		}
@@ -268,7 +268,7 @@ public class BackupRestoreTests {
 		testBackupOfSingleAlbum();
 		try {
 			DatabaseIntegrityManager.restoreFromFile(FileSystemLocations.TEMP_DIR + 
-					"testBackupRestoreOfSingleAlbum.cbk");
+					"/testBackupRestoreOfSingleAlbum.cbk");
 
 			AlbumItemResultSet allAlbumItems = DatabaseOperations.executeSQLQuery("SELECT * FROM Books");
 			assertTrue("Resultset should not be null", allAlbumItems != null);
@@ -290,7 +290,7 @@ public class BackupRestoreTests {
 		
 		try {
 			DatabaseIntegrityManager.restoreFromFile(FileSystemLocations.TEMP_DIR + 
-					"testBackupRestoreOfMultipleAlbums.cbk");
+					"/testBackupRestoreOfMultipleAlbums.cbk");
 
 			AlbumItemResultSet allAlbumItems = DatabaseOperations.executeSQLQuery("SELECT * FROM " + 
 					DatabaseStringUtilities.encloseNameWithQuotes(DatabaseStringUtilities.generateTableName("Books")));
@@ -380,7 +380,7 @@ public class BackupRestoreTests {
 			}
 
 			DatabaseIntegrityManager.backupToFile(FileSystemLocations.TEMP_DIR + 
-					"testRestoreAndModificiationOfTestDataAlbums.cbk");
+					"/testRestoreAndModificiationOfTestDataAlbums.cbk");
 		} catch (DatabaseWrapperOperationException e) {
 			fail("Failed on internal db error");
 		}
@@ -390,7 +390,7 @@ public class BackupRestoreTests {
 	public void testRestoreOfModificiationOfTestDataAlbums() {
 		try {
 			DatabaseIntegrityManager.restoreFromFile(FileSystemLocations.TEMP_DIR + 
-					"testRestoreAndModificiationOfTestDataAlbums.cbk");
+					"/testRestoreAndModificiationOfTestDataAlbums.cbk");
 
 			AlbumItemResultSet allAlbumItems = DatabaseOperations.executeSQLQuery("SELECT * FROM Books");
 			assertTrue("Resultset should not be null", allAlbumItems != null);

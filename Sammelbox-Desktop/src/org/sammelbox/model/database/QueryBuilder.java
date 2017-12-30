@@ -292,7 +292,6 @@ public final class QueryBuilder {
 	 * Creates a simple select * from albumName with a properly formatted albumName and columnName
 	 * @param albumName The name of the album to which this query refers to
 	 * @param columnName The name of the column to be queried
-	 * @param whereColumn The name of the column which is referenced in the where clause
 	 * @return The properly formatted select query containing a wildcard as the value for in the where clause
 	 */
 	public static String createSelectColumnQuery(String albumName, String columnName) {

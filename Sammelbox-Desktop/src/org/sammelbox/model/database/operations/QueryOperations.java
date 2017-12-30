@@ -157,7 +157,6 @@ public final class QueryOperations {
 	
 	public static long transformDateStringToUTCUnixTime(String dateString) throws ParseException {
 		SimpleDateFormat sdf = new SimpleDateFormat(SettingsManager.getSettings().getDateFormat());
-		sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
 		Date parsedDate = sdf.parse(dateString);
 		return parsedDate.getTime();
 	}
@@ -178,7 +177,7 @@ public final class QueryOperations {
 	}
 	
 	static List<String> getListOfAllAlbums() throws DatabaseWrapperOperationException {
-		List<String> albumList = new ArrayList<String>();
+		List<String> albumList = new ArrayList<>();
 		String queryAllAlbumsSQL = QueryBuilder.createSelectColumnQuery(
 				DatabaseConstants.ALBUM_MASTER_TABLE_NAME, DatabaseConstants.ALBUMNAME_IN_ALBUM_MASTER_TABLE);
 

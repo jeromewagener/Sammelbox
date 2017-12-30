@@ -37,7 +37,7 @@ import static org.junit.Assert.fail;
 
 public class CSVImportTests {
 	public static final String CSV_TEST_FOLDER = 
-			System.getProperty("user.dir") + File.separatorChar + "test" + 
+			System.getProperty("user.dir") + File.separatorChar + "test" +
 					File.separatorChar + "testdata" + File.separatorChar + "import-test-data";
 	
 	public static final String TEST_CSV_1 = CSV_TEST_FOLDER + File.separatorChar + "myCollection1.csv";
@@ -94,7 +94,7 @@ public class CSVImportTests {
 	@Test
 	public void testCSVImport() {		
 		try {
-			String tmpCSVFilePath = FileSystemLocations.TEMP_DIR + "csvFileWithAbsolutImagePathPlaceholders.csv";
+			String tmpCSVFilePath = FileSystemLocations.TEMP_DIR + "/csvFileWithAbsolutImagePathPlaceholders.csv";
 			replaceImagePlaceholdersAndWriteToOutputFilePath(TEST_CSV_1, tmpCSVFilePath);
 			
 			CSVImporter.importCSV(IMPORT_ALBUM_NAME, tmpCSVFilePath, ";", "IMG", "!", true);
@@ -119,7 +119,7 @@ public class CSVImportTests {
 	@Test
 	public void testCSVImport2() {		
 		try {
-			String tmpCSVFilePath = FileSystemLocations.TEMP_DIR + "csvFileWithAbsolutImagePathPlaceholders.csv";
+			String tmpCSVFilePath = FileSystemLocations.TEMP_DIR + "/csvFileWithAbsolutImagePathPlaceholders.csv";
 			replaceImagePlaceholdersAndWriteToOutputFilePath(TEST_CSV_2, tmpCSVFilePath);
 			
 			CSVImporter.importCSV(IMPORT_ALBUM_NAME, tmpCSVFilePath, "#", "pics", "%", true);

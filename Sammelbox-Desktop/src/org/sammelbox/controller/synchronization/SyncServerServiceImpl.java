@@ -54,8 +54,8 @@ public class SyncServerServiceImpl implements SyncServerService {
 	private static final int BROADCAST_PORT = 5454;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(SyncServerServiceImpl.class);
-	private static final String SYNC_DIRECTORY_PATH = FileSystemLocations.TEMP_DIR + "sammelbox-sync" + File.separatorChar;
-	private static final String SYNC_ZIP_ARCHIVE_PATH = FileSystemLocations.TEMP_DIR + "sammelbox-sync.zip";
+	private static final String SYNC_DIRECTORY_PATH = FileSystemLocations.TEMP_DIR + File.separatorChar + "sammelbox-sync" + File.separatorChar;
+	private static final String SYNC_ZIP_ARCHIVE_PATH = FileSystemLocations.TEMP_DIR + File.separatorChar + "sammelbox-sync.zip";
 
 	private static final int SYNC_FINISH_LOOP_TIME_SLEEP_IN_MILLISECONDS = 200;
 	private static final int MAX_VALUE_FOR_SYNC_CODE = 99999;
@@ -77,7 +77,7 @@ public class SyncServerServiceImpl implements SyncServerService {
 		
 		try {
 			if (syncFolder.mkdir()) {
-				LOGGER.error("Could not create sync folder");
+				LOGGER.error("Could not create sync folder - " + SYNC_DIRECTORY_PATH);
 			}
 
 			FileSystemAccessWrapper.copyFile(

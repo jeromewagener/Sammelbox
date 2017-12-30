@@ -41,7 +41,7 @@ public final class FileSystemLocations {
 	public static final String CSS_JS_DIR_NAME = "css-js";
 	public static final String ALBUM_PICTURES_DIR_NAME = "album-pictures";
 
-	public static final String TEMP_DIR = System.getProperty("java.io.tmpdir") + File.separatorChar;
+	public static final String TEMP_DIR = System.getProperty("java.io.tmpdir");
 	public static final String USER_HOME = System.getProperty("user.home");
 	public static final String WORKING_DIR = System.getProperty("user.dir");
 
